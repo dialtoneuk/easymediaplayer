@@ -1,0 +1,475 @@
+/*
+	Super cool settings system that allows for tables, ints and strings to be saved to the /data/ folder on both the client
+	and server's end, all editable via an easy to use panel.
+
+	Each setting also has a server convar value attached to it, Server and client convars are synced so use them like you would normally and everything should work fine. The
+	settings will be replaced by the convars. The system will create all convars that do not exist with their current settings values.
+
+	Written by Llydia Cross 2020.
+*/
+
+--Our settings
+MEDIA.Settings = MEDIA.Settings or {}
+
+/*
+	Registers an array of client settings
+*/
+function MEDIA.RegisterClientSettings(client)
+	MEDIA.RegisterSettings({}, client)
+end
+
+/*
+	Registers an array of server settings
+*/
+
+function MEDIA.RegisterServerSettings(server)
+	MEDIA.RegisterSettings(server, {})
+end
+
+/*
+	Registers both server and client settings
+*/
+
+function MEDIA.RegisterSettings(server, client)
+
+	local fn = function(tab, key, is_server)
+		if (tab.Value == nil ) then error("no value") end
+
+		if (tab.Type == nil ) then
+
+			local typ = type( tab.Value )
+
+			if (typ == "table") then
+				tab.Type = MEDIA.Type.TABLE
+			elseif ( typ == "number") then
+				tab.Type = MEDIA.Type.INT
+			elseif ( typ == "boolean") then
+				tab.Type = MEDIA.Type.BOOL
+			else
+				tab.Type = MEDIA.Type.STRING
+			end
+		end
+
+		if (tab.Type == MEDIA.Type.INT and tab.Min == nil ) then
+			tab.Min = 1
+		end
+
+		if (tab.Type == MEDIA.Type.INT and tab.Max == nil ) then
+			tab.Max = 100
+		end
+
+		if (tab.Convar == nil ) then
+			if (tab.Type != MEDIA.Type.TABLE ) then
+				tab.Convar = true
+			else
+				tab.Convar = false
+			end
+		end
+
+		if (tab.Type == MEDIA.Type.BOOL ) then
+			if (tab.Value == true) then
+				tab.Value = 1
+			else
+				tab.Value = 0
+			end
+		end
+
+		tab.Server = is_server
+
+		if (tab.Server == false and tab.Refresh == nil and tab.Type != MEDIA.Type.TABLE ) then
+			tab.Refresh = true
+		end
+
+		tab.Key = key
+
+		MEDIA.AddSetting(tab)
+	end
+
+
+	for k,t in pairs( server ) do
+		fn(t, k, true )
+	end
+
+	for k,t in pairs( client ) do
+		fn(t, k, false)
+	end
+end
+
+/*
+Add Setting
+*/
+
+function MEDIA.AddSetting(tab)
+	if (!table.HasValue(MEDIA.Type,tab.Type)) then return end
+	if (MEDIA.Settings[tab.key]) then return end
+
+	if (tab.Convar and tab.Type != MEDIA.Type.TABLE) then
+		if (!tab.Server and CLIENT ) then
+			print("creating client side convar: " .. tab.Key)
+			CreateClientConVar(tab.Key,tab.Value)
+		elseif (tab.Server and SERVER) then
+			print("creating server side convar: " .. tab.Key)
+			CreateConVar(tab.Key,tab.Value)
+		end
+	end
+
+	if (tab.Server and CLIENT ) then return end
+	if (!tab.Server and SERVER ) then return end
+
+	MEDIA.Settings[tab.Key] = {}
+	if (!MEDIA.Settings[tab.Key][tab.Type]) then MEDIA.Settings[tab.Key][tab.Type] = {} end
+
+	if (tab.Type == MEDIA.Type.INT) then
+		tab.Value = math.Truncate(tab.Value)
+	end
+
+	MEDIA.Settings[tab.Key][tab.Type] = {
+		Value = tab.Value,
+		DefValue = tab.Value,
+		Type = tab.Type,
+		Key = tab.Key,
+		Max = tab.Max or 6400,
+		Min = tab.Min or 0,
+		Custom = tab.Custom or false,
+		Server = tab.Server or false,
+		Convar = tab.Convar or false,
+		Comment = tab.Comment or false,
+		Refresh = tab.Refresh or false,
+		SlowUpdate = tab.SlowUpdate or false
+	}
+end
+
+/*
+Gets a setting
+*/
+
+function MEDIA.GetSetting(key)
+
+	if (table.IsEmpty(MEDIA.Settings)) then error("SETTINGS EMPTY") return end
+
+	for k,keys in pairs(MEDIA.Settings) do
+		for kind,v in pairs(keys) do
+			if (k == key ) then
+				return v
+			end
+		end
+	end
+
+	error("setting not found: " .. key)
+
+	return {
+		Value = nil,
+		DefValue = nil,
+		Type = nil
+	}
+end
+
+if ( CLIENT ) then
+
+	function MEDIA.ChangeClientSetting(key, value )
+
+		if (type(value) == "table") then
+			error("invalid type")
+		end
+
+		for k,keys in pairs(MEDIA.Settings) do
+			for kind,v in pairs(keys) do
+				if (k == key ) then
+					MEDIA.Settings[k].Value = value
+				end
+			end
+		end
+	end
+end
+
+/*
+Resets our convars, works on client too
+*/
+
+if ( SERVER ) then
+	function MEDIA.ResetSettings()
+		for k,keys in pairs(MEDIA.Settings) do
+			for kind,v in pairs(keys) do
+				if (!v.Server and SERVER ) then continue end
+
+				if (ConVarExists(k) and v.Convar) then
+					local convar = GetConVar(k)
+					if ( kind == MEDIA.Type.INT) then
+						convar:SetInt(v.DefValue)
+					elseif (kind == MEDIA.Type.STRING) then
+						convar:SetString(v.DefValue)
+					elseif ( kind == MEDIA.Type.BOOL) then
+						convar:SetBool(v.DefValue)
+					end
+					print("reset convar " .. k .. " to " .. v.Value )
+				end
+
+				MEDIA.Settings[k][kind].Value = v.DefValue
+			end
+		end
+	end
+end
+
+
+/*
+Resets our settings CL
+*/
+
+if ( CLIENT ) then
+	function MEDIA.ResetSettings()
+		for k,keys in pairs(MEDIA.Settings) do
+			for kind,v in pairs(keys) do
+				if (v.Server and CLIENT ) then continue end
+
+				if (ConVarExists(k) and v.Convar) then
+					local convar = GetConVar(k)
+					if ( kind == MEDIA.Type.INT) then
+						convar:SetInt(v.DefValue)
+					elseif (kind == MEDIA.Type.STRING) then
+						convar:SetString(v.DefValue)
+					elseif ( kind == MEDIA.Type.BOOL) then
+						convar:SetBool(v.DefValue)
+					end
+					print("reset convar " .. k .. " to " .. v.Value )
+				end
+
+				MEDIA.Settings[k][kind].Value = v.DefValue
+			end
+		end
+	end
+end
+
+--this is named differently if we are playing locally
+
+if (SERVER) then
+	--server only
+	concommand.Add("media_reset_settings", function(ply, cmd, args )
+		if (!ply:IsAdmin()) then return end
+
+		MEDIA.ResetSettings()
+	end)
+end
+
+if (CLIENT) then
+	--client only
+	concommand.Add("media_reset_cl_settings", function(ply, cmd, args )
+
+		MEDIA.ResetSettings()
+		--recreate UI
+		RunConsoleCommand("media_create_cl")
+
+		if (IsValid(MEDIA.SettingsPanel) and MEDIA.SettingsPanel:IsVisible() ) then
+			MEDIA.SettingsPanel:Remove()
+			RunConsoleCommand("media_settings")
+		end
+	end)
+end
+
+/*
+	Syncs our settings with our convars and vice versa
+*/
+
+function MEDIA.SetClientConvars()
+	if ( CLIENT ) then return end
+	for k,keys in pairs(MEDIA.Settings) do
+		for kind,v in pairs(keys) do
+			if (!v.Server) then continue end
+			if (!v.Server and SERVER ) then continue end
+			if (!v.Convar ) then continue end --since some settings might not have associated convar values
+			if (!ConVarExists(k)) then continue end
+
+			local convar = GetConVar(k)
+			local value = 0
+
+			if (kind == MEDIA.Type.INT) then
+				value = convar:GetInt()
+			elseif (kind == MEDIA.Type.STRING ) then
+				value = convar:GetString()
+			elseif (kind == MEDIA.Type.BOOL ) then
+				value = convar:GetBool()
+			end
+
+			v.Value = value
+			MEDIA.Settings[k][kind] = v
+
+			if (isbool(v.Value)) then if (v.Value) then v.Value = 1 else v.Value = 0 end end
+
+			print("sync setting " .. k .. " to " .. v.Value or "bool" )
+		end
+	end
+end
+
+if ( SERVER ) then
+	concommand.Add("media_resync_convars", function(ply, cmd, args )
+		if (!ply:IsAdmin()) then return end
+
+		MEDIA.SetClientConvars()
+		ply:SendAdminSettings()
+	end)
+end
+
+/*
+Called after loading our settings
+*/
+
+function MEDIA.SetConvars()
+	if ( CLIENT ) then return end
+
+	for k,keys in pairs(MEDIA.Settings) do
+		for kind,v in pairs(keys) do
+			if (!v.Server and SERVER ) then continue end
+			if (!v.Convar ) then continue end --since some settings might not have associated convar values
+			if (!ConVarExists(k)) then continue end
+
+			local convar = GetConVar(k)
+			if (kind == MEDIA.Type.INT) then
+				convar:SetInt(v.Value)
+			elseif (kind == MEDIA.Type.STRING) then
+				convar:SetString(v.Value)
+			elseif (kind == MEDIA.Type.BOOL) then
+				convar:SetBool(v.Value)
+			else
+				convar:SetInt(v.Value)
+			end
+
+			print("set convar " .. k .. " to " .. v.Value )
+		end
+	end
+end
+
+/*
+loads our settings
+*/
+
+function MEDIA.LoadSettings()
+
+	print("loading settings")
+
+	if (CLIENT) then return end
+
+	if (!file.IsDir("lyds", "DATA")) then return end
+	if (!file.Exists("lyds/settings.json", "DATA")) then return end
+
+	local settings = util.JSONToTable( file.Read("lyds/settings.json") )
+
+	for k,keys in pairs(settings) do
+		for kind,v in pairs(keys) do
+
+			if (!MEDIA.Settings[k]) then continue end
+			if (!MEDIA.Settings[k][kind]) then continue end
+
+			local tab = MEDIA.Settings[k][kind]
+			tab.Value = v.Value
+
+			MEDIA.Settings[k][kind] = tab
+		end
+	end
+end
+
+/*
+loads our client settings
+*/
+
+if (CLIENT) then
+	function MEDIA.LoadSettings()
+		print("loading settings")
+		if (!file.IsDir("lyds", "DATA")) then return end
+		if (!file.Exists("lyds/settings_client.json", "DATA")) then return end
+		local settings = util.JSONToTable( file.Read("lyds/settings_client.json") )
+
+		for k,keys in pairs(settings) do
+			for kind,v in pairs(keys) do
+				if (!MEDIA.Settings[k]) then continue end
+				if (!MEDIA.Settings[k][kind]) then continue end
+				if (kind == MEDIA.Type.TABLE and MEDIA.Settings[k][kind].DefValue.__unpack) then
+					for j,_k in pairs(v.Value) do
+						v.Value[j] = MEDIA.Settings[k][kind].DefValue.__unpack(MEDIA.Settings[k][kind], j, _k)
+					end
+				end
+
+				local tab = MEDIA.Settings[k][kind]
+				tab.Value = v.Value
+				MEDIA.Settings[k][kind] = tab
+			end
+		end
+	end
+end
+
+/*
+Saves our settings
+*/
+
+if (SERVER) then
+	function MEDIA.SaveSettings()
+		if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
+		local values = {}
+
+		for k,keys in pairs(MEDIA.Settings) do
+			for kind,v in pairs(keys) do
+
+				if (!v.Server and SERVER) then continue end
+				if (!values[k]) then values[k] = {} end
+
+
+				if (kind == MEDIA.Type.INT ) then
+					v.Value = math.Truncate(v.Value)
+				end
+
+				values[k][kind] = {
+					Value = v.Value
+				}
+			end
+		end
+
+		file.Write("lyds/settings.json", util.TableToJSON( values ))
+	end
+
+	concommand.Add( "media_save_settings", function()
+		MEDIA.SaveSettings()
+	end)
+end
+
+/*
+Saves our client settings
+*/
+
+if (CLIENT) then
+	function MEDIA.SaveSettings()
+		if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
+
+		local values = {}
+
+		for k,keys in pairs(MEDIA.Settings) do
+			for kind,v in pairs(keys) do
+				if (v.Server and CLIENT) then continue end
+
+				if (!values[k]) then values[k] = {} end
+
+				if ( kind == MEDIA.Type.TABLE and MEDIA.Settings[k][kind].DefValue.__pack) then
+					for j,_k in pairs(v.Value) do
+						v.Value[j] = MEDIA.Settings[k][kind].DefValue.__pack(MEDIA.Settings[k][kind], j, _k)
+					end
+				end
+
+				if (kind == MEDIA.Type.INT ) then
+					v.Value = math.Truncate(v.Value)
+				end
+
+				values[k][kind] = {
+					Value = v.Value
+				}
+			end
+		end
+
+		file.Write("lyds/settings_client.json", util.TableToJSON( values ))
+	end
+
+	concommand.Add( "media_save_cl_settings", function()
+		MEDIA.SaveSettings()
+	end)
+end
+
+--So we can actually add our settings when all of this code has executed, but only if we haven't loaded them already
+if (table.IsEmpty(MEDIA.Settings)) then
+	hook.Run("MEDIA_SettingsLoaded")
+end
