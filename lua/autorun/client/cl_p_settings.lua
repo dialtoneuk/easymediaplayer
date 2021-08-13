@@ -1,7 +1,7 @@
-/*
+--[[
 Settings Panel
 ------------------------------------------------------------------------------
-*/
+--]]
 
 local panel = {}
 
@@ -41,9 +41,9 @@ panel.AdminSettings = {
 
 panel.Selected = {}
 
-/*
+--[[
 Init
-*/
+--]]
 
 function panel:Init()
 	self:BaseInit()
@@ -70,9 +70,9 @@ function panel:Init()
 	self:SetTitle("Youtube Settings Editor")
 end
 
-/*
+--[[
 Fills the property sheet
-*/
+--]]
 
 function panel:FillPropertySheet(settings)
 	local ply = LocalPlayer()
@@ -91,9 +91,9 @@ function panel:FillPropertySheet(settings)
 	self:AddCommandsTab()
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:MyThink()
 	if (self:HasResized() and MEDIA.Settings != nil ) then
@@ -114,9 +114,9 @@ function panel:MyThink()
 	end
 end
 
-/*
+--[[
 Add commands tab
-*/
+--]]
 
 function panel:AddCommandsTab()
 
@@ -187,9 +187,9 @@ function panel:AddCommandsTab()
 	self.PropertySheet:AddSheet("Commands", pan, "icon16/star.png")
 end
 
-/*
+--[[
 Adds a new property sheet tab, takes settings data
-*/
+--]]
 
 function panel:AddPropertySheetTab(title, data, icon, admin)
 	admin = admin or false
@@ -274,9 +274,9 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	self.PropertySheet:AddSheet(title, pan, icon)
 end
 
-/*
+--[[
 Updates the selection table
-*/
+--]]
 
 function panel:UpdateTable(title, v, admin)
 	self.settingsEdit[title]:Clear()
@@ -380,9 +380,9 @@ function panel:UpdateTable(title, v, admin)
 	end
 end
 
-/*
+--[[
 return a normal settings row
-*/
+--]]
 
 function panel:NormalSettingsRow(v, k, row )
 	return function( _, val )
@@ -413,9 +413,9 @@ function panel:NormalSettingsRow(v, k, row )
 	end
 end
 
-/*
+--[[
 Return an admin settings row
-*/
+--]]
 
 function panel:AdminSettingsRow(v, k, row )
 	return function( _, val )

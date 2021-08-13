@@ -1,12 +1,12 @@
-/*
+--[[
 	Holds our blacklist
-*/
+--]]
 
 MEDIA.Blacklist = MEDIA.Blacklist or {}
 
-/*
+--[[
 Loads the blacklist
-*/
+--]]
 
 function MEDIA.LoadBlacklist()
 	if (!file.IsDir("lyds", "DATA")) then return end
@@ -15,9 +15,9 @@ function MEDIA.LoadBlacklist()
 	MEDIA.Blacklist = util.JSONToTable(file.Read("lyds/blacklist.json"))
 end
 
-/*
+--[[
 	Saves blacklist
-*/
+--]]
 
 function MEDIA.SaveBlacklist()
 	if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
@@ -25,9 +25,9 @@ function MEDIA.SaveBlacklist()
 	file.Write("lyds/blacklist.json", util.TableToJSON(MEDIA.Blacklist))
 end
 
-/*
+--[[
 	Adds video to blacklist
-*/
+--]]
 
 function MEDIA.AddToBlacklist(video, ply )
 	if (!ply:IsAdmin() ) then return end
@@ -49,9 +49,9 @@ function MEDIA.AddToBlacklist(video, ply )
 	MEDIA.Blacklist[video.Video] = _video
 end
 
-/*
+--[[
 	Removes video from blacklist
-*/
+--]]
 
 function MEDIA.RemoveFromBlacklist(video)
 	MEDIA.Blacklist[video.Video] = nil

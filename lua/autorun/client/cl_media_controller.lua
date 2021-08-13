@@ -4,9 +4,9 @@ function MEDIA.SetURL(url)
 	MEDIA.URL = url
 end
 
-/*
+--[[
 Search
-**/
+*--]]
 
 function MEDIA.SearchYoutube(query)
 
@@ -17,9 +17,9 @@ function MEDIA.SearchYoutube(query)
 	net.SendToServer()
 end
 
-/*
+--[[
 Requests and then sets our admin settings if not already sent
-*/
+--]]
 
 function MEDIA.GetAdminSettings()
 	if (!LocalPlayer():IsAdmin()) then return end
@@ -29,9 +29,9 @@ function MEDIA.GetAdminSettings()
 	net.SendToServer()
 end
 
-/*
+--[[
 Pushes a change to server settings
-*/
+--]]
 
 function MEDIA.SetAdminSettings()
 	if (!LocalPlayer():IsAdmin()) then return end
@@ -42,9 +42,9 @@ function MEDIA.SetAdminSettings()
 	net.SendToServer()
 end
 
-/*
+--[[
 Create Settings
-*/
+--]]
 
 function MEDIA.CreateSettings()
 	local admin = {}
@@ -73,9 +73,9 @@ function MEDIA.CreateSettings()
 	})
 end
 
-/*
+--[[
 Creates the Admin Panel
-*/
+--]]
 
 function MEDIA.CreateAdminPanel()
 
@@ -104,9 +104,9 @@ function MEDIA.CreateAdminPanel()
 	end
 end
 
-/*
+--[[
 Creates the Search Panel
-*/
+--]]
 
 function MEDIA.CreateSearchPanel()
 
@@ -133,9 +133,9 @@ function MEDIA.CreateSearchPanel()
 	end
 end
 
-/*
+--[[
 Creates the video
-*/
+--]]
 
 function MEDIA.CreatePlayerPanel()
 
@@ -164,9 +164,9 @@ function MEDIA.CreatePlayerPanel()
 	end
 end
 
-/*
+--[[
 Creates the vote
-*/
+--]]
 
 function MEDIA.CreateVotePanel()
 
@@ -191,9 +191,9 @@ function MEDIA.CreateVotePanel()
 	MEDIA.VotePanel:SetSize(width, height)
 end
 
-/*
+--[[
 Creates the playlist
-*/
+--]]
 
 function MEDIA.CreatePlaylistPanel()
 

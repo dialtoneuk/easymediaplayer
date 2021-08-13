@@ -4,9 +4,9 @@ MEDIA.Playlist = MEDIA.Playlist or {}
 --get the player meta
 local ply = FindMetaTable("Player")
 
-/*
+--[[
 sends a message to the player
-*/
+--]]
 
 function ply:SendMessage(message)
 
@@ -17,9 +17,9 @@ function ply:SendMessage(message)
 	net.Send(self)
 end
 
-/*
+--[[
 	Players initial spawn
-*/
+--]]
 
 function ply:DoInitialSpawn()
 
@@ -40,9 +40,9 @@ function ply:DoInitialSpawn()
 	self:ConCommand("media_create_cl")
 end
 
-/*
+--[[
 Sends the servers settings to the client
-*/
+--]]
 
 function ply:SendAdminSettings()
 	if (!self:IsAdmin()) then return end
@@ -52,9 +52,9 @@ function ply:SendAdminSettings()
 	net.Send(self)
 end
 
-/*
+--[[
 Removes a video
-*/
+--]]
 
 function ply:RemoveVideo(id)
 	if (MEDIA.Playlist[id] == nil) then return end -- already in there
@@ -68,9 +68,9 @@ function ply:RemoveVideo(id)
 	MEDIA.RemoveVideo(video)
 end
 
-/*
+--[[
 Gets a players personal history
-*/
+--]]
 
 function ply:GetPersonalHistory(max, start )
 	local results = {}
@@ -91,9 +91,9 @@ function ply:GetPersonalHistory(max, start )
 	return results
 end
 
-/*
+--[[
 Used for pages
-*/
+--]]
 
 function ply:GetPersonalHistoryCount()
 
@@ -110,9 +110,9 @@ function ply:GetPersonalHistoryCount()
 	return count
 end
 
-/*
+--[[
 Gets the players videos
-*/
+--]]
 
 function ply:GetVideos()
 	local results = {}
@@ -128,9 +128,9 @@ function ply:GetVideos()
 	return results
 end
 
-/*
+--[[
 Removes all the users videos
-*/
+--]]
 
 function ply:RemoveVideos()
 	for k,v in pairs(MEDIA.Playlist) do

@@ -1,7 +1,7 @@
-/*
+--[[
 	Player Panel
 	----------------------------------------------------------------------------
-*/
+--]]
 
 
 local panel = {}
@@ -120,9 +120,9 @@ function panel:SetVideo(video)
 	end)
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:GetHTMLSourceCode(video, start_time, mute)
 	mute = mute or 0

@@ -1,7 +1,7 @@
-/*
+--[[
 	Net Receives
 	---------------------------------------------------------------------------
-*/
+--]]
 
 util.AddNetworkString("MEDIA_SendPlaylist")
 util.AddNetworkString("MEDIA_SendCurrentVideo")
@@ -49,17 +49,17 @@ net.Receive("MEDIA_SearchQuery",function(len, ply)
 	end, setting.Value)
 end)
 
-/*
+--[[
 Sends the servers settings to the client if they are an admin
-*/
+--]]
 
 net.Receive("MEDIA_RequestAdminSettings",function(len, ply)
 	ply:SendAdminSettings()
 end)
 
-/*
+--[[
 Sets settings from the player
-*/
+--]]
 
 net.Receive("MEDIA_SetAdminSettings",function(len, ply)
 	if (!ply:IsAdmin()) then return end
@@ -68,10 +68,10 @@ net.Receive("MEDIA_SetAdminSettings",function(len, ply)
 	--MEDIA.SetConvars()
 end)
 
-/*
+--[[
 	This loads stuff which requries our settings to be loaded first
 	---------------------------------------------------------------
-*/
+--]]
 
 hook.Add("MEDIA_SettingsPostLoad","MEDIA_MiscStuffLoad", function()
 
@@ -86,10 +86,10 @@ hook.Add("MEDIA_SettingsPostLoad","MEDIA_MiscStuffLoad", function()
 	end
 end)
 
-/*
+--[[
 	Chat Commands Hook
 	---------------------------------------------------------------------------
-*/
+--]]
 
 hook.Add("PlayerSay", "MEDIA_PlayerSay", function(ply, msg, teamchat)
 	msg = string.lower(msg)
@@ -100,36 +100,36 @@ hook.Add("PlayerSay", "MEDIA_PlayerSay", function(ply, msg, teamchat)
 	end
 end)
 
-/*
+--[[
 	Do our initial spawn on dat client boy
 	---------------------------------------------------------------------------
-*/
+--]]
 
 hook.Add("PlayerInitialSpawn","MEDIA_InitialSpawn",function(ply, transition)
 	ply:DoInitialSpawn()
 end)
 
-/*
+--[[
 	Chat Commands can be loaded as soon as the file has been read
 	See sv_media_chatcommands.lua
 	---------------------------------------------------------------------------
-*/
+--]]
 
 hook.Add("MEDIA_LoadedChatCommands", "MEDIA_LoadedChatCommands", function()
 	MEDIA.LoadChatCommands()
 end)
 
-/*
+--[[
 	Cooldowns can be loaded as soon as the file has been read
 	See sv_media_cooldown.lua
 	---------------------------------------------------------------------------
-*/
+--]]
 
 hook.Add("MEDIA_CooldownLoaded","MEDIA_LoadCooldowns", function()
 	MEDIA.LoadCooldowns()
 end)
 
-/*
+--[[
 	VOTES!
 
 	Votes are defined inside the media_voting.lua file on the Server. They have a callback
@@ -143,15 +143,15 @@ end)
 	Votes can be loaded as soon as the file has been read
 	See sv_media_voting.lua
 ---------------------------------------------------------------------------
-*/
+--]]
 
 hook.Add("MEDIA_VotingLoaded", "MEDIA_VotingLoaded", function()
 	MEDIA.LoadVotes()
 end)
 
-/*
+--[[
 Console command to vote
-*/
+--]]
 
 concommand.Add("media_start_vote", function(ply, cmd, args)
 	if (MEDIA.HasCooldown(ply, "Vote")) then
@@ -176,10 +176,10 @@ concommand.Add("media_start_vote", function(ply, cmd, args)
 end)
 
 
-/*
+--[[
 	Various Console commands
 ---------------------------------------------------------------------------
-*/
+--]]
 
 concommand.Add("media_reload_cooldowns", function(ply)
 	if (!ply:IsAdmin()) then return end
@@ -200,9 +200,9 @@ concommand.Add("media_reload_blacklist", function(ply)
 	MEDIA.SendBlacklist(ply)
 end)
 
-/*
+--[[
 Requests personal history from the server
-*/
+--]]
 
 concommand.Add("media_request_personal_history", function(ply, cmd, args)
 	if (!args[1]) then return end
@@ -219,9 +219,9 @@ concommand.Add("media_request_personal_history", function(ply, cmd, args)
 	MEDIA.AddPlayerCooldown(ply, MEDIA.GetNewCooldown("History"))
 end)
 
-/*
+--[[
 Requests history from the server
-*/
+--]]
 
 concommand.Add("media_request_history", function(ply, cmd, args)
 	if (!args[1]) then return end
@@ -261,17 +261,17 @@ concommand.Add("media_request_history", function(ply, cmd, args)
 	end
 end)
 
-/*
+--[[
 Command to refresh settings
-*/
+--]]
 
 concommand.Add("media_refresh_settings", function(ply)
 	ply:SendAdminSettings()
 end)
 
-/*
+--[[
 Reloads the playlist Playlist
-*/
+--]]
 
 concommand.Add("media_reload_playlist",function(ply)
 	if (!ply:IsAdmin()) then return end
@@ -279,9 +279,9 @@ concommand.Add("media_reload_playlist",function(ply)
 	MEDIA.BroadcastPlaylist()
 end)
 
-/*
+--[[
 Skips a video
-*/
+--]]
 
 concommand.Add("media_skip_video", function(ply)
 	if (ply:IsAdmin() and !table.IsEmpty(MEDIA.CurrentVideo)) then
@@ -293,9 +293,9 @@ concommand.Add("media_skip_video", function(ply)
 	end
 end)
 
-/*
+--[[
 Blacklists as video
-*/
+--]]
 
 concommand.Add("media_blacklist_video", function(ply,cmd,args)
 	if (ply:IsAdmin()) then
@@ -323,9 +323,9 @@ concommand.Add("media_blacklist_video", function(ply,cmd,args)
 	end
 end)
 
-/*
+--[[
 Unblacklists as video
-*/
+--]]
 
 concommand.Add("media_unblacklist_video", function(ply, cmd, args)
 	if (ply:IsAdmin() and !table.IsEmpty(MEDIA.Blacklist)) then
@@ -339,9 +339,9 @@ concommand.Add("media_unblacklist_video", function(ply, cmd, args)
 	end
 end)
 
-/*
+--[[
 Likes a current video
-*/
+--]]
 
 concommand.Add("media_like_video", function(ply, cmd, args)
 	if (MEDIA.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have liked a video too recently") return end
@@ -359,9 +359,9 @@ concommand.Add("media_like_video", function(ply, cmd, args)
 	end
 end)
 
-/*
+--[[
 Dislikes a current video
-*/
+--]]
 
 concommand.Add("media_dislike_video", function(ply, cmd, args)
 	if (MEDIA.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have disliked a video too recently") return end
@@ -378,9 +378,9 @@ concommand.Add("media_dislike_video", function(ply, cmd, args)
 	end
 end)
 
-/*
+--[[
 Plays a video
-*/
+--]]
 
 concommand.Add("media_play", function (ply, cmd, args)
 
@@ -436,9 +436,9 @@ concommand.Add("media_play", function (ply, cmd, args)
 	end)
 end)
 
-/*
+--[[
 Removes a video but doesn't check if its the players
-*/
+--]]
 
 concommand.Add("media_delete", function(ply, cmd, args)
 	if (!args[1]) then return end
@@ -458,9 +458,9 @@ concommand.Add("media_delete", function(ply, cmd, args)
 	MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
 end)
 
-/*
+--[[
 Removes a video but checks if its the players
-*/
+--]]
 
 concommand.Add("media_remove", function(ply, cmd, args)
 	if (!args[1]) then return end
@@ -472,9 +472,9 @@ concommand.Add("media_remove", function(ply, cmd, args)
 	MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
 end)
 
-/*
+--[[
 Removes all your videos
-*/
+--]]
 
 concommand.Add("media_remove_all", function(ply, cmd, args)
 	ply:RemoveVideos()

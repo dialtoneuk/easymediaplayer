@@ -1,7 +1,7 @@
-/*
+--[[
 Admin Panel
 ------------------------------------------------------------------------------
-*/
+--]]
 
 
 local panel = {}
@@ -13,9 +13,9 @@ panel._Reposition = false
 --data
 panel.Selected = {}
 
-/*
+--[[
 Init
-*/
+--]]
 
 function panel:Init()
 
@@ -43,9 +43,9 @@ function panel:Init()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:MyThink()
 	if (self:HasResized()) then
@@ -54,9 +54,9 @@ function panel:MyThink()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:CreateBlacklistPanel()
 
@@ -130,9 +130,9 @@ function panel:CreateBlacklistPanel()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:PresentBlacklist()
 

@@ -1,6 +1,6 @@
-/*
+--[[
 	Our chat commands!
-*/
+--]]
 
 MEDIA.Commands = MEDIA.Commands or {
 	_ChatCommand = {
@@ -13,13 +13,13 @@ MEDIA.Commands = MEDIA.Commands or {
 	}
 }
 
-/*
+--[[
 	Chat Commands
 	Devs: You can add to these!
 
 	TODO: Argument parging for !play <url> command
 ---------------------------------------------------------------------------
-*/
+--]]
 
 function MEDIA.LoadChatCommands()
 
@@ -200,17 +200,17 @@ function MEDIA.LoadChatCommands()
 	MEDIA.AddChatCommand(command)
 end
 
-/*
+--[[
 	Returns a new chat command table
-*/
+--]]
 
 function MEDIA.NewChatCommand()
 	return table.Copy(MEDIA.Commands._ChatCommand)
 end
 
-/*
+--[[
 	Adds a chat command
-*/
+--]]
 
 function MEDIA.AddChatCommand(command)
 
@@ -221,9 +221,9 @@ function MEDIA.AddChatCommand(command)
 	MEDIA.Commands[command.Command] = command
 end
 
-/*
+--[[
 	Parses a command and then executes the command
-*/
+--]]
 
 function MEDIA.ParseCommand(ply, string)
 	if (string.sub(string, 1,1) != MEDIA.GetSetting("media_command_prefix").Value ) then return false end

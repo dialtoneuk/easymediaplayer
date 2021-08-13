@@ -1,6 +1,6 @@
-/*
+--[[
 Sets the info for a video, including its duration
-*/
+--]]
 
 function MEDIA.GetYoutubeVideo(video, callback)
 	MEDIA.YoutubeVideoExists(video, function(result)
@@ -20,9 +20,9 @@ function MEDIA.GetYoutubeVideo(video, callback)
 	end)
 end
 
-/*
+--[[
 Does a free check to see if a video exists using the api-less call (takes up no use of API key limit)
-*/
+--]]
 
 function MEDIA.YoutubeVideoExists(video, callback)
 
@@ -51,9 +51,9 @@ function MEDIA.YoutubeVideoExists(video, callback)
 	end)
 end
 
-/*
+--[[
 	This will search media and return videos for us.
-*/
+--]]
 
 function MEDIA.SearchYoutube(query, callback, count)
 	count = count or 1
@@ -62,9 +62,9 @@ function MEDIA.SearchYoutube(query, callback, count)
 	MEDIA.YoutubeAPIFetch(params, callback)
 end
 
-/*
+--[[
 	This gets data about a video and then calls a callback
-*/
+--]]
 
 function MEDIA.YoutubeGetDeepInfo(video, callback)
 
@@ -72,9 +72,9 @@ function MEDIA.YoutubeGetDeepInfo(video, callback)
 	MEDIA.YoutubeAPIFetch(params, callback, true )
 end
 
-/*
+--[[
 	Gets free info which does not take from your api key limit
-*/
+--]]
 
 function MEDIA.YoutubeGetFreeInfo(video, callback)
 

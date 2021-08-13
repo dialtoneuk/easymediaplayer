@@ -1,8 +1,8 @@
 
-/*
+--[[
 	Syntax
 		You can use {SETTING_NAME} to get the value of a setting, it can't be a table though!
-*/
+--]]
 
 --default harcoded tips
 MEDIA.Tips = {
@@ -41,9 +41,9 @@ MEDIA.Tips = {
 	}
 }
 
-/*
+--[[
 	Loads our custom tips
-*/
+--]]
 
 function MEDIA.LoadCustomTips()
 
@@ -64,9 +64,9 @@ function MEDIA.LoadCustomTips()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function MEDIA.SelectTip(is_admin)
 	is_admin = is_admin or false
@@ -93,9 +93,9 @@ function MEDIA.SelectTip(is_admin)
 	return tip;
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function MEDIA.ParseTipBody(tip)
 	local str = tip;
@@ -126,9 +126,9 @@ function MEDIA.ParseTipBody(tip)
 	return str
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function MEDIA.DisplayTip()
 

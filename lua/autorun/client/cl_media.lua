@@ -18,10 +18,10 @@ MEDIA.HistoryPageMax = MEDIA.HistoryPageMax or 1
 MEDIA.PlayerHistoryCount = MEDIA.PlayerHistoryCount or 1
 MEDIA.PlayerPageMax = MEDIA.PlayerPageMax or 1
 
-/*
+--[[
 Fonts
 -----------------------------------------------------------------------------
-*/
+--]]
 
 surface.CreateFont( "BiggerText", {
 	font = "Arial",
@@ -95,10 +95,10 @@ surface.CreateFont( "SmallText", {
 	outline = false,
 })
 
-/*
+--[[
 Hooks
 -----------------------------------------------------------------------------
-*/
+--]]
 
 hook.Add("OnContextMenuOpen", "MEDIA_ContextMenu", function()
 	local setting = MEDIA.GetSetting("media_playlist_show_in_context") or { Value = 1}
@@ -166,14 +166,14 @@ hook.Add("ScoreboardHide", "MEDIA_ScoreboardHide", function()
 	end
 end)
 
-/*
+--[[
 Console Commands
 -----------------------------------------------------------------------------
-*/
+--]]
 
-/*
+--[[
 Youtube search function
-*/
+--]]
 
 concommand.Add("media_search", function (ply, cmd, args)
 
@@ -181,9 +181,9 @@ concommand.Add("media_search", function (ply, cmd, args)
 	MEDIA.SearchYoutube(args[1])
 end)
 
-/*
+--[[
 Creates all components
-*/
+--]]
 
 
 concommand.Add("media_create_cl", function()
@@ -194,9 +194,9 @@ concommand.Add("media_create_cl", function()
 	if ( LocalPlayer():IsAdmin() ) then MEDIA.CreateAdminPanel() end
 end)
 
-/*
+--[[
 Shows our Search Panel
-*/
+--]]
 
 concommand.Add("media_search_panel", function()
 	if (MEDIA.SearchPanel and IsValid(MEDIA.SearchPanel)) then
@@ -204,9 +204,9 @@ concommand.Add("media_search_panel", function()
 	end
 end)
 
-/*
+--[[
 Shows our Admin Panel
-*/
+--]]
 
 concommand.Add("media_admin_panel", function()
 	if (MEDIA.AdminPanel and IsValid(MEDIA.AdminPanel)) then
@@ -214,59 +214,59 @@ concommand.Add("media_admin_panel", function()
 	end
 end)
 
-/*
+--[[
 Creates Search Panel
-*/
+--]]
 
 concommand.Add("media_create_search_panel", function()
 	MEDIA.CreateSearchPanel()
 end)
 
-/*
+--[[
 	Creates admin panel
-*/
+--]]
 
 
 concommand.Add("media_create_admin_panel", function()
 	MEDIA.CreateAdminPanel()
 end)
 
-/*
+--[[
 Creates Vote Panel
-*/
+--]]
 
 concommand.Add("media_create_vote_panel", function()
 	MEDIA.CreateVotePanel()
 end)
 
-/*
+--[[
 Creates Playlist Panel
-*/
+--]]
 
 concommand.Add("media_create_player_panel", function()
 	MEDIA.CreatePlayerPanel()
 end)
 
-/*
+--[[
 Creates Playlist Panel
-*/
+--]]
 
 concommand.Add("media_create_playlist_panel", function()
 	MEDIA.CreatePlaylistPanel()
 end)
 
-/*
+--[[
 Displays the media settings
-*/
+--]]
 
 concommand.Add("media_settings",function()
 	MEDIA.CreateSettings()
 end)
 
-/*
+--[[
 Net stuff
 -----------------------------------------------------------------------------
-*/
+--]]
 
 net.Receive("MEDIA_SendMessage", function()
 	local msg = net.ReadString() or " null "
@@ -276,9 +276,9 @@ net.Receive("MEDIA_SendMessage", function()
 	chat.PlaySound()
 end)
 
-/*
+--[[
 	This receives a chunk of history data AKA Paged data
-*/
+--]]
 
 net.Receive("MEDIA_SendHistoryData", function()
 	local tab = net.ReadTable();
@@ -299,9 +299,9 @@ net.Receive("MEDIA_SendHistoryData", function()
 	end
 end)
 
-/*
+--[[
 Recieves personal history data from the server (basically checks for steam id before sending history)
-*/
+--]]
 
 net.Receive("MEDIA_SendPersonalHistory", function()
 	local tab = net.ReadTable();
@@ -322,10 +322,10 @@ net.Receive("MEDIA_SendPersonalHistory", function()
 	end
 end)
 
-/*
+--[[
  This receives ALL data
   Note: not used atm
-*/
+--]]
 
 net.Receive("MEDIA_SendHistory", function()
 	MEDIA.History =  net.ReadTable()
@@ -338,18 +338,18 @@ net.Receive("MEDIA_SendHistory", function()
 	end
 end)
 
-/*
+--[[
 Recieves history data from the server
-*/
+--]]
 
 net.Receive("MEDIA_SendHistoryForVideo", function()
 	local tab = net.ReadTable()
 	MEDIA.History[tab.Video] = tab;
 end)
 
-/*
+--[[
 Recieves blacklist data from the server
-*/
+--]]
 
 net.Receive("MEDIA_SendBlacklist", function()
 	MEDIA.Blacklist = net.ReadTable()
@@ -359,9 +359,9 @@ net.Receive("MEDIA_SendBlacklist", function()
 	end
 end)
 
-/*
+--[[
 Ends a new vote
-*/
+--]]
 
 net.Receive("MEDIA_EndVote", function()
 	MEDIA.CurrentVote = {}
@@ -376,9 +376,9 @@ net.Receive("MEDIA_EndVote", function()
 	end
 end)
 
-/*
+--[[
 Starts a new vote
-*/
+--]]
 
 net.Receive("MEDIA_NewVote", function()
 	MEDIA.CurrentVote = net.ReadTable()
@@ -389,9 +389,9 @@ net.Receive("MEDIA_NewVote", function()
 	end
 end)
 
-/*
+--[[
 Sets Search Data
-*/
+--]]
 
 net.Receive("MEDIA_SendSearchResults",function()
 	MEDIA.SearchResults = net.ReadTable()
@@ -401,9 +401,9 @@ net.Receive("MEDIA_SendSearchResults",function()
 	end
 end)
 
-/*
+--[[
 Ends the current playlist/listening session
-*/
+--]]
 
 net.Receive("MEDIA_End", function()
 	MEDIA.Playlist = {}
@@ -426,9 +426,9 @@ net.Receive("MEDIA_End", function()
 	end
 end)
 
-/*
+--[[
 Sets the current video
-*/
+--]]
 
 net.Receive("MEDIA_SendCurrentVideo",function()
 	MEDIA.CurrentVideo = net.ReadTable()
@@ -458,9 +458,9 @@ net.Receive("MEDIA_SendCurrentVideo",function()
 	end
 end)
 
-/*
+--[[
 Sets the playlist
-*/
+--]]
 
 net.Receive("MEDIA_SendPlaylist",function()
 
@@ -471,17 +471,17 @@ net.Receive("MEDIA_SendPlaylist",function()
 	end
 end)
 
-/*
+--[[
 Sets admin settings
-*/
+--]]
 
 net.Receive("MEDIA_SendAdminSettings",function()
 	MEDIA.AdminSettings = net.ReadTable()
 end)
 
-/*
+--[[
 Sets history
-*/
+--]]
 
 net.Receive("MEDIA_SendHistory",function()
 	MEDIA.History = net.ReadTable()

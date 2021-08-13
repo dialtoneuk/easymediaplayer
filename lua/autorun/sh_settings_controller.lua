@@ -1,4 +1,4 @@
-/*
+--[[
 	Super cool settings system that allows for tables, ints and strings to be saved to the /data/ folder on both the client
 	and server's end, all editable via an easy to use panel.
 
@@ -6,29 +6,29 @@
 	settings will be replaced by the convars. The system will create all convars that do not exist with their current settings values.
 
 	Written by Llydia Cross 2020.
-*/
+--]]
 
 --Our settings
 MEDIA.Settings = MEDIA.Settings or {}
 
-/*
+--[[
 	Registers an array of client settings
-*/
+--]]
 function MEDIA.RegisterClientSettings(client)
 	MEDIA.RegisterSettings({}, client)
 end
 
-/*
+--[[
 	Registers an array of server settings
-*/
+--]]
 
 function MEDIA.RegisterServerSettings(server)
 	MEDIA.RegisterSettings(server, {})
 end
 
-/*
+--[[
 	Registers both server and client settings
-*/
+--]]
 
 function MEDIA.RegisterSettings(server, client)
 
@@ -95,9 +95,9 @@ function MEDIA.RegisterSettings(server, client)
 	end
 end
 
-/*
+--[[
 Add Setting
-*/
+--]]
 
 function MEDIA.AddSetting(tab)
 	if (!table.HasValue(MEDIA.Type,tab.Type)) then return end
@@ -139,9 +139,9 @@ function MEDIA.AddSetting(tab)
 	}
 end
 
-/*
+--[[
 Gets a setting
-*/
+--]]
 
 function MEDIA.GetSetting(key)
 
@@ -182,9 +182,9 @@ if ( CLIENT ) then
 	end
 end
 
-/*
+--[[
 Resets our convars, works on client too
-*/
+--]]
 
 if ( SERVER ) then
 	function MEDIA.ResetSettings()
@@ -211,9 +211,9 @@ if ( SERVER ) then
 end
 
 
-/*
+--[[
 Resets our settings CL
-*/
+--]]
 
 if ( CLIENT ) then
 	function MEDIA.ResetSettings()
@@ -265,9 +265,9 @@ if (CLIENT) then
 	end)
 end
 
-/*
+--[[
 	Syncs our settings with our convars and vice versa
-*/
+--]]
 
 function MEDIA.SetClientConvars()
 	if ( CLIENT ) then return end
@@ -308,9 +308,9 @@ if ( SERVER ) then
 	end)
 end
 
-/*
+--[[
 Called after loading our settings
-*/
+--]]
 
 function MEDIA.SetConvars()
 	if ( CLIENT ) then return end
@@ -337,9 +337,9 @@ function MEDIA.SetConvars()
 	end
 end
 
-/*
+--[[
 loads our settings
-*/
+--]]
 
 function MEDIA.LoadSettings()
 
@@ -366,9 +366,9 @@ function MEDIA.LoadSettings()
 	end
 end
 
-/*
+--[[
 loads our client settings
-*/
+--]]
 
 if (CLIENT) then
 	function MEDIA.LoadSettings()
@@ -395,9 +395,9 @@ if (CLIENT) then
 	end
 end
 
-/*
+--[[
 Saves our settings
-*/
+--]]
 
 if (SERVER) then
 	function MEDIA.SaveSettings()
@@ -429,9 +429,9 @@ if (SERVER) then
 	end)
 end
 
-/*
+--[[
 Saves our client settings
-*/
+--]]
 
 if (CLIENT) then
 	function MEDIA.SaveSettings()

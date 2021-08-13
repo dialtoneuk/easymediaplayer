@@ -1,6 +1,6 @@
-/*
+--[[
 	Parses a url from media
-*/
+--]]
 
 function MEDIA.ParseYoutubeURL(url) --bad method
 
@@ -15,9 +15,9 @@ function MEDIA.ParseYoutubeURL(url) --bad method
 	return str
 end
 
-/*
+--[[
  Fetches youtube api data (SERVER ONLY)
-*/
+--]]
 
 if (SERVER) then
 	function MEDIA.YoutubeAPIFetch(params, callback, one_object)
@@ -74,9 +74,9 @@ if (SERVER) then
 	end
 end
 
-/*
+--[[
 	Converts ISO time to a numerical value
-*/
+--]]
 function MEDIA.ConvertFromISOTime(duration)
 
 	local safeFunc = function()

@@ -1,7 +1,7 @@
 
-/*
+--[[
 	Holds our active cooldowns
-*/
+--]]
 
 MEDIA.Cooldown = MEDIA.Cooldown or {}
 
@@ -13,14 +13,14 @@ MEDIA.StoredCooldowns = MEDIA.StoredCooldowns or {
 	}
 }
 
-/*
+--[[
 Cooldowns
 Devs: You can add to this
 
 Cooldowns are essentially rate limiters which only allow you to preform an action
 ever so seconds in time.
 ---------------------------------------------------------------------------
-*/
+--]]
 
 function MEDIA.LoadCooldowns()
 	--Search Cooldown
@@ -61,9 +61,9 @@ function MEDIA.LoadCooldowns()
 	MEDIA.StoreCooldown(cooldown)
 end
 
-/*
+--[[
  Stores a copy of a cooldown for us to use
-*/
+--]]
 
 function MEDIA.StoreCooldown(typ)
 	if (MEDIA.StoredCooldowns[typ.Name]) then MEDIA.StoredCooldowns[typ.Name] = nil end
@@ -71,17 +71,17 @@ function MEDIA.StoreCooldown(typ)
 	MEDIA.StoredCooldowns[typ.Name] = typ
 end
 
-/*
+--[[
 Gets a new copy of a stored cooldown
-*/
+--]]
 
 function MEDIA.GetNewCooldown(name)
 	return table.Copy( MEDIA.StoredCooldowns[name] )
 end
 
-/*
+--[[
 	Return true if a player has a current cooldown
-*/
+--]]
 
 function MEDIA.HasCooldown(ply, name)
 	if (!MEDIA.Cooldown[ply:UniqueID()]) then return false end
@@ -89,9 +89,9 @@ function MEDIA.HasCooldown(ply, name)
 	return MEDIA.Cooldown[ply:UniqueID()][name] != nil
 end
 
-/*
+--[[
 	Return true if a player has dat current cooldown type
-*/
+--]]
 
 function MEDIA.HasCooldownType(ply, typ)
 	if (!MEDIA.Cooldown[ply:UniqueID()]) then return false end
@@ -99,9 +99,9 @@ function MEDIA.HasCooldownType(ply, typ)
 	return MEDIA.Cooldown[ply:UniqueID()][typ.Name] != nil
 end
 
-/*
+--[[
 Gets a new cooldown type
-*/
+--]]
 
 function MEDIA.GetCooldownType(time, name)
 		if (!time) then time = MEDIA.StoredCooldowns._CooldownType.Time end
@@ -114,9 +114,9 @@ function MEDIA.GetCooldownType(time, name)
 		return tab
 end
 
-/*
+--[[
 	Adds a cooldown to the player, takes a Type name
-*/
+--]]
 
 function MEDIA.AddPlayerCooldown(ply, typ)
 	if (!MEDIA.Cooldown[ply:UniqueID()]) then MEDIA.Cooldown[ply:UniqueID()] = {} end
@@ -125,9 +125,9 @@ function MEDIA.AddPlayerCooldown(ply, typ)
 	MEDIA.Cooldown[ply:UniqueID()][typ.Name] = typ
 end
 
-/*
+--[[
 	Loops through all the cooldowns and updates, this is called each time in MEDIA.CooldownLoop()
-*/
+--]]
 
 function MEDIA.UpdateCooldowns()
 	for steamid,cooldowns in pairs(MEDIA.Cooldown) do
@@ -142,10 +142,10 @@ function MEDIA.UpdateCooldowns()
 	end
 end
 
-/*
+--[[
 	Once initiated, will be called each second updating all current cooldowns present.
 	The refreshrate can be halved to make it go faster
-*/
+--]]
 
 function MEDIA.CooldownLoop()
 	local setting = MEDIA.GetSetting("media_cooldown_refreshrate") or {Value = 1}

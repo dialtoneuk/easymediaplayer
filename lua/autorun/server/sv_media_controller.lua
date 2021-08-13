@@ -1,6 +1,6 @@
-/*
+--[[
 	Announces a new video
-*/
+--]]
 
 function MEDIA.AnnounceVideo()
 	if (!MEDIA.CurrentVideo or table.IsEmpty(MEDIA.CurrentVideo)) then return end
@@ -9,9 +9,9 @@ function MEDIA.AnnounceVideo()
 	end
 end
 
-/*
+--[[
 	Announces an addition to the playlist
-*/
+--]]
 
 function MEDIA.AnnouncePlaylistAddition(video)
 	if (!video or table.IsEmpty(video)) then return end
@@ -20,9 +20,9 @@ function MEDIA.AnnouncePlaylistAddition(video)
 	end
 end
 
-/*
+--[[
 	Announces an ending to a video
-*/
+--]]
 
 function MEDIA.AnnounceVideoEnding(video)
 	if (!video or table.IsEmpty(video)) then return end
@@ -32,9 +32,9 @@ function MEDIA.AnnounceVideoEnding(video)
 end
 
 
-/*
+--[[
 	Send Data to player
-*/
+--]]
 
 function MEDIA.SendHistoryData(ply, data)
 	if (table.IsEmpty(MEDIA.History)) then return end
@@ -47,9 +47,9 @@ function MEDIA.SendHistoryData(ply, data)
 	net.Send(ply)
 end
 
-/*
+--[[
 	Send Data to player
-*/
+--]]
 
 function MEDIA.SendPersonalHistoryData(ply, data)
 	if (table.IsEmpty(MEDIA.History)) then return end
@@ -62,9 +62,9 @@ function MEDIA.SendPersonalHistoryData(ply, data)
 	net.Send(ply)
 end
 
-/*
+--[[
 Send All History to player
-*/
+--]]
 
 function MEDIA.SendHistory(ply)
 	if (table.IsEmpty(MEDIA.History)) then return end
@@ -85,9 +85,9 @@ function MEDIA.SendHistoryForVideo(ply, video)
 	net.Send(ply)
 end
 
-/*
+--[[
 Send blacklist to player
-*/
+--]]
 
 function MEDIA.SendBlacklist(ply)
 	if (table.IsEmpty(MEDIA.Blacklist)) then return end
@@ -97,9 +97,9 @@ function MEDIA.SendBlacklist(ply)
 	net.Send(ply)
 end
 
-/*
+--[[
 Sends a section of the playlist
-*/
+--]]
 
 function MEDIA.SendPlaylistSection(ply, limit)
 	net.Start("MEDIA_SendPlaylist")
@@ -107,9 +107,9 @@ function MEDIA.SendPlaylistSection(ply, limit)
 	net.Send(ply)
 end
 
-/*
+--[[
 Broadcast a selection
-*/
+--]]
 
 function MEDIA.BroadcastSection(limit)
 	for k,v in pairs(player.GetAll()) do
@@ -117,9 +117,9 @@ function MEDIA.BroadcastSection(limit)
 	end
 end
 
-/*
+--[[
 	Broadcasts end to all players
-*/
+--]]
 
 function MEDIA.BroadcastEnd()
 	for k,v in pairs(player.GetAll()) do
@@ -127,9 +127,9 @@ function MEDIA.BroadcastEnd()
 	end
 end
 
-/*
+--[[
 	Sends the entire playlist
-*/
+--]]
 
 function MEDIA.SendPlaylist(ply)
 	net.Start("MEDIA_SendPlaylist")
@@ -137,18 +137,18 @@ function MEDIA.SendPlaylist(ply)
 	net.Send(ply)
 end
 
-/*
+--[[
 	Tells a player the playlist has ended / no next current video
-*/
+--]]
 
 function MEDIA.SendEnd(ply)
 	net.Start("MEDIA_End")
 	net.Send(ply)
 end
 
-/*
+--[[
 	Broadcast the entire playlist
-*/
+--]]
 
 function MEDIA.BroadcastPlaylist()
 	for k,v in pairs(player.GetAll()) do
@@ -156,9 +156,9 @@ function MEDIA.BroadcastPlaylist()
 	end
 end
 
-/*
+--[[
 	Starts a new video
-*/
+--]]
 
 function MEDIA.StartVideo(video, callback)
 	MEDIA.CurrentVideo = video
@@ -176,9 +176,9 @@ function MEDIA.StartVideo(video, callback)
 	end)
 end
 
-/*
+--[[
 	Skips a video
-*/
+--]]
 
 function MEDIA.SkipVideo()
 
@@ -201,9 +201,9 @@ function MEDIA.SkipVideo()
 	end
 end
 
-/*
+--[[
 	Calls when a new media video is added. Begins the playlist or broadcasts the current playlist
-*/
+--]]
 
 function MEDIA.Begin(video)
 	if (table.IsEmpty(MEDIA.CurrentVideo)) then
@@ -232,9 +232,9 @@ function MEDIA.Begin(video)
 	end
 end
 
-/*
+--[[
 	Stops the current video
-*/
+--]]
 
 function MEDIA.StopVideo()
 	if (timer.Exists("MEDIA_VideoTimer")) then timer.Remove("MEDIA_VideoTimer") end
@@ -246,9 +246,9 @@ function MEDIA.StopVideo()
 	MEDIA.CurrentVideo = {}
 end
 
-/*
+--[[
 	Broadcasts the current video to the players
-*/
+--]]
 
 function MEDIA.BroadcastCurrentVideo()
 	for k,v in pairs(player.GetAll()) do

@@ -1,6 +1,6 @@
-/*
+--[[
 Encode URI
-*/
+--]]
 
 function MEDIA.EncodeURI(str)
 	if (str) then
@@ -12,9 +12,9 @@ function MEDIA.EncodeURI(str)
 	return str
 end
 
-/*
+--[[
 Decode URI
-*/
+--]]
 
 function MEDIA.DecodeURI(s)
 	if (s) then
@@ -25,9 +25,9 @@ function MEDIA.DecodeURI(s)
 	return s
 end
 
-/*
+--[[
 Turns a table into a colour
-*/
+--]]
 
 function MEDIA.TableToColour(tab)
 	return Color(tab.r or tab[1], tab.g or tab[2], tab.b or tab[3], tab.a or tab[4] or 255)

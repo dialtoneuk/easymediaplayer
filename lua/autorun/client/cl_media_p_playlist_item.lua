@@ -1,7 +1,7 @@
-/*
+--[[
   Playlist Item
 	---------------------------------------------------------------------------
-*/
+--]]
 
 local panel = {}
 
@@ -14,9 +14,9 @@ panel.Settings = {
 	Size = MEDIA.GetSetting("media_playlist_size")
 }
 
-/*
+--[[
 	Initializes
-*/
+--]]
 function panel:Init()
 
 	self:BaseInit()
@@ -59,9 +59,9 @@ function panel:Init()
 	end
 end
 
-/*
+--[[
  Updates Colours
-*/
+--]]
 
 function panel:Think()
 	if (self.Settings.Colours != nil) then
@@ -69,17 +69,17 @@ function panel:Think()
 	end
 end
 
-/*
+--[[
 	Sets if we are active or not
-*/
+--]]
 
 function panel:SetActive()
 	self.Active = true
 end
 
-/*
+--[[
 	Sets our video
-*/
+--]]
 
 function panel:SetVideo(video)
 	self.Video = video
@@ -145,9 +145,9 @@ function panel:SetVideo(video)
 	end
 end
 
-/*
+--[[
 	Sets the texts
-*/
+--]]
 
 function panel:SetTexts()
 	local mins = math.floor( self.Video.Duration / 60 )

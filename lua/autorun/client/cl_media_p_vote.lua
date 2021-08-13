@@ -1,7 +1,7 @@
-/*
+--[[
 Vote Panel
 ------------------------------------------------------------------------------
-*/
+--]]
 
 local panel = {}
 
@@ -11,9 +11,9 @@ panel.Name = "vote"
 --the vote
 panel.Vote = {}
 
-/*
+--[[
 Create vote panel
-*/
+--]]
 
 function panel:Init()
 	self:BaseInit()
@@ -57,9 +57,9 @@ function panel:Init()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:MyThink()
 	if (self.Settings.Size != nil) then
@@ -68,9 +68,9 @@ function panel:MyThink()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:Reset()
 	self.Vote = nil
@@ -78,9 +78,9 @@ function panel:Reset()
 	self.VOwner:SetText("Penisman")
 end
 
-/*
+--[[
 Sets the vote
-*/
+--]]
 
 function panel:SetVote(vote)
 	self.Vote = vote

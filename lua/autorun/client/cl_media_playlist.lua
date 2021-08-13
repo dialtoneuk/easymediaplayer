@@ -1,7 +1,7 @@
-/*
+--[[
 Playlist Panel
 ------------------------------------------------------------------------------
-*/
+--]]
 
 local panel = {}
 
@@ -18,9 +18,9 @@ panel.Settings = {
 	AutoResize = MEDIA.GetSetting("media_playlist_autoresize")
 }
 
-/*
+--[[
 Sets up grid and paints our colours
-*/
+--]]
 
 function panel:Init()
 	self:BaseInit()
@@ -36,9 +36,9 @@ function panel:Init()
 	end
 end
 
-/*
+--[[
 Creates new DickGrid
-*/
+--]]
 
 function panel:SetupGrid()
 	self.Grid = vgui.Create("DGrid", self )
@@ -50,9 +50,9 @@ function panel:SetupGrid()
 	self.Grid:SetColWide( self:GetWide())
 end
 
-/*
+--[[
 Autromatically removes videos from our playlist
-*/
+--]]
 
 function panel:MyThink()
 	if (self.Settings.AutoResize != nil ) then
@@ -86,9 +86,9 @@ function panel:MyThink()
 	end
 end
 
-/*
+--[[
 Essentially fills our local playlist table and updates the grid.
-*/
+--]]
 
 function panel:UpdatePlaylist()
 	self.Playlist = {}
@@ -102,9 +102,9 @@ function panel:UpdatePlaylist()
 	self:UpdateGrid()
 end
 
-/*
+--[[
 Displays playlist items
-*/
+--]]
 
 function panel:NoVidPanel()
 	local p = vgui.Create("DPanel", self.Grid )
@@ -118,9 +118,9 @@ function panel:NoVidPanel()
 	self.Grid:AddItem(p)
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:UpdateGrid()
 	if (IsValid(self.Grid)) then
@@ -163,9 +163,9 @@ function panel:UpdateGrid()
 
 end
 
-/*
+--[[
 Adds a new video to the playlist
-*/
+--]]
 
 function panel:AddVideo(video)
 
@@ -174,9 +174,9 @@ function panel:AddVideo(video)
 	end
 end
 
-/*
+--[[
 Removes a video
-*/
+--]]
 
 function panel:RemoveVideo(video)
 

@@ -1,7 +1,7 @@
-/*
+--[[
 Search Panel
 ------------------------------------------------------------------------------
-*/
+--]]
 
 local panel = {}
 
@@ -15,13 +15,13 @@ panel.BrowserHistory = {}
 panel.PlayerHistoryPage = 1
 panel.BrowserPosition = 0
 panel._Empty = false
-/*
+--[[
 	TODO: Branch all this out into more custom vgui elements
-*/
+--]]
 
-/*
+--[[
 Fills the property sheet with all our shit
-*/
+--]]
 
 function panel:Init()
 	self:BaseInit()
@@ -80,9 +80,9 @@ function panel:Init()
 	self:SetTitle("Youtube Navigator")
 end
 
-/*
+--[[
 Updates the size of our elements basically
-*/
+--]]
 
 function panel:MyThink()
 
@@ -113,9 +113,9 @@ function panel:MyThink()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:CreateBrowserPanel()
 
@@ -263,9 +263,9 @@ function panel:CreateBrowserPanel()
 	end
 end
 
-/*
+--[[
 Creates the panel we search for videos with
-*/
+--]]
 
 function panel:CreateSearchPanel()
 
@@ -312,9 +312,9 @@ function panel:CreateSearchPanel()
 	end
 end
 
-/*
+--[[
 Presents our search results
-*/
+--]]
 
 function panel:PresentSearchResults(clear)
 
@@ -367,9 +367,9 @@ function panel:PresentSearchResults(clear)
 	end
 end
 
-/*
+--[[
 Creates our server history panel
-*/
+--]]
 
 function panel:CreateHistoryPanel()
 	self.FetchButton = vgui.Create("DButton", self.ServerHistoryContainer )
@@ -415,9 +415,9 @@ function panel:CreateHistoryPanel()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:CreatePlayerHistoryPanel()
 	self.PlayerFetchButton = vgui.Create("DButton", self.PlayerHistoryContainer )
@@ -462,9 +462,9 @@ function panel:CreatePlayerHistoryPanel()
 	end
 end
 
-/*
+--[[
 Presents history we get from the server
-*/
+--]]
 
 function panel:PresentHistory()
 	for k,v in SortedPairsByMemberValue(MEDIA.History, "LastPlayed", true ) do
@@ -508,9 +508,9 @@ function panel:PresentHistory()
 	end
 end
 
-/*
+--[[
 Presents history we get from the server
-*/
+--]]
 
 function panel:PresentPlayerHistory()
 	for k,v in SortedPairsByMemberValue(MEDIA.PlayerHistory, "LastPlayed", true ) do
@@ -554,9 +554,9 @@ function panel:PresentPlayerHistory()
 	end
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:AddPageHeader(that, page, count)
 	page = page or 0
@@ -579,9 +579,9 @@ function panel:AddPageHeader(that, page, count)
 	that:AddItem(pan)
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:RefreshSearchGrid()
 	if (IsValid(self.Grid)) then
@@ -596,9 +596,9 @@ function panel:RefreshSearchGrid()
 	self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + 5)
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:RefreshHistoryGrid()
 	if (IsValid(self.HistoryGrid)) then
@@ -612,9 +612,9 @@ function panel:RefreshHistoryGrid()
 	self.HistoryGrid:SetRowHeight( self.Settings.Size.Value.RowHeight  + 5 )
 end
 
-/*
+--[[
 
-*/
+--]]
 
 function panel:RefreshPlayerGrid()
 	if (IsValid(self.PlayerHistoryGrid)) then

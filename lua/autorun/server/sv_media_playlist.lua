@@ -24,9 +24,9 @@ MEDIA.DefaultVideo = {
 	Owner = {} --this will be a player entity on the servers end and a table on the clients end
 }
 
-/*
+--[[
 Gets a number of videos
-*/
+--]]
 
 function MEDIA.GetVideos(owner, limit)
 	local results = {}
@@ -58,17 +58,17 @@ function MEDIA.GetVideos(owner, limit)
 	return results
 end
 
-/*
+--[[
 Return true if we have next
-*/
+--]]
 
 function MEDIA.HasNext()
 	return !table.IsEmpty(MEDIA.Playlist)
 end
 
-/*
+--[[
 Broadcast's the next video to the player
-*/
+--]]
 
 function MEDIA.Next()
 	if (!MEDIA.HasNext() ) then return end
@@ -78,17 +78,17 @@ function MEDIA.Next()
 	end
 end
 
-/*
+--[[
 Copys a new video table
-*/
+--]]
 
 function MEDIA.GetNewVideo()
 	return table.Copy(MEDIA.DefaultVideo)
 end
 
-/*
+--[[
 Clears the playlist
-*/
+--]]
 
 function MEDIA.ClearPlaylist(ply)
 
@@ -98,9 +98,9 @@ function MEDIA.ClearPlaylist(ply)
 	MEDIA.Count = 0
 end
 
-/*
+--[[
 Adds a video to the playlist
-*/
+--]]
 
 function MEDIA.AddVideo(video, tab)
 	if (MEDIA.Playlist[video]) then return end --already exists
@@ -109,9 +109,9 @@ function MEDIA.AddVideo(video, tab)
 	MEDIA.Count = MEDIA.Count + 1
 end
 
-/*
+--[[
 Removes a video to the playlist
-*/
+--]]
 
 function MEDIA.RemoveVideo(video)
 	if (MEDIA.Playlist[video] == nil) then return end --does not exist??
@@ -119,9 +119,9 @@ function MEDIA.RemoveVideo(video)
 	MEDIA.Playlist[video] = nil
 end
 
-/*
+--[[
 Gets a video
-*/
+--]]
 
 function MEDIA.GetVideo(video)
 	if (!MEDIA.Playlist[video]) then return nil end

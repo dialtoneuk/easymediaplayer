@@ -18,12 +18,12 @@ MEDIA.Votes = MEDIA.Votes or {
 	}
 }
 
-/*
+--[[
 	Devs: You can add to this
 
 	! NOTE ! This is merely a code definition of a vote and does not attach its self to a chat command implicity, for that, see sv_media_chatcommands for how
 	that works.
-*/
+--]]
 
 function MEDIA.LoadVotes()
 
@@ -74,17 +74,17 @@ function MEDIA.LoadVotes()
 	MEDIA.RegisterVote(vote)
 end
 
-/*
+--[[
 returns copy of the table above
-*/
+--]]
 
 function MEDIA.NewKindOfVote()
 	return table.Copy(MEDIA.Votes._Vote)
 end
 
-/*
+--[[
 Broadcasts vote to the server
-*/
+--]]
 
 function MEDIA.BroadcastVote()
 	if (!MEDIA.HasCurrentVote()) then return end
@@ -94,9 +94,9 @@ function MEDIA.BroadcastVote()
 	end
 end
 
-/*
+--[[
 Broadcasts End vote to the server
-*/
+--]]
 
 
 function MEDIA.BroadcastEndVote()
@@ -106,9 +106,9 @@ function MEDIA.BroadcastEndVote()
 	end
 end
 
-/*
+--[[
 Broadcasts vote to the player
-*/
+--]]
 
 function MEDIA.SendVoteToPlayer( ply )
 	if (!MEDIA.HasCurrentVote()) then return end
@@ -127,18 +127,18 @@ function MEDIA.SendVoteToPlayer( ply )
 	net.Send(ply)
 end
 
-/*
+--[[
 Notifys the player that a vote has ended
-*/
+--]]
 
 function MEDIA.SendEndVoteToPlayer( ply )
 	net.Start("MEDIA_EndVote")
 	net.Send(ply)
 end
 
-/*
+--[[
 Adds a kind of vote to the table
-*/
+--]]
 
 function MEDIA.RegisterVote(vote)
 	if (MEDIA.Votes[vote.Type]) then return end
@@ -146,9 +146,9 @@ function MEDIA.RegisterVote(vote)
 	MEDIA.Votes[vote.Type] = vote
 end
 
-/*
+--[[
 Gets a kind of vote to the table
-*/
+--]]
 
 function MEDIA.GetKindOfVote(vote)
 	if ( !MEDIA.Votes[vote]) then return end
@@ -156,9 +156,9 @@ function MEDIA.GetKindOfVote(vote)
 	return MEDIA.Votes[vote]
 end
 
-/**
+--[[*
 Returns true if we have a current vote going on
-**/
+*--]]
 
 function MEDIA.HasCurrentVote() return !table.IsEmpty(MEDIA.CurrentVote) end
 
@@ -183,9 +183,9 @@ function MEDIA.AddToCount()
 	MEDIA.BroadcastVote()
 end
 
-/*
+--[[
 Starts a vote
-*/
+--]]
 
 function MEDIA.StartVote(vote, ply)
 	if ( !MEDIA.Votes[vote]) then return end
@@ -204,9 +204,9 @@ function MEDIA.StartVote(vote, ply)
 	MEDIA.ExecuteVote(v)
 end
 
-/*
+--[[
 Executes a vote
-*/
+--]]
 
 function MEDIA.ExecuteVote(vote)
 	if (!MEDIA.Votes[vote.Type]) then return end
@@ -252,9 +252,9 @@ function MEDIA.ExecuteVote(vote)
 		end)
 	end
 
-	/*
+	--[[
 	Return true if a vote passed
-	*/
+	--]]
 
 	function MEDIA.HasPassed()
 
@@ -268,8 +268,8 @@ function MEDIA.ExecuteVote(vote)
 		return true
 	end
 
-	/*
+	--[[
 	Hook call
-	*/
+	--]]
 
 	hook.Run("MEDIA_VotingLoaded")
