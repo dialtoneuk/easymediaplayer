@@ -151,11 +151,11 @@ function MEDIA.CooldownLoop()
 	local setting = MEDIA.GetSetting("media_cooldown_refreshrate") or {Value = 1}
 
 	--So we update our time
-	timer.Create("MEDIA_CooldownLoop", setting.Value, 1, function()
+	timer.Create("MEDIA.CooldownLoop", setting.Value, 1, function()
 		MEDIA.UpdateCooldowns()
 		MEDIA.CooldownLoop()
 	end)
 end
 
 --when we have loaded this file
-hook.Run("MEDIA_CooldownLoaded")
+hook.Run("MEDIA.CooldownLoaded")

@@ -37,12 +37,12 @@ function panel:Init()
 	self.Duration:SetFont("BigText")
 	self.Duration:SetTextColor(self.Settings.Colours.Value.TextColor)
 
-	self.TOwner = vgui.Create("DLabel", self )
-	self.TOwner:Dock(LEFT)
-	self.TOwner:SetWide(160)
-	self.TOwner:SetTall(15)
-	self.TOwner:SetFont("MediumText")
-	self.TOwner:SetTextColor(self.Settings.Colours.Value.TextColor)
+	self.TextOwner = vgui.Create("DLabel", self )
+	self.TextOwner:Dock(LEFT)
+	self.TextOwner:SetWide(160)
+	self.TextOwner:SetTall(15)
+	self.TextOwner:SetFont("MediumText")
+	self.TextOwner:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	if (self.Settings.Colours != nil) then
 	  	self.Paint = function()
@@ -72,7 +72,6 @@ end
 --[[
 	Sets if we are active or not
 --]]
-
 function panel:SetActive()
 	self.Active = true
 end
@@ -92,9 +91,9 @@ function panel:SetVideo(video)
 
 		local menu = DermaMenu(false, self )
 		menu:SetDeleteSelf( true )
-		if (LocalPlayer():IsAdmin()) then
+		if (MEDIA.LocalPlayer:IsAdmin()) then
 			if (!self.Active) then
-				if (video.Owner.SteamID != LocalPlayer():SteamID() ) then
+				if (video.Owner.SteamID != MEDIA.LocalPlayer:SteamID()) then
 					local del = menu:AddOption( "Delete Video", function()
 						RunConsoleCommand("media_delete", video.Video )
 					end)
@@ -134,7 +133,7 @@ function panel:SetVideo(video)
 
 		dislike:SetIcon("icon16/award_star_delete.png")
 
-		if ( !self.Active and ( video.Owner.SteamID == LocalPlayer():SteamID() ) ) then
+		if ( !self.Active and ( video.Owner.SteamID == MEDIA.LocalPlayer:SteamID() ) ) then
 			local remove = menu:AddOption( "Remove Video", function()
 				RunConsoleCommand("media_remove", video.Video )
 			end)
@@ -161,11 +160,11 @@ function panel:SetTexts()
 	self.Duration:SetText( mins .. ":" .. string.Replace(result,"-", "") )
 
 	if (!self.Active) then
-		self.TOwner:SetText(self.Video.Owner.Name)
+		self.TextOwner:SetText(self.Video.Owner.Name)
 	else
-		self.TOwner:SetText(self.Video.Owner.Name .. " (playing)")
+		self.TextOwner:SetText(self.Video.Owner.Name .. " (playing)")
 	end
 end
 
 --Register Item
-vgui.Register("MEDIA_PlaylistItem", panel, "DButton")
+vgui.Register("MEDIA.PlaylistItem", panel, "DButton")

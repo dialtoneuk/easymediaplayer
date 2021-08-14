@@ -1,5 +1,5 @@
 MEDIA = MEDIA or {
-    Name = "Easy Media Player",
+    Name = "Easy MEDIA Player",
     Credits = {
         Author = "Llydia Cross",
         Email = "llydia@zyon.io",

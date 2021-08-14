@@ -152,11 +152,11 @@ function MEDIA.LoadChatCommands()
 			return false
 		end --returning false won't inhibit a cooldown
 
-		if (MEDIA.GetSeting("media_mute_video").Value == 1 ) then
-			MEDIA.ChangeClientSetting("media_mute_video", 0 );
+		if (MEDIA.GetSeting("media_mute_video").Value) then
+			MEDIA.ChangeSetting("media_mute_video", false );
 			ply:SendMessage("Video unmuted")
 		else
-			MEDIA.ChangeClientSetting("media_mute_video", 1 );
+			MEDIA.ChangeSetting("media_mute_video", true );
 			ply:SendMessage("Video muted")
 		end
 
@@ -262,4 +262,4 @@ function MEDIA.ParseCommand(ply, string)
 end
 
 --hook call
-hook.Run("MEDIA_LoadedChatCommands")
+hook.Run("MEDIA.LoadedChatCommands")

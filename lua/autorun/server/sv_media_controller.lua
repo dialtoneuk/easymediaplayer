@@ -40,7 +40,7 @@ function MEDIA.SendHistoryData(ply, data)
 	if (table.IsEmpty(MEDIA.History)) then return end
 	local setting = MEDIA.GetSetting("media_history_max") or { Value = 25 }
 
-	net.Start("MEDIA_SendHistoryData")
+	net.Start("MEDIA.SendHistoryData")
 		net.WriteTable(data)
 		net.WriteFloat(table.Count( MEDIA.History ))
 		net.WriteFloat(setting.Value)
@@ -55,7 +55,7 @@ function MEDIA.SendPersonalHistoryData(ply, data)
 	if (table.IsEmpty(MEDIA.History)) then return end
 	local setting = MEDIA.GetSetting("media_history_max") or { Value = 25 }
 
-	net.Start("MEDIA_SendPersonalHistory")
+	net.Start("MEDIA.SendPersonalHistory")
 		net.WriteTable(data)
 		net.WriteFloat( ply:GetPersonalHistoryCount() )
 		net.WriteFloat(setting.Value)
@@ -70,7 +70,7 @@ function MEDIA.SendHistory(ply)
 	if (table.IsEmpty(MEDIA.History)) then return end
 	local setting = MEDIA.GetSetting("media_history_max") or { Value = 25 }
 
-	net.Start("MEDIA_SendHistory")
+	net.Start("MEDIA.SendHistory")
 		net.WriteTable(MEDIA.History)
 		net.WriteFloat( table.Count( MEDIA.History ) )
 		net.WriteFloat(setting.Value)
@@ -80,7 +80,7 @@ end
 
 
 function MEDIA.SendHistoryForVideo(ply, video)
-	net.Start("MEDIA_SendHistoryForVideo")
+	net.Start("MEDIA.SendHistoryForVideo")
 		net.WriteTable(video)
 	net.Send(ply)
 end
@@ -92,7 +92,7 @@ Send blacklist to player
 function MEDIA.SendBlacklist(ply)
 	if (table.IsEmpty(MEDIA.Blacklist)) then return end
 
-	net.Start("MEDIA_SendBlacklist")
+	net.Start("MEDIA.SendBlacklist")
 		net.WriteTable(MEDIA.Blacklist)
 	net.Send(ply)
 end
@@ -102,7 +102,7 @@ Sends a section of the playlist
 --]]
 
 function MEDIA.SendPlaylistSection(ply, limit)
-	net.Start("MEDIA_SendPlaylist")
+	net.Start("MEDIA.SendPlaylist")
 		net.WriteTable(MEDIA.GetVideos(false, limit))
 	net.Send(ply)
 end
@@ -132,7 +132,7 @@ end
 --]]
 
 function MEDIA.SendPlaylist(ply)
-	net.Start("MEDIA_SendPlaylist")
+	net.Start("MEDIA.SendPlaylist")
 	net.WriteTable(MEDIA.GetVideos(false))
 	net.Send(ply)
 end
@@ -142,7 +142,7 @@ end
 --]]
 
 function MEDIA.SendEnd(ply)
-	net.Start("MEDIA_End")
+	net.Start("MEDIA.End")
 	net.Send(ply)
 end
 
@@ -170,7 +170,7 @@ function MEDIA.StartVideo(video, callback)
 	end
 
 	print("starting timer for video: " .. video.Video )
-	timer.Create("MEDIA_VideoTimer", video.Duration, 1, function()
+	timer.Create("MEDIA.VideoTimer", video.Duration, 1, function()
 		MEDIA.StopVideo()
 		callback()
 	end)
@@ -237,7 +237,7 @@ end
 --]]
 
 function MEDIA.StopVideo()
-	if (timer.Exists("MEDIA_VideoTimer")) then timer.Remove("MEDIA_VideoTimer") end
+	if (timer.Exists("MEDIA.VideoTimer")) then timer.Remove("MEDIA.VideoTimer") end
 
 	if (MEDIA.GetSetting("media_announce_ending").Value == 1) then
 		MEDIA.AnnounceVideoEnding(MEDIA.CurrentVideo)
@@ -252,7 +252,7 @@ end
 
 function MEDIA.BroadcastCurrentVideo()
 	for k,v in pairs(player.GetAll()) do
-		net.Start("MEDIA_SendCurrentVideo")
+		net.Start("MEDIA.SendCurrentVideo")
 		net.WriteTable(MEDIA.CurrentVideo or {})
 		net.Send(v)
 	end

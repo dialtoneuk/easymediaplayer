@@ -137,7 +137,7 @@ function panel:UpdateGrid()
 	end
 
 	for k,v in SortedPairsByMemberValue(self.Playlist, "Position") do
-		local p = vgui.Create("MEDIA_PlaylistItem", self.Grid )
+		local p = vgui.Create("MEDIA.PlaylistItem", self.Grid )
 
 		if (MEDIA.CurrentVideo and MEDIA.CurrentVideo.Video == v.Video) then
 			if (self.Settings.HideActive.Value == 1 ) then
@@ -186,4 +186,4 @@ function panel:RemoveVideo(video)
 end
 
 --Register
-vgui.Register("MEDIA_Playlist", panel, "MEDIA_BasePanel")
+vgui.Register("MEDIA.PlaylistPanel", panel, "MEDIA.BasePanel")

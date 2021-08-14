@@ -4,8 +4,8 @@
 
 function MEDIA.ParseYoutubeURL(url) --bad method
 
-	if (url == "https://www.youtube.com"  or url == "http://media.com" ) then return nil end
-	if (string.sub(url, 1,23) != "https://www.youtube.com" and string.sub(url, 1,23) != "http://media.com" ) then return nil end
+	if (url == "https://www.youtube.com"  or url == "http://youtube.com" ) then return nil end
+	if (string.sub(url, 1,23) != "https://www.youtube.com" and string.sub(url, 1,23) != "http://youtube.com" ) then return nil end
 
 	local str = string.match(url, "?v=[a-zA-Z0-9_/]+") --bad method
 

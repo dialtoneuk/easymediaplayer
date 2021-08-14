@@ -89,4 +89,4 @@ function panel:SetVote(vote)
 end
 
 --Register
-vgui.Register("MEDIA_Vote", panel, "MEDIA_BasePanel")
+vgui.Register("MEDIA.VotePanel", panel, "MEDIA.BasePanel")

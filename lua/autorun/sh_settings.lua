@@ -154,17 +154,65 @@ local client = {
         Value = true,
         Comment = "Hide the playlist when it is not in use"
     },
+    media_playlist_centered = {
+        Value = false,
+        Comment = " (unused)"
+    },
+    media_player_centered = {
+        Value = false,
+        Comment = "(unused)"
+    },
+    media_vote_centered = {
+        Value = false,
+        Comment = "(unused)"
+    },
+    media_playlist_show_constant = {
+        Value = false,
+        Comment = "Will show the playlist all the time"
+    },
+    media_settings_centered = {
+        Value = false,
+        Comment = "Settings window will open center screen"
+    },
+    media_admin_centered = {
+        Value = false,
+        Comment = "Admin window will open center screen"
+    },
+    media_search_centered = {
+        Value = false,
+        Comment = "Search window will open center screen"
+    },
     media_playlist_show_in_context = {
         Value = true,
-        Comment = "Show the playlist when you press 'c'"
+        Comment = "Show the playlist when you press 'c' / go in the context menu"
+    },
+    media_playlist_show_in_scoreboard = {
+        Value = true,
+        Comment = "Show the playlist when you press 'tab' / see the scoreboard"
     },
     media_player_hide = {
         Value = true,
         Comment = "Hides the player when it is not in use"
     },
+    media_search_hide = {
+        Value = true,
+        Comment = "(unused)"
+    },
+    media_settings_hide = {
+        Value = true,
+        Comment = "(unused)"
+    },
+    media_vote_hide = {
+        Value = true,
+        Comment = "(unused)"
+    },
+    media_admin_hide = {
+        Value = true,
+        Comment = "(unused)"
+    },
     media_all_show = {
         Value = false,
-        Comment = "Useful for designing your look, will display all panels used by Easy Media"
+        Comment = "Useful for designing your look, will display all panels used by Easy MEDIA"
     },
     media_mute_video = {
         Value = false,
@@ -438,6 +486,6 @@ local client = {
 }
 
 --register our settings
-hook.Add("MEDIA_SettingsLoaded","MEDIA_RegisterSettings", function()
+hook.Add("MEDIA.SettingsLoaded","MEDIA.RegisterSettings", function()
     MEDIA.RegisterSettings(server, client)
 end)

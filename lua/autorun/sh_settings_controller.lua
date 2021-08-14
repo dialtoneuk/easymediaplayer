@@ -140,6 +140,58 @@ function MEDIA.AddSetting(tab)
 end
 
 --[[
+chnanges the value of a setting
+]]--
+
+function MEDIA.ChangeSetting(key, value, all_kinds)
+	all_kinds = all_kinds or false
+	for k,keys in pairs(MEDIA.Settings) do
+		if (k == key) then
+			for kind,v in pairs(keys) do
+				if (kind == MEDIA.Type.BOOL) then
+					if (value == 0 or value == false ) then
+						value = false
+					else
+						value = true
+					end
+				end
+
+				if (kind == MEDIA.Type.INT) then
+					value = math.Truncate(value)
+				end
+
+				MEDIA.Settings[key][kind].Value = value
+
+				if (ConVarExists(key)) then
+					if (kind == MEDIA.Type.INT) then
+						GetConVar(key):SetInt(math.floor(value))
+					elseif (kind == MEDIA.Type.BOOL) then
+						GetConVar(key):SetBool(value)
+					elseif (kind == MEDIA.Type.STRING ) then
+						GetConVar(key):SetString(value)
+					end
+
+					if ( isbool(value) and value) then
+						value = "true"
+					else
+						value = "false"
+					end
+
+					print("set convar " .. key .. " to " .. value)
+
+					if (all_kinds) then
+						return
+					end
+				end
+
+				--only once we'vefound
+				return
+			end
+		end
+	end
+end
+
+--[[
 Gets a setting
 --]]
 
@@ -148,8 +200,16 @@ function MEDIA.GetSetting(key)
 	if (table.IsEmpty(MEDIA.Settings)) then error("SETTINGS EMPTY") return end
 
 	for k,keys in pairs(MEDIA.Settings) do
-		for kind,v in pairs(keys) do
-			if (k == key ) then
+		if (k == key ) then
+			for kind,v in pairs(keys) do
+				if (kind == MEDIA.Type.BOOL) then
+					if (v.Value == 0 or v.Value == false ) then
+						v.Value = false
+					else
+						v.Value = true
+					end
+				end
+
 				return v
 			end
 		end
@@ -162,24 +222,6 @@ function MEDIA.GetSetting(key)
 		DefValue = nil,
 		Type = nil
 	}
-end
-
-if ( CLIENT ) then
-
-	function MEDIA.ChangeClientSetting(key, value )
-
-		if (type(value) == "table") then
-			error("invalid type")
-		end
-
-		for k,keys in pairs(MEDIA.Settings) do
-			for kind,v in pairs(keys) do
-				if (k == key ) then
-					MEDIA.Settings[k].Value = value
-				end
-			end
-		end
-	end
 end
 
 --[[
@@ -201,7 +243,14 @@ if ( SERVER ) then
 					elseif ( kind == MEDIA.Type.BOOL) then
 						convar:SetBool(v.DefValue)
 					end
-					print("reset convar " .. k .. " to " .. v.Value )
+
+					if ( isbool(v.Value) and v.Value) then
+						v.Value = 1
+					else
+						v.Value = 0
+					end
+
+					print("set convar " .. k .. " to " .. v.Value)
 				end
 
 				MEDIA.Settings[k][kind].Value = v.DefValue
@@ -230,7 +279,14 @@ if ( CLIENT ) then
 					elseif ( kind == MEDIA.Type.BOOL) then
 						convar:SetBool(v.DefValue)
 					end
-					print("reset convar " .. k .. " to " .. v.Value )
+
+					if ( isbool(v.Value) and v.Value) then
+						v.Value = 1
+					else
+						v.Value = 0
+					end
+
+					print("set convar " .. k .. " to " .. v.Value)
 				end
 
 				MEDIA.Settings[k][kind].Value = v.DefValue
@@ -257,11 +313,6 @@ if (CLIENT) then
 		MEDIA.ResetSettings()
 		--recreate UI
 		RunConsoleCommand("media_create_cl")
-
-		if (IsValid(MEDIA.SettingsPanel) and MEDIA.SettingsPanel:IsVisible() ) then
-			MEDIA.SettingsPanel:Remove()
-			RunConsoleCommand("media_settings")
-		end
 	end)
 end
 
@@ -269,99 +320,97 @@ end
 	Syncs our settings with our convars and vice versa
 --]]
 
-function MEDIA.SetClientConvars()
-	if ( CLIENT ) then return end
-	for k,keys in pairs(MEDIA.Settings) do
-		for kind,v in pairs(keys) do
-			if (!v.Server) then continue end
-			if (!v.Server and SERVER ) then continue end
-			if (!v.Convar ) then continue end --since some settings might not have associated convar values
-			if (!ConVarExists(k)) then continue end
-
-			local convar = GetConVar(k)
-			local value = 0
-
-			if (kind == MEDIA.Type.INT) then
-				value = convar:GetInt()
-			elseif (kind == MEDIA.Type.STRING ) then
-				value = convar:GetString()
-			elseif (kind == MEDIA.Type.BOOL ) then
-				value = convar:GetBool()
-			end
-
-			v.Value = value
-			MEDIA.Settings[k][kind] = v
-
-			if (isbool(v.Value)) then if (v.Value) then v.Value = 1 else v.Value = 0 end end
-
-			print("sync setting " .. k .. " to " .. v.Value or "bool" )
-		end
-	end
-end
-
 if ( SERVER ) then
-	concommand.Add("media_resync_convars", function(ply, cmd, args )
-		if (!ply:IsAdmin()) then return end
+	function MEDIA.SetConvars()
 
-		MEDIA.SetClientConvars()
-		ply:SendAdminSettings()
-	end)
-end
+		for k,keys in pairs(MEDIA.Settings) do
+			for kind,v in pairs(keys) do
+				if (!v.Server) then continue end
+				if (!v.Convar ) then continue end --since some settings might not have associated convar values
+				if (!ConVarExists(k)) then continue end
 
---[[
-Called after loading our settings
---]]
+				local convar = GetConVar(k)
+				local value = 0
 
-function MEDIA.SetConvars()
-	if ( CLIENT ) then return end
+				if (kind == MEDIA.Type.INT) then
+					value = convar:GetInt()
+				elseif (kind == MEDIA.Type.STRING ) then
+					value = convar:GetString()
+				elseif (kind == MEDIA.Type.BOOL ) then
+					value = convar:GetBool()
+				end
 
-	for k,keys in pairs(MEDIA.Settings) do
-		for kind,v in pairs(keys) do
-			if (!v.Server and SERVER ) then continue end
-			if (!v.Convar ) then continue end --since some settings might not have associated convar values
-			if (!ConVarExists(k)) then continue end
+				v.Value = value
+				MEDIA.Settings[k][kind] = v
 
-			local convar = GetConVar(k)
-			if (kind == MEDIA.Type.INT) then
-				convar:SetInt(v.Value)
-			elseif (kind == MEDIA.Type.STRING) then
-				convar:SetString(v.Value)
-			elseif (kind == MEDIA.Type.BOOL) then
-				convar:SetBool(v.Value)
-			else
-				convar:SetInt(v.Value)
+				if (isbool(v.Value)) then if (v.Value) then v.Value = 1 else v.Value = 0 end end
+				print("set convar " .. k .. " to " .. v.Value)
 			end
-
-			print("set convar " .. k .. " to " .. v.Value )
 		end
 	end
 end
+
+if ( CLIENT ) then
+	function MEDIA.SetConvars()
+		for k,keys in pairs(MEDIA.Settings) do
+			for kind,v in pairs(keys) do
+				if (v.Server) then continue end
+				if (!v.Convar ) then continue end --since some settings might not have associated convar values
+				if (!ConVarExists(k)) then continue end
+
+				local convar = GetConVar(k)
+				if (kind == MEDIA.Type.INT) then
+					convar:SetInt(v.Value)
+				elseif (kind == MEDIA.Type.STRING) then
+					convar:SetString(v.Value)
+				elseif (kind == MEDIA.Type.BOOL) then
+					convar:SetBool(v.Value)
+				else
+					convar:SetInt(v.Value)
+				end
+
+				if (isbool(v.Value)) then if (v.Value) then v.Value = 1 else v.Value = 0 end end
+
+				print("set convar " .. k .. " to " .. v.Value)
+			end
+		end
+	end
+end
+
+concommand.Add("media_resync_convars", function(ply, cmd, args )
+	MEDIA.SetConvars()
+
+	if (SERVER and !ply:IsAdmin()) then
+		ply:SendAdminSettings()
+		return
+	end
+end)
 
 --[[
 loads our settings
 --]]
 
-function MEDIA.LoadSettings()
+if (SERVER) then
+	function MEDIA.LoadSettings()
 
-	print("loading settings")
+		print("loading settings")
 
-	if (CLIENT) then return end
 
-	if (!file.IsDir("lyds", "DATA")) then return end
-	if (!file.Exists("lyds/settings.json", "DATA")) then return end
+		if (!file.IsDir("lyds", "DATA")) then return end
+		if (!file.Exists("lyds/settings.json", "DATA")) then return end
 
-	local settings = util.JSONToTable( file.Read("lyds/settings.json") )
+		local settings = util.JSONToTable( file.Read("lyds/settings.json") )
 
-	for k,keys in pairs(settings) do
-		for kind,v in pairs(keys) do
+		for k,keys in pairs(settings) do
+			for kind,v in pairs(keys) do
 
-			if (!MEDIA.Settings[k]) then continue end
-			if (!MEDIA.Settings[k][kind]) then continue end
+				if (!MEDIA.Settings[k]) then continue end
+				if (!MEDIA.Settings[k][kind]) then continue end
 
-			local tab = MEDIA.Settings[k][kind]
-			tab.Value = v.Value
-
-			MEDIA.Settings[k][kind] = tab
+				local tab = MEDIA.Settings[k][kind]
+				tab.Value = v.Value
+				MEDIA.Settings[k][kind] = tab
+			end
 		end
 	end
 end
@@ -471,5 +520,5 @@ end
 
 --So we can actually add our settings when all of this code has executed, but only if we haven't loaded them already
 if (table.IsEmpty(MEDIA.Settings)) then
-	hook.Run("MEDIA_SettingsLoaded")
+	hook.Run("MEDIA.SettingsLoaded")
 end

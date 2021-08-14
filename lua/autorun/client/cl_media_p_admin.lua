@@ -21,9 +21,9 @@ function panel:Init()
 
 	self:BaseInit()
 
-	if (!LocalPlayer():IsAdmin()) then self:Remove() return end
+	if (!MEDIA.LocalPlayer:IsAdmin()) then self:Remove() return end
 
-	self:SetTitle("Media Admin Panel")
+	self:SetTitle("MEDIA Admin Panel")
 	self:SetSize(self.Settings.Size.Value.Width or 500, self.Settings.Size.Value.Height or 500 )
 	self:SetDeleteOnClose( false )
 
@@ -136,7 +136,7 @@ end
 
 function panel:PresentBlacklist()
 
-	if (!LocalPlayer():IsAdmin()) then self:Remove() return end
+	if (!MEDIA.LocalPlayer:IsAdmin()) then self:Remove() return end
 
 	self.List:Clear()
 
@@ -146,4 +146,4 @@ function panel:PresentBlacklist()
 end
 
 --Register panel
-vgui.Register("MEDIA_Admin", panel, "MEDIA_Base")
+vgui.Register("MEDIA.AdminPanel", panel, "MEDIA.Base")

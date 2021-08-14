@@ -11,11 +11,12 @@ panel._Reposition = false
 
 --client settings
 panel.ClientSettings = {
-	media_create_cl = "Refresh All Panels",
+	media_create_cl = "Reinstantiate All Panels",
+	media_refresh_cl = "Reinstantiate All Panels But This One",
 	media_create_playlist_panel = "Refresh Playlist Panel",
 	media_create_player_panel = "Refresh Player Panel",
 	media_create_search_panel = "Refresh Search Panel",
-	media_settings = "Refresh Settings Panel",
+	media_create_settings_panel = "Refresh Settings Panel",
 	media_search_panel = "Show search panel",
 	media_like_video = "Like Current Video",
 	media_dislike_video = "Dislike Current Video",
@@ -103,7 +104,7 @@ function panel:MyThink()
 		self.Edited = false
 
 		local admin = {}
-		if (LocalPlayer():IsAdmin()) then
+		if (MEDIA.LocalPlayer:IsAdmin()) then
 			admin = MEDIA.AdminSettings
 		end
 
@@ -167,7 +168,7 @@ function panel:AddCommandsTab()
 		fn(k,v, "user.png")
 	end
 
-	if (LocalPlayer():IsAdmin()) then
+	if (MEDIA.LocalPlayer:IsAdmin()) then
 
 		--add server commands devicer
 		divider = vgui.Create("DButton", grid )
@@ -245,7 +246,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 			local node = settingSelection:AddNode(k)
 
 			function node:DoClick()
-				MEDIA.SettingsPanel:UpdateTable(title, v, admin )
+				MEDIA.LoadedPanels["SettingsPanel"].Panel:UpdateTable(title, v, admin )
 			end
 		end
 	end
@@ -321,23 +322,14 @@ function panel:UpdateTable(title, v, admin)
 		row.DataChanged = function( _, val )
 
 			if ( v.Refresh) then
-				RunConsoleCommand("media_create_cl")
+				RunConsoleCommand("media_refresh_cl")
 			end
 
 			if (!admin) then
-				if (v.Convar and ConVarExists(v.Key)) then
-					if (v.Type == MEDIA.Type.INT) then
-						GetConVar(v.Key):SetInt(math.floor(val))
-					elseif (v.Type == MEDIA.Type.BOOL) then
-						GetConVar(v.Key):SetBool(val)
-					elseif (v.Type == MEDIA.Type.STRING ) then
-						GetConVar(v.Key):SetString(val)
-					end
-				end
-				MEDIA.Settings[v.Key][v.Type].Value = val
-
+				MEDIA.ChangeSetting(v.Key, val )
 				return
 			end
+
 			MEDIA.AdminSettings[v.Key][v.Type].Value = val
 
 			if (self.Edited == false) then
@@ -440,4 +432,4 @@ function panel:AdminSettingsRow(v, k, row )
 	end
 end
 
-vgui.Register("MEDIA_Settings", panel, "MEDIA_Base")
+vgui.Register("MEDIA.SettingsPanel", panel, "MEDIA.Base")

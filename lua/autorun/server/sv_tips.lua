@@ -142,7 +142,7 @@ function MEDIA.DisplayTip()
 		end
 	end
 
-	timer.Create("MEDIA_Tips", MEDIA.GetSetting("media_tips_frequency").Value, 1, function()
+	timer.Create("MEDIA.Tips", MEDIA.GetSetting("media_tips_frequency").Value, 1, function()
 		if ( MEDIA.GetSetting("media_tips_enabled").Value == 1) then
 			MEDIA.DisplayTip()
 		end

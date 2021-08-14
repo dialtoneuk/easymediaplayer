@@ -187,4 +187,4 @@ function panel:GetHTMLSourceCode(video, start_time, mute)
 end
 
 --Register
-vgui.Register("MEDIA_Player", panel, "MEDIA_BasePanel")
+vgui.Register("MEDIA.PlayerPanel", panel, "MEDIA.BasePanel")

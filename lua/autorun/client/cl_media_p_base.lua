@@ -34,7 +34,6 @@ end
 ]]
 function base:GetSettingKey(type)
     type = type or "colours"
-
     return "media_" .. self.Name .. "_" .. type
 end
 
@@ -119,5 +118,5 @@ end
 --copy it
 local panel = table.Copy(base)
 --Register
-vgui.Register("MEDIA_Base", base, "DFrame")
-vgui.Register("MEDIA_BasePanel", panel, "DPanel") --register an exact copy but for a panel too
+vgui.Register("MEDIA.Base", base, "DFrame")
+vgui.Register("MEDIA.BasePanel", panel, "DPanel") --register an exact copy but for a panel too

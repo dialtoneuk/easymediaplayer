@@ -114,7 +114,7 @@ function MEDIA.SendVoteToPlayer( ply )
 	if (!MEDIA.HasCurrentVote()) then return end
 
 
-	net.Start("MEDIA_NewVote")
+	net.Start("MEDIA.NewVote")
 		net.WriteTable({
 			Owner = {
 				Name = ply:GetName()
@@ -132,7 +132,7 @@ Notifys the player that a vote has ended
 --]]
 
 function MEDIA.SendEndVoteToPlayer( ply )
-	net.Start("MEDIA_EndVote")
+	net.Start("MEDIA.EndVote")
 	net.Send(ply)
 end
 
@@ -272,4 +272,4 @@ function MEDIA.ExecuteVote(vote)
 	Hook call
 	--]]
 
-	hook.Run("MEDIA_VotingLoaded")
+	hook.Run("MEDIA.VotingLoaded")

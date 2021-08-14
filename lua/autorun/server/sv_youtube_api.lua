@@ -55,7 +55,7 @@ end
 	This will search media and return videos for us.
 --]]
 
-function MEDIA.SearchYoutube(query, callback, count)
+function MEDIA.RequestYoutubeSearch(query, callback, count)
 	count = count or 1
 
 	local params = "search?q=" .. MEDIA.EncodeURI(query) .. "&part=snippet&maxResults=" .. math.floor(count) .. "&type=video"

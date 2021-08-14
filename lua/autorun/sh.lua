@@ -1,5 +1,5 @@
 --[[
-	Easy Media Player
+	Easy MEDIA Player
 
 	This was written by Llydia Cross and is a free to use addon for Garrys Mod (2021). Please feel free to use the code here anywhere you like, and build off of it
 	how ever you like. Hopefully you learn something about programming as the current documentation avaiable for the game is pretty bad in my opinion. A lot of people
@@ -18,19 +18,19 @@
  	Start Up
 --]]
 
-hook.Add("PostGamemodeLoaded", "MEDIA_LoadSettings", function()
+hook.Add("PostGamemodeLoaded", "MEDIA.LoadSettings", function()
 	MEDIA.LoadSettings()
 	MEDIA.SetConvars()
 
 	--Client and server called
-	hook.Call("MEDIA_SettingsPostLoad")
+	hook.Call("MEDIA.SettingsPostLoad")
 end)
 
 --[[
 	Shutdown
 --]]
 
-hook.Add("ShutDown", "MEDIA_SaveSettingsShutdown", function()
+hook.Add("ShutDown", "MEDIA.SaveSettingsShutdown", function()
 	MEDIA.SaveSettings()
 
 	if (SERVER) then

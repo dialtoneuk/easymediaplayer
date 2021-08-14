@@ -3,26 +3,26 @@
 	---------------------------------------------------------------------------
 --]]
 
-util.AddNetworkString("MEDIA_SendPlaylist")
-util.AddNetworkString("MEDIA_SendCurrentVideo")
-util.AddNetworkString("MEDIA_RequestAdminSettings")
-util.AddNetworkString("MEDIA_SendAdminSettings")
-util.AddNetworkString("MEDIA_SetAdminSettings")
-util.AddNetworkString("MEDIA_SearchQuery")
-util.AddNetworkString("MEDIA_SendSearchResults")
-util.AddNetworkString("MEDIA_SendHistory")
-util.AddNetworkString("MEDIA_SendHistoryForVideo")
-util.AddNetworkString("MEDIA_RequestHistory")
-util.AddNetworkString("MEDIA_SendHistoryData")
-util.AddNetworkString("MEDIA_End")
-util.AddNetworkString("MEDIA_NewVote")
-util.AddNetworkString("MEDIA_EndVote")
-util.AddNetworkString("MEDIA_SendMessage")
-util.AddNetworkString("MEDIA_SendPersonalHistory")
-util.AddNetworkString("MEDIA_SendBlacklist")
+util.AddNetworkString("MEDIA.SendPlaylist")
+util.AddNetworkString("MEDIA.SendCurrentVideo")
+util.AddNetworkString("MEDIA.RequestAdminSettings")
+util.AddNetworkString("MEDIA.SendAdminSettings")
+util.AddNetworkString("MEDIA.SetAdminSettings")
+util.AddNetworkString("MEDIA.SearchQuery")
+util.AddNetworkString("MEDIA.SendSearchResults")
+util.AddNetworkString("MEDIA.SendHistory")
+util.AddNetworkString("MEDIA.SendHistoryForVideo")
+util.AddNetworkString("MEDIA.RequestHistory")
+util.AddNetworkString("MEDIA.SendHistoryData")
+util.AddNetworkString("MEDIA.End")
+util.AddNetworkString("MEDIA.NewVote")
+util.AddNetworkString("MEDIA.EndVote")
+util.AddNetworkString("MEDIA.SendMessage")
+util.AddNetworkString("MEDIA.SendPersonalHistory")
+util.AddNetworkString("MEDIA.SendBlacklist")
 
 --responds to a search query
-net.Receive("MEDIA_SearchQuery",function(len, ply)
+net.Receive("MEDIA.SearchQuery",function(len, ply)
 
 	if (MEDIA.HasCooldown(ply, "Search")) then return end
 
@@ -31,7 +31,7 @@ net.Receive("MEDIA_SearchQuery",function(len, ply)
 
 	MEDIA.AddPlayerCooldown( ply, MEDIA.GetNewCooldown("Search") )
 
-	MEDIA.SearchYoutube(query, function(data)
+	MEDIA.RequestYoutubeSearch(query, function(data)
 		local results = {}
 
 		for k,v in pairs(data) do
@@ -43,7 +43,7 @@ net.Receive("MEDIA_SearchQuery",function(len, ply)
 			}
 		end
 
-		net.Start("MEDIA_SendSearchResults")
+		net.Start("MEDIA.SendSearchResults")
 		net.WriteTable(results)
 		net.Send(ply)
 	end, setting.Value)
@@ -53,7 +53,7 @@ end)
 Sends the servers settings to the client if they are an admin
 --]]
 
-net.Receive("MEDIA_RequestAdminSettings",function(len, ply)
+net.Receive("MEDIA.RequestAdminSettings",function(len, ply)
 	ply:SendAdminSettings()
 end)
 
@@ -61,19 +61,32 @@ end)
 Sets settings from the player
 --]]
 
-net.Receive("MEDIA_SetAdminSettings",function(len, ply)
+net.Receive("MEDIA.SetAdminSettings",function(len, ply)
 	if (!ply:IsAdmin()) then return end
 
-	MEDIA.Settings = net.ReadTable()
-	--MEDIA.SetConvars()
+	local tab = net.ReadTable()
+
+	for k,v in pairs(tab) do
+
+		if (MEDIA.Settings[k] == nil ) then
+			error("player with the steam id of " .. ply:SteamID() .. " has tried to add settings")
+		end
+
+		MEDIA.Settings[k] = v
+	end
+
+	MEDIA.SetConvars()
 end)
 
 --[[
+
+	HOOKS!
+
 	This loads stuff which requries our settings to be loaded first
 	---------------------------------------------------------------
 --]]
 
-hook.Add("MEDIA_SettingsPostLoad","MEDIA_MiscStuffLoad", function()
+hook.Add("MEDIA.SettingsPostLoad","MEDIA.MiscStuffLoad", function()
 
 	--loads custom tips from settings
 	MEDIA.LoadCustomTips()
@@ -91,7 +104,7 @@ end)
 	---------------------------------------------------------------------------
 --]]
 
-hook.Add("PlayerSay", "MEDIA_PlayerSay", function(ply, msg, teamchat)
+hook.Add("PlayerSay", "MEDIA.PlayerSay", function(ply, msg, teamchat)
 	msg = string.lower(msg)
 	if ( MEDIA.ParseCommand( ply, msg ) == false ) then
 		return msg
@@ -105,7 +118,7 @@ end)
 	---------------------------------------------------------------------------
 --]]
 
-hook.Add("PlayerInitialSpawn","MEDIA_InitialSpawn",function(ply, transition)
+hook.Add("PlayerInitialSpawn","MEDIA.InitialSpawn",function(ply, transition)
 	ply:DoInitialSpawn()
 end)
 
@@ -115,7 +128,7 @@ end)
 	---------------------------------------------------------------------------
 --]]
 
-hook.Add("MEDIA_LoadedChatCommands", "MEDIA_LoadedChatCommands", function()
+hook.Add("MEDIA.LoadedChatCommands", "MEDIA.LoadedChatCommands", function()
 	MEDIA.LoadChatCommands()
 end)
 
@@ -125,7 +138,7 @@ end)
 	---------------------------------------------------------------------------
 --]]
 
-hook.Add("MEDIA_CooldownLoaded","MEDIA_LoadCooldowns", function()
+hook.Add("MEDIA.CooldownLoaded","MEDIA.LoadCooldowns", function()
 	MEDIA.LoadCooldowns()
 end)
 
@@ -145,7 +158,7 @@ end)
 ---------------------------------------------------------------------------
 --]]
 
-hook.Add("MEDIA_VotingLoaded", "MEDIA_VotingLoaded", function()
+hook.Add("MEDIA.VotingLoaded", "MEDIA.VotingLoaded", function()
 	MEDIA.LoadVotes()
 end)
 

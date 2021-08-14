@@ -227,7 +227,7 @@ function panel:CreateBrowserPanel()
 
 			self.UrlBox:SetValue(str)
 			self.GrabButton:SetDisabled(false)
-			MEDIA.SetURL(str)
+			MEDIA.Url = str
 		end
 	end)
 
@@ -628,4 +628,4 @@ function panel:RefreshPlayerGrid()
 	self.PlayerHistoryGrid:SetRowHeight(self.Settings.Size.Value.RowHeight + 5 )
 end
 
-vgui.Register("MEDIA_Search", panel, "MEDIA_Base")
+vgui.Register("MEDIA.SearchPanel", panel, "MEDIA.Base")

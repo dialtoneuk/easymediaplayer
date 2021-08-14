@@ -12,7 +12,7 @@ function ply:SendMessage(message)
 
 	if (string.len(message) > 125) then return end
 
-	net.Start("MEDIA_SendMessage")
+	net.Start("MEDIA.SendMessage")
 		net.WriteString(message)
 	net.Send(self)
 end
@@ -22,22 +22,14 @@ end
 --]]
 
 function ply:DoInitialSpawn()
-
-	self:SendMessage("This server is running Media Player v" .. MEDIA.Version )
+	self:SendMessage("This server is running " .. MEDIA.Name .. " v" .. MEDIA.Version )
 	self:SendMessage("Created by " .. MEDIA.Credits.Author )
 
 	if (self:IsAdmin()) then
 		MEDIA.SendBlacklist(self)
+		self:SendAdminSettings()
 		self:ConCommand("media_create_admin_panel")
-
-		--seems to work
-		timer.Simple(1, function()
-			self:SendAdminSettings()
-		end)
 	end
-
-	--create client side stuff
-	self:ConCommand("media_create_cl")
 end
 
 --[[
@@ -47,7 +39,7 @@ Sends the servers settings to the client
 function ply:SendAdminSettings()
 	if (!self:IsAdmin()) then return end
 
-	net.Start("MEDIA_SendAdminSettings")
+	net.Start("MEDIA.SendAdminSettings")
 	net.WriteTable(MEDIA.Settings)
 	net.Send(self)
 end
