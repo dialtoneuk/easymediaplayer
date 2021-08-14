@@ -68,7 +68,7 @@ function MEDIA.InstantiatePanels(reinstantiate, skip, only_do)
 		end
 
 		--implicit hide
-		if (MEDIA.LoadedPanels[key].IsVisible != nil and MEDIA.LoadedPanels[key].IsVisible) then
+		if (MEDIA.LoadedPanels[key].IsVisible == nil or !MEDIA.LoadedPanels[key].IsVisible) then
 			MEDIA.LoadedPanels[key].Panel:Hide()
 		end
 

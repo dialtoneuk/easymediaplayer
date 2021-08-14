@@ -63,6 +63,8 @@ MEDIA.Panels = {
 				panel:Show()
 			else
 				if (settings.Hide.Value) then
+					panel:Hide()
+				else
 					panel:Show()
 				end
 			end
@@ -80,7 +82,10 @@ MEDIA.Panels = {
 		PostInit = function(panel, key, settings)
 			panel:Reposition()
 			--nothing needs to be done
-			if (settings.Hide.Value == false ) then
+			if (table.IsEmpty(MEDIA.CurrentVote)) then
+				panel:Hide()
+			else
+				panel:SetVote(MEDIA.CurrentVote)
 				panel:Show()
 			end
 		end
@@ -107,12 +112,14 @@ MEDIA.Panels = {
 				return
 			end
 
-			if ( table.IsEmpty(MEDIA.Playlist) ) then
+			if ( table.IsEmpty(MEDIA.Playlist) or settings.Hide.Value) then
 				panel:Hide()
+			else
+				panel:Show()
 			end
 		end,
 		OnContext = function(panel, key, settings, opened)
-			if (!opened or !settings.Show_In_Context.Value) then
+			if ((!opened or !settings.Show_In_Context.Value ) or settings.Hide.Value) then
 				panel:Hide()
 				return
 			end

@@ -194,7 +194,7 @@ function MEDIA.StartVote(vote, ply)
 
 	if (v.Required or 0 > #player.GetAll()) then ply:SendMessage("Must have at least " .. v.Required .. " players in the server for this vote") return end
 
-	local setting =  MEDIA.GetSetting("media_vote_time") or { Value = 10}
+	local setting =  MEDIA.GetSetting("media_vote_time") or { Value = 10 }
 
 	v.Owner = ply
 	v.StartTime = CurTime()

@@ -11,12 +11,12 @@ panel._Reposition = false
 
 --client settings
 panel.ClientSettings = {
-	media_create_cl = "Reinstantiate All Panels",
-	media_refresh_cl = "Reinstantiate All Panels But This One",
+	media_create_cl = "Refresh All Panels",
+	media_refresh_cl = "Refresh All Panels (Except for this one)",
 	media_create_playlist_panel = "Refresh Playlist Panel",
 	media_create_player_panel = "Refresh Player Panel",
 	media_create_search_panel = "Refresh Search Panel",
-	media_create_settings_panel = "Refresh Settings Panel",
+	media_settings = "Refresh Settings Panel",
 	media_search_panel = "Show search panel",
 	media_like_video = "Like Current Video",
 	media_dislike_video = "Dislike Current Video",
@@ -68,7 +68,7 @@ function panel:Init()
 		end
 	end
 
-	self:SetTitle("Youtube Settings Editor")
+	self:SetTitle("Easy Media Settings Editor")
 end
 
 --[[
@@ -326,7 +326,7 @@ function panel:UpdateTable(title, v, admin)
 			end
 
 			if (!admin) then
-				MEDIA.ChangeSetting(v.Key, val )
+				MEDIA.ChangeSetting(v.Key, val)
 				return
 			end
 

@@ -407,10 +407,12 @@ concommand.Add("media_play", function (ply, cmd, args)
 	end
 
 	local vids = ply:GetVideos()
-	local val = MEDIA.GetSetting("player_playlist_max").Value
+	local _c = table.Count(vids)
+	local setting = MEDIA.GetSetting("player_playlist_max")
+	local ignore_limit = MEDIA.GetSetting("admins_ignore_playlist_limit")
 
-	if (vids != nil and !table.IsEmpty(vids) and table.Count(vids) >= val ) then
-		ply:SendMessage("You are allowed a maximum of " .. val .. " in the playlist. You have " .. table.Count(vids) .. "." )
+	if (vids != nil and !table.IsEmpty(vids) and _c >= setting.Value and (!ply:IsAdmin() or !ignore_limit.Value ) ) then
+		ply:SendMessage("You are allowed a maximum of " .. setting.Value .. " in the playlist. You have " .. _c  .. "." )
 		return
 	end
 

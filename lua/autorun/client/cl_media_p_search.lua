@@ -217,8 +217,6 @@ function panel:CreateBrowserPanel()
 			self.BrowserPosition = #self.BrowserHistory
 		end
 
-		PrintTable(self.BrowserHistory)
-		print(self.BrowserPosition)
 		--if its just media or media.com
 		if ( url != "www.youtube.com/watch") then
 			self.UrlBox:SetValue(str)
@@ -278,7 +276,7 @@ function panel:CreateSearchPanel()
 
 	self.Search.OnEnter = function()
 		if (self.Search:GetValue() != "") then
-			RunConsoleCommand("media_search", self.Search:GetValue() )
+			RunConsoleCommand("media_youtube_search", self.Search:GetValue() )
 		end
 
 		self.Search:SetDisabled(true)
@@ -294,7 +292,7 @@ function panel:CreateSearchPanel()
 	self.SearchButton:SetWide(120)
 	self.SearchButton.DoClick = function()
 		if (self.Search:GetValue() != "") then
-			RunConsoleCommand("media_search", self.Search:GetValue() )
+			RunConsoleCommand("media_youtube_search", self.Search:GetValue() )
 		end
 
 		self.Search:SetDisabled(true)

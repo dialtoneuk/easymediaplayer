@@ -4,9 +4,17 @@ local server = {
         Value = 10,
         Comment = "The maximum amount of playlist items allowed at the same"
     },
+    media_vote_time = {
+        Value = 30,
+        Comment = "The maximum amount of playlist items allowed at the same"
+    },
     media_announce_admin = {
         Value = true,
         Comment = "Announced in the chat when an admin skips a video"
+    },
+    admins_ignore_playlist_limit = {
+        Value = true,
+        Comment = "Admins can queue as many videos as they like"
     },
     media_announce_video = {
         Value = true,
@@ -44,6 +52,10 @@ local server = {
         Value = 10,
         Max = 50,
         Comment = "How many items from the history to return to the player"
+    },
+    media_cooldown_enabled = {
+        Value = false,
+        Comment = "Will turn off cooldowns all together, not recommended"
     },
     media_cooldown_play = {
         Value = 45,
@@ -151,8 +163,8 @@ local client = {
         Comment = "Autosize the playlist to fit its elements"
     },
     media_playlist_hide = {
-        Value = true,
-        Comment = "Hide the playlist when it is not in use"
+        Value = false,
+        Comment = "Hides the playlist completely."
     },
     media_playlist_centered = {
         Value = false,
@@ -168,7 +180,7 @@ local client = {
     },
     media_playlist_show_constant = {
         Value = false,
-        Comment = "Will show the playlist all the time"
+        Comment = "Will show the playlist all the time, no matter what."
     },
     media_settings_centered = {
         Value = false,
@@ -179,7 +191,7 @@ local client = {
         Comment = "Admin window will open center screen"
     },
     media_search_centered = {
-        Value = false,
+        Value = true,
         Comment = "Search window will open center screen"
     },
     media_playlist_show_in_context = {
@@ -203,7 +215,7 @@ local client = {
         Comment = "(unused)"
     },
     media_vote_hide = {
-        Value = true,
+        Value = false,
         Comment = "(unused)"
     },
     media_admin_hide = {
@@ -404,9 +416,9 @@ local client = {
         Min = 10,
         Max = 1000,
         Value = {
-            Width = 100,
-            Height = 300,
-            RowHeight = 40
+            Width = 200,
+            Height = 90,
+            RowHeight = 80
         }
     },
     media_player_position = {

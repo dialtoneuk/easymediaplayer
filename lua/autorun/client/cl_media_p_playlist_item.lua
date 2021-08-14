@@ -19,15 +19,15 @@ panel.Settings = {
 --]]
 function panel:Init()
 
-	self:BaseInit()
 	self:DockPadding(5,5,5,5)
 	self:SetText("")
 
 	self.Text = vgui.Create("DLabel", self )
-	self.Text:SetFont("BigText")
+	self.Text:SetFont("MediumText")
 	self.Text:Dock(TOP)
+	self.Text:SetWrap(true)
 	self.Text:SetWide(self.Settings.Size.Value.Width)
-	self.Text:SetTall(20)
+	self.Text:SetTall(40)
 	self.Text:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	self.Duration = vgui.Create("DLabel", self )

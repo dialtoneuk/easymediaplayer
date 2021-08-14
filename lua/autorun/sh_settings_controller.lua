@@ -106,10 +106,20 @@ function MEDIA.AddSetting(tab)
 	if (tab.Convar and tab.Type != MEDIA.Type.TABLE) then
 		if (!tab.Server and CLIENT ) then
 			print("creating client side convar: " .. tab.Key)
-			CreateClientConVar(tab.Key,tab.Value)
+
+			if (!ConVarExists(tab.Key)) then
+				print("creating client side convar: " .. tab.Key)
+				CreateClientConVar(tab.Key,tab.Value)
+			else
+				print("already existing client side convar: " .. tab.Key)
+			end
 		elseif (tab.Server and SERVER) then
-			print("creating server side convar: " .. tab.Key)
-			CreateConVar(tab.Key,tab.Value)
+			if (!ConVarExists(tab.Key)) then
+				print("creating server side convar: " .. tab.Key)
+				CreateConVar(tab.Key,tab.Value)
+			else
+				print("already existing server side convar: " .. tab.Key)
+			end
 		end
 	end
 
@@ -148,6 +158,7 @@ function MEDIA.ChangeSetting(key, value, all_kinds)
 	for k,keys in pairs(MEDIA.Settings) do
 		if (k == key) then
 			for kind,v in pairs(keys) do
+
 				if (kind == MEDIA.Type.BOOL) then
 					if (value == 0 or value == false ) then
 						value = false
@@ -163,21 +174,17 @@ function MEDIA.ChangeSetting(key, value, all_kinds)
 				MEDIA.Settings[key][kind].Value = value
 
 				if (ConVarExists(key)) then
+					local convar = GetConVar(key)
+
 					if (kind == MEDIA.Type.INT) then
-						GetConVar(key):SetInt(math.floor(value))
+						convar:SetInt(math.floor(value))
 					elseif (kind == MEDIA.Type.BOOL) then
-						GetConVar(key):SetBool(value)
+						convar:SetBool(value)
 					elseif (kind == MEDIA.Type.STRING ) then
-						GetConVar(key):SetString(value)
+						convar:SetString(value)
 					end
 
-					if ( isbool(value) and value) then
-						value = "true"
-					else
-						value = "false"
-					end
-
-					print("set convar " .. key .. " to " .. value)
+					print("set convar " .. k .. " to ", value)
 
 					if (all_kinds) then
 						return
@@ -244,13 +251,7 @@ if ( SERVER ) then
 						convar:SetBool(v.DefValue)
 					end
 
-					if ( isbool(v.Value) and v.Value) then
-						v.Value = 1
-					else
-						v.Value = 0
-					end
-
-					print("set convar " .. k .. " to " .. v.Value)
+					print("reset server convar " .. k .. " to ", v.Value )
 				end
 
 				MEDIA.Settings[k][kind].Value = v.DefValue
@@ -280,13 +281,7 @@ if ( CLIENT ) then
 						convar:SetBool(v.DefValue)
 					end
 
-					if ( isbool(v.Value) and v.Value) then
-						v.Value = 1
-					else
-						v.Value = 0
-					end
-
-					print("set convar " .. k .. " to " .. v.Value)
+					print("reset client convar " .. k .. " to ", v.Value )
 				end
 
 				MEDIA.Settings[k][kind].Value = v.DefValue
@@ -320,71 +315,65 @@ end
 	Syncs our settings with our convars and vice versa
 --]]
 
-if ( SERVER ) then
-	function MEDIA.SetConvars()
+function MEDIA.ResyncConvars()
+	for k,keys in pairs(MEDIA.Settings) do
+		for kind,v in pairs(keys) do
+			if (v.Server and CLIENT) then continue end
+			if (!v.Convar ) then continue end --since some settings might not have associated convar values
+			if (!ConVarExists(k)) then continue end
 
-		for k,keys in pairs(MEDIA.Settings) do
-			for kind,v in pairs(keys) do
-				if (!v.Server) then continue end
-				if (!v.Convar ) then continue end --since some settings might not have associated convar values
-				if (!ConVarExists(k)) then continue end
+			local convar = GetConVar(k)
+			local value = 0
 
-				local convar = GetConVar(k)
-				local value = 0
-
-				if (kind == MEDIA.Type.INT) then
-					value = convar:GetInt()
-				elseif (kind == MEDIA.Type.STRING ) then
-					value = convar:GetString()
-				elseif (kind == MEDIA.Type.BOOL ) then
-					value = convar:GetBool()
-				end
-
-				v.Value = value
-				MEDIA.Settings[k][kind] = v
-
-				if (isbool(v.Value)) then if (v.Value) then v.Value = 1 else v.Value = 0 end end
-				print("set convar " .. k .. " to " .. v.Value)
+			if (kind == MEDIA.Type.INT) then
+				value = convar:GetInt()
+			elseif (kind == MEDIA.Type.STRING ) then
+				value = convar:GetString()
+			elseif (kind == MEDIA.Type.BOOL ) then
+				value = convar:GetBool()
 			end
+
+			v.Value = value
+			MEDIA.Settings[k][kind] = v
+
+			print("set convar " .. k .. " to ", v.Value )
 		end
 	end
 end
 
-if ( CLIENT ) then
-	function MEDIA.SetConvars()
-		for k,keys in pairs(MEDIA.Settings) do
-			for kind,v in pairs(keys) do
-				if (v.Server) then continue end
-				if (!v.Convar ) then continue end --since some settings might not have associated convar values
-				if (!ConVarExists(k)) then continue end
+function MEDIA.SetConvars()
+	for k,keys in pairs(MEDIA.Settings) do
+		for kind,v in pairs(keys) do
+			if (v.Server and CLIENT) then continue end
+			if (!v.Convar ) then continue end --since some settings might not have associated convar values
+			if (!ConVarExists(k)) then continue end
 
-				local convar = GetConVar(k)
-				if (kind == MEDIA.Type.INT) then
-					convar:SetInt(v.Value)
-				elseif (kind == MEDIA.Type.STRING) then
-					convar:SetString(v.Value)
-				elseif (kind == MEDIA.Type.BOOL) then
-					convar:SetBool(v.Value)
-				else
-					convar:SetInt(v.Value)
-				end
-
-				if (isbool(v.Value)) then if (v.Value) then v.Value = 1 else v.Value = 0 end end
-
-				print("set convar " .. k .. " to " .. v.Value)
+			local convar = GetConVar(k)
+			if (kind == MEDIA.Type.INT) then
+				convar:SetInt(v.Value)
+			elseif (kind == MEDIA.Type.STRING) then
+				convar:SetString(v.Value)
+			elseif (kind == MEDIA.Type.BOOL) then
+				convar:SetBool(v.Value)
+			else
+				convar:SetInt(v.Value)
 			end
+
+			print("set convar " .. k .. " to ", v.Value )
 		end
 	end
 end
 
-concommand.Add("media_resync_convars", function(ply, cmd, args )
-	MEDIA.SetConvars()
+if (SERVER) then
+	concommand.Add("media_resync_convars", function(ply, cmd, args )
+		MEDIA.ResyncConvars()
 
-	if (SERVER and !ply:IsAdmin()) then
-		ply:SendAdminSettings()
-		return
-	end
-end)
+		if (!ply:IsAdmin()) then
+			ply:SendAdminSettings()
+			return
+		end
+	end)
+end
 
 --[[
 loads our settings
@@ -392,10 +381,6 @@ loads our settings
 
 if (SERVER) then
 	function MEDIA.LoadSettings()
-
-		print("loading settings")
-
-
 		if (!file.IsDir("lyds", "DATA")) then return end
 		if (!file.Exists("lyds/settings.json", "DATA")) then return end
 
@@ -421,7 +406,6 @@ loads our client settings
 
 if (CLIENT) then
 	function MEDIA.LoadSettings()
-		print("loading settings")
 		if (!file.IsDir("lyds", "DATA")) then return end
 		if (!file.Exists("lyds/settings_client.json", "DATA")) then return end
 		local settings = util.JSONToTable( file.Read("lyds/settings_client.json") )

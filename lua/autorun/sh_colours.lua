@@ -5,6 +5,7 @@ MEDIA.ComputedColours = MEDIA.ComputedColours or {
 --the colours for our stuff
 MEDIA.Colours = {
     Black = Color(10,10,10),
+    Gray = Color(145,145,145),
     PitchBlack = Color(0,0,0),
     White = Color(255,255,255),
     Red = Color(255,0,0),
@@ -19,6 +20,8 @@ if (table.IsEmpty(MEDIA.ComputedColours)) then
         MEDIA.ComputedColours[ "Barely" .. key ] = Color(colour.r, colour.g, colour.b, 50 )
         MEDIA.ComputedColours[ "Reverse" .. key ] = Color(colour.b, colour.g, colour.r, 255 )
     end
+end
 
+if (!table.IsEmpty(MEDIA.ComputedColours)) then
     MEDIA.Colours = table.Merge(MEDIA.Colours, MEDIA.ComputedColours)
 end

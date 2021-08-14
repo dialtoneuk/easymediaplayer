@@ -169,7 +169,6 @@ function MEDIA.StartVideo(video, callback)
 		MEDIA.AnnounceVideo()
 	end
 
-	print("starting timer for video: " .. video.Video )
 	timer.Create("MEDIA.VideoTimer", video.Duration, 1, function()
 		MEDIA.StopVideo()
 		callback()
@@ -189,7 +188,6 @@ function MEDIA.SkipVideo()
 
 	if (MEDIA.HasNext()) then
 		--Next please
-		print("beginning next")
 		MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
 		MEDIA.Begin(MEDIA.Next())
 	else
@@ -197,7 +195,6 @@ function MEDIA.SkipVideo()
 		MEDIA.Playlist = {}
 		MEDIA.CurrentVideo = {}
 		MEDIA.BroadcastEnd()
-		print("no more")
 	end
 end
 

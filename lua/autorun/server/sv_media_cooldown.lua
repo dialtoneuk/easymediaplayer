@@ -79,12 +79,18 @@ function MEDIA.GetNewCooldown(name)
 	return table.Copy( MEDIA.StoredCooldowns[name] )
 end
 
+function MEDIA.CooldownsAreDisabled()
+
+	return MEDIA.GetSetting("media_cooldown_enabled").Value == false
+end
+
 --[[
 	Return true if a player has a current cooldown
 --]]
 
 function MEDIA.HasCooldown(ply, name)
-	if (!MEDIA.Cooldown[ply:UniqueID()]) then return false end
+	if (MEDIA.CooldownsAreDisabled()) then return false end
+	if (MEDIA.Cooldown[ply:UniqueID()] == nil) then return false end
 
 	return MEDIA.Cooldown[ply:UniqueID()][name] != nil
 end
@@ -119,6 +125,7 @@ end
 --]]
 
 function MEDIA.AddPlayerCooldown(ply, typ)
+	if (MEDIA.CooldownsAreDisabled()) then return end
 	if (!MEDIA.Cooldown[ply:UniqueID()]) then MEDIA.Cooldown[ply:UniqueID()] = {} end
 	if (MEDIA.Cooldown[ply:UniqueID()][typ.Name] ) then return end
 

@@ -7,7 +7,6 @@ local panel = {}
 
 panel.Name = "playlist"
 panel.InvertPosition = true
-panel.RescaleHeight = false
 
 --Playlist items
 panel.Playlist = {}
@@ -45,7 +44,7 @@ function panel:SetupGrid()
 	self.Grid:DockMargin(5,5,5,5)
 	self.Grid:Dock(TOP)
 	self.Grid:SetCols( 1 )
-	self.Grid:SetRowHeight( 60 )
+	self.Grid:SetRowHeight( self.Settings.Size.Value.RowHeight )
 	self.Grid:SetWide( self:GetWide())
 	self.Grid:SetColWide( self:GetWide())
 end
@@ -107,13 +106,22 @@ Displays playlist items
 --]]
 
 function panel:NoVidPanel()
-	local p = vgui.Create("DPanel", self.Grid )
+	local p = vgui.Create("DButton", self.Grid )
 	p:SetWide(self.Grid:GetWide() - 10)
-	p:SetTall(60)
-	p.Paint = function()
-		draw.SimpleTextOutlined( "Nothing Here!", "BiggerText", 10, 20, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
-		draw.SimpleTextOutlined( "Play something?", "MediumText", 10, 35, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
+	p:SetTall( self.Settings.Size.Value.RowHeight )
+	p:SetText("")
+	p.Paint = function(s)
+		draw.RoundedBox(5, 0, 0, s:GetWide(), s:GetTall(), MEDIA.Colours.FadedGray )
+		draw.SimpleTextOutlined( "EASY!", "SmallText", 10,12, MEDIA.Colours.Red, 5, 1, 0.5, MEDIA.Colours.Black )
+		draw.SimpleTextOutlined( "Media Player", "BiggerText", 10, 28, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
+		draw.SimpleTextOutlined( "v" .. MEDIA.Version, "MediumText", 10, 50, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
+		draw.SimpleTextOutlined( "(click me)", "MediumText", self.Grid:GetWide() - 70, 65, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
 	end
+
+	p.DoClick = function(sel)
+		RunConsoleCommand("media_search_panel")
+	end
+
 
 	self.Grid:AddItem(p)
 end
@@ -150,11 +158,11 @@ function panel:UpdateGrid()
 
 		p:SetVideo(v)
 		p:SetWide(self.Grid:GetWide() - 10)
-		p:SetTall(60)
+		p:SetTall(self.Settings.Size.Value.RowHeight)
 		p:SetTexts()
 		self.Grid:AddItem(p)
 
-		size = size + 60
+		size = size + self.Settings.Size.Value.RowHeight
 	end
 
 	if (self.Settings.AutoResize.Value == 1 and size != 0 ) then

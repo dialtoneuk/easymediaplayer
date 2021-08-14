@@ -26,6 +26,9 @@ MEDIA.HistoryPageMax = MEDIA.HistoryPageMax or 1
 MEDIA.PlayerHistoryCount = MEDIA.PlayerHistoryCount or 1
 MEDIA.PlayerPageMax = MEDIA.PlayerPageMax or 1
 
+MEDIA.CurrentVote = MEDIA.CurrentVote or {}
+MEDIA.AdminSettings = MEDIA.AdminSettings  or {}
+
 --[[
 Fonts
 -----------------------------------------------------------------------------
@@ -180,7 +183,7 @@ Console Commands
 Youtube search function
 --]]
 
-concommand.Add("media_search", function (ply, cmd, args)
+concommand.Add("media_youtube_search", function (ply, cmd, args)
 
 	if (args[1] == nil or args[1] == "" ) then return end
 	MEDIA.RequestYoutubeSearch(args[1])
