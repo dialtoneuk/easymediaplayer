@@ -54,19 +54,29 @@ MEDIA.Panels = {
 		Settings = {
 			--can define extra settings here
 			--size, is centered and show is implicit
+			Show_Constant = "show_constant"
 		},
 		PostInit = function(panel, key, settings)
 			panel:Reposition()
 
 			if (!table.IsEmpty(MEDIA.CurrentVideo)) then
 				panel:SetVideo(MEDIA.CurrentVideo)
-				panel:Show()
-			else
-				if (settings.Hide.Value) then
-					panel:Hide()
-				else
+
+				if (!settings.Hide.Value) then
 					panel:Show()
 				end
+			else
+				if (settings.Show_Constant.Value) then
+					panel:Show()
+				end
+			end
+		end,
+		OnContext = function(panel, key, settings, opened)
+			if (panel:IsVisible()) then
+				panel:MakePopup()
+				panel:SetPopupStayAtBack(true)
+				panel:SetKeyboardInputEnabled(opened)
+				panel:SetMouseInputEnabled(opened)
 			end
 		end
 	},
@@ -108,6 +118,7 @@ MEDIA.Panels = {
 			panel:SetPos(ScrW() - settings.Position.Value.X, settings.Position.Value.Y)
 
 			if (settings.Show_Constant.Value) then
+				print("constant")
 				panel:Show()
 				return
 			end
@@ -122,6 +133,13 @@ MEDIA.Panels = {
 			if ((!opened or !settings.Show_In_Context.Value or settings.Hide.Value ) and !settings.Show_Constant.Value ) then
 				panel:Hide()
 				return
+			end
+
+			if (panel:IsVisible()) then
+				panel:MakePopup()
+				panel:SetPopupStayAtBack(true)
+				panel:SetKeyboardInputEnabled(opened)
+				panel:SetMouseInputEnabled(opened)
 			end
 
 			panel:Show()

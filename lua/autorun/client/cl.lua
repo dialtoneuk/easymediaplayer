@@ -424,12 +424,16 @@ net.Receive("MEDIA.End", function()
 
 	local setting = MEDIA.GetSetting("media_player_hide")
 	panel = MEDIA.GetPanel("PlayerPanel")
+	panel:SetVideo(MEDIA.CurrentVideo)
 
 	if (setting.Value) then
 		panel:Hide()
 	end
 
-	panel:SetVideo(MEDIA.CurrentVideo)
+	MEDIA.CurrentVote = {}
+	panel = MEDIA.GetPanel("VotePanel")
+	panel:Reset()
+	panel:Hide()
 end)
 
 --[[

@@ -122,6 +122,15 @@ function base:GetPadding(neg)
     return padding
 end
 
+function base:IsSettingTrue(key)
+
+    if (self.Settings[key] == nil ) then
+        error(key .. " is nil")
+    end
+
+    return self.Settings[ key ].Value == true or self.Settings[ key ].Value == 1
+end
+
 function base:GetSettingWidth(set_padding, neg)
     neg = neg or false
     return self.Settings.Size.Value.Width + self:GetPadding(neg)
@@ -140,7 +149,6 @@ function base:ResizePanel()
 
     if (self.RescaleHeight and self:GetTall() != math.floor(self:GetSettingHeight())) then
         self:SetTall(self:GetSettingHeight())
-        print("r")
         self._Resized = true
     end
 
@@ -177,6 +185,8 @@ end
 
 --copy it
 local panel = table.Copy(base)
+local button = table.Copy(base)
 --Register
 vgui.Register("MEDIA.Base", base, "DFrame")
 vgui.Register("MEDIA.BasePanel", panel, "DPanel") --register an exact copy but for a panel too
+vgui.Register("MEDIA.BaseButton", button, "DButton") --register an exact copy but for a panel too

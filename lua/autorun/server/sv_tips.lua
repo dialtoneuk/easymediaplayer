@@ -11,7 +11,7 @@ MEDIA.Tips = {
 		admin = true
 	},
 	{
-		body = "As an admin, Your server convars are synced with settings values automatically on each map load.",
+		body = "Convars values overwrite settings values ever few minutes",
 		admin = true
 	},
 	{

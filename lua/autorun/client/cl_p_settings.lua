@@ -90,6 +90,8 @@ function panel:FillPropertySheet(settings)
 	end
 
 	self:AddCommandsTab()
+	self:AddPresetTab()
+	self:AddCreditsTab()
 end
 
 --[[
@@ -113,6 +115,30 @@ function panel:MyThink()
 			Client = MEDIA.Settings
 		})
 	end
+end
+
+--[[
+Add Preset tab
+--]]
+
+function panel:AddPresetTab()
+	local pan = vgui.Create("DScrollPanel", self.PropertySheet)
+	pan:DockMargin(15,15,15,15)
+	pan:Dock(FILL)
+
+	self.PropertySheet:AddSheet("Presets", pan, "icon16/folder.png")
+end
+
+--[[
+Add Credits Tab
+--]]
+
+function panel:AddCreditsTab()
+	local pan = vgui.Create("DScrollPanel", self.PropertySheet)
+	pan:DockMargin(15,15,15,15)
+	pan:Dock(FILL)
+
+	self.PropertySheet:AddSheet("Credits & Changelog", pan, "icon16/rainbow.png")
 end
 
 --[[

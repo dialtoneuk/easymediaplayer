@@ -202,8 +202,12 @@ local client = {
         Comment = "Show the playlist when you press 'tab' / see the scoreboard"
     },
     media_player_hide = {
+        Value = false,
+        Comment = "Hides the player completely"
+    },
+    media_player_show_constant = {
         Value = true,
-        Comment = "Hides the player when it is not in use"
+        Comment = "Shows the player constantly"
     },
     media_search_hide = {
         Value = true,
@@ -416,10 +420,10 @@ local client = {
         }
     },
     media_playlist_size = {
-        Min = 10,
+        Min = 5,
         Max = 1000,
         Value = {
-            Width = 200,
+            Width = 350,
             Height = 90,
             RowHeight = 80,
             Padding = 5,

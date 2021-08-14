@@ -105,8 +105,6 @@ function MEDIA.AddSetting(tab)
 
 	if (tab.Convar and tab.Type != MEDIA.Type.TABLE) then
 		if (!tab.Server and CLIENT ) then
-			print("creating client side convar: " .. tab.Key)
-
 			if (!ConVarExists(tab.Key)) then
 				print("creating client side convar: " .. tab.Key)
 				CreateClientConVar(tab.Key,tab.Value)
@@ -198,22 +196,28 @@ function MEDIA.ChangeSetting(key, value, all_kinds)
 	end
 end
 
+--
+function MEDIA.SettingTrue(key)
+	return MEDIA.GetSetting(key, true ).Value == true
+end
+
 --[[
 Gets a setting
 --]]
 
-function MEDIA.GetSetting(key)
-
+function MEDIA.GetSetting(key, assure_type)
+	assure_type = assure_type or false
 	if (table.IsEmpty(MEDIA.Settings)) then error("SETTINGS EMPTY") return end
 
 	for k,keys in pairs(MEDIA.Settings) do
 		if (k == key ) then
 			for kind,v in pairs(keys) do
-				if (kind == MEDIA.Type.BOOL) then
-					if (v.Value == 0 or v.Value == false ) then
+
+				if (assure_type) then
+					if (kind == MEDIA.Type.BOOL and v.Value != true ) then
 						v.Value = false
-					else
-						v.Value = true
+					elseif (kind == MEDIA.Type.INT) then
+						v.Value = math.Truncate(v.Value)
 					end
 				end
 
@@ -254,7 +258,11 @@ if ( SERVER ) then
 					print("reset server convar " .. k .. " to ", v.Value )
 				end
 
-				MEDIA.Settings[k][kind].Value = v.DefValue
+				if (kind == MEDIA.Type.BOOL) then
+					MEDIA.Settings[k][kind].Value = v.DefValue == 1
+				else
+					MEDIA.Settings[k][kind].Value = v.DefValue
+				end
 			end
 		end
 	end
@@ -284,7 +292,11 @@ if ( CLIENT ) then
 					print("reset client convar " .. k .. " to ", v.Value )
 				end
 
-				MEDIA.Settings[k][kind].Value = v.DefValue
+				if (kind == MEDIA.Type.BOOL) then
+					MEDIA.Settings[k][kind].Value = v.DefValue == 1
+				else
+					MEDIA.Settings[k][kind].Value = v.DefValue
+				end
 			end
 		end
 	end
@@ -394,6 +406,11 @@ if (SERVER) then
 
 				local tab = MEDIA.Settings[k][kind]
 				tab.Value = v.Value
+
+				if (kind == MEDIA.Types.BOOL and v.Value != true) then
+					tab.Value = v.Value == 1
+				end
+
 				MEDIA.Settings[k][kind] = tab
 			end
 		end
@@ -422,6 +439,11 @@ if (CLIENT) then
 
 				local tab = MEDIA.Settings[k][kind]
 				tab.Value = v.Value
+
+				if (kind == MEDIA.Types.BOOL and v.Value != true ) then
+					tab.Value = v.Value == 1
+				end
+
 				MEDIA.Settings[k][kind] = tab
 			end
 		end

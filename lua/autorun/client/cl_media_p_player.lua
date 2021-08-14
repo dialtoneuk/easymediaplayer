@@ -7,17 +7,20 @@
 local panel = {}
 panel.Name = "player"
 panel.Video = {}
+panel._CurrentOwnerName = nil
 
 --Extra Settings
 panel.Settings = {
-	DisplayVideo = MEDIA.GetSetting("media_display_video")
+	DisplayVideo = MEDIA.GetSetting("media_display_video"),
+	Muted =  MEDIA.GetSetting("media_mute_video"),
+	ShowConstant =  MEDIA.GetSetting("media_player_show_constant"),
 }
 
 --Our initial setup
 
 function panel:Init()
-
 	self:BaseInit()
+	self:SetPopupStayAtBack(true)
 
 	self.HTML = vgui.Create("DHTML", self)
 	self.HTML:Dock(FILL)
@@ -46,48 +49,48 @@ function panel:Init()
 	self.Wang.OnValueChanged = self.SetPlayerVolume
 
 	self.Paint = function()
-		if (self.Settings.Colours != nil) then
-			surface.SetDrawColor(self.Settings.Colours.Value.Background)
-			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
-		end
 
+		surface.SetDrawColor(self.Settings.Colours.Value.Background)
+		surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+		surface.SetDrawColor(self.Settings.Colours.Value.Border)
+		surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+
+		--todo: Optimise this
 		if (!table.IsEmpty(MEDIA.CurrentVideo)) then
-			draw.SimpleTextOutlined(self.Video.Title or "", "SmallText", 10, self:GetTall() - 30, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
-			draw.SimpleTextOutlined(self.Video.Creator or "", "MediumText", 10, self:GetTall() - 45, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
 
-			if (IsValid(self.Video.Owner) and self.Video.Owner != nil ) then
-				draw.SimpleTextOutlined("Submitted by " .. self.Video.Owner:GetName() or "Unknown", "MediumText", 10, self:GetTall() - 15, MEDIA.Colours.White, 10, 1, 0.5,
-				MEDIA.Colours.Black)
+			local time = CurTime() - self.Video.StartTime
+			local mins = math.Truncate(time / 60)
+			local seconds = math.floor(time - (mins * 60))
+
+			if (seconds < 10) then
+				seconds = "0" .. seconds
 			end
 
-			if (!table.IsEmpty(self.Video) and self.Video.StartTime) then
-				local time = CurTime() - self.Video.StartTime
-				local mins = math.Truncate(time / 60)
-				local seconds = math.floor(time - (mins * 60))
+			local str = mins .. ":" .. seconds
+			local w = surface.GetTextSize(str)
 
-				if (seconds < 10) then
-					seconds = "0" .. seconds
-				end
+			draw.SimpleTextOutlined(self.Video.Title, "MediumText", 10, self:GetTall() - 30, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
+			draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetTall() - 45, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
+			draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner or "Unknown",
+				"SmallText", 10, self:GetTall() - 15, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
 
-				local str = mins .. ":" .. seconds
-				local w = surface.GetTextSize(str)
-
-				draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10, self:GetTall() - 45, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
-				surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground)
-				surface.DrawRect(0, 0, math.Clamp((self:GetWide() / self.Video.Duration ) * time, 5, self:GetWide()), 5)
-			end
+			draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10, self:GetTall() - 45, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
+			surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground)
+			surface.DrawRect(0, 0, math.Clamp((self:GetWide() / self.Video.Duration ) * time, 5, self:GetWide()), 5)
 		end
 	end
 end
 
 --Normally use MyThink instead of Think
 function panel:MyThink()
-	if (!self.Settings.DisplayVideo.Value and self.HTML:IsVisible()) then
+	if (!self:IsSettingTrue("DisplayVideo")) then
 		self.HTML:Hide()
-	elseif (self.Settings.DisplayVideo.Value and !self.HTML:IsVisible()) then
+	else
 		self.HTML:Show()
+	end
+
+	if (!table.IsEmpty(self.Video) and self._CurrentVideoOwner == nil and IsValid(self.Video.Owner)) then
+		self._CurrentVideoOwner = self.Video.Owner:GetName()
 	end
 
 	--eh
@@ -98,6 +101,12 @@ end
 function panel:SetVideo(video)
 	if (table.IsEmpty(video)) then
 		self.HTML:SetHTML("<marquee style='text-align: center; color: white; font-family: sans-serif; font-size: 15vw; padding-top: 10.99%;'>No Video</marquee>")
+		self._CurrentVideoOwner = nil
+
+		if ( !self:IsSettingTrue("ShowConstant")) then
+			self:Hide()
+		end
+
 		return
 	end
 
@@ -107,14 +116,13 @@ function panel:SetVideo(video)
 	--local link = "https://www.youtube.com/embed/" .. video.Video .. "?rel=0&enablejsapi=1&autoplay=1&controls=0&nohtml5=1&showinfo=0&loop=1&iv_load_policy=3&start=" .. time
 	local mute = 0
 
-	if (MEDIA.GetSetting("media_mute_video").Value) then
+	if (self:IsSettingTrue("Muted")) then
 		mute = 1
 	end
 
-	--self.HTML:SetHTML("<iframe style='width: 99%; height: 80%; border: 1px solid black;' src='" .. link .. "' allow='accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture'></iframe>")
 	self.HTML:SetHTML(self:GetHTMLSourceCode(video, time, mute))
 
-	--replace this is dumb
+	--replace this is dumb needs to be done when browser loads
 	timer.Simple(1, function()
 		if (self.SetPlayerVolume) then
 			self.SetPlayerVolume()

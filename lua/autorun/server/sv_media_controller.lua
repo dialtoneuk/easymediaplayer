@@ -165,7 +165,7 @@ function MEDIA.StartVideo(video, callback)
 	MEDIA.BroadcastCurrentVideo()
 	MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
 
-	if (MEDIA.GetSetting("media_announce_video").Value ) then
+	if (MEDIA.GetSetting("media_announce_video").Value) then
 		MEDIA.AnnounceVideo()
 	end
 

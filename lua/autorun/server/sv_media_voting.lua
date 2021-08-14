@@ -55,7 +55,7 @@ function MEDIA.LoadVotes()
 	--This is the "key" or name of this vote, so the command to excute this would be media_start_vote VoteBlacklist
 	vote.Type = "VoteBlacklist"
 	vote.Time = 30
-	vote.Required = 3 --at least three players on server
+	vote.Required = 3 -- three thirds of the server
 	vote.OnSuccess = function()
 		MEDIA.AddToBlacklist(MEDIA.CurrentVideo)
 		MEDIA.SkipVideo()
@@ -122,7 +122,8 @@ function MEDIA.SendVoteToPlayer( ply )
 			StartTime = MEDIA.CurrentVote.StartTime,
 			Type = MEDIA.CurrentVote.Type,
 			Count = MEDIA.CurrentVote.Count,
-			Time = MEDIA.CurrentVote.Time
+			Time = MEDIA.CurrentVote.Time,
+			Required = MEDIA.CurrentVote.Required
 		})
 	net.Send(ply)
 end
@@ -169,7 +170,7 @@ function MEDIA.AddToCount()
 
 	if (MEDIA.GetSetting("media_announce_count").Value) then
 		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("Votes +1 [" .. MEDIA.CurrentVote.Type .. "] (" .. MEDIA.CurrentVote.Count ..  " / " ..  math.Round( #player.GetAll() / 2 ) .. ")")
+			v:SendMessage("Votes +1 to " .. MEDIA.CurrentVote.Type .. " (" .. MEDIA.CurrentVote.Count ..  " / " .. MEDIA.CurrentVote.Required  .. ")")
 		end
 
 		if (MEDIA.HasPassed() ) then
@@ -191,10 +192,16 @@ function MEDIA.StartVote(vote, ply)
 	if ( !MEDIA.Votes[vote]) then return end
 
 	local v = table.Copy(MEDIA.Votes[vote])
-	v.Required = v.Required or 1
-
 	local count = table.Count( player.GetAll() )
-	if (v.Required >= count) then ply:SendMessage("Must have at least " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
+	local req = v.Required or 1
+
+	if (req == 1 ) then
+		v.Required = math.floor(count / 2)
+	else
+		v.Required = count - math.floor(count / req)
+	end
+
+	if (v.Required >= count) then ply:SendMessage("Must have at over " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
 
 	local setting = MEDIA.GetSetting("media_vote_time") or { Value = 10 }
 
@@ -202,6 +209,8 @@ function MEDIA.StartVote(vote, ply)
 	v.StartTime = CurTime()
 	v.Time = setting.Value
 	v.CurrentVideo = MEDIA.CurrentVideo or {}
+
+	PrintTable(v)
 
 	MEDIA.ExecuteVote(v)
 end
@@ -225,7 +234,7 @@ function MEDIA.ExecuteVote(vote)
 
 	if (MEDIA.GetSetting("media_announce_vote").Value ) then
 		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("A vote has been initiated. type !vote to participate!")
+			v:SendMessage("A vote has been initiated. type !vote to participate! " .. vote.Required .. " votes are required for this to pass!")
 		end
 	end
 

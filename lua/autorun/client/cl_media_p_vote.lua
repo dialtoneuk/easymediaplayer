@@ -84,7 +84,7 @@ Sets the vote
 
 function panel:SetVote(vote)
 	self.Vote = vote
-	self.Type:SetText(vote.Type .. " (" .. vote.Count .. ")")
+	self.Type:SetText(vote.Type .. " (" .. vote.Count .. "/" .. vote.Required .. ")")
 	self.VOwner:SetText(vote.Owner.Name)
 end
 
