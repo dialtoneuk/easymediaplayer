@@ -24,7 +24,6 @@ end
 
 --loads all the panels required by our system
 function MEDIA.InstantiatePanels(reinstantiate, skip, only_do)
-	local show_all = MEDIA.GetSetting("media_all_show")
 	skip = skip or {}
 	only_do = only_do or {}
 	reinstantiate = reinstantiate or false
@@ -59,7 +58,7 @@ function MEDIA.InstantiatePanels(reinstantiate, skip, only_do)
 
 		MEDIA.SetupPanel(MEDIA.LoadedPanels[key]._Settings, MEDIA.LoadedPanels[key].Panel, key)
 
-		--overwrite our hide to essentiallyignore it if show all isn't present
+		--overwrite our hide to essentially ignore it if show all isn't present
 		MEDIA.LoadedPanels[key].Panel._Hide = MEDIA.LoadedPanels[key].Panel.Hide
 		MEDIA.LoadedPanels[key].Panel.Hide = function()
 			local _as = MEDIA.GetSetting("media_all_show")
