@@ -51,7 +51,7 @@ function panel:Init()
 
 				draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10 , self:GetTall() - 45, MEDIA.Colours.White, 10, 1, 0.5,  MEDIA.Colours.Black )
 				surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground )
-				surface.DrawRect( 0, 0, math.Clamp( self:GetWide() * (time / 10), 5, self:GetWide() ), 5)
+				surface.DrawRect( 0, 0, math.Clamp( ( self:GetWide() / self.Vote.Time ) * time , 5, self:GetWide() ), 5)
 			end
 		end
 	end

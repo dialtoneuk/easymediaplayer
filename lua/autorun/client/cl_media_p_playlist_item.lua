@@ -17,6 +17,7 @@ panel.Settings = {
 --[[
 	Initializes
 --]]
+
 function panel:Init()
 
 	self:DockPadding(5,5,5,5)
@@ -26,26 +27,30 @@ function panel:Init()
 	self.Text:SetFont("MediumText")
 	self.Text:Dock(TOP)
 	self.Text:SetWrap(true)
-	self.Text:SetWide(self.Settings.Size.Value.Width)
-	self.Text:SetTall(40)
+	self.Text:SetWide(self:GetSettingWidth())
+	self.Text:SetTall(30)
 	self.Text:SetTextColor(self.Settings.Colours.Value.TextColor)
 
-	self.Duration = vgui.Create("DLabel", self )
-	self.Duration:Dock(LEFT)
-	self.Duration:SetWide(50)
-	self.Duration:SetTall(15)
-	self.Duration:SetFont("BigText")
-	self.Duration:SetTextColor(self.Settings.Colours.Value.TextColor)
-
 	self.TextOwner = vgui.Create("DLabel", self )
-	self.TextOwner:Dock(LEFT)
-	self.TextOwner:SetWide(160)
-	self.TextOwner:SetTall(15)
+	self.TextOwner:Dock(TOP)
+	self.TextOwner:SetWide(self:GetSettingWidth())
+	self.TextOwner:DockPadding(5,5,5,5)
+	self.TextOwner:SetTall(20)
 	self.TextOwner:SetFont("MediumText")
 	self.TextOwner:SetTextColor(self.Settings.Colours.Value.TextColor)
 
+	self.Duration = vgui.Create("DLabel", self )
+	self.Duration:Dock(RIGHT)
+	self.Duration:SetWide(40)
+	self.Duration:SetTall(15)
+	self.Duration:SetFont("MediumText")
+	self.Duration:SetTextColor(self.Settings.Colours.Value.TextColor)
+
+
+
 	if (self.Settings.Colours != nil) then
 	  	self.Paint = function()
+
 			if (self.Active) then
 				surface.SetDrawColor(self.Settings.Colours.Value.ItemActiveBackground)
 			else
@@ -57,6 +62,27 @@ function panel:Init()
 			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
 	  	end
 	end
+end
+
+function panel:GetPadding(neg)
+	neg = neg or false
+	local padding = self.Settings.Size.Value.Padding or 0
+
+	if (neg) then
+		padding = padding - (padding * 2)
+	end
+
+	return padding
+end
+
+function panel:GetSettingWidth(set_padding, neg)
+	neg = neg or false
+	return self.Settings.Size.Value.Width + self:GetPadding(neg)
+end
+
+function panel:GetSettingHeight(set_padding, neg)
+	neg = neg or false
+	return self.Settings.Size.Value.Height + self:GetPadding(neg)
 end
 
 --[[
@@ -137,7 +163,7 @@ function panel:SetVideo(video)
 			local remove = menu:AddOption( "Remove Video", function()
 				RunConsoleCommand("media_remove", video.Video )
 			end)
-			remove:SetIcon("icon16/delete.png")
+			remove:SetIcon("icon16/bomb.png")
 		end
 
 		menu:Open()
@@ -148,7 +174,7 @@ end
 	Sets the texts
 --]]
 
-function panel:SetTexts()
+function panel:SetItemText()
 	local mins = math.floor( self.Video.Duration / 60 )
 	local result = (self.Video.Duration - (mins * 60))
 
@@ -156,13 +182,15 @@ function panel:SetTexts()
 		result = "0" .. result
 	end
 
-	self.Text:SetText(self.Video.Title)
+	self.Text:SetText(self.Video.Title .. " by " .. self.Video.Creator )
 	self.Duration:SetText( mins .. ":" .. string.Replace(result,"-", "") )
 
+	local str = self.Video.Owner.Name
+
 	if (!self.Active) then
-		self.TextOwner:SetText(self.Video.Owner.Name)
+		self.TextOwner:SetText("submitted by " .. str)
 	else
-		self.TextOwner:SetText(self.Video.Owner.Name .. " (playing)")
+		self.TextOwner:SetText("submitted by " .. str .. " (is playing)")
 	end
 end
 

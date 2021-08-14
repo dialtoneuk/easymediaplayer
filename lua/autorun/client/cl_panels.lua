@@ -112,14 +112,14 @@ MEDIA.Panels = {
 				return
 			end
 
-			if ( table.IsEmpty(MEDIA.Playlist) or settings.Hide.Value) then
+			if (table.IsEmpty(MEDIA.Playlist) or settings.Hide.Value ) then
 				panel:Hide()
 			else
 				panel:Show()
 			end
 		end,
 		OnContext = function(panel, key, settings, opened)
-			if ((!opened or !settings.Show_In_Context.Value ) or settings.Hide.Value) then
+			if ((!opened or !settings.Show_In_Context.Value or settings.Hide.Value ) and !settings.Show_Constant.Value ) then
 				panel:Hide()
 				return
 			end

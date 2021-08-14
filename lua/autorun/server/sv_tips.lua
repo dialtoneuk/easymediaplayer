@@ -132,7 +132,7 @@ end
 
 function MEDIA.DisplayTip()
 
-	if ( MEDIA.GetSetting("media_tips_enabled").Value == 1) then
+	if ( MEDIA.GetSetting("media_tips_enabled").Value) then
 		for k,v in pairs(player.GetAll()) do
 			local tip = MEDIA.SelectTip(v:IsAdmin())
 
@@ -143,7 +143,7 @@ function MEDIA.DisplayTip()
 	end
 
 	timer.Create("MEDIA.Tips", MEDIA.GetSetting("media_tips_frequency").Value, 1, function()
-		if ( MEDIA.GetSetting("media_tips_enabled").Value == 1) then
+		if ( MEDIA.GetSetting("media_tips_enabled").Value) then
 			MEDIA.DisplayTip()
 		end
 	end)

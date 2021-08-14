@@ -165,7 +165,7 @@ function MEDIA.StartVideo(video, callback)
 	MEDIA.BroadcastCurrentVideo()
 	MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
 
-	if (MEDIA.GetSetting("media_announce_video").Value == 1 ) then
+	if (MEDIA.GetSetting("media_announce_video").Value ) then
 		MEDIA.AnnounceVideo()
 	end
 
@@ -221,7 +221,7 @@ function MEDIA.Begin(video)
 			end
 		end)
 	else
-		if (MEDIA.GetSetting("media_announce_addition").Value == 1) then
+		if (MEDIA.GetSetting("media_announce_addition").Value) then
 			MEDIA.AnnouncePlaylistAddition(video)
 		end
 
@@ -236,7 +236,7 @@ end
 function MEDIA.StopVideo()
 	if (timer.Exists("MEDIA.VideoTimer")) then timer.Remove("MEDIA.VideoTimer") end
 
-	if (MEDIA.GetSetting("media_announce_ending").Value == 1) then
+	if (MEDIA.GetSetting("media_announce_ending").Value) then
 		MEDIA.AnnounceVideoEnding(MEDIA.CurrentVideo)
 	end
 

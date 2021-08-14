@@ -84,9 +84,9 @@ end
 
 --Normally use MyThink instead of Think
 function panel:MyThink()
-	if (self.Settings.DisplayVideo.Value == 0 and self.HTML:IsVisible()) then
+	if (!self.Settings.DisplayVideo.Value and self.HTML:IsVisible()) then
 		self.HTML:Hide()
-	elseif (self.Settings.DisplayVideo.Value == 1 and !self.HTML:IsVisible()) then
+	elseif (self.Settings.DisplayVideo.Value and !self.HTML:IsVisible()) then
 		self.HTML:Show()
 	end
 
@@ -107,7 +107,7 @@ function panel:SetVideo(video)
 	--local link = "https://www.youtube.com/embed/" .. video.Video .. "?rel=0&enablejsapi=1&autoplay=1&controls=0&nohtml5=1&showinfo=0&loop=1&iv_load_policy=3&start=" .. time
 	local mute = 0
 
-	if (MEDIA.GetSetting("media_mute_video").Value == 1) then
+	if (MEDIA.GetSetting("media_mute_video").Value) then
 		mute = 1
 	end
 
@@ -116,7 +116,9 @@ function panel:SetVideo(video)
 
 	--replace this is dumb
 	timer.Simple(1, function()
-		self.SetPlayerVolume()
+		if (self.SetPlayerVolume) then
+			self.SetPlayerVolume()
+		end
 	end)
 end
 

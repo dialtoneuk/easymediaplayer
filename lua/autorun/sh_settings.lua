@@ -155,7 +155,6 @@ local client = {
     },
     media_playlist_hide_active = {
         Value = false,
-        Refresh = false,
         Comment = "If enabled, the current actuve video playing will not be displayed in the playlist"
     },
     media_playlist_autoresize = {
@@ -279,7 +278,7 @@ local client = {
         Max = 2000,
         Value = {
             Width = 500,
-            Height = 500
+            Height = 500,
         },
         SlowUpdate = 0.5
     },
@@ -298,6 +297,7 @@ local client = {
             Width = 750,
             Height = 500,
             RowHeight = 40,
+            Padding = 5,
         }
     },
     media_base_position = {
@@ -363,6 +363,7 @@ local client = {
             Width = 750,
             Height = 500,
             RowHeight = 40,
+            Padding = 5,
         }
     },
     media_search_position = {
@@ -385,7 +386,9 @@ local client = {
             Border = MEDIA.Colours.FadedBlack,
             TextColor = MEDIA.Colours.FadedWhite,
             ItemBackground = MEDIA.Colours.FadedBlack,
-            ItemBorder = MEDIA.Colours.Blue
+            ItemBorder = MEDIA.Colours.Blue,
+            HeaderBackground = MEDIA.Colours.FadedBlack,
+            HeaderBorder = MEDIA.Colours.Gray
         }
     },
     media_playlist_colours = {
@@ -418,7 +421,8 @@ local client = {
         Value = {
             Width = 200,
             Height = 90,
-            RowHeight = 80
+            RowHeight = 80,
+            Padding = 5,
         }
     },
     media_player_position = {
@@ -480,7 +484,8 @@ local client = {
             end,
             Background = MEDIA.Colours.FadedBlack,
             Border = MEDIA.Colours.FadedBlack,
-            TextColor = MEDIA.Colours.Black
+            TextColor = MEDIA.Colours.Black,
+            LoadingBarBackground = MEDIA.Colours.Red
         }
     },
     media_chat_colours = {

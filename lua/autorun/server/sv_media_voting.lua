@@ -167,7 +167,7 @@ function MEDIA.AddToCount()
 
 	MEDIA.CurrentVote.Count = MEDIA.CurrentVote.Count + 1
 
-	if (MEDIA.GetSetting("media_announce_count").Value == 1 ) then
+	if (MEDIA.GetSetting("media_announce_count").Value) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("Votes +1 [" .. MEDIA.CurrentVote.Type .. "] (" .. MEDIA.CurrentVote.Count ..  " / " ..  math.Round( #player.GetAll() / 2 ) .. ")")
 		end
@@ -191,10 +191,12 @@ function MEDIA.StartVote(vote, ply)
 	if ( !MEDIA.Votes[vote]) then return end
 
 	local v = table.Copy(MEDIA.Votes[vote])
+	v.Required = v.Required or 1
 
-	if (v.Required or 0 > #player.GetAll()) then ply:SendMessage("Must have at least " .. v.Required .. " players in the server for this vote") return end
+	local count = table.Count( player.GetAll() )
+	if (v.Required >= count) then ply:SendMessage("Must have at least " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
 
-	local setting =  MEDIA.GetSetting("media_vote_time") or { Value = 10 }
+	local setting = MEDIA.GetSetting("media_vote_time") or { Value = 10 }
 
 	v.Owner = ply
 	v.StartTime = CurTime()
@@ -221,7 +223,7 @@ function MEDIA.ExecuteVote(vote)
 		return
 	end
 
-	if (MEDIA.GetSetting("media_announce_vote").Value == 1 ) then
+	if (MEDIA.GetSetting("media_announce_vote").Value ) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("A vote has been initiated. type !vote to participate!")
 		end

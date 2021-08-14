@@ -27,11 +27,11 @@ function panel:Init()
 	self:BaseInit()
 	self:MakePopup()
 
-	self:SetWide(self.Settings.Size.Value.Width)
-	self:SetHeight(self.Settings.Size.Value.Width)
-	self:SetDeleteOnClose( false )
+	self:SetWide(self:GetSettingWidth())
+	self:SetTall(self:GetSettingHeight())
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
+	self.PropertySheet:SetTall(self:GetSettingHeight())
 	self.PropertySheet:Dock(FILL)
 
 	self.SearchContainer = vgui.Create("DScrollPanel", self.PropertySheet )
@@ -77,7 +77,7 @@ function panel:Init()
 		end
 	end
 
-	self:SetTitle("Youtube Navigator")
+	self:SetTitle("Media Navigator")
 end
 
 --[[
@@ -86,30 +86,29 @@ Updates the size of our elements basically
 
 function panel:MyThink()
 
-	self.Grid:SetWide(self.Settings.Size.Value.Width)
-	self.Grid:SetColWide(self.Settings.Size.Value.Width)
+	self.Grid:SetWide(self:GetSettingWidth())
+	self.Grid:SetColWide(self:GetSettingWidth())
 
 	if (self:HasResized()) then
 		--wide
-		self.Browser:SetWide(self.Settings.Size.Value.Width)
-		self.Browser:SetTall(self.Settings.Size.Value.Height)
+		self.Browser:SetWide(self:GetSettingWidth())
 
 		if (IsValid(self.HistoryGrid)) then
-			self.HistoryGrid:SetColWide(self.Settings.Size.Value.Width)
-			self.HistoryGrid:SetTall(self.Settings.Size.Value.Height)
-			self.HistoryGrid:SetRowHeight(self.Settings.Size.Value.RowHeight + 5 )
+			self.HistoryGrid:SetColWide(self:GetSettingWidth())
+			self.HistoryGrid:SetTall(self:GetSettingHeight())
+			self.HistoryGrid:SetRowHeight(self.Settings.Size.Value.RowHeight + self:GetPadding() )
 		end
 
 		if (IsValid(self.PlayerHistoryGrid)) then
-			self.PlayerHistoryGrid:SetColWide(self.Settings.Size.Value.Width)
-			self.PlayerHistoryGrid:SetTall(self.Settings.Size.Value.Height)
-			self.PlayerHistoryGrid:SetRowHeight( self.Settings.Size.Value.RowHeight + 5 )
+			self.PlayerHistoryGrid:SetColWide(self:GetSettingWidth())
+			self.PlayerHistoryGrid:SetTall(self:GetSettingHeight())
+			self.PlayerHistoryGrid:SetRowHeight( self.Settings.Size.Value.RowHeight + self:GetPadding() )
 		end
 
 
 		--tall
-		self.Grid:SetTall(self.Settings.Size.Value.Height)
-		self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + 5 )
+		self.Grid:SetTall(self:GetSettingHeight())
+		self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self:GetPadding() )
 	end
 end
 
@@ -186,7 +185,7 @@ function panel:CreateBrowserPanel()
 	end
 
 	self.Browser = vgui.Create("DHTML", self.BrowserContainer )
-	self.Browser:SetSize(self.Settings.Size.Value.Width - 25,  self.Settings.Size.Value.Height - 70)
+	self.Browser:SetSize(self:GetSettingWidth() - 25,  self:GetSettingHeight() - 70)
 	self.Browser:OpenURL("http://www.youtube.com")
 	self.Browser:DockPadding(5,5,5,5)
 	self.Browser:Dock(FILL)
@@ -235,7 +234,7 @@ function panel:CreateBrowserPanel()
 
 	self.GrabButton = vgui.Create("DButton", self.Browser)
 	self.GrabButton:Dock(BOTTOM)
-	self.GrabButton:SetWide(self.Settings.Size.Value.Width - 25)
+	self.GrabButton:SetWide(self:GetSettingWidth() - 25)
 	self.GrabButton:SetTall(30)
 	self.GrabButton:SetImage("icon16/tick.png")
 	self.GrabButton:SetText("Grab")
@@ -271,7 +270,7 @@ function panel:CreateSearchPanel()
 	self.Search:Dock(TOP)
 	self.Search:SetPlaceholderText("Will search media.com for valid videos")
 	self.Search:DockMargin(15,15,15,15)
-	self.Search:SetWide(self.Settings.Size.Value.Width)
+	self.Search:SetWide(self:GetSettingWidth())
 	self.Search:SetTall(30)
 
 	self.Search.OnEnter = function()
@@ -323,19 +322,19 @@ function panel:PresentSearchResults(clear)
 	if (!MEDIA.SearchResults) then self:OnEmpty() return end
 	if (table.IsEmpty(MEDIA.SearchResults)) then self:OnEmpty() return end
 
-	self.Grid:SetColWide(self.Settings.Size.Value.Width)
+	self.Grid:SetColWide(self:GetSettingWidth())
 
 	for k,v in pairs(MEDIA.SearchResults) do
 		local pan = vgui.Create("DButton", self.Grid )
-		pan:SetWide(self.Settings.Size.Value.Width - 40)
+		pan:SetWide(self:GetSettingWidth() - 40)
 		pan:SetHeight(self.Settings.Size.Value.RowHeight)
 		pan:SetText("")
 
 		pan.Paint = function()
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
-			surface.DrawRect(0, 0, self.Settings.Size.Value.Width, self.Settings.Size.Value.RowHeight)
+			surface.DrawRect(0, 0, self:GetSettingWidth(), self.Settings.Size.Value.RowHeight)
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0, self.Settings.Size.Value.Width, self.Settings.Size.Value.RowHeight)
+			surface.DrawOutlinedRect(0, 0, self:GetSettingWidth(), self.Settings.Size.Value.RowHeight)
 		end
 
 		pan.DoClick = function()
@@ -348,14 +347,14 @@ function panel:PresentSearchResults(clear)
 		html:SetHTML("<style>body{margin:0}</style><img style='width:100%; height: 100%;' src=" .. v.Thumbnail .. "></img>")
 
 		local text = vgui.Create("DLabel", pan )
-		text:SetWide(self.Settings.Size.Value.Width - 10 )
+		text:SetWide(self:GetSettingWidth(true, true))
 		text:SetPos(5, 5)
 		text:SetText(v.Title)
 		text:SetFont("BigText")
 		text:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 		local text2 = vgui.Create("DLabel", pan )
-		text2:SetWide(self.Settings.Size.Value.Width - 10)
+		text2:SetWide(self:GetSettingWidth(true, true))
 		text2:SetPos(5, 20)
 		text2:SetText(v.Creator)
 		text2:SetFont("MediumText")
@@ -375,8 +374,9 @@ function panel:CreateHistoryPanel()
 	self.FetchButton:SetImage("icon16/world.png")
 	self.FetchButton:Dock(TOP)
 	self.FetchButton:SetTall(30)
-	self.FetchButton:SetWide( self.Settings.Size.Value.Width)
-	self.FetchButton:DockMargin(15,15,15,5)
+	self.FetchButton:SetWide( self:GetSettingWidth())
+	self:SimpleDockMargin(self.FetchButton)
+
 	self.FetchButton.DoClick = function()
 
 		if (self.HistoryPage == 1 ) then
@@ -398,8 +398,9 @@ function panel:CreateHistoryPanel()
 	self.ResetButton:Dock(TOP)
 	self.ResetButton:SetTall(30)
 	self.ResetButton:Hide()
-	self.ResetButton:SetWide( self.Settings.Size.Value.Width)
-	self.ResetButton:DockMargin(15,5,15,5)
+	self.ResetButton:SetWide( self:GetSettingWidth())
+	self:SimpleDockMargin(self.ResetButton)
+
 	self.ResetButton.DoClick = function(this)
 		self:RefreshHistoryGrid()
 		self.HistoryPage = 1
@@ -423,8 +424,9 @@ function panel:CreatePlayerHistoryPanel()
 	self.PlayerFetchButton:SetTall(30)
 	self.PlayerFetchButton:SetImage("icon16/world.png")
 	self.PlayerFetchButton:Dock(TOP)
-	self.PlayerFetchButton:SetWide( self.Settings.Size.Value.Width)
-	self.PlayerFetchButton:DockMargin(15,15,15,5)
+	self.PlayerFetchButton:SetWide( self:GetSettingWidth())
+	self:SimpleDockMargin(self.PlayerFetchButton)
+
 	self.PlayerFetchButton.DoClick = function()
 		if (self.PlayerHistoryPage == 1 ) then
 			self:RefreshPlayerGrid()
@@ -445,8 +447,9 @@ function panel:CreatePlayerHistoryPanel()
 	self.PlayerResetButton:Dock(TOP)
 	self.PlayerResetButton:SetTall(30)
 	self.PlayerResetButton:Hide()
-	self.PlayerResetButton:SetWide( self.Settings.Size.Value.Width)
-	self.PlayerResetButton:DockMargin(15,5,15,5)
+	self.PlayerResetButton:SetWide( self:GetSettingWidth())
+	self:SimpleDockMargin(self.PlayerResetButton)
+
 	self.PlayerResetButton.DoClick = function(this)
 		self:RefreshPlayerGrid()
 		self.PlayerHistoryPage = 1
@@ -471,16 +474,16 @@ function panel:PresentHistory()
 		if ( v.Owner == nil ) then v.Owner = {} end
 
 		local pan = vgui.Create("DButton", self.HistoryGrid )
-		pan:SetWide(self.Settings.Size.Value.Width - 40)
-		pan:SetHeight(self.Settings.Size.Value.RowHeight)
+		pan:SetWide(self:GetSettingWidth(true, true))
+		pan:SetTall(self.Settings.Size.Value.RowHeight)
 		pan:SetText("")
 		pan:SetTooltip( "Likes: " .. v.Likes  .. "\n" .. "Dislikes: " .. v.Dislikes .. "\n" .. "Plays: " .. v.Plays )
 
 		pan.Paint = function()
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
-			surface.DrawRect(0, 0, self:GetWide(), self.Settings.Size.Value.RowHeight)
+			surface.DrawRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight)
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self.Settings.Size.Value.RowHeight)
+			surface.DrawOutlinedRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight)
 		end
 
 		pan.DoClick = function()
@@ -489,14 +492,14 @@ function panel:PresentHistory()
 		end
 
 		local text = vgui.Create("DLabel", pan )
-		text:SetWide(self.Settings.Size.Value.Width - 10 )
+		text:SetWide(self:GetSettingWidth(true, true) - 5 )
 		text:SetPos(5, 5)
 		text:SetText(v.Title)
 		text:SetFont("BigText")
 		text:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 		local text2 = vgui.Create("DLabel", pan )
-		text2:SetWide(self.Settings.Size.Value.Width - 10)
+		text2:SetWide(self:GetSettingWidth(true, true) - 5)
 		text2:SetPos(5, 20)
 		text2:SetText(v.Creator .. " / last played by " .. ( v.Owner.Name or "Unknown" ) .. " (" .. (v.Owner.SteamID or "None" ) .. ")" .. " / last played " .. os.date( "%H:%M:%S - %d/%m/%Y" , v.LastPlayed ))
 		text2:SetFont("MediumText")
@@ -517,16 +520,16 @@ function panel:PresentPlayerHistory()
 		if ( v.Owner == nil ) then v.Owner = {} end
 
 		local pan = vgui.Create("DButton", self.PlayerHistoryGrid )
-		pan:SetWide(self:GetWide() - 40)
-		pan:SetHeight(self.Settings.Size.Value.RowHeight)
+		pan:SetWide(self:GetSettingWidth(true, true))
+		pan:SetTall(self.Settings.Size.Value.RowHeight)
 		pan:SetText("")
 		pan:SetTooltip( "Likes: " .. v.Likes .. "\n" .. "Dislikes: " .. v.Dislikes .. "\n" .. "Plays: " .. v.Plays )
 
 		pan.Paint = function()
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
-			surface.DrawRect(0, 0, self:GetWide(), self.Settings.Size.Value.RowHeight)
+			surface.DrawRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight)
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder )
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self.Settings.Size.Value.RowHeight)
+			surface.DrawOutlinedRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight)
 		end
 
 		pan.DoClick = function()
@@ -535,14 +538,14 @@ function panel:PresentPlayerHistory()
 		end
 
 		local text = vgui.Create("DLabel", pan )
-		text:SetWide(self.Settings.Size.Value.Width - 10 )
+		text:SetWide(self:GetSettingWidth(true, true) - 5 )
 		text:SetPos(5, 5)
 		text:SetText(v.Title)
 		text:SetFont("BigText")
 		text:SetTextColor(self.Settings.Colours.Value.TextColor )
 
 		local text2 = vgui.Create("DLabel", pan )
-		text2:SetWide(self.Settings.Size.Value.Width - 10)
+		text2:SetWide(self:GetSettingWidth(true, true) - 5)
 		text2:SetPos(5, 20)
 		text2:SetText(v.Creator .. " / last played " .. os.date( "%H:%M:%S - %d/%m/%Y" , v.LastPlayed ))
 		text2:SetFont("MediumText")
@@ -561,16 +564,16 @@ function panel:AddPageHeader(that, page, count)
 	count = count or MEDIA.HistoryCount
 
 	local pan = vgui.Create("DButton", that )
-	pan:SetWide(self:GetWide() - 40)
-	pan:SetTall(25)
+	pan:SetWide(self:GetSettingWidth(true, true))
+	pan:SetTall(self.Settings.Size.Value.RowHeight)
 	pan:SetText( "page " .. page)
 	pan:SetFont("BigText")
-	pan:SetTextColor( MEDIA.Colours.White )
+	pan:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	pan.Paint = function()
-		surface.SetDrawColor(MEDIA.Colours.FadedBlack )
+		surface.SetDrawColor(self.Settings.Colours.Value.HeaderBackground)
 		surface.DrawRect(0, 0, pan:GetWide(), pan:GetTall() )
-		surface.SetDrawColor(MEDIA.Colours.Red)
+		surface.SetDrawColor(self.Settings.Colours.Value.HeaderBorder)
 		surface.DrawOutlinedRect(0, 0, pan:GetWide(), pan:GetTall() )
 	end
 
@@ -589,9 +592,9 @@ function panel:RefreshSearchGrid()
 	self.Grid = vgui.Create("DGrid", self.SearchContainer)
 	self.Grid:Dock(FILL)
 	self.Grid:SetCols( 1 )
-	self.Grid:SetColWide(self.Settings.Size.Value.Width)
-	self.Grid:SetWide(self.Settings.Size.Value.Width)
-	self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + 5)
+	self.Grid:SetColWide(self:GetSettingWidth())
+	self.Grid:SetWide(self:GetSettingWidth())
+	self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self:GetPadding())
 end
 
 --[[
@@ -607,7 +610,7 @@ function panel:RefreshHistoryGrid()
 	self.HistoryGrid:Dock(FILL)
 	self.HistoryGrid:SetCols( 1 )
 	self.HistoryGrid:SetColWide( self:GetWide() )
-	self.HistoryGrid:SetRowHeight( self.Settings.Size.Value.RowHeight  + 5 )
+	self.HistoryGrid:SetRowHeight( self.Settings.Size.Value.RowHeight + self:GetPadding())
 end
 
 --[[
@@ -623,7 +626,7 @@ function panel:RefreshPlayerGrid()
 	self.PlayerHistoryGrid:Dock(FILL)
 	self.PlayerHistoryGrid:SetCols( 1 )
 	self.PlayerHistoryGrid:SetColWide( self:GetWide() )
-	self.PlayerHistoryGrid:SetRowHeight(self.Settings.Size.Value.RowHeight + 5 )
+	self.PlayerHistoryGrid:SetRowHeight(self.Settings.Size.Value.RowHeight + self:GetPadding())
 end
 
 vgui.Register("MEDIA.SearchPanel", panel, "MEDIA.Base")

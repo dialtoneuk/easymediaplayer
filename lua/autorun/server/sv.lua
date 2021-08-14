@@ -94,7 +94,7 @@ hook.Add("MEDIA.SettingsPostLoad","MEDIA.MiscStuffLoad", function()
 	MEDIA.LoadBlacklist()
 	MEDIA.CooldownLoop()
 
-	if ( MEDIA.GetSetting("media_tips_enabled").Value == 1) then
+	if ( MEDIA.GetSetting("media_tips_enabled").Value) then
 		MEDIA.DisplayTip()
 	end
 end)
@@ -328,7 +328,7 @@ concommand.Add("media_blacklist_video", function(ply,cmd,args)
 			MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
 		end
 
-		if (MEDIA.GetSetting("media_announce_admin").Value == 1 ) then
+		if (MEDIA.GetSetting("media_announce_admin").Value ) then
 			for k,v in pairs(player.GetAll()) do
 				v:SendMessage("Video blacklisted by admin (" .. ply:GetName() .. ")")
 			end
@@ -401,7 +401,7 @@ concommand.Add("media_play", function (ply, cmd, args)
 	if (tonumber(args[1]) != nil) then return end
 	if (string.len(args[1]) > 32) then return end
 
-	if (MEDIA.GetSetting("media_admin_only").Value == 1 and !ply:IsAdmin()) then
+	if (MEDIA.GetSetting("media_admin_only").Value and !ply:IsAdmin()) then
 		ply:SendMessage("Only admins can use this feature. Sorry.")
 		return
 	end
@@ -464,7 +464,7 @@ concommand.Add("media_delete", function(ply, cmd, args)
 
 	MEDIA.RemoveVideo(args[1])
 
-	if (MEDIA.GetSetting("media_announce_admin").Value == 1 ) then
+	if (MEDIA.GetSetting("media_announce_admin").Value ) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("Video deleted by admin (" .. ply:GetName() .. ")")
 		end

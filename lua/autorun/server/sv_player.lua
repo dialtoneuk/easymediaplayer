@@ -50,14 +50,14 @@ Removes a video
 
 function ply:RemoveVideo(id)
 	if (MEDIA.Playlist[id] == nil) then return end -- already in there
-
 	local video = MEDIA.GetVideo(id)
 
 	if ( video == nil) then return end
 	if (!IsValid(video.Owner)) then return end
 	if (video.Owner:SteamID() != self:SteamID()) then return end --not ours
 
-	MEDIA.RemoveVideo(video)
+	MEDIA.RemoveVideo(id)
+	ply:SendMessage("Video successfully removed!")
 end
 
 --[[

@@ -7,6 +7,7 @@ local panel = {}
 
 panel.Name = "playlist"
 panel.InvertPosition = true
+panel.ActiveRefresh = true
 
 --Playlist items
 panel.Playlist = {}
@@ -23,7 +24,10 @@ Sets up grid and paints our colours
 
 function panel:Init()
 	self:BaseInit()
-	self:SetupGrid()
+
+	if (self.Settings.AutoResize.Value ) then
+		self.RescaleHeight = false
+	end
 
 	if ( self.Settings.Colours != nil) then
 		self.Paint = function()
@@ -33,6 +37,9 @@ function panel:Init()
 			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
 		end
 	end
+
+	self:SetTall(self:GetSettingHeight())
+	self:SetupGrid()
 end
 
 --[[
@@ -44,9 +51,9 @@ function panel:SetupGrid()
 	self.Grid:DockMargin(5,5,5,5)
 	self.Grid:Dock(TOP)
 	self.Grid:SetCols( 1 )
+	self.Grid:SetWide(self:GetWide())
+	self.Grid:SetColWide(self:GetWide())
 	self.Grid:SetRowHeight( self.Settings.Size.Value.RowHeight )
-	self.Grid:SetWide( self:GetWide())
-	self.Grid:SetColWide( self:GetWide())
 end
 
 --[[
@@ -54,12 +61,8 @@ Autromatically removes videos from our playlist
 --]]
 
 function panel:MyThink()
-	if (self.Settings.AutoResize != nil ) then
-		self.Settings.AutoResize = MEDIA.GetSetting("media_playlist_autoresize") or {Value = 0}
-	end
-
-	if (self.Settings.Size != nil and self.Settings.AutoResize.Value == 0) then
-		self:SetTall(self.Settings.Size.Value.Height)
+	if (self.Settings.Size != nil and !self.Settings.AutoResize.Value) then
+		self:SetTall(self:GetSettingHeight())
 	end
 
 	local f = false
@@ -80,8 +83,9 @@ function panel:MyThink()
 			self:UpdateGrid()
 		end
 
-		self.Grid:SetWide( self:GetWide())
-		self.Grid:SetColWide( self:GetWide())
+		self.Grid:SetWide(self:GetWide())
+		self.Grid:SetColWide(self:GetWide())
+		self.Grid:SetRowHeight( self.Settings.Size.Value.RowHeight )
 	end
 end
 
@@ -107,7 +111,7 @@ Displays playlist items
 
 function panel:NoVidPanel()
 	local p = vgui.Create("DButton", self.Grid )
-	p:SetWide(self.Grid:GetWide() - 10)
+	p:SetWide(self.Grid:GetWide() - self:GetPadding())
 	p:SetTall( self.Settings.Size.Value.RowHeight )
 	p:SetText("")
 	p.Paint = function(s)
@@ -148,7 +152,7 @@ function panel:UpdateGrid()
 		local p = vgui.Create("MEDIA.PlaylistItem", self.Grid )
 
 		if (MEDIA.CurrentVideo and MEDIA.CurrentVideo.Video == v.Video) then
-			if (self.Settings.HideActive.Value == 1 ) then
+			if (self.Settings.HideActive.Value) then
 				p:Remove()
 				continue
 			end
@@ -157,16 +161,17 @@ function panel:UpdateGrid()
 		end
 
 		p:SetVideo(v)
-		p:SetWide(self.Grid:GetWide() - 10)
+		p:SetWide(self.Grid:GetWide() - self:GetPadding())
 		p:SetTall(self.Settings.Size.Value.RowHeight)
-		p:SetTexts()
+		p:SetItemText()
+
 		self.Grid:AddItem(p)
 
 		size = size + self.Settings.Size.Value.RowHeight
 	end
 
-	if (self.Settings.AutoResize.Value == 1 and size != 0 ) then
-		self:SetTall(size + 10)
+	if (self.Settings.AutoResize.Value) then
+		self:SetTall(size + self:GetPadding())
 	end
 
 end
