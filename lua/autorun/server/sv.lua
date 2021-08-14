@@ -27,7 +27,7 @@ net.Receive("MEDIA.SearchQuery",function(len, ply)
 	if (MEDIA.HasCooldown(ply, "Search")) then return end
 
 	local query = net.ReadString()
-	local setting = MEDIA.GetSetting("media_max_results") or {Value = 10}
+	local setting = MEDIA.GetSetting("media_max_results")
 
 	MEDIA.AddPlayerCooldown( ply, MEDIA.GetNewCooldown("Search") )
 
@@ -69,7 +69,7 @@ net.Receive("MEDIA.SetAdminSettings",function(len, ply)
 	for k,v in pairs(tab) do
 
 		if (MEDIA.Settings[k] == nil ) then
-			error("player with the steam id of " .. ply:SteamID() .. " has tried to add settings")
+			errorBad("player with the steam id of " .. ply:SteamID() .. " has tried to add settings")
 		end
 
 		MEDIA.Settings[k] = v
@@ -200,12 +200,17 @@ concommand.Add("media_reload_cooldowns", function(ply)
 	MEDIA.LoadCooldowns()
 end)
 
-concommand.Add("media_reload_chat_commands", function(ply)
+concommand.Add("media_reload_chatcommands", function(ply)
 	if (!ply:IsAdmin()) then return end
 
 	MEDIA.LoadChatCommands()
 end)
 
+concommand.Add("media_reload_votes", function(ply)
+	if (!ply:IsAdmin()) then return end
+
+	MEDIA.LoadVotes()
+end)
 
 concommand.Add("media_reload_blacklist", function(ply)
 	if (!ply:IsAdmin()) then return end
@@ -222,7 +227,7 @@ concommand.Add("media_request_personal_history", function(ply, cmd, args)
 	if (MEDIA.HasCooldown(ply, "History")) then return end
 
 	local page = math.abs(tonumber(args[1]) - 1)
-	local setting = MEDIA.GetSetting("media_history_max") or { Value = 10 }
+	local setting = MEDIA.GetSetting("media_history_max")
 
 	local data = ply:GetPersonalHistory(setting.Value, page * setting.Value )
 
@@ -241,7 +246,7 @@ concommand.Add("media_request_history", function(ply, cmd, args)
 	if (MEDIA.HasCooldown(ply, "History")) then return end
 
 	local page = math.abs(tonumber(args[1]) - 1)
-	local setting = MEDIA.GetSetting("media_history_max") or { Value = 10}
+	local setting = MEDIA.GetSetting("media_history_max")
 	local results = {}
 
 	if (table.IsEmpty(MEDIA.History)) then return end
@@ -283,7 +288,7 @@ concommand.Add("media_refresh_settings", function(ply)
 end)
 
 --[[
-Reloads the playlist Playlist
+Reloads the playlist for everyone
 --]]
 
 concommand.Add("media_reload_playlist",function(ply)
@@ -328,7 +333,7 @@ concommand.Add("media_blacklist_video", function(ply,cmd,args)
 			MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
 		end
 
-		if (MEDIA.GetSetting("media_announce_admin").Value ) then
+		if (MEDIA.IsSettingTrue("media_announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
 				v:SendMessage("Video blacklisted by admin (" .. ply:GetName() .. ")")
 			end
@@ -393,6 +398,7 @@ end)
 
 --[[
 Plays a video
+TODO: Move some of this code, support multiple types
 --]]
 
 concommand.Add("media_play", function (ply, cmd, args)
@@ -401,7 +407,7 @@ concommand.Add("media_play", function (ply, cmd, args)
 	if (tonumber(args[1]) != nil) then return end
 	if (string.len(args[1]) > 32) then return end
 
-	if (MEDIA.GetSetting("media_admin_only").Value and !ply:IsAdmin()) then
+	if (MEDIA.IsSettingTrue("media_admin_only") and !ply:IsAdmin()) then
 		ply:SendMessage("Only admins can use this feature. Sorry.")
 		return
 	end
@@ -409,9 +415,8 @@ concommand.Add("media_play", function (ply, cmd, args)
 	local vids = ply:GetVideos()
 	local _c = table.Count(vids)
 	local setting = MEDIA.GetSetting("player_playlist_max")
-	local ignore_limit = MEDIA.GetSetting("admins_ignore_playlist_limit")
 
-	if (vids != nil and !table.IsEmpty(vids) and _c >= setting.Value and (!ply:IsAdmin() or !ignore_limit.Value ) ) then
+	if (vids != nil and !table.IsEmpty(vids) and _c >= setting.Value and (!ply:IsAdmin() or !MEDIA.IsSettingTrue("admins_ignore_playlist_limit") ) ) then
 		ply:SendMessage("You are allowed a maximum of " .. setting.Value .. " in the playlist. You have " .. _c  .. "." )
 		return
 	end
@@ -464,7 +469,7 @@ concommand.Add("media_delete", function(ply, cmd, args)
 
 	MEDIA.RemoveVideo(args[1])
 
-	if (MEDIA.GetSetting("media_announce_admin").Value ) then
+	if (MEDIA.IsSettingTrue("media_admin_only")) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("Video deleted by admin (" .. ply:GetName() .. ")")
 		end

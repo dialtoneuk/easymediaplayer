@@ -131,6 +131,11 @@ function MEDIA.AddSetting(tab)
 		tab.Value = math.Truncate(tab.Value)
 	end
 
+	if (tab.Type  == MEDIA.Types.BOOL) then
+		tab.Value = ( tab.Value == 1 or tab.Value == true )
+	end
+
+
 	MEDIA.Settings[tab.Key][tab.Type] = {
 		Value = tab.Value,
 		DefValue = tab.Value,
@@ -156,13 +161,9 @@ function MEDIA.ChangeSetting(key, value, all_kinds)
 	for k,keys in pairs(MEDIA.Settings) do
 		if (k == key) then
 			for kind,v in pairs(keys) do
-
-				if (kind == MEDIA.Type.BOOL) then
-					if (value == 0 or value == false ) then
-						value = false
-					else
-						value = true
-					end
+				print("test")
+				if (kind == MEDIA.Types.BOOL) then
+					value = ( value == 1 or value == true )
 				end
 
 				if (kind == MEDIA.Type.INT) then
@@ -197,8 +198,13 @@ function MEDIA.ChangeSetting(key, value, all_kinds)
 end
 
 --
-function MEDIA.SettingTrue(key)
+function MEDIA.IsSettingTrue(key)
 	return MEDIA.GetSetting(key, true ).Value == true
+end
+
+function MEDIA.SettingTrue(key)
+	warning("DEPRACATED! call to settings true")
+	return MEDIA.SettingTrue(key)
 end
 
 --[[
@@ -207,18 +213,13 @@ Gets a setting
 
 function MEDIA.GetSetting(key, assure_type)
 	assure_type = assure_type or false
-	if (table.IsEmpty(MEDIA.Settings)) then error("SETTINGS EMPTY") return end
+	if (table.IsEmpty(MEDIA.Settings)) then errorBad("SETTINGS EMPTY") end
 
 	for k,keys in pairs(MEDIA.Settings) do
 		if (k == key ) then
 			for kind,v in pairs(keys) do
-
-				if (assure_type) then
-					if (kind == MEDIA.Type.BOOL and v.Value != true ) then
-						v.Value = false
-					elseif (kind == MEDIA.Type.INT) then
-						v.Value = math.Truncate(v.Value)
-					end
+				if (assure_type and kind == MEDIA.Types.BOOL) then
+					v.Value = ( v.Value == 1 or v.Value == true )
 				end
 
 				return v
@@ -226,7 +227,7 @@ function MEDIA.GetSetting(key, assure_type)
 		end
 	end
 
-	error("setting not found: " .. key)
+	ErrorNoHalt("setting not found: " .. key)
 
 	return {
 		Value = nil,
@@ -258,8 +259,10 @@ if ( SERVER ) then
 					print("reset server convar " .. k .. " to ", v.Value )
 				end
 
-				if (kind == MEDIA.Type.BOOL) then
-					MEDIA.Settings[k][kind].Value = v.DefValue == 1
+				if (kind == MEDIA.Types.BOOL) then
+					MEDIA.Settings[k][kind].Value = ( v.DefValue == 1 or v.DefValue == true )
+				elseif (kind == MEDIA.Types.TABLE ) then
+					MEDIA.Settings[k][kind].Value = table.Copy(v.DefValue)
 				else
 					MEDIA.Settings[k][kind].Value = v.DefValue
 				end
@@ -288,14 +291,14 @@ if ( CLIENT ) then
 					elseif ( kind == MEDIA.Type.BOOL) then
 						convar:SetBool(v.DefValue)
 					end
-
-					print("reset client convar " .. k .. " to ", v.Value )
 				end
 
-				if (kind == MEDIA.Type.BOOL) then
-					MEDIA.Settings[k][kind].Value = v.DefValue == 1
+				if (kind == MEDIA.Types.BOOL) then
+					MEDIA.Settings[k][kind].Value = ( v.DefValue == 1 or v.DefValue == true )
+				elseif (kind == MEDIA.Types.TABLE ) then
+					MEDIA.Settings[k][kind].Value = table.Copy(v.DefValue)
 				else
-					MEDIA.Settings[k][kind].Value = v.DefValue
+					MEDIA.Settings[k][kind].Value = (0 + v.DefValue)
 				end
 			end
 		end
@@ -407,8 +410,8 @@ if (SERVER) then
 				local tab = MEDIA.Settings[k][kind]
 				tab.Value = v.Value
 
-				if (kind == MEDIA.Types.BOOL and v.Value != true) then
-					tab.Value = v.Value == 1
+				if (kind == MEDIA.Types.BOOL) then
+					tab.Value = ( v.Value == 1 or v.Value == true )
 				end
 
 				MEDIA.Settings[k][kind] = tab
@@ -440,8 +443,8 @@ if (CLIENT) then
 				local tab = MEDIA.Settings[k][kind]
 				tab.Value = v.Value
 
-				if (kind == MEDIA.Types.BOOL and v.Value != true ) then
-					tab.Value = v.Value == 1
+				if (kind == MEDIA.Types.BOOL ) then
+					tab.Value = ( v.Value == 1 or v.Value == true )
 				end
 
 				MEDIA.Settings[k][kind] = tab

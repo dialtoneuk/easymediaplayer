@@ -34,9 +34,7 @@ function MEDIA.YoutubeVideoExists(video, callback)
 			callback(true)
 		else
 
-			local setting = MEDIA.GetSetting("youtube_deep_check") or {Value = 0}
-
-			if (setting.Value) then
+			if (MEDIA.IsSettingTrue("youtube_deep_check")) then
 				MEDIA.YoutubeGetDeepInfo(video, function(r)
 					if (table.IsEmpty(r)) then
 						callback(false)

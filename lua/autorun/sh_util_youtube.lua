@@ -16,64 +16,62 @@ function MEDIA.ParseYoutubeURL(url) --bad method
 end
 
 --[[
- Fetches youtube api data (SERVER ONLY)
+ Fetches youtube api data
 --]]
 
-if (SERVER) then
-	function MEDIA.YoutubeAPIFetch(params, callback, one_object)
+function MEDIA.YoutubeAPIFetch(params, callback, one_object)
+	one_object = one_object or false
 
-		one_object = one_object or false
+	local apikey = MEDIA.GetSetting("youtube_api_key")
 
-		local apikey = MEDIA.GetSetting("youtube_api_key")
+	if (CLIENT) then
+		apikey = MEDIA.GetSetting("youtube_client_api_key")
+	end
 
-		if (apikey.Value == apikey.DefValue or false ) then
-			error("youtube_api_key not set! please goto https://console.cloud.google.com/google/ and create a new api key, it must have access to the Youtube 'Data' V3 Api")
-			return
+	if (apikey.Value == apikey.DefValue or false ) then
+		warning("youtube_api_key not set! please goto https://console.cloud.google.com/google/ and create a new api key, it must have access to the Youtube 'Data' V3 Api")
+	end
+
+	params = "https://www.googleapis.com/youtube/v3/" .. params .. "&key=" .. apikey.Value
+
+	http.Fetch( params, function( body, length, headers, code )
+		if ( code == 404) then
+			errorBad(params .. " not found")
 		end
 
-		params = "https://www.googleapis.com/youtube/v3/" .. params .. "&key=" .. apikey.Value
+		if ( code == 400 ) then
+			errorBad("youtube_api_key is invalid!")
+		end
 
-		http.Fetch( params, function( body, length, headers, code )
-			if ( code == 404) then
-				error(params .. " not found")
-				return
-			end
-
-			if ( code == 400 ) then
-				error("youtube_api_key is invalid!")
-				return
-			end
-
-			local json = util.JSONToTable(body) or {
-				error = {
-					"JSON parse failed check body",
-					body = body
-				}
+		local json = util.JSONToTable(body) or {
+			error = {
+				"JSON parse failed check body",
+				body = body
 			}
+		}
 
-			if (json.error) then
-				PrintTable(json.error)
-			elseif (table.IsEmpty(json.items)) then
-				callback({})
-			else
+		if (json.error) then
+			PrintTable(json.error)
+			errorBad("http.fetch error " .. body)
+		elseif (table.IsEmpty(json.items)) then
+			callback({})
+		else
 
-				if (json.items == nil ) then
-					callback(json)
-					return
-				end
-
-				if (one_object) then
-					callback(json.items[1])
-				else
-					callback(json.items)
-				end
+			if (json.items == nil ) then
+				callback(json)
+				return
 			end
-		end, function( message )
-			print(params .. " failed")
-		end, {["accept-encoding"] = "gzip, deflate"})
-	end
-end
 
+			if (one_object) then
+				callback(json.items[1])
+			else
+				callback(json.items)
+			end
+		end
+	end, function( message )
+		print(params .. " failed")
+	end, {["accept-encoding"] = "gzip, deflate"})
+end
 --[[
 	Converts ISO time to a numerical value
 --]]

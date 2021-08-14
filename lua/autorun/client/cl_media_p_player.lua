@@ -7,20 +7,22 @@
 local panel = {}
 panel.Name = "player"
 panel.Video = {}
+
+--the current
 panel._CurrentOwnerName = nil
 
 --Extra Settings
-panel.Settings = {
-	DisplayVideo = MEDIA.GetSetting("media_display_video"),
-	Muted =  MEDIA.GetSetting("media_mute_video"),
-	ShowConstant =  MEDIA.GetSetting("media_player_show_constant"),
+panel.RefreshSettings = {
+	DisplayVideo = "display_video",
+	Muted = "mute_video",
+	ShowConstant =  "show_constant",
 }
 
 --Our initial setup
 
 function panel:Init()
+
 	self:BaseInit()
-	self:SetPopupStayAtBack(true)
 
 	self.HTML = vgui.Create("DHTML", self)
 	self.HTML:Dock(FILL)

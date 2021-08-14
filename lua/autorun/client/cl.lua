@@ -114,7 +114,7 @@ Hooks
 
 hook.Add("InitPostEntity", "MEDIA.LoadClientAddon", function()
 	MEDIA.LocalPlayer = LocalPlayer()
-	MEDIA.CreateClientPanels()
+	MEDIA.InstantiatePanels(true)
 end)
 
 hook.Add("OnContextMenuOpen", "MEDIA.ContextMenu", function()
@@ -421,6 +421,7 @@ net.Receive("MEDIA.End", function()
 	local panel = MEDIA.GetPanel("PlaylistPanel")
 	panel:UpdatePlaylist()
 	panel:UpdateGrid()
+	panel:EmptyPanel()
 
 	local setting = MEDIA.GetSetting("media_player_hide")
 	panel = MEDIA.GetPanel("PlayerPanel")

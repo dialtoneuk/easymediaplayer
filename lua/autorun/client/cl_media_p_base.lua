@@ -1,36 +1,73 @@
 local base = {}
 
 base.Name = "base"
+base.ActiveRefresh = true
+base.InvertXPosition = false
+base.InvertYPosition = false
 base.RescaleWidth = true
 base.RescaleHeight = true
-base.ActiveRefresh = true
 base._Reposition = true
-base.InvertPosition = false
-base._Resized = false
+base._Rescaled = false
 base._RowHeight = 0
 base._Padding = 0
 
---[[
-Init
-]]
-function base:BaseInit()
-    self:RefreshPanelSettings()
-    self:Reposition()
-    self:ResizePanel()
-end
+base._OnChange = {
+    Width = function(p)
+        if (p.RescaleWidth and p:GetWide() != p:GetPaddedWidth()) then
+            p:SetWide(p:GetPaddedWidth())
+            p._Rescaled = true
+        end
+        p:SetWide(p:GetPaddedWidth())
+    end,
+    Height = function(p)
+        if (p.RescaleHeight and p:GetTall() != p:GetPaddedHeight()) then
+            p:SetTall(p:GetPaddedHeight())
+            p._Rescaled = true
+        end
+    end
+}
+
+base._RefreshSettings = {
+    Colours = "colours",
+    Position = "position",
+    Size = "size"
+}
 
 function base:Init()
     self:CacheThink()
 end
 
+function base:BaseInit()
+    self.OnChange = table.Merge(table.Copy(self._OnChange), self.OnChange or {})
+    self.RefreshSettings = table.Merge(table.Copy(self._RefreshSettings), self.RefreshSettings or {})
+
+    self:RefreshPanelSettings()
+    self:Reposition()
+    self:ExecuteOperations()
+end
+
+function base:IgnoreRescaling(height, width)
+
+    self.RescaleHeight = !height
+    self.RescaleWidth = !width
+end
+
+
 --only use in panel:MyThink()
-function base:HasResized()
-    return self._Resized == true
+function base:HasRescaled()
+    return self._Rescaled == true
 end
 
 --another way of saying it
 function base:HasRefreshed()
-    return self:HasResized()
+    return self:HasRescaled()
+end
+
+function base:InvertPosition(x, y )
+    x = x or false
+    y = y or false
+    self.InvertXPosition = x
+    self.InvertYPosition = y
 end
 
 --[[
@@ -49,7 +86,7 @@ function base:CacheThink()
     self._Think = self.Think
 
     self.Think = function()
-        self._Resized = false
+        self._Rescaled = false
 
         if (self._Think != nil) then
             self:_Think()
@@ -63,14 +100,16 @@ function base:CacheThink()
     end
 end
 
---[[
-
-*]]
+--rerefesh _OnChange settings
 function base:RefreshPanelSettings()
     self.Settings = self.Settings or {}
-    self.Settings.Colours = MEDIA.GetSetting(self:GetSettingKey("colours"))
-    self.Settings.Position = MEDIA.GetSetting(self:GetSettingKey("position"))
-    self.Settings.Size = MEDIA.GetSetting(self:GetSettingKey("size"))
+    for k,v in pairs(self.RefreshSettings) do
+        self.Settings[k] = MEDIA.GetSetting(self:GetSettingKey(v))
+    end
+end
+
+function base:IgnoreReposition()
+    self._Reposition = false
 end
 
 --[[
@@ -81,29 +120,34 @@ function base:BaseThink()
         self:RefreshPanelSettings()
     end
 
-    self:ResizePanel()
+    self:ExecuteOperations()
+    self:Reposition()
+end
 
-    if (self._Reposition) then
-        self:Reposition()
+function base:ExecuteOperations()
+
+    if (self.OnChange == nil) then return end
+    for k,v in pairs(self.OnChange) do
+        self.OnChange[k](self)
     end
+end
+
+function base:ResizePanel()
+    self:ExecuteOperations()
+end
+
+function base:RescalePanel()
+    self:ExecuteOperations()
 end
 
 function base:SimpleDockPadding(element)
-    element = element or false
-    if (!element) then
-        self:DockPadding(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
-    else
-        element:DockPadding(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
-    end
+    element = element or self
+    element:DockPadding(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
 end
 
 function base:SimpleDockMargin(element)
-    element = element or false
-    if (!element) then
-        self:DockMargin(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
-    else
-        element:DockMargin(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
-    end
+    element = element or self
+    element:DockMargin(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
 end
 
 function base:GetPadding(neg)
@@ -119,73 +163,50 @@ function base:GetPadding(neg)
         padding = padding - (padding * 2)
     end
 
-    return padding
+    return math.Truncate(padding)
 end
 
 function base:IsSettingTrue(key)
 
     if (self.Settings[key] == nil ) then
-        error(key .. " is nil")
+        errorBad(key .. " is nil")
     end
 
     return self.Settings[ key ].Value == true or self.Settings[ key ].Value == 1
 end
 
-function base:GetSettingWidth(set_padding, neg)
+function base:GetPaddedWidth(set_padding, neg)
     neg = neg or false
-    return self.Settings.Size.Value.Width + self:GetPadding(neg)
+    return math.Truncate(self.Settings.Size.Value.Width + self:GetPadding(neg))
 end
 
-function base:GetSettingHeight(set_padding, neg)
+function base:GetPaddedHeight(set_padding, neg)
     neg = neg or false
-    return self.Settings.Size.Value.Height + self:GetPadding(neg)
-end
-
-function base:ResizePanel()
-    if (self.RescaleWidth and self:GetWide() != math.floor(self:GetSettingWidth())) then
-        self:SetWide(self:GetSettingWidth())
-        self._Resized = true
-    end
-
-    if (self.RescaleHeight and self:GetTall() != math.floor(self:GetSettingHeight())) then
-        self:SetTall(self:GetSettingHeight())
-        self._Resized = true
-    end
-
-    if (self.Settings.Size.Value.RowHeight != nil and self.Settings.Size.Value.RowHeight != self._RowHeight ) then
-        self._RowHeight =  self.Settings.Size.Value.RowHeight
-        self._Resized = true
-    end
-
-    if (self.Settings.Size.Value.Padding != nil and self.Settings.Size.Value.Padding != self._Padding ) then
-        self._Padding =  self.Settings.Size.Value.Padding
-        self._Resized = true
-    end
+    return math.Truncate(self.Settings.Size.Value.Height + self:GetPadding(neg))
 end
 
 --[[
 Sets the vote position
 ]]
 function base:Reposition()
-    if (self.Centered or self.Settings.Position == nil) then return end
+    if (!self._Reposition or self.Centered or self.Settings.Position == nil) then return end
 
-    local x = self.Settings.Position.Value.X or 10
-    local y = self.Settings.Position.Value.Y or 10
+    local x = self.Settings.Position.Value.X
+    local y = self.Settings.Position.Value.Y
     x = math.floor(x)
     y = math.floor(y)
 
-    if (self:GetX() != x or self:GetY() != y) then
-        if (!self.InvertPosition) then
-            self:SetPos(x, y)
-        else
-            self:SetPos(ScrW() - (self:GetSettingWidth() + self.Settings.Position.Value.X), self.Settings.Position.Value.Y)
-        end
+    if (!self.InvertXPosition) then
+        self:SetPos(x, y)
+    else
+        self:SetPos(ScrW() - (self:GetPaddedWidth() + self.Settings.Position.Value.X), self.Settings.Position.Value.Y)
     end
 end
 
 --copy it
 local panel = table.Copy(base)
 local button = table.Copy(base)
+
 --Register
 vgui.Register("MEDIA.Base", base, "DFrame")
 vgui.Register("MEDIA.BasePanel", panel, "DPanel") --register an exact copy but for a panel too

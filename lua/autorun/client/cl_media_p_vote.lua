@@ -16,6 +16,7 @@ Create vote panel
 --]]
 
 function panel:Init()
+
 	self:BaseInit()
 	self:DockPadding(15,15,15,15)
 

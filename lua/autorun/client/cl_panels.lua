@@ -18,6 +18,12 @@ MEDIA.Panels = {
 				Client = MEDIA.Settings or {}
 			})
 			panel:MakePopup()
+
+			--refreshes
+			panel.OnClose = function(self)
+				RunConsoleCommand("media_create_cl")
+				self:Hide()
+			end
 		end
 	},
 	AdminPanel = {
@@ -72,12 +78,11 @@ MEDIA.Panels = {
 			end
 		end,
 		OnContext = function(panel, key, settings, opened)
-			if (panel:IsVisible()) then
-				panel:MakePopup()
-				panel:SetPopupStayAtBack(true)
-				panel:SetKeyboardInputEnabled(opened)
-				panel:SetMouseInputEnabled(opened)
-			end
+			panel:SetKeyboardInputEnabled(opened)
+			panel:SetMouseInputEnabled(opened)
+		end,
+		OnScoreboard =  function(panel, key, settings, opened)
+			MEDIA.LoadedPanels[key].OnContext(panel,key,settings,opened)
 		end
 	},
 	VotePanel = {
@@ -117,27 +122,21 @@ MEDIA.Panels = {
 			panel:Reposition()
 			panel:SetPos(ScrW() - settings.Position.Value.X, settings.Position.Value.Y)
 
-			if (settings.Show_Constant.Value) then
-				print("constant")
-				panel:Show()
-				return
-			end
-
-			if (table.IsEmpty(MEDIA.Playlist) or settings.Hide.Value ) then
+			if (table.IsEmpty(MEDIA.Playlist) and !settings.Show_Constant.Value ) then
 				panel:Hide()
-			else
+			elseif (!settings.Hide.Value and settings.Show_Constant.Value) then
 				panel:Show()
 			end
 		end,
 		OnContext = function(panel, key, settings, opened)
-			if ((!opened or !settings.Show_In_Context.Value or settings.Hide.Value ) and !settings.Show_Constant.Value ) then
+			if ((!opened or !settings.Show_In_Context.Value or settings.Hide.Value) and !settings.Show_Constant.Value ) then
 				panel:Hide()
 				return
 			end
 
 			if (panel:IsVisible()) then
 				panel:MakePopup()
-				panel:SetPopupStayAtBack(true)
+				panel:SetPopupStayAtBack(opened)
 				panel:SetKeyboardInputEnabled(opened)
 				panel:SetMouseInputEnabled(opened)
 			end

@@ -24,7 +24,7 @@ function panel:Init()
 	if (!MEDIA.LocalPlayer:IsAdmin()) then self:Remove() return end
 
 	self:SetTitle("MEDIA Admin Panel")
-	self:SetSize(self:GetSettingWidth(), self:GetSettingHeight())
+	self:SetSize(self:GetPaddedWidth(), self:GetPaddedHeight())
 	self:SetDeleteOnClose( false )
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
@@ -48,7 +48,7 @@ end
 --]]
 
 function panel:MyThink()
-	if (self:HasResized()) then
+	if (self:HasRescaled()) then
 		self.List:SetWide(self:GetWide() - 40)
 		self.List:SetTall(self:GetTall() - (self:GetTall() / 4))
 	end

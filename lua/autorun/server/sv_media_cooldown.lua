@@ -81,7 +81,7 @@ end
 
 function MEDIA.CooldownsAreDisabled()
 
-	return MEDIA.GetSetting("media_cooldown_enabled").Value == false
+	return !MEDIA.IsSettingTrue("media_cooldown_enabled")
 end
 
 --[[
@@ -155,7 +155,7 @@ end
 --]]
 
 function MEDIA.CooldownLoop()
-	local setting = MEDIA.GetSetting("media_cooldown_refreshrate") or {Value = 1}
+	local setting = MEDIA.GetSetting("media_cooldown_refreshrate")
 
 	--So we update our time
 	timer.Create("MEDIA.CooldownLoop", setting.Value, 1, function()

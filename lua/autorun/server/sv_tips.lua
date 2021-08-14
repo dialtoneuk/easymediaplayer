@@ -54,7 +54,7 @@ function MEDIA.LoadCustomTips()
 	local tip = MEDIA.GetSetting("media_custom_tips")
 
 	if (tip.Type != MEDIA.SettingTypes.TABLE ) then
-		error("invalid type")
+		errorBad("invalid type")
 	end
 
 	for k,v in pairs(tip.Value) do
@@ -76,8 +76,7 @@ function MEDIA.SelectTip(is_admin)
 	while (true) do
 
 		if (count <= 0 ) then
-			error("failed to select tip")
-			break
+			errorBad("failed to select tip")
 		end
 
 		local result = MEDIA.Tips[math.random( 1, #MEDIA.Tips )]
@@ -102,14 +101,12 @@ function MEDIA.ParseTipBody(tip)
 
 	if (type(tip) == "table") then
 		if (tip.body == nil) then
-			error("invalid")
-			return nil
+			errorBad("invalid")
 		end
 
 		str = tip.body
 	elseif (type(tip) != "string") then
-		error("invalid")
-		return nil
+		errorBad("invalid")
 	end
 
 	for capture in string.gmatch(str, "%{(.-)%}") do
@@ -132,7 +129,7 @@ end
 
 function MEDIA.DisplayTip()
 
-	if ( MEDIA.GetSetting("media_tips_enabled").Value) then
+	if ( MEDIA.IsSettingTrue("media_tips_enabled")) then
 		for k,v in pairs(player.GetAll()) do
 			local tip = MEDIA.SelectTip(v:IsAdmin())
 

@@ -7,7 +7,6 @@ local panel = {}
 
 --panel settings
 panel.Name = "settings"
-panel._Reposition = false
 
 --client settings
 panel.ClientSettings = {
@@ -35,7 +34,8 @@ panel.AdminSettings = {
 	media_reload_cooldowns = "Reload Cooldowns (can fix some time issues)",
 	media_reload_playlist = "Reload Playlist (can fix some issues)",
 	media_reload_blacklist = "Reload Blacklist",
-	media_reload_chat_commands = "Reload Chat commands",
+	media_reload_chatcommands = "Reload Chat Commands",
+	media_reload_votes = "Reload Votes",
 	media_save_settings = "Save Server Settings",
 	media_admin_panel = "Show Admin Panel",
 }
@@ -47,11 +47,11 @@ Init
 --]]
 
 function panel:Init()
+
 	self:BaseInit()
 
 	if ( MEDIA.Settings == nil or table.IsEmpty(MEDIA.Settings)) then
-		error("no settings")
-		return
+		errorBad("no settings")
 	end
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
@@ -99,7 +99,7 @@ end
 --]]
 
 function panel:MyThink()
-	if (self:HasResized() and MEDIA.Settings != nil ) then
+	if (self:HasRescaled() and MEDIA.Settings != nil ) then
 		self.PropertySheet:Remove()
 		self.PropertySheet = vgui.Create("DPropertySheet", self )
 		self.PropertySheet:Dock(FILL)
@@ -315,7 +315,7 @@ function panel:UpdateTable(title, v, admin)
 		self.Comments[title]:Show()
 	else
 		self.Comments[title]:Hide()
-		self:ResizePanel()
+		self:RescalePanel()
 	end
 
 	local typ = "Generic"

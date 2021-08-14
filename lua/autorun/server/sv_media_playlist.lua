@@ -11,7 +11,7 @@ MEDIA.MediaType = MEDIA.MediaType or {
 }
 
 --Copy table
-MEDIA.DefaultVideo = {
+MEDIA.BaseVideo = {
 	Video = "38enrQGRDhA",
 	Title = "Default",
 	Creator = "Default",
@@ -83,7 +83,7 @@ Copys a new video table
 --]]
 
 function MEDIA.GetNewVideo()
-	return table.Copy(MEDIA.DefaultVideo)
+	return table.Copy(MEDIA.BaseVideo)
 end
 
 --[[

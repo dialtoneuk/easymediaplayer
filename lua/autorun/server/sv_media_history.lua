@@ -16,6 +16,7 @@ function MEDIA.AddToHistory(video)
 		return
 	end
 
+	--replace with merge
 	MEDIA.History[video.Video] = {
 		Video = video.Video,
 		Title = video.Title,

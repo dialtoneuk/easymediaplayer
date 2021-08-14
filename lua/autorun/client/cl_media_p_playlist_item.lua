@@ -24,7 +24,7 @@ function panel:Init()
 	self.Text:SetFont("BigText")
 	self.Text:Dock(TOP)
 	self.Text:SetWrap(true)
-	self.Text:SetWide(self:GetSettingWidth())
+	self.Text:SetWide(self:GetPaddedWidth())
 	self.Text:SetTall(40)
 	self.Text:SetTextColor(self.Settings.Colours.Value.TextColor)
 
@@ -37,13 +37,13 @@ function panel:Init()
 
 	self.TextOwner = vgui.Create("DLabel", self )
 	self.TextOwner:Dock(TOP)
-	self.TextOwner:SetWide(self:GetSettingWidth())
+	self.TextOwner:SetWide(self:GetPaddedWidth())
 	self.TextOwner:SetFont("MediumText")
 	self.TextOwner:SetTextColor(self.Settings.Colours.Value.TextColor)
 	self:SimpleDockPadding(self.TextOwner)
 
 	if (self.Settings.Colours != nil) then
-	  	self.Paint = function()
+	  	self.Paint = function(p)
 
 			if (self.Active) then
 				surface.SetDrawColor(self.Settings.Colours.Value.ItemActiveBackground)
@@ -51,9 +51,9 @@ function panel:Init()
 				surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 			end
 
-			surface.DrawRect(0, 0, self:GetSettingWidth(), self.Settings.Size.Value.RowHeight )
+			surface.DrawRect(0, 0, p:GetWide(), self.Settings.Size.Value.RowHeight )
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0, self:GetSettingWidth(), self.Settings.Size.Value.RowHeight )
+			surface.DrawOutlinedRect(0, 0, p:GetWide(), self.Settings.Size.Value.RowHeight )
 	  	end
 	end
 

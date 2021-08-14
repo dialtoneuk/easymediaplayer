@@ -1,21 +1,27 @@
 --Current vote
 MEDIA.CurrentVote = MEDIA.CurrentVote or {}
 
---All votes
+--Computed votes are put here and are not effected by file changes making this file easy to work with
 MEDIA.Votes = MEDIA.Votes or {
-	--base
-	_Vote = {
-		Owner = {},  --ply entity, steam id on client
-		Type = "Default", --type of Vote
-		OnSuccess = function()
-			--nothing
-		end,
-		OnFailire = function()
-			--nothing
-		end,
-		Time = 0, --set by setting
-		Count = 0 --votes
-	}
+
+}
+
+--base vote to copy off of so we don't get missing fields
+MEDIA.BaseVote = {
+	Owner = {},  --ply entity, steam id on client
+	Type = "Default", --type of Vote
+	Required = 1,
+	OnSuccess = function()
+		--nothing
+	end,
+	OnFailire = function()
+		--nothing
+	end,
+	OnStart = function()
+		return true
+	end,
+	Time = 0, --set by setting
+	Count = 0 --votes
 }
 
 --[[
@@ -25,61 +31,78 @@ MEDIA.Votes = MEDIA.Votes or {
 	that works.
 --]]
 
+MEDIA.RegisteredVotes = {
+	--this is the type of vote and what we'll use to grab this vote
+	VoteSkip = {
+		Time = 30,
+		OnSuccess = function()
+			MEDIA.SkipVideo()
+
+			for k,v in pairs(player.GetAll()) do
+				v:SendMessage("Vote Passed! Skipping video..")
+			end
+		end,
+		OnFailire = function()
+			for k,v in pairs(player.GetAll()) do
+				v:SendMessage("Vote has not been skipped!")
+			end
+		end
+	},
+	--!voteban
+	VoteBlacklist = {
+		Time = 45,
+		Required = 3, --two thirds of the server must agree
+		OnSuccess = function()
+			MEDIA.AddToBlacklist(MEDIA.CurrentVideo)
+			MEDIA.SkipVideo()
+
+			for k,v in pairs(player.GetAll()) do
+				v:SendMessage("Vote Passed! Blacklisting video..")
+			end
+		end,
+		OnFailire = function()
+			for k,v in pairs(player.GetAll()) do
+				v:SendMessage("Video has not been blacklisted!")
+			end
+		end
+	}
+}
+
+--[[
+
+]]--
+
 function MEDIA.LoadVotes()
 
-	--Skip video
-	local vote = MEDIA.NewKindOfVote()
+	hook.Call("MEDIA.PreloadRegisteredVotes")
 
-	vote.Type = "VoteSkip" --this is not the commands name, but its internal type name. Look above in commands to see how we invoke this command by using the value of this key
-	vote.Time = 30 --this is a default time and can be overridden in admin settings
-	vote.OnSuccess = function()
-		MEDIA.SkipVideo()
+	for k,v in pairs(MEDIA.RegisteredVotes) do
+		v = table.Merge(MEDIA.GetNewVote(), v)
+		v.Type = k
 
-		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("Vote Passed! Skipping video..")
-		end
+		--register it
+		MEDIA.RegisterVote(v)
 	end
+end
 
-	vote.OnFailire = function()
-		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("Vote has not been skipped!")
+function MEDIA.AddRegisteredVotes(tab)
+
+	for k,v in pairs(tab) do
+
+		if (MEDIA.RegisteredVotes[k] != nil ) then
+			warning(k .. " is an already registered vote")
 		end
+
+		MEDIA.RegisteredVotes[k] = v
 	end
-
-	--must copy this too
-	MEDIA.RegisterVote(vote)
-
-	--blacklist video
-	vote = MEDIA.NewKindOfVote()
-
-	--This is the "key" or name of this vote, so the command to excute this would be media_start_vote VoteBlacklist
-	vote.Type = "VoteBlacklist"
-	vote.Time = 30
-	vote.Required = 3 -- three thirds of the server
-	vote.OnSuccess = function()
-		MEDIA.AddToBlacklist(MEDIA.CurrentVideo)
-		MEDIA.SkipVideo()
-
-		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("Vote Passed! Blacklisting video..")
-		end
-	end
-
-	vote.OnFailire = function()
-		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("Video has not been blacklisted!")
-		end
-	end
-
-	MEDIA.RegisterVote(vote)
 end
 
 --[[
 returns copy of the table above
 --]]
 
-function MEDIA.NewKindOfVote()
-	return table.Copy(MEDIA.Votes._Vote)
+function MEDIA.GetNewVote()
+	return table.Copy(MEDIA.BaseVote)
 end
 
 --[[
@@ -115,16 +138,15 @@ function MEDIA.SendVoteToPlayer( ply )
 
 
 	net.Start("MEDIA.NewVote")
-		net.WriteTable({
+		--remove the owner field
+		local t = table.Merge({
 			Owner = {
-				Name = ply:GetName()
+				Name = ply:GetName(),
+				SteamID = ply:SteamID()
 			},
-			StartTime = MEDIA.CurrentVote.StartTime,
-			Type = MEDIA.CurrentVote.Type,
-			Count = MEDIA.CurrentVote.Count,
-			Time = MEDIA.CurrentVote.Time,
-			Required = MEDIA.CurrentVote.Required
-		})
+		}, MEDIA.CurrentVote)
+
+		net.WriteTable(t)
 	net.Send(ply)
 end
 
@@ -142,8 +164,6 @@ Adds a kind of vote to the table
 --]]
 
 function MEDIA.RegisterVote(vote)
-	if (MEDIA.Votes[vote.Type]) then return end
-
 	MEDIA.Votes[vote.Type] = vote
 end
 
@@ -168,7 +188,7 @@ function MEDIA.AddToCount()
 
 	MEDIA.CurrentVote.Count = MEDIA.CurrentVote.Count + 1
 
-	if (MEDIA.GetSetting("media_announce_count").Value) then
+	if (MEDIA.IsSettingTrue("media_announce_count")) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("Votes +1 to " .. MEDIA.CurrentVote.Type .. " (" .. MEDIA.CurrentVote.Count ..  " / " .. MEDIA.CurrentVote.Required  .. ")")
 		end
@@ -203,14 +223,21 @@ function MEDIA.StartVote(vote, ply)
 
 	if (v.Required >= count) then ply:SendMessage("Must have at over " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
 
+	if (v.OnStart != nil ) then
+		local result = v.OnStart()
+
+		if (result == false ) then
+			ply:SendMessage("Unable to start vote")
+			return
+		end
+	end
+
 	local setting = MEDIA.GetSetting("media_vote_time") or { Value = 10 }
 
 	v.Owner = ply
 	v.StartTime = CurTime()
 	v.Time = setting.Value
 	v.CurrentVideo = MEDIA.CurrentVideo or {}
-
-	PrintTable(v)
 
 	MEDIA.ExecuteVote(v)
 end
@@ -232,7 +259,7 @@ function MEDIA.ExecuteVote(vote)
 		return
 	end
 
-	if (MEDIA.GetSetting("media_announce_vote").Value ) then
+	if (MEDIA.IsSettingTrue("media_announce_vote")) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("A vote has been initiated. type !vote to participate! " .. vote.Required .. " votes are required for this to pass!")
 		end

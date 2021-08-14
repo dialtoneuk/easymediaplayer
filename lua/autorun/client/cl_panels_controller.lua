@@ -119,6 +119,7 @@ function MEDIA.SetupPanel(settings, panel, key)
 	panel:SetPos(settings.Position.Value.X, settings.Position.Value.Y)
 
 	if (settings.Centered.Value == true ) then
+		panel:IgnoreReposition()
 		panel:Center()
 	end
 
@@ -142,6 +143,6 @@ end
 ]]--
 
 function MEDIA.CreateClientPanels()
-	print("DEPRACATED! CreateClientPanels call somewhere")
+	warning("DEPRACATED! CreateClientPanels call somewhere")
 	MEDIA.InstantiatePanels(true)
 end

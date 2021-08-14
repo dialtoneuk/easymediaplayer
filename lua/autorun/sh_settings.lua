@@ -149,7 +149,7 @@ local client = {
             Video_1 = "DRfidJNts6U"
         }
     },
-    media_display_video = {
+    media_player_display_video = {
         Value = true,
         Comment = "Displays the video"
     },
@@ -157,7 +157,7 @@ local client = {
         Value = false,
         Comment = "If enabled, the current actuve video playing will not be displayed in the playlist"
     },
-    media_playlist_autoresize = {
+    media_playlist_auto_resize = {
         Value = true,
         Comment = "Autosize the playlist to fit its elements"
     },
@@ -167,7 +167,11 @@ local client = {
     },
     media_playlist_centered = {
         Value = false,
-        Comment = " (unused)"
+        Comment = "(unused)"
+    },
+    media_playlist_invert_position = {
+        Value = true,
+        Comment = "(unused)"
     },
     media_player_centered = {
         Value = false,
@@ -206,7 +210,7 @@ local client = {
         Comment = "Hides the player completely"
     },
     media_player_show_constant = {
-        Value = true,
+        Value = false,
         Comment = "Shows the player constantly"
     },
     media_search_hide = {
@@ -229,7 +233,7 @@ local client = {
         Value = false,
         Comment = "Useful for designing your look, will display all panels used by Easy MEDIA"
     },
-    media_mute_video = {
+    media_player_mute_video = {
         Value = false,
         Comment = "Mutes the audio"
     },
@@ -424,9 +428,10 @@ local client = {
         Max = 1000,
         Value = {
             Width = 350,
-            Height = 90,
+            Height = 100,
             RowHeight = 80,
             Padding = 5,
+            RowSpacing = 10
         }
     },
     media_player_position = {
