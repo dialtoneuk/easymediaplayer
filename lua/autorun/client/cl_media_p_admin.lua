@@ -13,6 +13,10 @@ panel._Reposition = false
 --data
 panel.Selected = {}
 
+panel.Settings = {
+	Options = "options"
+}
+
 --[[
 Init
 --]]
@@ -23,7 +27,6 @@ function panel:Init()
 
 	if (!MEDIA.LocalPlayer:IsAdmin()) then self:Remove() return end
 
-	self:SetTitle("MEDIA Admin Panel")
 	self:SetSize(self:GetPaddedWidth(), self:GetPaddedHeight())
 	self:SetDeleteOnClose( false )
 
@@ -40,6 +43,12 @@ function panel:Init()
 			surface.SetDrawColor(self.Settings.Colours.Value.Border)
 			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
 		end
+	end
+
+	if (self.Settings.Options.Value.DisplayTitle) then
+		self:SetTitle("Easy Media Admin Settings")
+	else
+		self:SetTitle("")
 	end
 end
 

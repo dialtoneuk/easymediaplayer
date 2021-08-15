@@ -41,16 +41,9 @@ function panel:Init()
 	self.PropertySheet:Dock(FILL)
 
 	self.SearchContainer = vgui.Create("DScrollPanel", self.PropertySheet )
-	self.SearchContainer.Paint = function() end
-
 	self.ServerHistoryContainer = vgui.Create("DScrollPanel", self.PropertySheet )
-	self.ServerHistoryContainer.Paint = function() end
-
 	self.PlayerHistoryContainer = vgui.Create("DScrollPanel", self.PropertySheet )
-	self.PlayerHistoryContainer.Paint = function() end
-
 	self.BrowserContainer = vgui.Create("DScrollPanel", self.PropertySheet )
-	self.BrowserContainer.Paint = function() end
 
 	self:CreateBrowserPanel()
 	self:CreateSearchPanel()
@@ -58,10 +51,7 @@ function panel:Init()
 	self:CreatePlayerHistoryPanel()
 
 	self.PropertySheet:AddSheet("Search", self.SearchContainer, "icon16/wand.png")
-
-	local browser_tab = self.PropertySheet:AddSheet("Basic Browser", self.BrowserContainer, "icon16/page_white_world.png")
-	browser_tab.Panel.Browser = true
-
+	self.PropertySheet:AddSheet("Basic Browser", self.BrowserContainer, "icon16/page_white_world.png")
 	self.PropertySheet:AddSheet("Player History", self.PlayerHistoryContainer, "icon16/user.png")
 	self.PropertySheet:AddSheet("Server History", self.ServerHistoryContainer, "icon16/shield.png")
 
@@ -78,7 +68,11 @@ function panel:Init()
 		end
 	end
 
-	self:SetTitle("Media Navigator")
+	if (self.Settings.Options.Value.DisplayTitle) then
+		self:SetTitle("Easy Media Media Search")
+	else
+		self:SetTitle("")
+	end
 end
 
 --[[

@@ -45,6 +45,20 @@ function ply:SendAdminSettings()
 end
 
 --[[
+ Sends a warning box to a player
+--]]
+
+function ply:SendWarningBox(message, title)
+	title = title or "Warning"
+
+	net.Start("MEDIA.CreateWarningBox")
+	net.WriteString(title)
+	net.WriteString(message)
+	net.Send(self)
+end
+
+
+--[[
 Removes a video
 --]]
 

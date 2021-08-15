@@ -135,10 +135,19 @@ function MEDIA.AddSetting(tab)
 		tab.Value = ( tab.Value == 1 or tab.Value == true )
 	end
 
+	if (tab.Type == MEDIA.Types.TABLE ) then
+		tab.DefValue = table.Copy(tab.Value)
+	elseif (tab.Type == MEDIA.Types.STRING ) then
+		tab.DefValue = "" .. tab.Value
+	elseif ( tab.Type == MEDIA.Types.BOOL ) then
+		tab.DefValue = tab.Value
+	else
+		tab.DefValue = 0 + tab.Value
+	end
 
 	MEDIA.Settings[tab.Key][tab.Type] = {
 		Value = tab.Value,
-		DefValue = tab.Value,
+		DefValue = tab.DefValue or {},
 		Type = tab.Type,
 		Key = tab.Key,
 		Max = tab.Max or 6400,
@@ -227,7 +236,7 @@ function MEDIA.GetSetting(key, assure_type)
 		end
 	end
 
-	ErrorNoHalt("setting not found: " .. key)
+	warning("setting not found: ", key)
 
 	return {
 		Value = nil,
@@ -413,7 +422,6 @@ if (SERVER) then
 				if (kind == MEDIA.Types.BOOL) then
 					tab.Value = ( v.Value == 1 or v.Value == true )
 				elseif (kind == MEDIA.Types.TABLE ) then
-
 					for key,index in pairs(v.Value) do
 						tab.Value[key] = index
 					end
@@ -425,6 +433,10 @@ if (SERVER) then
 			end
 		end
 	end
+
+	concommand.Add("media_load_settings", function()
+		MEDIA.LoadSettings()
+	end)
 end
 
 --[[
@@ -463,7 +475,12 @@ if (CLIENT) then
 			end
 		end
 	end
+
+	concommand.Add("media_cl_load_settings", function()
+		MEDIA.LoadSettings()
+	end)
 end
+
 
 --[[
 Saves our settings

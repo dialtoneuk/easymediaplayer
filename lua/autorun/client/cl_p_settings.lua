@@ -19,7 +19,7 @@ panel.ClientSettings = {
 	media_create_playlist_panel = "Refresh Playlist Panel",
 	media_create_player_panel = "Refresh Player Panel",
 	media_create_search_panel = "Refresh Search Panel",
-	media_settings = "Refresh Settings Panel",
+	media_create_settings_panel = "Refresh Settings Panel",
 	media_search_panel = "Show search panel",
 	media_like_video = "Like Current Video",
 	media_dislike_video = "Dislike Current Video",
@@ -73,7 +73,11 @@ function panel:Init()
 		end
 	end
 
-	self:SetTitle("Easy Media Settings Editor")
+	if (self.Settings.Options.Value.DisplayTitle) then
+		self:SetTitle("Easy Media Settings Editor")
+	else
+		self:SetTitle("")
+	end
 end
 
 --[[
@@ -195,7 +199,7 @@ function panel:AddCommandsTab()
 		grid:AddItem( but )
 	end
 
-	for k,v in pairs(self.ClientSettings) do
+	for k,v in SortedPairs(self.ClientSettings) do
 		fn(k,v, "user.png")
 	end
 
@@ -211,7 +215,7 @@ function panel:AddCommandsTab()
 		divider:SetWide( self:GetWide() - 65 )
 		grid:AddItem( divider )
 
-		for k,v in pairs(self.AdminSettings) do
+		for k,v in SortedPairs(self.AdminSettings) do
 			fn(k, v, "cog.png")
 		end
 	end
@@ -372,11 +376,13 @@ function panel:UpdateTable(title, v, admin)
 		return
 	end
 
-	for k,_v in SortedPairs(v.Value) do
-		if (string.sub(k,1,2) == "__") then continue end
+	for k,_v in pairs(v.Value) do
+		if (type(k) == "string" and string.sub(k,1,2) == "__") then continue end
 
-		if (tonumber(_v) != nil ) then
+		if (type(_v) == "number") then
 			typ = "Int"
+		elseif (type(_v) == "boolean") then
+			typ = "Boolean"
 		else
 			typ = "Generic"
 		end
@@ -421,7 +427,20 @@ function panel:NormalSettingsRow(v, k, row )
 			if ( MEDIA.Settings[v.Key][v.Type].DefValue.__unpack) then
 				MEDIA.Settings[v.Key][v.Type].Value[k] = MEDIA.Settings[v.Key][v.Type].DefValue.__unpack(MEDIA.Settings[v.Key][v.Type], k, tab)
 			else
-				MEDIA.Settings[v.Key][v.Type].Value[k] = tab
+
+				if (type(MEDIA.Settings[v.Key][v.Type].DefValue[k]) == "boolean") then
+					tab = (tab == 1 or tab == true)
+					MEDIA.Settings[v.Key][v.Type].Value[k] = tab
+					return
+				end
+
+				if (v.Type == MEDIA.Types.TABLE) then
+					MEDIA.Settings[v.Key][v.Type].Value[k] = val
+				elseif (v.TYpe == MEDIA.Types.INT) then
+					MEDIA.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
+				else
+					MEDIA.Settings[v.Key][v.Type].Value[k] = tab
+				end
 			end
 
 			row:SetValue(MEDIA.Settings[v.Key][v.Type].Value[k])
@@ -456,7 +475,21 @@ function panel:AdminSettingsRow(v, k, row )
 		if ( MEDIA.AdminSettings[v.Key][v.Type].DefValue.__unpack) then
 			MEDIA.AdminSettings[v.Key][v.Type].Value[k] = MEDIA.AdminSettings[v.Key][v.Type].DefValue.__unpack(MEDIA.AdminSettings[v.Key][v.Type], k, tab)
 		else
-			MEDIA.AdminSettings[v.Key][v.Type].Value[k] = tab
+
+			--seems to work for boolean packing/unpacking
+			if (type(MEDIA.AdminSettings[v.Key][v.Type].DefValue[k]) == "boolean") then
+				tab = (tab == 1 or tab == true)
+				MEDIA.AdminSettings[v.Key][v.Type].Value[k] = tab
+				return
+			end
+
+			if (v.Type == MEDIA.Types.TABLE) then
+				MEDIA.Settings[v.Key][v.Type].Value[k] = val
+			elseif (v.TYpe == MEDIA.Types.INT) then
+				MEDIA.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
+			else
+				MEDIA.Settings[v.Key][v.Type].Value[k] = tab
+			end
 		end
 
 		row:SetValue(MEDIA.AdminSettings[v.Key][v.Type].Value[k])

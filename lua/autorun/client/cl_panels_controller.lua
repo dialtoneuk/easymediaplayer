@@ -30,10 +30,14 @@ function MEDIA.InstantiatePanels(reinstantiate, skip, only_do)
 
 	for key,v in pairs(MEDIA.Panels) do
 
+
+		if (v.Preloaded != nil and !v.Preloaded and !table.HasValue(only_do, key)) then continue end
 		if (table.HasValue(skip, key)) then continue end
 		if (!table.IsEmpty(only_do) and !table.HasValue(only_do, key)) then continue end
 
 		MEDIA.Panels[key]._Settings = {}
+
+		--TODO replicate these inside the panel too so the panel doesn't have to
 		MEDIA.SetPanelSettings(key, table.Merge(MEDIA.Panels[key].Settings, {
 			Size = MEDIA.Panels[key].SettingsBase .. "_size",
 			Position = MEDIA.Panels[key].SettingsBase .. "_position",

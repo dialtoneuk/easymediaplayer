@@ -165,6 +165,10 @@ local client = {
         Value = false,
         Comment = "Hides the playlist completely."
     },
+    media_warning_hide = {
+        Value = false,
+        Comment = "(unused)."
+    },
     media_playlist_centered = {
         Value = false,
         Comment = "(unused)"
@@ -187,11 +191,16 @@ local client = {
     },
     media_settings_centered = {
         Value = false,
+        SlowUpdate = 0.75,
         Comment = "Settings window will open center screen"
     },
     media_admin_centered = {
         Value = false,
         Comment = "Admin window will open center screen"
+    },
+    media_warning_centered = {
+        Value = true,
+        Comment = "Warning window will open center screen"
     },
     media_search_centered = {
         Value = true,
@@ -286,10 +295,10 @@ local client = {
         Min = 500,
         Max = 2000,
         Value = {
-            Width = 500,
+            Width = 715,
             Height = 500,
         },
-        SlowUpdate = 0.5
+        SlowUpdate = 0.75
     },
     media_settings_position = {
         Min = 10,
@@ -297,7 +306,8 @@ local client = {
         Value = {
             X = 25,
             Y = 25
-        }
+        },
+        SlowUpdate = 0.75
     },
     media_base_size = {
         Min = 20,
@@ -439,35 +449,56 @@ local client = {
         Min = 1,
         Max = 25,
         Value = {
-            BorderThickness = 2
+            BorderThickness = 2,
+            DisplayTitle = true
         }
     },
     media_player_options = {
         Min = 1,
         Max = 25,
         Value = {
-            BorderThickness = 2
+            BorderThickness = 2,
+            DisplayTitle = true
         }
     },
     media_settings_options = {
         Min = 1,
         Max = 25,
         Value = {
-            BorderThickness = 2
+            BorderThickness = 2,
+            DisplayTitle = false
+        }
+    },
+    media_warning_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2,
+            DisplayTitle = true
         }
     },
     media_search_options = {
         Min = 1,
         Max = 25,
         Value = {
-            BorderThickness = 2
+            BorderThickness = 2,
+            DisplayTitle = false
         }
     },
     media_vote_options = {
         Min = 1,
         Max = 25,
         Value = {
-            BorderThickness = 2
+            BorderThickness = 2,
+            DisplayTitle = true
+        }
+    },
+    media_admin_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2,
+            DisplayTitle = true
         }
     },
     media_player_position = {
@@ -497,12 +528,12 @@ local client = {
         }
     },
     media_player_size = {
-        Min = 10,
+        Min = 5,
         Max = 1000,
         Value = {
             Width = 500,
             Height = 300,
-            LoadingBarHeight = 50
+            LoadingBarHeight = 5
         }
     },
     media_vote_position = {
@@ -514,12 +545,12 @@ local client = {
         }
     },
     media_vote_size = {
-        Min = 10,
+        Min = 5,
         Max = 400,
         Value = {
             Width = 190,
             Height = 75,
-            LoadingBarHeight = 50
+            LoadingBarHeight = 5
         }
     },
     media_vote_colours = {

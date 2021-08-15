@@ -1,11 +1,21 @@
 things to do:
 
 !Play argument parsing
-tidy up UI in places
-implement 	Setting.Custom = true for custom tips as in AddADitions so you can add shit to this table inside the settings ui
+
+table additions inside setting box
 the warning box for when bad stuff happen
-make it more visually appealing
 implement a changelog
+
+implement inverse position + options as default setting inside CL panel base
+position exactly in center of screen toggle settings for UI elemenets
+
+PRESETS!
+Presets which are automatically adopted when you join the server as a default preset so default preset
+
+More admin fuctionality
+ - Remove all a users videos
+ - etc
+
 thats it
 
 

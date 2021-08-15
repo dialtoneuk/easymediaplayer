@@ -1,6 +1,13 @@
 if (MEDIA == nil or table.IsEmpty(MEDIA)) then
     _errorLog = {}
 
+    --overwrite error stuff
+    _error = error
+
+    error = function(...)
+        errorBad(...)
+    end
+
     warning = function(...)
         local seed = "Server"
         _errorLog.Recoverable = _errorLog.Recoverable or {}
@@ -18,6 +25,7 @@ if (MEDIA == nil or table.IsEmpty(MEDIA)) then
         ErrorNoHalt(...)
     end
 
+
     errorBad = function(...)
         local seed = "Server"
         _errorLog.Bad = _errorLog.Bad or {}
@@ -27,37 +35,43 @@ if (MEDIA == nil or table.IsEmpty(MEDIA)) then
         end
 
         _errorLog.Bad[ seed ] = _errorLog.Bad[ seed ] or {}
+
+        if (#_errorLog.Bad[ seed ] == 0) then
+            hook.Run("OnFirstBadError", {...})
+        end
+
         _errorLog.Bad[ seed ][ #_errorLog.Bad[ seed ] + 1 ] = {
             Time = os.time(),
             ...
         }
 
-        error(...)
+        hook.Run("OnBadError", {...})
+
+        _error(...)
     end
+
 
     hook.Add("ShutDown", "SaveErrors", function()
         if (!file.IsDir("lyds/errors", "DATA")) then file.CreateDir("lyds/errors", "DATA") end
 
         for f,v in pairs(_errorLog) do
-            for env,_v in pairs(v) do
-                if (CLIENT and env == "Client") then
-                    file.Write("lyds/errors/" .. f .. " " .. os.date("%A_%B%d_$Y %H_%M_%S") .. " CLIENT.json", util.TableToJSON(_v, true))
-                elseif (SERVER) then
-                    file.Write("lyds/errors/" .. f .. " " .. os.date("%A_%B%d_$Y %H_%M_%S") .. " SERVER.json", util.TableToJSON(_v, true))
-                end
+            if (CLIENT) then
+                file.Write("lyds/errors/" .. f .. " " .. os.date("%A_%B%d_%y %H_%M_%S") .. " CLIENT.json", util.TableToJSON(v["Client"], true))
+            elseif (SERVER) then
+                file.Write("lyds/errors/" .. f .. " " .. os.date("%A_%B%d_%y %H_%M_%S") .. " SERVER.json", util.TableToJSON(v["Server"], true))
             end
         end
     end)
 end
 
 MEDIA = MEDIA or {
-    Name = "Easy MEDIA Player",
+    Name = "Easy Media Player",
     Credits = {
-        Author = "Llydia Cross",
+        Author = "llydia",
         Email = "llydia@zyon.io",
         SteamID = "STEAM_0:1:31630"
     },
-    Version = 1.7,
+    Version = 1.9,
     Type = {
         INT = "int", --can be a convar
         STRING = "string", --can be a convar

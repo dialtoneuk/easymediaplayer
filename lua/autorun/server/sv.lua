@@ -20,6 +20,7 @@ util.AddNetworkString("MEDIA.EndVote")
 util.AddNetworkString("MEDIA.SendMessage")
 util.AddNetworkString("MEDIA.SendPersonalHistory")
 util.AddNetworkString("MEDIA.SendBlacklist")
+util.AddNetworkString("MEDIA.CreateWarningBox")
 
 --responds to a search query
 net.Receive("MEDIA.SearchQuery",function(len, ply)
@@ -110,6 +111,22 @@ hook.Add("PlayerSay", "MEDIA.PlayerSay", function(ply, msg, teamchat)
 		return msg
 	else
 		return ""
+	end
+end)
+
+--[[
+	On the first bad error that of occurs, lets notify all the online admins of its occurance
+	---------------------------------------------------------------------------
+--]]
+
+
+hook.Add("OnFirstBadError","MEDIA.OnFirstBadError", function(error)
+	for k,v in pairs(player.GetAll()) do
+
+		if (!IsValid(v)) then continue end
+		if (!v:IsAdmin() ) then continue end
+
+		v:SendWarningBox("There has been an bad error! Please check the admin panel inside the error log to see what occured! \n\n error: " .. error[1],"Oh no!")
 	end
 end)
 

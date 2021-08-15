@@ -52,6 +52,25 @@ surface.CreateFont( "BiggerText", {
 	outline = false,
 })
 
+surface.CreateFont( "PlaylistText", {
+	font = "Arial",
+	extended = false,
+	size = 22,
+	weight = 100,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = true,
+	additive = false,
+	outline = false,
+})
+
+
 surface.CreateFont( "BigText", {
 	font = "Arial",
 	extended = false,
@@ -355,6 +374,15 @@ net.Receive("MEDIA.SendHistory", function()
 	panel:AddPageHeader(panel.HistoryGrid, "All History")
 	panel:PresentHistory()
 end)
+
+--[[
+Recieves history data from the server
+--]]
+
+net.Receive("MEDIA.CreateWarningBox", function()
+	MEDIA.CreateWarningBox(net.ReadString(), net.ReadString() )
+end)
+
 
 --[[
 Recieves history data from the server

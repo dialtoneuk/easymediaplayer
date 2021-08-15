@@ -39,6 +39,20 @@ MEDIA.Panels = {
 			panel:MakePopup()
 		end
 	},
+	WarningBox = {
+		Preloaded = false,
+		Element = "WarningBox",
+		SettingsBase = "media_warning",
+		Draggable = true,
+		Settings = {
+			--can define extra settings here
+			--size, is centered and show is implicit
+		},
+		PostInit = function(panel, key, settings)
+			panel:Show()
+			panel:MakePopup()
+		end
+	},
 	SearchPanel = {
 		Element = "SearchPanel",
 		SettingsBase = "media_search",

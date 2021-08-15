@@ -21,7 +21,6 @@ panel.Settings = {
 panel.OnChange = {
 	RowSpacing = function(p)
 		if (p._RowSpacing and p._RowSpacing != p.Settings.Size.Value.RowSpacing ) then
-			print("t")
 			p._RowSpacing = p.Settings.Size.Value.RowSpacing
 			p._Rescaled = true
 		end
@@ -116,7 +115,7 @@ function panel:MyThink()
 		if (!table.IsEmpty(MEDIA.Playlist)) then
 			self:UpdateGrid()
 		else
-			self:SetTall(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing + self:GetPadding() * 2 )
+			self:SetTall(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing + ( self:GetPadding() * 2 ))
 		end
 	end
 end
@@ -160,10 +159,10 @@ Displays playlist items
 function panel:EmptyPanel()
 	self.MiscPanel = vgui.Create("DButton", self.Grid )
 	self.MiscPanel:SetWide(self:GetPaddedWidth(true))
-	self.MiscPanel:SetTall( self.Settings.Size.Value.RowHeight )
+	self.MiscPanel:SetTall( self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing )
 	self.MiscPanel:SetText("")
 	self.MiscPanel.Paint = function(s)
-		draw.RoundedBox(5, 0, 0, self:GetWide(), self.Settings.Size.Value.RowHeight, MEDIA.Colours.FadedGray )
+		draw.RoundedBox(5, 0, 0, self.Settings.Size.Value.Width, self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing , MEDIA.Colours.FadedGray )
 		draw.SimpleTextOutlined( "EASY!", "SmallText", 10,12, MEDIA.Colours.FadedWhite, 5, 1, 0.5, MEDIA.Colours.Black )
 		draw.SimpleTextOutlined( "Media Player", "BiggerText", 10, 30, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
 		draw.SimpleTextOutlined( "v" .. MEDIA.Version, "MediumText", 170, 28, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
@@ -220,7 +219,7 @@ function panel:UpdateGrid()
 	end
 
 	if (self:IsSettingTrue("AutoResize")) then
-		self:SetTall(size + self:GetPadding() * 2 )
+		self:SetTall(size + ( self:GetPadding() * 2 ) )
 	end
 end
 

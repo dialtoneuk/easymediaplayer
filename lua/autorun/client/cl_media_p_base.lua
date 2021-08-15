@@ -46,11 +46,11 @@ base._Settings = {
 
 --call this to do the rest
 function base:BaseInit()
-    self:CacheThink()
 
     self.OnChange = table.Merge(table.Copy(self._OnChange), self.OnChange or {})
     self.Settings = table.Merge(table.Copy(self._Settings), self.Settings or {})
 
+    self:CacheThink()
     self:RefreshPanelSettings()
     self:Reposition()
     self:ExecuteOperations()
@@ -213,7 +213,7 @@ end
 Sets the vote position
 ]]
 function base:Reposition()
-    if (!self._Reposition or self.Centered) then return end
+    if (!self._Reposition or self.Centered or self.Settings.Position == nil) then return end
 
     local x = self.Settings.Position.Value.X
     local y = self.Settings.Position.Value.Y
