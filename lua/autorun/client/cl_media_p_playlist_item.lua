@@ -11,13 +11,19 @@ panel._Reposition = false
 --the video data
 panel.Video = {}
 
+--Settings
+panel.Settings = {
+	Options = "options"
+}
+
 --[[
 	Initializes
 --]]
 
 function panel:Init()
 	self:BaseInit()
-	self:SimpleDockPadding()
+
+	self:DockPadding(4,4,4,4)
 	self:SetText("")
 
 	self.Text = vgui.Create("DLabel", self )
@@ -51,9 +57,9 @@ function panel:Init()
 				surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 			end
 
-			surface.DrawRect(0, 0, p:GetWide(), self.Settings.Size.Value.RowHeight )
+			surface.DrawRect(0, 0, self.Settings.Size.Value.Width - self.Settings.Size.Value.Padding, self.Settings.Size.Value.RowHeight )
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0, p:GetWide(), self.Settings.Size.Value.RowHeight )
+			surface.DrawOutlinedRect(0, 0, self.Settings.Size.Value.Width - self.Settings.Size.Value.Padding, self.Settings.Size.Value.RowHeight, self.Settings.Options.Value.BorderThickness )
 	  	end
 	end
 

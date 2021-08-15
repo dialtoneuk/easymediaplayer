@@ -12,7 +12,7 @@ panel.Video = {}
 panel._CurrentOwnerName = nil
 
 --Extra Settings
-panel.RefreshSettings = {
+panel.Settings = {
 	DisplayVideo = "display_video",
 	Muted = "mute_video",
 	ShowConstant =  "show_constant",
@@ -55,7 +55,7 @@ function panel:Init()
 		surface.SetDrawColor(self.Settings.Colours.Value.Background)
 		surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
 		surface.SetDrawColor(self.Settings.Colours.Value.Border)
-		surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+		surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 
 		--todo: Optimise this
 		if (!table.IsEmpty(MEDIA.CurrentVideo)) then
@@ -78,7 +78,7 @@ function panel:Init()
 
 			draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10, self:GetTall() - 45, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
 			surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground)
-			surface.DrawRect(0, 0, math.Clamp((self:GetWide() / self.Video.Duration ) * time, 5, self:GetWide()), 5)
+			surface.DrawRect(0, 0, math.Clamp((self:GetWide() / self.Video.Duration ) * time, 5, self:GetWide()), self.Settings.Size.Value.LoadingBarHeight)
 		end
 	end
 end

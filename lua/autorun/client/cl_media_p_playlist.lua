@@ -7,13 +7,25 @@ local panel = {}
 
 panel.Playlist = {}
 panel.Name = "playlist"
-
+panel._RowSpacing = -1
 
 --Settings
 panel.Settings = {
-	HideActive = MEDIA.GetSetting("media_playlist_hide_active"),
-	AutoResize = MEDIA.GetSetting("media_playlist_auto_resize"),
-	InvertPosition = MEDIA.GetSetting("media_playlist_invert_position")
+	HideActive = "hide_active",
+	AutoResize = "auto_resize",
+	InvertPosition = "invert_position",
+	Options = "options"
+}
+
+--on chhange
+panel.OnChange = {
+	RowSpacing = function(p)
+		if (p._RowSpacing and p._RowSpacing != p.Settings.Size.Value.RowSpacing ) then
+			print("t")
+			p._RowSpacing = p.Settings.Size.Value.RowSpacing
+			p._Rescaled = true
+		end
+	end
 }
 
 --[[
@@ -34,9 +46,9 @@ function panel:Init()
 	if ( self.Settings.Colours != nil) then
 		self.Paint = function()
 			surface.SetDrawColor(self.Settings.Colours.Value.Background)
-			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+			surface.DrawRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 		end
 	end
 
@@ -44,9 +56,6 @@ function panel:Init()
 		self:EmptyPanel()
 	else
 		self:UpdatePlaylist()
-	end
-	if (self:IsSettingTrue("AutoResize")) then
-		self:SetTall(self.Settings.Size.Value.RowHeight + self:GetPadding())
 	end
 end
 
@@ -64,7 +73,7 @@ function panel:SetupGrid()
 	self.Grid:SetCols( 1 )
 	self.Grid:SetWide(self:GetPaddedWidth(true, true))
 	self.Grid:SetColWide(self:GetPaddedWidth(true, true))
-	self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing)
+	self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing )
 
 	self:SimpleDockPadding()
 end
@@ -96,7 +105,19 @@ function panel:MyThink()
 	if (self:HasRescaled()) then
 		self.Grid:SetWide(self:GetPaddedWidth(true, true))
 		self.Grid:SetColWide(self:GetPaddedWidth(true, true))
-		self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing)
+		self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing )
+
+		if (IsValid(self.MiscPanel)) then
+			self.MiscPanel:SetWide(self:GetPaddedWidth(true))
+		end
+
+		self:SimpleDockPadding()
+
+		if (!table.IsEmpty(MEDIA.Playlist)) then
+			self:UpdateGrid()
+		else
+			self:SetTall(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing + self:GetPadding() * 2 )
+		end
 	end
 end
 
@@ -139,10 +160,10 @@ Displays playlist items
 function panel:EmptyPanel()
 	self.MiscPanel = vgui.Create("DButton", self.Grid )
 	self.MiscPanel:SetWide(self:GetPaddedWidth(true))
-	self.MiscPanel:SetTall(self:GetPaddedHeight(true))
+	self.MiscPanel:SetTall( self.Settings.Size.Value.RowHeight )
 	self.MiscPanel:SetText("")
 	self.MiscPanel.Paint = function(s)
-		draw.RoundedBox(5, 0, 0, s:GetWide(), s:GetTall(), MEDIA.Colours.FadedGray )
+		draw.RoundedBox(5, 0, 0, self:GetWide(), self.Settings.Size.Value.RowHeight, MEDIA.Colours.FadedGray )
 		draw.SimpleTextOutlined( "EASY!", "SmallText", 10,12, MEDIA.Colours.FadedWhite, 5, 1, 0.5, MEDIA.Colours.Black )
 		draw.SimpleTextOutlined( "Media Player", "BiggerText", 10, 30, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
 		draw.SimpleTextOutlined( "v" .. MEDIA.Version, "MediumText", 170, 28, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
@@ -168,6 +189,7 @@ function panel:UpdateGrid()
 	end
 
 	local size = 0
+	local count = 0
 
 	for k,v in SortedPairsByMemberValue(self.Playlist, "Position") do
 		local p = vgui.Create("MEDIA.PlaylistItem", self.Grid )
@@ -188,11 +210,17 @@ function panel:UpdateGrid()
 
 		self.Grid:AddItem(p)
 
-		size = size + (self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing)
+		if (count != 0 ) then
+			size = size + (self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing)
+		else
+			size = self.Settings.Size.Value.RowHeight
+		end
+
+		count = count + 1
 	end
 
 	if (self:IsSettingTrue("AutoResize")) then
-		self:SetTall(size)
+		self:SetTall(size + self:GetPadding() * 2 )
 	end
 end
 

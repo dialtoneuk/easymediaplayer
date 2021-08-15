@@ -8,6 +8,10 @@ local panel = {}
 --panel settings
 panel.Name = "settings"
 
+panel.Settings = {
+	Options = "options"
+}
+
 --client settings
 panel.ClientSettings = {
 	media_create_cl = "Refresh All Panels",
@@ -47,7 +51,6 @@ Init
 --]]
 
 function panel:Init()
-
 	self:BaseInit()
 
 	if ( MEDIA.Settings == nil or table.IsEmpty(MEDIA.Settings)) then
@@ -64,7 +67,9 @@ function panel:Init()
 			surface.SetDrawColor(self.Settings.Colours.Value.Background)
 			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
 			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
+			surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder)
+			surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
 		end
 	end
 

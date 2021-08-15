@@ -412,6 +412,13 @@ if (SERVER) then
 
 				if (kind == MEDIA.Types.BOOL) then
 					tab.Value = ( v.Value == 1 or v.Value == true )
+				elseif (kind == MEDIA.Types.TABLE ) then
+
+					for key,index in pairs(v.Value) do
+						tab.Value[key] = index
+					end
+				else
+					tab.Value = v.Value
 				end
 
 				MEDIA.Settings[k][kind] = tab
@@ -441,10 +448,15 @@ if (CLIENT) then
 				end
 
 				local tab = MEDIA.Settings[k][kind]
-				tab.Value = v.Value
 
-				if (kind == MEDIA.Types.BOOL ) then
+				if (kind == MEDIA.Types.BOOL) then
 					tab.Value = ( v.Value == 1 or v.Value == true )
+				elseif (kind == MEDIA.Types.TABLE ) then
+					for key,index in pairs(v.Value) do
+						tab.Value[key] = index
+					end
+				else
+					tab.Value = v.Value
 				end
 
 				MEDIA.Settings[k][kind] = tab

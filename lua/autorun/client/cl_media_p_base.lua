@@ -17,29 +17,39 @@ base._OnChange = {
             p:SetWide(p:GetPaddedWidth())
             p._Rescaled = true
         end
-        p:SetWide(p:GetPaddedWidth())
     end,
     Height = function(p)
         if (p.RescaleHeight and p:GetTall() != p:GetPaddedHeight()) then
             p:SetTall(p:GetPaddedHeight())
             p._Rescaled = true
         end
+    end,
+    RowHeight = function(p)
+        if (p._RowHeight and p._RowHeight != p.Settings.Size.Value.RowHeight ) then
+            p._RowHeight = p.Settings.Size.Value.RowHeight
+            p._Rescaled = true
+        end
+    end,
+    Padding = function(p)
+        if (p._Padding and p._Padding != p.Settings.Size.Value.Padding ) then
+            p._Padding = p.Settings.Size.Value.Padding
+            p._Rescaled = true
+        end
     end
 }
 
-base._RefreshSettings = {
+base._Settings = {
     Colours = "colours",
     Position = "position",
     Size = "size"
 }
 
-function base:Init()
-    self:CacheThink()
-end
-
+--call this to do the rest
 function base:BaseInit()
+    self:CacheThink()
+
     self.OnChange = table.Merge(table.Copy(self._OnChange), self.OnChange or {})
-    self.RefreshSettings = table.Merge(table.Copy(self._RefreshSettings), self.RefreshSettings or {})
+    self.Settings = table.Merge(table.Copy(self._Settings), self.Settings or {})
 
     self:RefreshPanelSettings()
     self:Reposition()
@@ -63,7 +73,7 @@ function base:HasRefreshed()
     return self:HasRescaled()
 end
 
-function base:InvertPosition(x, y )
+function base:InvertPosition(x, y)
     x = x or false
     y = y or false
     self.InvertXPosition = x
@@ -75,6 +85,16 @@ end
 ]]
 function base:GetSettingKey(type)
     type = type or "colours"
+
+    if (string.sub(type, 1,1) == "!") then
+        return string.sub(type, 2)
+    end
+
+    if (string.find(type, "media_" .. self.Name)) then
+        warning("type already has extension present: " .. type )
+        return type
+    end
+
     return "media_" .. self.Name .. "_" .. type
 end
 
@@ -103,8 +123,12 @@ end
 --rerefesh _OnChange settings
 function base:RefreshPanelSettings()
     self.Settings = self.Settings or {}
-    for k,v in pairs(self.RefreshSettings) do
-        self.Settings[k] = MEDIA.GetSetting(self:GetSettingKey(v))
+    for k,v in pairs(self.Settings) do
+        if (type(v) == "string") then
+            self.Settings[k] = MEDIA.GetSetting( self:GetSettingKey(v) )
+        elseif (type(v) == "table") then
+            self.Settings[k] = MEDIA.GetSetting(v.Key)
+        end
     end
 end
 
@@ -189,7 +213,7 @@ end
 Sets the vote position
 ]]
 function base:Reposition()
-    if (!self._Reposition or self.Centered or self.Settings.Position == nil) then return end
+    if (!self._Reposition or self.Centered) then return end
 
     local x = self.Settings.Position.Value.X
     local y = self.Settings.Position.Value.Y

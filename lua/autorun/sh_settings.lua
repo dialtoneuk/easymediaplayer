@@ -278,6 +278,7 @@ local client = {
             end,
             Background = MEDIA.Colours.FadedBlack,
             Border = MEDIA.Colours.FadedBlack,
+            SecondaryBorder = MEDIA.Colours.FadedGray,
             TextColor = MEDIA.Colours.White
         }
     },
@@ -424,7 +425,7 @@ local client = {
         }
     },
     media_playlist_size = {
-        Min = 5,
+        Min = 1,
         Max = 1000,
         Value = {
             Width = 350,
@@ -432,6 +433,41 @@ local client = {
             RowHeight = 80,
             Padding = 5,
             RowSpacing = 10
+        }
+    },
+    media_playlist_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2
+        }
+    },
+    media_player_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2
+        }
+    },
+    media_settings_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2
+        }
+    },
+    media_search_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2
+        }
+    },
+    media_vote_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2
         }
     },
     media_player_position = {
@@ -456,6 +492,7 @@ local client = {
             ItemBackground = MEDIA.Colours.FadedBlack,
             ItemBorder = MEDIA.Colours.FadedBlack,
             Border = MEDIA.Colours.FadedBlack,
+            SecondaryBorder = MEDIA.Colours.FadedBlack,
             LoadingBarBackground = MEDIA.Colours.Red
         }
     },
@@ -464,7 +501,8 @@ local client = {
         Max = 1000,
         Value = {
             Width = 500,
-            Height = 300
+            Height = 300,
+            LoadingBarHeight = 50
         }
     },
     media_vote_position = {
@@ -480,7 +518,8 @@ local client = {
         Max = 400,
         Value = {
             Width = 190,
-            Height = 75
+            Height = 75,
+            LoadingBarHeight = 50
         }
     },
     media_vote_colours = {

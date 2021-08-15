@@ -8,6 +8,10 @@ local panel = {}
 --settings
 panel.Name = "search"
 
+panel.Settings = {
+	Options = "options"
+}
+
 --for the pages
 panel.HistoryPage = 1
 panel.BrowserHistory = {}
@@ -16,7 +20,6 @@ panel.BrowserPosition = 0
 
 --?
 panel._Empty = false
-panel._Reposition = false
 
 --[[
 	TODO: Branch all this out into more custom vgui elements
@@ -55,20 +58,15 @@ function panel:Init()
 	self:CreatePlayerHistoryPanel()
 
 	self.PropertySheet:AddSheet("Search", self.SearchContainer, "icon16/wand.png")
-	self.PropertySheet:AddSheet("Basic Browser", self.BrowserContainer, "icon16/page_white_world.png")
+
+	local browser_tab = self.PropertySheet:AddSheet("Basic Browser", self.BrowserContainer, "icon16/page_white_world.png")
+	browser_tab.Panel.Browser = true
+
 	self.PropertySheet:AddSheet("Player History", self.PlayerHistoryContainer, "icon16/user.png")
 	self.PropertySheet:AddSheet("Server History", self.ServerHistoryContainer, "icon16/shield.png")
 
 	self.PropertySheet.OnActiveTabChanged = function(old, new)
-
-		if (new.Browser != nil ) then
-			new.Browser:OpenURL("https://www.youtube.com")
-			return
-		end
-
-		if (old.Browser != nil ) then
-			old.Browser:OpenURL("/")
-		end
+		self.Browser:OpenURL("https://www.youtube.com")
 	end
 
 	if ( self.Settings.Colours != nil) then
@@ -76,7 +74,7 @@ function panel:Init()
 			surface.SetDrawColor(self.Settings.Colours.Value.Background)
 			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
 			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 		end
 	end
 
@@ -189,7 +187,6 @@ function panel:CreateBrowserPanel()
 
 	self.Browser = vgui.Create("DHTML", self.BrowserContainer )
 	self.Browser:SetSize(self:GetPaddedWidth() - 25,  self:GetPaddedHeight() - 70)
-	self.Browser:OpenURL("http://www.youtube.com")
 	self.Browser:DockPadding(5,5,5,5)
 	self.Browser:Dock(FILL)
 
@@ -227,7 +224,7 @@ function panel:CreateBrowserPanel()
 
 			self.UrlBox:SetValue(str)
 			self.GrabButton:SetDisabled(false)
-			MEDIA.Url = str
+			MEDIA.URL = str
 		end
 	end)
 
@@ -337,7 +334,7 @@ function panel:PresentSearchResults(clear)
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 			surface.DrawRect(0, 0, self:GetPaddedWidth(), self.Settings.Size.Value.RowHeight)
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0, self:GetPaddedWidth(), self.Settings.Size.Value.RowHeight)
+			surface.DrawOutlinedRect(0, 0, self:GetPaddedWidth(), self.Settings.Size.Value.RowHeight, self.Settings.Options.Value.BorderThickness)
 		end
 
 		pan.DoClick = function()
@@ -486,7 +483,7 @@ function panel:PresentHistory()
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 			surface.DrawRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight)
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight)
+			surface.DrawOutlinedRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight, self.Settings.Options.Value.BorderThickness)
 		end
 
 		pan.DoClick = function()
@@ -532,7 +529,7 @@ function panel:PresentPlayerHistory()
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 			surface.DrawRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight)
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder )
-			surface.DrawOutlinedRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight)
+			surface.DrawOutlinedRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight, self.Settings.Options.Value.BorderThickness)
 		end
 
 		pan.DoClick = function()
@@ -577,7 +574,7 @@ function panel:AddPageHeader(that, page, count)
 		surface.SetDrawColor(self.Settings.Colours.Value.HeaderBackground)
 		surface.DrawRect(0, 0, pan:GetWide(), pan:GetTall() )
 		surface.SetDrawColor(self.Settings.Colours.Value.HeaderBorder)
-		surface.DrawOutlinedRect(0, 0, pan:GetWide(), pan:GetTall() )
+		surface.DrawOutlinedRect(0, 0, pan:GetWide(), pan:GetTall(), self.Settings.Options.Value.BorderThickness )
 	end
 
 	that:AddItem(pan)

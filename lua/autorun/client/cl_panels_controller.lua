@@ -126,6 +126,7 @@ function MEDIA.SetupPanel(settings, panel, key)
 	--for dframes
 	if (panel.SetDraggable != nil ) then
 		panel:SetDraggable(MEDIA.LoadedPanels[key].Draggable)
+		panel._Reposition = !MEDIA.LoadedPanels[key].Draggable
 	end
 
 	if (panel.SetDeleteOnClose != nil ) then
