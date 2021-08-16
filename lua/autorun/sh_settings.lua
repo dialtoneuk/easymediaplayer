@@ -54,7 +54,7 @@ local server = {
         Comment = "How many items from the history to return to the player"
     },
     media_cooldown_enabled = {
-        Value = false,
+        Value = true,
         Comment = "Will turn off cooldowns all together, not recommended"
     },
     media_cooldown_play = {
@@ -65,7 +65,7 @@ local server = {
     media_cooldown_vote = {
         Value = 60,
         Max = 500,
-        Comment = "Cooldown in seconds a player experiences after voting",
+        Comment = "Cooldown in seconds a player experiences after starting a vote",
     },
     media_cooldown_search = {
         Value = 2,
@@ -207,7 +207,7 @@ local client = {
         Comment = "Search window will open center screen"
     },
     media_playlist_show_in_context = {
-        Value = true,
+        Value = false,
         Comment = "Show the playlist when you press 'c' / go in the context menu"
     },
     media_playlist_show_in_scoreboard = {
@@ -229,6 +229,11 @@ local client = {
     media_settings_hide = {
         Value = true,
         Comment = "(unused)"
+    },
+    media_playlist_show_limit = {
+        Value = 10,
+        Refresh = false,
+        Comment = "Will only show this amount of videos on the playlist at any given time"
     },
     media_vote_hide = {
         Value = false,

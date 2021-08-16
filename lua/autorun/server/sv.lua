@@ -32,7 +32,7 @@ net.Receive("MEDIA.SearchQuery",function(len, ply)
 
 	MEDIA.AddPlayerCooldown( ply, MEDIA.GetNewCooldown("Search") )
 
-	MEDIA.RequestYoutubeSearch(query, function(data)
+	MEDIA.YoutubeSearch(query, function(data)
 		local results = {}
 
 		for k,v in pairs(data) do
@@ -433,7 +433,7 @@ concommand.Add("media_play", function (ply, cmd, args)
 	local _c = table.Count(vids)
 	local setting = MEDIA.GetSetting("player_playlist_max")
 
-	if (vids != nil and !table.IsEmpty(vids) and _c >= setting.Value and (!ply:IsAdmin() or !MEDIA.IsSettingTrue("admins_ignore_playlist_limit") ) ) then
+	if (_c >= setting.Value and (!ply:IsAdmin() or !MEDIA.IsSettingTrue("admins_ignore_playlist_limit") ) ) then
 		ply:SendMessage("You are allowed a maximum of " .. setting.Value .. " in the playlist. You have " .. _c  .. "." )
 		return
 	end

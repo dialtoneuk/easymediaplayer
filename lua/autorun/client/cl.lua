@@ -130,6 +130,102 @@ Hooks
 -----------------------------------------------------------------------------
 --]]
 
+hook.Add("PreGamemodeLoaded", "MEDIA.PreGamemodeLoaded", function()
+	--[[
+		This is where the icons for the sandbox context menu are added
+	-----------------------------------------------------------------------------
+	--]]
+
+	--settings panel
+	list.Add( "DesktopWindows", {
+		title		= "Media Settings",
+		icon		= "icon64/settings.png",
+		width		= 10,
+		height		= 10,
+		onewindow	= true,
+		init		= function( icon, window )
+			RunConsoleCommand("media_settings")
+
+			--instantly remove
+			window:Remove()
+		end
+	})
+
+	list.Add( "DesktopWindows", {
+		title		= "Media Search",
+		icon		= "icon64/search.png",
+		width		= 10,
+		height		= 10,
+		onewindow	= true,
+		init		= function( icon, window )
+			RunConsoleCommand("media_search_panel")
+
+			--instantly remove
+			window:Remove()
+		end
+	})
+
+	list.Add( "DesktopWindows", {
+		title		= "Like Video",
+		icon		= "icon64/like.png",
+		width		= 10,
+		height		= 10,
+		onewindow	= true,
+		init		= function( icon, window )
+
+			if (table.IsEmpty(MEDIA.CurrentVideo)) then
+				MEDIA.CreateWarningBox("No Current Video!","There isn't even a video playing! Try playing one first.")
+				window:Remove()
+				return
+			end
+
+			RunConsoleCommand("media_like_video")
+			--instantly remove
+			window:Remove()
+		end
+	})
+
+	list.Add( "DesktopWindows", {
+		title		= "Dislike Video",
+		icon		= "icon64/dislike.png",
+		width		= 10,
+		height		= 10,
+		onewindow	= true,
+		init		= function( icon, window )
+
+			if (table.IsEmpty(MEDIA.CurrentVideo)) then
+				MEDIA.CreateWarningBox("No Current Video!","There isn't even a video playing! Try playing one first.")
+				window:Remove()
+				return
+			end
+
+			RunConsoleCommand("media_dislike_video")
+			--instantly remove
+			window:Remove()
+		end
+	})
+
+	list.Add( "DesktopWindows", {
+		title		= "Media Admin",
+		icon		= "icon64/admin.png",
+		width		= 10,
+		height		= 10,
+		onewindow	= true,
+		init		= function( icon, window )
+
+			if ( !LocalPlayer():IsAdmin()) then
+
+				MEDIA.CreateWarningBox("Permissions Denied!","You'll need to be an admin of the server to view the admin dashboard")
+				window:Remove()
+				return
+			end
+
+			RunConsoleCommand("media_admin_panel")
+			--instantly remove
+			window:Remove()
+		end
+	})
+end)
 
 hook.Add("InitPostEntity", "MEDIA.LoadClientAddon", function()
 	MEDIA.LocalPlayer = LocalPlayer()
@@ -158,7 +254,7 @@ end)
 --]]
 
 
-function MEDIA.RequestYoutubeSearch(query)
+function MEDIA.YoutubeSearch(query)
 
 	if (query == nil or query == "") then return end
 
@@ -205,7 +301,7 @@ Youtube search function
 concommand.Add("media_youtube_search", function (ply, cmd, args)
 
 	if (args[1] == nil or args[1] == "" ) then return end
-	MEDIA.RequestYoutubeSearch(args[1])
+	MEDIA.YoutubeSearch(args[1])
 end)
 
 --[[

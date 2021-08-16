@@ -157,7 +157,7 @@ function MEDIA.AddSetting(tab)
 		Convar = tab.Convar or false,
 		Comment = tab.Comment or false,
 		Refresh = tab.Refresh or false,
-		SlowUpdate = tab.SlowUpdate or false
+		SlowUpdate = tab.SlowUpdate or 0.05
 	}
 end
 
@@ -170,7 +170,6 @@ function MEDIA.ChangeSetting(key, value, all_kinds)
 	for k,keys in pairs(MEDIA.Settings) do
 		if (k == key) then
 			for kind,v in pairs(keys) do
-				print("test")
 				if (kind == MEDIA.Types.BOOL) then
 					value = ( value == 1 or value == true )
 				end

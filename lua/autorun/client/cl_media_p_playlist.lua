@@ -8,13 +8,15 @@ local panel = {}
 panel.Playlist = {}
 panel.Name = "playlist"
 panel._RowSpacing = -1
+panel._Count = 0
 
 --Settings
 panel.Settings = {
 	HideActive = "hide_active",
 	AutoResize = "auto_resize",
 	InvertPosition = "invert_position",
-	Options = "options"
+	Options = "options",
+	Limit = "show_limit"
 }
 
 --on chhange
@@ -56,6 +58,8 @@ function panel:Init()
 	else
 		self:UpdatePlaylist()
 	end
+
+	self:RecalculateSize()
 end
 
 --[[
@@ -70,11 +74,11 @@ function panel:SetupGrid()
 	self.Grid = vgui.Create("DGrid", self )
 	self.Grid:Dock(FILL)
 	self.Grid:SetCols( 1 )
-	self.Grid:SetWide(self:GetPaddedWidth(true, true))
-	self.Grid:SetColWide(self:GetPaddedWidth(true, true))
+	self.Grid:SetWide(self:GetWidth(true, true))
+	self.Grid:SetColWide(self:GetWidth(true, true))
 	self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing )
 
-	self:SimpleDockPadding()
+	self:SetDockPadding()
 end
 
 --[[
@@ -83,7 +87,7 @@ Autromatically removes videos from our playlist
 
 function panel:MyThink()
 	if (!self:IsSettingTrue("AutoResize")) then
-		self:SetTall(self:GetPaddedHeight())
+		self:SetTall(self:GetHeight())
 	end
 
 	local f = false
@@ -98,24 +102,24 @@ function panel:MyThink()
 			self:UpdateGrid()
 		end
 	else
-		panel:UpdatePlaylist()
+		self:UpdatePlaylist()
 	end
 
 	if (self:HasRescaled()) then
-		self.Grid:SetWide(self:GetPaddedWidth(true, true))
-		self.Grid:SetColWide(self:GetPaddedWidth(true, true))
+		self.Grid:SetWide(self:GetWidth(true, true))
+		self.Grid:SetColWide(self:GetWidth(true, true))
 		self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing )
 
 		if (IsValid(self.MiscPanel)) then
-			self.MiscPanel:SetWide(self:GetPaddedWidth(true))
+			self.MiscPanel:SetWide(self:GetWidth(true))
 		end
 
-		self:SimpleDockPadding()
+		self:SetDockPadding()
 
 		if (!table.IsEmpty(MEDIA.Playlist)) then
 			self:UpdateGrid()
 		else
-			self:SetTall(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing + ( self:GetPadding() * 2 ))
+			self:RecalculateSize()
 		end
 	end
 end
@@ -150,6 +154,8 @@ function panel:UpdatePlaylist()
 			self:EmptyPanel()
 		end
 	end
+
+	self._Count = table.Count(self.Playlist)
 end
 
 --[[
@@ -158,11 +164,11 @@ Displays playlist items
 
 function panel:EmptyPanel()
 	self.MiscPanel = vgui.Create("DButton", self.Grid )
-	self.MiscPanel:SetWide(self:GetPaddedWidth(true))
-	self.MiscPanel:SetTall( self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing )
+	self.MiscPanel:SetWide(self:GetWidth(true))
+	self.MiscPanel:SetTall( self.Settings.Size.Value.RowHeight)
 	self.MiscPanel:SetText("")
 	self.MiscPanel.Paint = function(s)
-		draw.RoundedBox(5, 0, 0, self.Settings.Size.Value.Width, self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing , MEDIA.Colours.FadedGray )
+		draw.RoundedBox(5, 0, 0, self.Settings.Size.Value.Width, self.Settings.Size.Value.RowHeight, MEDIA.Colours.FadedGray )
 		draw.SimpleTextOutlined( "EASY!", "SmallText", 10,12, MEDIA.Colours.FadedWhite, 5, 1, 0.5, MEDIA.Colours.Black )
 		draw.SimpleTextOutlined( "Media Player", "BiggerText", 10, 30, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
 		draw.SimpleTextOutlined( "v" .. MEDIA.Version, "MediumText", 170, 28, MEDIA.Colours.White, 5, 1, 0.5, MEDIA.Colours.Black )
@@ -176,6 +182,28 @@ function panel:EmptyPanel()
 	self.Grid:AddItem(self.MiscPanel)
 end
 
+
+--[[
+Displays playlist items
+--]]
+
+function panel:CreateFullPanel()
+	self.FullPanel = vgui.Create("DButton", self.Grid )
+	self.FullPanel:SetWide(self:GetWidth(true))
+	self.FullPanel:SetTall( math.floor(self.Settings.Size.Value.RowHeight / 2) + self.Settings.Size.Value.RowSpacing )
+	self.FullPanel:SetText("")
+	self.FullPanel.Paint = function(s)
+		surface.SetDrawColor(self.Settings.Colours.Value.Background)
+		surface.DrawRect(0, 0, s:GetWide(), s:GetTall(), self.Settings.Options.Value.BorderThickness)
+		surface.SetDrawColor(self.Settings.Colours.Value.Border)
+		surface.DrawOutlinedRect(0, 0, s:GetWide(), s:GetTall(), self.Settings.Options.Value.BorderThickness)
+		draw.SimpleTextOutlined("Playlist Full", "BiggerText", 5, 20, MEDIA.Colours.FadedWhite, 5, 1, 0.5, MEDIA.Colours.Black )
+		draw.SimpleTextOutlined("A total of " .. self._Count  .. " videos are present", "BigText", 150, 22, MEDIA.Colours.FadedWhite, 5, 1, 0.5, MEDIA.Colours.Black )
+	end
+
+	self.Grid:AddItem(self.FullPanel)
+end
+
 --[[
 
 --]]
@@ -187,10 +215,15 @@ function panel:UpdateGrid()
 		return
 	end
 
-	local size = 0
 	local count = 0
 
 	for k,v in SortedPairsByMemberValue(self.Playlist, "Position") do
+
+		if (count > self.Settings.Limit.Value ) then
+			self:CreateFullPanel()
+			break
+		end
+
 		local p = vgui.Create("MEDIA.PlaylistItem", self.Grid )
 
 		if (MEDIA.CurrentVideo and MEDIA.CurrentVideo.Video == v.Video) then
@@ -209,18 +242,21 @@ function panel:UpdateGrid()
 
 		self.Grid:AddItem(p)
 
-		if (count != 0 ) then
-			size = size + (self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing)
-		else
-			size = self.Settings.Size.Value.RowHeight
-		end
-
 		count = count + 1
 	end
 
 	if (self:IsSettingTrue("AutoResize")) then
-		self:SetTall(size + ( self:GetPadding() * 2 ) )
+		self:RecalculateSize()
 	end
+end
+
+function panel:RecalculateSize()
+	local count = 0
+	for k,v in pairs(self.Grid:GetItems()) do
+		count = count + v:GetTall() + self.Settings.Size.Value.RowSpacing
+	end
+
+	self:SetTall(count)
 end
 
 

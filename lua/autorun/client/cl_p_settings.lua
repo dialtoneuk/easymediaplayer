@@ -51,6 +51,7 @@ Init
 --]]
 
 function panel:Init()
+
 	self:BaseInit()
 
 	if ( MEDIA.Settings == nil or table.IsEmpty(MEDIA.Settings)) then
@@ -324,7 +325,6 @@ function panel:UpdateTable(title, v, admin)
 		self.Comments[title]:Show()
 	else
 		self.Comments[title]:Hide()
-		self:RescalePanel()
 	end
 
 	local typ = "Generic"
@@ -356,7 +356,7 @@ function panel:UpdateTable(title, v, admin)
 		row:SetValue(v.Value)
 		row.DataChanged = function( _, val )
 
-			if ( v.Refresh) then
+			if (v.Refresh) then
 				RunConsoleCommand("media_refresh_cl")
 			end
 
@@ -442,13 +442,20 @@ function panel:NormalSettingsRow(v, k, row )
 					MEDIA.Settings[v.Key][v.Type].Value[k] = tab
 				end
 			end
-
-			row:SetValue(MEDIA.Settings[v.Key][v.Type].Value[k])
 		end
 
-		if ( v.SlowUpdate ) then
+		if ( v.SlowUpdate != nil ) then
+
+			local t
+
+			if (type(v.SlowUpdate) == "boolean") then
+				t = 1.5
+			else
+				t = v.SlowUpdate
+			end
+
 			timer.Remove("update")
-			timer.Create("update", v.SlowUpdate, 0, fn)
+			timer.Create("update", t, 0, fn)
 		else
 			fn()
 		end
@@ -491,8 +498,6 @@ function panel:AdminSettingsRow(v, k, row )
 				MEDIA.Settings[v.Key][v.Type].Value[k] = tab
 			end
 		end
-
-		row:SetValue(MEDIA.AdminSettings[v.Key][v.Type].Value[k])
 	end
 end
 

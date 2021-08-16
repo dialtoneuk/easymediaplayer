@@ -2,7 +2,7 @@ things to do:
 
 !Play argument parsing
 
-table additions inside setting box
+table additions inside setting box - so can add new custom tips inside settings panel
 the warning box for when bad stuff happen
 implement a changelog
 

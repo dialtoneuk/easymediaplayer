@@ -27,7 +27,7 @@ function panel:Init()
 
 	if (!MEDIA.LocalPlayer:IsAdmin()) then self:Remove() return end
 
-	self:SetSize(self:GetPaddedWidth(), self:GetPaddedHeight())
+	self:SetSize(self:GetWidth(), self:GetHeight())
 	self:SetDeleteOnClose( false )
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )

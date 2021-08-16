@@ -22,6 +22,8 @@ if (MEDIA == nil or table.IsEmpty(MEDIA)) then
             ...
         }
 
+
+        hook.Run("OnWarning", {...})
         ErrorNoHalt(...)
     end
 

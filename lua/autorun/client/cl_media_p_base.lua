@@ -1,112 +1,306 @@
-local base = {}
+local base = {
+    Name = "base",
+    Centered = false,
+    Locked = false,
+    Invert = {
+        X = false,
+        Y = false
+    },
+    Resize = {
+        Width = true,
+        Height = true
+    },
+    _Changes = {
 
-base.Name = "base"
-base.ActiveRefresh = true
-base.InvertXPosition = false
-base.InvertYPosition = false
-base.RescaleWidth = true
-base.RescaleHeight = true
-base._Reposition = true
-base._Rescaled = false
-base._RowHeight = 0
-base._Padding = 0
+    },
+    _Resized = false,
+    _WatchedSettings = {
+        Size = {
+            Width = function(p)
 
-base._OnChange = {
-    Width = function(p)
-        if (p.RescaleWidth and p:GetWide() != p:GetPaddedWidth()) then
-            p:SetWide(p:GetPaddedWidth())
-            p._Rescaled = true
-        end
-    end,
-    Height = function(p)
-        if (p.RescaleHeight and p:GetTall() != p:GetPaddedHeight()) then
-            p:SetTall(p:GetPaddedHeight())
-            p._Rescaled = true
-        end
-    end,
-    RowHeight = function(p)
-        if (p._RowHeight and p._RowHeight != p.Settings.Size.Value.RowHeight ) then
-            p._RowHeight = p.Settings.Size.Value.RowHeight
-            p._Rescaled = true
-        end
-    end,
-    Padding = function(p)
-        if (p._Padding and p._Padding != p.Settings.Size.Value.Padding ) then
-            p._Padding = p.Settings.Size.Value.Padding
-            p._Rescaled = true
-        end
-    end
+                if (p:CheckChange("Width")) then
+                    p:SetWide(p:GetSettingWidth())
+                    p:SetHasResized()
+                end
+            end,
+            Height = function(p)
+                if (p:CheckChange("Height")) then
+                    p:SetTall(p:GetSettingHeight())
+                    p:SetHasResized()
+                end
+            end,
+            RowHeight = function(p)
+                if (p:CheckChange("RowHeight")) then
+                    p:SetHasResized()
+                end
+            end,
+            Padding = function(p)
+                if ( p:CheckChange("Padding") ) then
+                    p:SetHasResized()
+                end
+            end
+        },
+        Position = {
+            X = function(p)
+                if ( p:CheckChange("X", "Position") ) then
+                    if (p.Locked) then return end
+                    if (p:IsCentered()) then return end
+                    if (p:IsXInverted()) then
+                        p:SetPos( ScrW() - p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
+                    else
+                        p:SetPos( p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
+                    end
+                end
+            end,
+            Y = function(p)
+                if ( p:CheckChange("Y", "Position") ) then
+                    if (p.Locked) then return end
+                    if (p:IsCentered()) then return end
+                    if (p:IsYInverted()) then
+                        p:SetPos( p:GetIndexedSetting("X", "Position"), ScrH() - p:GetIndexedSetting("Y", "Position") )
+                    else
+                        p:SetPos( p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
+                    end
+                end
+            end
+        }
+    },
+    _Settings = {
+        Colours = "colours",
+        Position = "position",
+        Size = "size",
+        Options = "options"
+    }
 }
 
-base._Settings = {
-    Colours = "colours",
-    Position = "position",
-    Size = "size"
-}
 
---call this to do the rest
-function base:BaseInit()
-
-    self.OnChange = table.Merge(table.Copy(self._OnChange), self.OnChange or {})
-    self.Settings = table.Merge(table.Copy(self._Settings), self.Settings or {})
-
-    self:CacheThink()
-    self:RefreshPanelSettings()
-    self:Reposition()
-    self:ExecuteOperations()
+function base:CanResizeHeight()
+    return self.Resize.Height
 end
 
-function base:IgnoreRescaling(height, width)
+function base:CanResizeWidth()
+    return self.Resize.Width
+end
 
-    self.RescaleHeight = !height
-    self.RescaleWidth = !width
+function base:IsXInverted()
+    return self.Invert.X
+end
+
+function base:IsYInverted()
+    return self.Invert.Y
+end
+
+function base:IsCentered()
+    return self.Centered
+end
+
+function base:HasResized()
+    return self._Resized
+end
+
+base.HasRescaled = base.HasResized
+
+function base:SetHasResized()
+    self._Resized = true
 end
 
 
---only use in panel:MyThink()
-function base:HasRescaled()
-    return self._Rescaled == true
-end
-
---another way of saying it
-function base:HasRefreshed()
-    return self:HasRescaled()
-end
-
-function base:InvertPosition(x, y)
-    x = x or false
+function base:SetInverted(x, y)
     y = y or false
-    self.InvertXPosition = x
-    self.InvertYPosition = y
+    x = x or true
+    self.Invert.X = x
+    self.Invert.Y = y
+end
+
+base.InvertPosition = base.SetInverted
+
+function base:LockPanel()
+    self.Lock = true
+end
+
+function base:IgnoreReposition()
+    warning("DEPRACATED CALL IgnoreReposition")
+    self:LockPanel()
+end
+
+function base:BaseInit()
+    self:CacheThink()
+
+    self.WatchedSettings = table.Merge(self._WatchedSettings, self.WatchedSettings or {})
+    self.Settings = table.Merge(self._Settings, self.Settings or {})
+
+    self:SetPanelSettings()
+end
+
+function base:GetSettingWidth(padding, negative_padding)
+    negative_padding = negative_padding or false
+
+    local width = self:GetSetting("Size").Width
+    if (padding and negative_padding) then
+        width = width - self:GetPadding()
+    elseif (padding) then
+        width = width + self:GetPadding()
+    end
+
+    return width
+end
+
+base.GetWidth = base.GetSettingWidth
+
+function base:GetSettingHeight(padding, negative_padding)
+    negative_padding = negative_padding or false
+
+    local height = self:GetSetting("Size").Height
+    if (padding and negative_padding) then
+        height = height - self:GetPadding()
+    elseif (padding) then
+        height = height + self:GetPadding()
+    end
+
+    return height
+end
+
+base.GetHeight = base.GetSettingHeight
+
+
+function base:IsSettingTrue(key)
+
+    return self:GetSetting(key) == true or self:GetSetting(key) == 1
+end
+
+function base:GetPadding()
+    return self:GetSetting("Size").Padding
+end
+
+function base:GetIndexedSetting(key, index)
+    index = index or "Size"
+    return self.Settings[index].Value[key]
+end
+
+function base:SetIgnoreRescaling(width, height)
+    width = width or true
+    height = height or true
+
+    self.Resize.Width = width
+    self.Resize.Height = height
+end
+
+base.IgnoreRescaling = base.SetIgnoreRescaling
+
+function base:GetSetting(index)
+    return self.Settings[index].Value
+end
+
+function base:ExecuteOperations()
+
+    warning("DEPRACATED CALL ExecuteOperations(")
+end
+
+function base:ResizePanel()
+
+    warning("DEPRACATED CALL ResizePanel")
+end
+
+function base:ResizePanel()
+
+    warning("DEPRACATED CALL ResizePanel")
+end
+
+function base:CheckChange(key, index)
+    index = index or "Size"
+
+    if (self._Changes[key] == nil ) then
+        self._Changes[key] = self:GetIndexedSetting(key, index)
+        return true
+    elseif (self._Changes[key] != self:GetIndexedSetting(key, index)) then
+        self._Changes[key] = self:GetIndexedSetting(key, index)
+        return true
+    end
+
+    return false
+end
+
+function base:BaseThink()
+    for k,v in pairs(self.Settings) do
+        if (self.WatchedSettings[k] != nil ) then
+            if ( v.Type == MEDIA.Types.TABLE ) then
+                for index,value in pairs(v.Value) do
+                    if (self.WatchedSettings[k][index] != nil ) then
+                        self.WatchedSettings[k][index](self)
+                    end
+                end
+            else
+                if (self.WatchedSettings[k] != nil ) then
+                    self.WatchedSettings[k](self)
+                end
+            end
+        end
+    end
+end
+
+function base:SetDockPadding(element)
+    element = element or self
+    element:DockPadding(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
+end
+
+function base:SetDockMargin(element)
+    element = element or self
+    element:DockMargin(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
+end
+
+--rerefesh _OnChange settings
+function base:SetPanelSettings()
+    self.Settings = self.Settings or {}
+    for k,v in pairs(self.Settings) do
+        if (type(v) == "string") then
+            self.Settings[k] = MEDIA.GetSetting(self:GetRealKey(v))
+        elseif (type(v) == "table") then
+            self.Settings[k] = MEDIA.GetSetting(v.Key)
+        end
+    end
 end
 
 --[[
-
+Sets the vote position
 ]]
-function base:GetSettingKey(type)
-    type = type or "colours"
+function base:Reposition()
+    if (self.Centered or self.Locked) then return end
 
-    if (string.sub(type, 1,1) == "!") then
-        return string.sub(type, 2)
+    local x = self.Settings.Position.Value.X
+    local y = self.Settings.Position.Value.Y
+
+    if (!self:IsXInverted() and !self:IsYInverted()) then
+        self:SetPos(x, y)
+    elseif (self:IsXInverted() and !self:IsYInverted()) then
+        self:SetPos(ScrW() - (self:GetSettingWidth() + self.Settings.Position.Value.X), self.Settings.Position.Value.Y)
+    elseif (self:IsYInverted() and !self:IsXInverted()) then
+        self:SetPos(self.Settings.Position.Value.X, ScrH() - (self:GetSettingHeight() + self.Settings.Position.Value.Y))
+    else
+        self:SetPos(ScrW() - (self:GetSettingWidth() + self.Settings.Position.Value.X), ScrH() - (self:GetSettingHeight() + self.Settings.Position.Value.Y))
     end
-
-    if (string.find(type, "media_" .. self.Name)) then
-        warning("type already has extension present: " .. type )
-        return type
-    end
-
-    return "media_" .. self.Name .. "_" .. type
 end
 
---[[
-To fix dragging
-]]
+
+function base:GetRealKey(t)
+    t = t or "colours"
+
+    if (string.sub(t, 1,1) == "!") then
+        return string.sub(t, 2)
+    end
+
+    if (string.find(t, "media_" .. self.Name)) then
+        warning("t already has extension present: " .. t )
+        return t
+    end
+
+    return "media_" .. self.Name .. "_" .. t
+end
+
 function base:CacheThink()
-    --hack to get window dragging to keep working too if we override think
     self._Think = self.Think
 
     self.Think = function()
-        self._Rescaled = false
+        self._Resized = false
 
         if (self._Think != nil) then
             self:_Think()
@@ -120,113 +314,6 @@ function base:CacheThink()
     end
 end
 
---rerefesh _OnChange settings
-function base:RefreshPanelSettings()
-    self.Settings = self.Settings or {}
-    for k,v in pairs(self.Settings) do
-        if (type(v) == "string") then
-            self.Settings[k] = MEDIA.GetSetting( self:GetSettingKey(v) )
-        elseif (type(v) == "table") then
-            self.Settings[k] = MEDIA.GetSetting(v.Key)
-        end
-    end
-end
-
-function base:IgnoreReposition()
-    self._Reposition = false
-end
-
---[[
-Resizes
-]]
-function base:BaseThink()
-    if (self.ActiveRefresh) then
-        self:RefreshPanelSettings()
-    end
-
-    self:ExecuteOperations()
-    self:Reposition()
-end
-
-function base:ExecuteOperations()
-
-    if (self.OnChange == nil) then return end
-    for k,v in pairs(self.OnChange) do
-        self.OnChange[k](self)
-    end
-end
-
-function base:ResizePanel()
-    self:ExecuteOperations()
-end
-
-function base:RescalePanel()
-    self:ExecuteOperations()
-end
-
-function base:SimpleDockPadding(element)
-    element = element or self
-    element:DockPadding(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
-end
-
-function base:SimpleDockMargin(element)
-    element = element or self
-    element:DockMargin(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
-end
-
-function base:GetPadding(neg)
-
-    if (self.Settings == nil ) then
-        self:RefreshPanelSettings()
-    end
-
-    neg = neg or false
-    local padding = self.Settings.Size.Value.Padding or 0
-
-    if (neg) then
-        padding = padding - (padding * 2)
-    end
-
-    return math.Truncate(padding)
-end
-
-function base:IsSettingTrue(key)
-
-    if (self.Settings[key] == nil ) then
-        errorBad(key .. " is nil")
-    end
-
-    return self.Settings[ key ].Value == true or self.Settings[ key ].Value == 1
-end
-
-function base:GetPaddedWidth(set_padding, neg)
-    neg = neg or false
-    return math.Truncate(self.Settings.Size.Value.Width + self:GetPadding(neg))
-end
-
-function base:GetPaddedHeight(set_padding, neg)
-    neg = neg or false
-    return math.Truncate(self.Settings.Size.Value.Height + self:GetPadding(neg))
-end
-
---[[
-Sets the vote position
-]]
-function base:Reposition()
-    if (!self._Reposition or self.Centered or self.Settings.Position == nil) then return end
-
-    local x = self.Settings.Position.Value.X
-    local y = self.Settings.Position.Value.Y
-    x = math.floor(x)
-    y = math.floor(y)
-
-    if (!self.InvertXPosition) then
-        self:SetPos(x, y)
-    else
-        self:SetPos(ScrW() - (self:GetPaddedWidth() + self.Settings.Position.Value.X), self.Settings.Position.Value.Y)
-    end
-end
-
 --copy it
 local panel = table.Copy(base)
 local button = table.Copy(base)
@@ -234,4 +321,4 @@ local button = table.Copy(base)
 --Register
 vgui.Register("MEDIA.Base", base, "DFrame")
 vgui.Register("MEDIA.BasePanel", panel, "DPanel") --register an exact copy but for a panel too
-vgui.Register("MEDIA.BaseButton", button, "DButton") --register an exact copy but for a panel too
+vgui.Register("MEDIA.BaseButton", button, "DButton") --register an exact copy but for a  too

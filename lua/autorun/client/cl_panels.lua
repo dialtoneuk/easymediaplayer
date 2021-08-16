@@ -158,11 +158,19 @@ MEDIA.Panels = {
 			panel:Show()
 		end,
 		OnScoreboard = function(panel, key, settings, opened)
-			if (opened and !settings.Show_In_Scoreboard.Value) then
+			if ((!opened or !settings.Show_In_Scoreboard.Value or settings.Hide.Value) and !settings.Show_Constant.Value ) then
+				panel:Hide()
 				return
 			end
 
-			MEDIA.LoadedPanels[key].OnContext(panel,key,settings,opened)
+			if (panel:IsVisible()) then
+				panel:MakePopup()
+				panel:SetPopupStayAtBack(opened)
+				panel:SetKeyboardInputEnabled(opened)
+				panel:SetMouseInputEnabled(opened)
+			end
+
+			panel:Show()
 		end
 	},
 }

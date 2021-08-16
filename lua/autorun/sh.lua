@@ -25,7 +25,6 @@ hook.Add("PostGamemodeLoaded", "MEDIA.LoadSettings", function()
 	--Client and server called
 	hook.Call("MEDIA.SettingsPostLoad")
 end)
-
 --[[
 	Shutdown
 --]]
