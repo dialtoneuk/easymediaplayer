@@ -16,6 +16,11 @@ panel.Settings = {
 	Options = "options"
 }
 
+panel.Invert = {
+	X = true,
+	Y = false
+}
+
 --[[
 	Initializes
 --]]
@@ -38,11 +43,11 @@ function panel:Init()
 	self.Duration:Dock(RIGHT)
 	self.Duration:SetWide(self:GetHeight() / 2)
 	self.Duration:SetFont("BigText")
-	self.Duration:DockMargin(0,0,self:GetPadding(),0)
+	self.Duration:DockMargin(0,0,self:GetPadding() * 2, self:GetPadding() * 2)
 	self.Duration:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	self.TextOwner = vgui.Create("DLabel", self )
-	self.TextOwner:Dock(BOTTOM)
+	self.TextOwner:Dock(TOP)
 	self.TextOwner:SetWide(self:GetWidth())
 	self.TextOwner:SetFont("MediumText")
 	self.TextOwner:SetTextColor(self.Settings.Colours.Value.TextColor)
@@ -57,9 +62,9 @@ function panel:Init()
 				surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 			end
 
-			surface.DrawRect(0, 0, self.Settings.Size.Value.Width - self.Settings.Size.Value.Padding, self.Settings.Size.Value.RowHeight )
+			surface.DrawRect(0, 0, self.Settings.Size.Value.Width - (self.Settings.Size.Value.Padding * 2), self.Settings.Size.Value.RowHeight )
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0, self.Settings.Size.Value.Width - self.Settings.Size.Value.Padding, self.Settings.Size.Value.RowHeight, self.Settings.Options.Value.BorderThickness )
+			surface.DrawOutlinedRect(0, 0, self.Settings.Size.Value.Width - (self.Settings.Size.Value.Padding * 2), self.Settings.Size.Value.RowHeight, self.Settings.Options.Value.BorderThickness )
 	  	end
 	end
 

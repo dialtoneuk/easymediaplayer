@@ -1,81 +1,69 @@
-local base = {
-    Name = "base",
-    Centered = false,
-    Locked = false,
-    Invert = {
-        X = false,
-        Y = false
-    },
-    Resize = {
-        Width = true,
-        Height = true
-    },
-    _Changes = {
+local base = {}
 
+base._WatchedSettings = {
+    Size = {
+        Width = function(p)
+            if (p:CheckChange("Width")) then
+                p:SetWide(p:GetSettingWidth())
+                p:SetHasResized()
+            end
+        end,
+        Height = function(p)
+            if (p:CheckChange("Height")) then
+                p:SetTall(p:GetSettingHeight())
+                p:SetHasResized()
+            end
+        end,
+        RowHeight = function(p)
+            if (p:CheckChange("RowHeight")) then
+                p:SetHasResized()
+            end
+        end,
+        Padding = function(p)
+            if ( p:CheckChange("Padding") ) then
+                p:SetHasResized()
+            end
+        end
     },
-    _Resized = false,
-    _WatchedSettings = {
-        Size = {
-            Width = function(p)
-
-                if (p:CheckChange("Width")) then
-                    p:SetWide(p:GetSettingWidth())
-                    p:SetHasResized()
-                end
-            end,
-            Height = function(p)
-                if (p:CheckChange("Height")) then
-                    p:SetTall(p:GetSettingHeight())
-                    p:SetHasResized()
-                end
-            end,
-            RowHeight = function(p)
-                if (p:CheckChange("RowHeight")) then
-                    p:SetHasResized()
-                end
-            end,
-            Padding = function(p)
-                if ( p:CheckChange("Padding") ) then
-                    p:SetHasResized()
+    Position = {
+        X = function(p)
+            if ( p:CheckChange("X", "Position") ) then
+                if (p:IsLocked()) then return end
+                if (p:IsCentered()) then return end
+                if (p:IsXInverted()) then
+                    p:SetPos( ScrW() - p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
+                else
+                    p:SetPos( p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
                 end
             end
-        },
-        Position = {
-            X = function(p)
-                if ( p:CheckChange("X", "Position") ) then
-                    if (p.Locked) then return end
-                    if (p:IsCentered()) then return end
-                    if (p:IsXInverted()) then
-                        p:SetPos( ScrW() - p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
-                    else
-                        p:SetPos( p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
-                    end
-                end
-            end,
-            Y = function(p)
-                if ( p:CheckChange("Y", "Position") ) then
-                    if (p.Locked) then return end
-                    if (p:IsCentered()) then return end
-                    if (p:IsYInverted()) then
-                        p:SetPos( p:GetIndexedSetting("X", "Position"), ScrH() - p:GetIndexedSetting("Y", "Position") )
-                    else
-                        p:SetPos( p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
-                    end
+        end,
+        Y = function(p)
+            if ( p:CheckChange("Y", "Position") ) then
+                if (p:IsLocked()) then return end
+                if (p:IsCentered()) then return end
+                if (p:IsYInverted()) then
+                    p:SetPos( p:GetIndexedSetting("X", "Position"), ScrH() - p:GetIndexedSetting("Y", "Position") )
+                else
+                    p:SetPos( p:GetIndexedSetting("X", "Position"), p:GetIndexedSetting("Y", "Position") )
                 end
             end
-        }
-    },
-    _Settings = {
-        Colours = "colours",
-        Position = "position",
-        Size = "size",
-        Options = "options"
+        end
     }
 }
 
+base._Settings = {
+    Colours = "colours",
+    Position = "position",
+    Size = "size",
+    Options = "options"
+}
 
 function base:CanResizeHeight()
     return self.Resize.Height
+end
+
+function base:IsLocked()
+    return self.Locked
 end
 
 function base:CanResizeWidth()
@@ -98,12 +86,10 @@ function base:HasResized()
     return self._Resized
 end
 
-base.HasRescaled = base.HasResized
 
 function base:SetHasResized()
     self._Resized = true
 end
-
 
 function base:SetInverted(x, y)
     y = y or false
@@ -112,25 +98,43 @@ function base:SetInverted(x, y)
     self.Invert.Y = y
 end
 
-base.InvertPosition = base.SetInverted
 
 function base:LockPanel()
-    self.Lock = true
+    self.Locked = true
 end
 
 function base:IgnoreReposition()
-    warning("DEPRACATED CALL IgnoreReposition")
     self:LockPanel()
 end
 
 function base:BaseInit()
+    self.WatchedSettings = table.Merge(table.Copy(self._WatchedSettings), self.WatchedSettings or {})
+    self.Settings = table.Merge(table.Copy(self._Settings), self.Settings or {})
+
+    self.InvertPosition = self.SetInverted
+    self.HasRescaled = self.HasResized
+    self.HasRescaled = self.HasResized
+
+    self.Centered = false
+    self.Invert = {
+        X = false,
+        Y = false
+    }
+    self._Changes = {}
+    self.Resize = {
+        Width = true,
+        Height = true
+    }
+    self._Resized = false
+
+    if (self.Name == nil ) then
+        self.Name = "base"
+    end
+
     self:CacheThink()
-
-    self.WatchedSettings = table.Merge(self._WatchedSettings, self.WatchedSettings or {})
-    self.Settings = table.Merge(self._Settings, self.Settings or {})
-
     self:SetPanelSettings()
 end
+
 
 function base:GetSettingWidth(padding, negative_padding)
     negative_padding = negative_padding or false
@@ -162,10 +166,9 @@ end
 
 base.GetHeight = base.GetSettingHeight
 
-
 function base:IsSettingTrue(key)
 
-    return self:GetSetting(key) == true or self:GetSetting(key) == 1
+    return self:GetSetting(key) == true
 end
 
 function base:GetPadding()
@@ -193,7 +196,7 @@ end
 
 function base:ExecuteOperations()
 
-    warning("DEPRACATED CALL ExecuteOperations(")
+    warning("DEPRACATED CALL ExecuteOperations")
 end
 
 function base:ResizePanel()
@@ -221,6 +224,7 @@ function base:CheckChange(key, index)
 end
 
 function base:BaseThink()
+
     for k,v in pairs(self.Settings) do
         if (self.WatchedSettings[k] != nil ) then
             if ( v.Type == MEDIA.Types.TABLE ) then

@@ -406,6 +406,7 @@ function panel:UpdateTable(title, v, admin)
 		else
 			row.DataChanged = self:AdminSettingsRow(v, k, row )
 		end
+
 	end
 end
 
@@ -436,20 +437,22 @@ function panel:NormalSettingsRow(v, k, row )
 
 				if (v.Type == MEDIA.Types.TABLE) then
 					MEDIA.Settings[v.Key][v.Type].Value[k] = val
-				elseif (v.TYpe == MEDIA.Types.INT) then
+				elseif (v.Type == MEDIA.Types.INT) then
 					MEDIA.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
 				else
 					MEDIA.Settings[v.Key][v.Type].Value[k] = tab
 				end
 			end
+
+			row:SetValue(MEDIA.Settings[v.Key][v.Type].Value[k])
 		end
 
-		if ( v.SlowUpdate != nil ) then
+		if ( v.SlowUpdate ) then
 
 			local t
 
 			if (type(v.SlowUpdate) == "boolean") then
-				t = 1.5
+				t = 0.1
 			else
 				t = v.SlowUpdate
 			end

@@ -13,7 +13,7 @@ function panel:Init()
 	self.Label = vgui.Create("DLabel", self )
 	self.Label:Dock(FILL)
 	self.Label:SetFont("BiggerText")
-	self.Label:SetTextColor( self.Settings.Colours.Value.TextColour )
+	self.Label:SetTextColor( self.Settings.Colours.Value.TextColor )
 
 	self.Paint = function(s, w, h)
 		surface.SetDrawColor(self.Settings.Colours.Value.Background)
@@ -40,13 +40,18 @@ end
 function panel:SetWarning(title, message, start_timeout)
 	title = title or "Warning"
 	start_timeout = start_timeout or true
-	self:SetTitle(title)
-	self:DockPadding(15,15,15,15)
-	self.Label:SetText(message)
-	self.Label:SetWrap(true)
 
-	if (start_timeout) then
-		self:SetTimeout()
+	if (message != self.LastMessage) then
+		self:SetTitle(title)
+		self:DockPadding(15,15,15,15)
+		self.Label:SetText(message)
+		self.Label:SetWrap(true)
+
+		self.LastMessage = message
+
+		if (start_timeout) then
+			self:SetTimeout()
+		end
 	end
 end
 
@@ -55,6 +60,7 @@ function panel:SetTimeout(seconds)
 
 	self.AcceptButton:SetText("OK! (will autoclose in " .. seconds .. " seconds)")
 
+	timer.Remove("warning_panel_timer")
 	timer.Create("warning_panel_timer", 1, seconds, function()
 		seconds = seconds - 1
 

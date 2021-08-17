@@ -476,6 +476,12 @@ Recieves history data from the server
 --]]
 
 net.Receive("MEDIA.CreateWarningBox", function()
+
+	if (MEDIA.PanelValid("WarningBox")) then
+		MEDIA.GetPanel("WarningBox"):SetWarning(net.ReadString(), net.ReadString())
+		return
+	end
+
 	MEDIA.CreateWarningBox(net.ReadString(), net.ReadString() )
 end)
 

@@ -101,6 +101,10 @@ function MEDIA.GetPanel(key)
 	return 	MEDIA.LoadedPanels[key].Panel
 end
 
+function MEDIA.PanelValid(key)
+	return MEDIA.LoadedPanels[key] != nil and MEDIA.LoadedPanels[key].Panel != nil and IsValid(MEDIA.LoadedPanels[key].Panel)
+end
+
 --hides a panel
 function MEDIA.HidePanel(key)
 	MEDIA.LoadedPanels[key].Panel:Hide()
@@ -122,7 +126,7 @@ function MEDIA.SetupPanel(settings, panel, key)
 	panel:SetSize(settings.Size.Value.Width, settings.Size.Value.Height)
 	panel:SetPos(settings.Position.Value.X, settings.Position.Value.Y)
 
-	if (settings.Centered.Value == true ) then
+	if (settings.Centered.Value) then
 		panel:IgnoreReposition()
 		panel:Center()
 	end
@@ -130,7 +134,10 @@ function MEDIA.SetupPanel(settings, panel, key)
 	--for dframes
 	if (panel.SetDraggable != nil ) then
 		panel:SetDraggable(MEDIA.LoadedPanels[key].Draggable)
-		panel._Reposition = !MEDIA.LoadedPanels[key].Draggable
+
+		if (!settings.Centered.Value) then
+			panel._Reposition = !MEDIA.LoadedPanels[key].Draggable
+		end
 	end
 
 	if (panel.SetDeleteOnClose != nil ) then

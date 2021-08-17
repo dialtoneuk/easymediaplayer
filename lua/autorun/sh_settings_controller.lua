@@ -157,7 +157,7 @@ function MEDIA.AddSetting(tab)
 		Convar = tab.Convar or false,
 		Comment = tab.Comment or false,
 		Refresh = tab.Refresh or false,
-		SlowUpdate = tab.SlowUpdate or 0.05
+		SlowUpdate = tab.SlowUpdate or false
 	}
 end
 

@@ -120,7 +120,7 @@ end)
 --]]
 
 
-hook.Add("OnFirstBadError","MEDIA.OnFirstBadError", function(error)
+hook.Add("OnBadError","MEDIA.OnFirstBadError", function(error)
 	for k,v in pairs(player.GetAll()) do
 
 		if (!IsValid(v)) then continue end
