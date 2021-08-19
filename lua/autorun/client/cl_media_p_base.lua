@@ -172,7 +172,7 @@ function base:IsSettingTrue(key)
 end
 
 function base:GetPadding()
-    return self:GetSetting("Size").Padding
+    return self:GetSetting("Size").Padding or 0
 end
 
 function base:GetIndexedSetting(key, index)

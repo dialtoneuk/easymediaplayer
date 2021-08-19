@@ -24,10 +24,22 @@ function panel:Init()
 
 	self.AcceptButton = vgui.Create("DButton", self )
 	self.AcceptButton:Dock(BOTTOM)
+	self.AcceptButton:SetTall(50)
 	self.AcceptButton:DockMargin(15,15,15,15)
 	self.AcceptButton:SetText("OK!")
 	self.AcceptButton.DoClick = function()
 		self:OnClicked()
+	end
+
+	self.KeepButton = vgui.Create("DButton", self )
+	self.KeepButton:Dock(BOTTOM)
+	self.KeepButton:DockMargin(15,15,15,0)
+	self.KeepButton:SetText("Keep Open")
+	self.KeepButton:Hide()
+	self.KeepButton.DoClick = function()
+		self.KeepButton:Hide()
+		self.AcceptButton:SetText("OK!")
+		timer.Remove("warning_panel_timer")
 	end
 end
 
@@ -59,6 +71,7 @@ function panel:SetTimeout(seconds)
 	seconds = seconds or 10
 
 	self.AcceptButton:SetText("OK! (will autoclose in " .. seconds .. " seconds)")
+	self.KeepButton:Show()
 
 	timer.Remove("warning_panel_timer")
 	timer.Create("warning_panel_timer", 1, seconds, function()

@@ -120,7 +120,7 @@ end)
 --]]
 
 
-hook.Add("OnBadError","MEDIA.OnFirstBadError", function(error)
+hook.Add("OnFirstBadError","MEDIA.OnFirstBadError", function(error)
 	for k,v in pairs(player.GetAll()) do
 
 		if (!IsValid(v)) then continue end
@@ -433,7 +433,7 @@ concommand.Add("media_play", function (ply, cmd, args)
 	local _c = table.Count(vids)
 	local setting = MEDIA.GetSetting("player_playlist_max")
 
-	if (_c >= setting.Value and (!ply:IsAdmin() or !MEDIA.IsSettingTrue("admins_ignore_playlist_limit") ) ) then
+	if (_c >= setting.Value and (!ply:IsAdmin() or !MEDIA.IsSettingTrue("media_admin_ignore_limits") ) ) then
 		ply:SendMessage("You are allowed a maximum of " .. setting.Value .. " in the playlist. You have " .. _c  .. "." )
 		return
 	end

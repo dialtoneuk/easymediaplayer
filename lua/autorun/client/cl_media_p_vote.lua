@@ -22,7 +22,8 @@ Create vote panel
 function panel:Init()
 
 	self:BaseInit()
-	self:DockPadding(15,15,15,15)
+
+	self:SetDockPadding()
 
 	self.Type = vgui.Create("DLabel", self )
 	self.Type:Dock(TOP)

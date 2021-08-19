@@ -22,7 +22,6 @@ Init
 --]]
 
 function panel:Init()
-
 	self:BaseInit()
 
 	if (!MEDIA.LocalPlayer:IsAdmin()) then self:Remove() return end

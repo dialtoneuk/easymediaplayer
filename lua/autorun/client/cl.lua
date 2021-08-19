@@ -213,9 +213,8 @@ hook.Add("PreGamemodeLoaded", "MEDIA.PreGamemodeLoaded", function()
 		onewindow	= true,
 		init		= function( icon, window )
 
-			if ( !LocalPlayer():IsAdmin()) then
-
-				MEDIA.CreateWarningBox("Permissions Denied!","You'll need to be an admin of the server to view the admin dashboard")
+			if ( !MEDIA.LocalPlayer:IsAdmin()) then
+				MEDIA.CreateWarningBox("Permissions Denied!","You'll need to be an admin of the server to view the admin dashboard", 4)
 				window:Remove()
 				return
 			end

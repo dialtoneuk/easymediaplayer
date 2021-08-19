@@ -12,7 +12,7 @@ local server = {
         Value = true,
         Comment = "Announced in the chat when an admin skips a video"
     },
-    admins_ignore_playlist_limit = {
+    media_admin_ignore_limits = {
         Value = true,
         Comment = "Admins can queue as many videos as they like"
     },
@@ -36,16 +36,13 @@ local server = {
         Value = true,
         Comment = "New votes will be announced in chat"
     },
-    youtube_api_key = {
-        Value = "REPLACE WITH YOUR OWN",
-        Comment = "Head over to google dashboard and create API credientials which have access to the Youtube Data API (version 3)"
-    },
     media_tips_enabled = {
         Value = true,
         Comment = "Disable tips completely here"
     },
     media_tips_frequency = {
         Value = 180,
+        Max = 1000,
         Comment = "In seconds, how frequent tips are"
     },
     media_history_max = {
@@ -106,6 +103,12 @@ local server = {
         Max = 50,
         Comment = "The maximum amount of items a search will return"
     },
+    media_ban_after_dislikes = {
+        Value = 50,
+        Max = 500,
+        Min = 0,
+        Comment = "After a piece of media has been disliked over this amount it will autoban a video, you can set this to zero if you wish not to ban videos based on dislikes"
+    },
     media_custom_tips = {
         Value = {
             "this is a tip",
@@ -135,6 +138,30 @@ local server = {
     youtube_enabled = {
         Value = false,
         Comment = "Since youtube only works on the Chromium branch, it is advised this disabled out right!"
+    },
+    youtube_api_key = {
+        Value = "REPLACE WITH YOUR OWN",
+        Comment = "Head over to google dashboard and create API credientials which have access to the Youtube Data API (version 3)"
+    },
+    dailymotion_enabled = {
+        Value = true,
+        Comment = "Will disable dailymotion videos from being supported"
+    },
+    dailymotion_api_key = {
+        Value = "REPLACE WITH YOUR OWN",
+        Comment = "TODO: Fill"
+    },
+    soundcloud_enabled = {
+        Value = true,
+        Comment = "Will disable soundcloud music from being supported"
+    },
+    soundcloud_api_key = {
+        Value = "REPLACE WITH YOUR OWN",
+        Comment = "TODO: Fill"
+    },
+    allow_custom_mp3 = {
+        Value = false,
+        Comment = "TODO: Fill"
     },
     media_admin_only = {
         Value = true,
@@ -187,7 +214,7 @@ local client = {
     },
     media_playlist_show_constant = {
         Value = false,
-        Comment = "Will show the playlist all the time, no matter what."
+        Comment = "Will show the playlist all the time, not just in the scoreboard and context menu"
     },
     media_settings_centered = {
         Value = false,
@@ -297,11 +324,12 @@ local client = {
         }
     },
     media_settings_size = {
-        Min = 500,
+        Min = 1,
         Max = 2000,
         Value = {
             Width = 715,
             Height = 500,
+            Padding = 5
         },
         SlowUpdate = 0.75
     },
@@ -555,6 +583,7 @@ local client = {
         Value = {
             Width = 190,
             Height = 75,
+            Padding = 15,
             LoadingBarHeight = 5
         }
     },

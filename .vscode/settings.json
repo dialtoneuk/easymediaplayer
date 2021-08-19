@@ -4,5 +4,75 @@
         "glua",
         "lua"
     ],
-
+    "commentAnchors.tags.list": [
+        {
+            "tag": "{()}",
+            "iconColor": "green",
+            "highlightColor": "#A8C023",
+            "scope": "file",
+            "isRegion": true
+        },
+        {
+            "tag": "{__}",
+            "iconColor": "blue",
+            "highlightColor": "#3ea8ff",
+            "scope": "workspace"
+        },
+        {
+            "tag": "{__t}",
+            "iconColor": "blue",
+            "highlightColor": "#3ea8ff",
+            "scope": "workspace",
+            "isRegion": true
+        },
+        {
+            "tag": "{@}",
+            "iconColor": "red",
+            "highlightColor": "#F44336",
+            "scope": "workspace",
+            "isRegion": true
+        },
+        {
+            "tag": "{-}",
+            "iconColor": "red",
+            "highlightColor": "#C10000",
+            "scope": "workspace",
+            "isRegion": true
+        },
+        {
+            "tag": "{*}",
+            "iconColor": "pink",
+            "highlightColor": "#35756A",
+            "scope": "workspace",
+            "isRegion": true
+        },
+        {
+            "tag": "{+}",
+            "iconColor": "orange",
+            "highlightColor": "#FFB300",
+            "scope": "workspace",
+            "isRegion": true
+        },
+        {
+            "tag": "{=_=}",
+            "enabled": true,
+            "scope": "file",
+            "iconColor": "green",
+            "highlightColor": "#64DD17"
+        },
+        {
+            "tag": "{^}",
+            "iconColor": "blurple",
+            "highlightColor": "#896afc",
+            "scope": "workspace",
+            "isRegion": true
+        },
+        {
+            "tag": "{%}",
+            "iconColor": "teal",
+            "highlightColor": "#03a6a6",
+            "scope": "workspace",
+            "isRegion": true
+        }
+    ]
 }

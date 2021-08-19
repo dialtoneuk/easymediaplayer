@@ -60,7 +60,9 @@ function panel:Init()
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
 	self.PropertySheet:Dock(FILL)
+
 	self.Edited = false
+	self.Clicked = false
 
 	--Draw our custom colours if we have any
 	if (self.Settings.Colours != nil) then
@@ -86,11 +88,9 @@ Fills the property sheet
 --]]
 
 function panel:FillPropertySheet(settings)
-	local ply = LocalPlayer()
-
 	for k,v in pairs(settings) do
 		if ( k == "Server") then
-			if (ply:IsAdmin()) then
+			if (MEDIA.LocalPlayer:IsAdmin()) then
 				self:AddPropertySheetTab(k, v, "icon16/shield.png", true )
 			end
 			continue
@@ -132,11 +132,9 @@ Add Preset tab
 --]]
 
 function panel:AddPresetTab()
-	local pan = vgui.Create("DScrollPanel", self.PropertySheet)
-	pan:DockMargin(15,15,15,15)
-	pan:Dock(FILL)
 
-	self.PropertySheet:AddSheet("Presets", pan, "icon16/folder.png")
+	self.PresetEditor = vgui.Create("MEDIA.SettingPresets", self.PropertySheet)
+	self.PropertySheet:AddSheet("Presets", self.PresetEditor, "icon16/folder.png")
 end
 
 --[[
@@ -145,7 +143,7 @@ Add Credits Tab
 
 function panel:AddCreditsTab()
 	local pan = vgui.Create("DScrollPanel", self.PropertySheet)
-	pan:DockMargin(15,15,15,15)
+	self:SetDockPadding(pan)
 	pan:Dock(FILL)
 
 	self.PropertySheet:AddSheet("Credits & Changelog", pan, "icon16/rainbow.png")
@@ -158,13 +156,15 @@ Add commands tab
 function panel:AddCommandsTab()
 
 	local pan = vgui.Create("DScrollPanel", self.PropertySheet)
-	pan:DockMargin(15,15,15,15)
+	self:SetDockMargin(pan)
+
 	pan:Dock(FILL)
 
 	local grid = vgui.Create( "DGrid", pan )
 	grid:Dock(FILL)
 	grid:SetCols( 1 )
 	grid:SetColWide( self:GetWide() )
+	self:SetDockPadding(grid)
 
 	local divider = vgui.Create("DButton", grid )
 	divider:SetText("Client Commands")
@@ -232,6 +232,10 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	admin = admin or false
 
 	local pan = vgui.Create("DPanel", self.PropertySheet)
+	pan.Paint = function() end
+
+	self:SetDockPadding(pan)
+
 	if (icon == nil) then icon = "icon16/star.png" end
 
 	local divider = vgui.Create("DHorizontalDivider", pan )
@@ -240,18 +244,20 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	divider:SetLeftMin( 200 ) -- Set the Minimum width of left side
 	divider:SetRightMin( 200 )
 
-	local scrollLeft = vgui.Create("DScrollPanel", divider )
-	scrollLeft:SetHeight(self:GetTall())
-	scrollLeft:DockPadding(5,5,5,5)
-
 	local scrollRight = vgui.Create("DPanel", divider )
 	scrollRight:SetHeight(self:GetTall())
+	scrollRight._Paint = scrollRight.Paint
 
-	local settingSelection = vgui.Create("DTree", scrollLeft )
-	settingSelection:Dock(FILL)
+	scrollRight.Paint = function(s)
+
+		if (admin and self.Edited) then
+			draw.SimpleTextOutlined( "Remember to click save!" , "BiggerText", 10, s:GetTall() / 2 , MEDIA.Colours.White, 10, 1, 0.5,  MEDIA.Colours.Black )
+		end
+	end
+
+	local settingSelection = vgui.Create("DTree", divider)
 	settingSelection:SetHeight(self:GetTall() - 75)
 
-	scrollLeft:SetVerticalScrollbarEnabled(false)
 
 	if ( !self.settingsEdit) then self.settingsEdit = {} end
 	if ( !self.Comments) then self.Comments = {} end
@@ -262,11 +268,30 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	self.settingsEdit[title]:Dock(FILL)
 	self.settingsEdit[title]:SetHeight(self:GetTall())
 
+	if (admin) then
+		self.SendButton = vgui.Create("DButton", scrollRight)
+		self.SendButton:Dock(BOTTOM)
+		self.SendButton:SizeToContents()
+		self.SendButton:SetText("Save Changes")
+		self.SendButton:SetImage("icon16/accept.png")
+		self.SendButton:SetTall(30)
+		self.SendButton:DockMargin(0,5,0,0)
+		self.SendButton:Hide()
+		self.SendButton.DoClick = function()
+			if (self.Edited) then
+				MEDIA.SetAdminSettings()
+				self.SendButton:Hide()
+				self.Edited = false
+			end
+		end
+	end
+
+
 	--comment for the property
 	self.Comments[title] = vgui.Create("DPanel",self.settingsEdit[title])
 	self.Comments[title]:Dock(BOTTOM)
-	self.Comments[title]:DockMargin(5,5,5,5)
-	self.Comments[title]:DockPadding(5,5,5,5)
+	self.Comments[title]:DockMargin(0,5,0,0)
+	self.Comments[title]:DockPadding(15,5,5,5)
 	self.Comments[title]:SetTall(65)
 	self.Comments[title]:SetBackgroundColor(self.Settings.Colours.Value.Background)
 	self.Comments[title]:Hide()
@@ -279,7 +304,41 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 
 	for k,keys in SortedPairs(data) do
 		for kind,v in SortedPairsByMemberValue(keys, "Convar") do
-			local node = settingSelection:AddNode(k)
+			local i = "icon16/folder.png"
+
+			if (admin) then
+				if ( string.find(k, "youtube_")) then
+					i = "icon16/television.png"
+				elseif ( string.find(k, "dailymotion_")) then
+					i = "icon16/film.png"
+				elseif ( string.find(k, "soundcloud_")) then
+					i = "icon16/sound.png"
+				elseif ( string.find(k, "media_cooldown")) then
+					i = "icon16/clock.png"
+				elseif ( string.find(k, "media_announce")) then
+					i = "icon16/email.png"
+				elseif ( string.find(k, "media_command")) then
+					i = "icon16/text_bold.png"
+				elseif ( string.find(k, "media_admin")) then
+					i = "icon16/shield.png"
+				end
+			else
+				if (string.find(k,"_colours")) then
+					i = "icon16/color_wheel.png"
+				elseif ( string.find(k, "_size")) then
+					i = "icon16/layout.png"
+				elseif ( string.find(k, "_position")) then
+					i = "icon16/arrow_in.png"
+				elseif ( string.find(k, "_options")) then
+					i = "icon16/page_edit.png"
+				elseif ( string.find(k, "_centered")) then
+					i = "icon16/shape_square.png"
+				elseif ( string.find(k, "_hide")) then
+					i = "icon16/zoom.png"
+				end
+			end
+
+			local node = settingSelection:AddNode(k, i)
 
 			function node:DoClick()
 				MEDIA.LoadedPanels["SettingsPanel"].Panel:UpdateTable(title, v, admin )
@@ -287,25 +346,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 		end
 	end
 
-	if (admin) then
-		self.SendButton = vgui.Create("DButton", scrollRight)
-		self.SendButton:Dock(BOTTOM)
-		self.SendButton:SizeToContents()
-		self.SendButton:SetText("Apply Changes")
-		self.SendButton:SetImage("icon16/accept.png")
-		self.SendButton:SetTall(30)
-		self.SendButton:DockMargin(0,5,5,5)
-		self.SendButton:Hide()
-		self.SendButton.DoClick = function()
-			if (self.Edited) then
-				MEDIA.SetAdminSettings()
-				self.SendButton:Hide()
-				self.Edited = false
-			end
-		end
-	end
-
-	divider:SetLeft(scrollLeft)
+	divider:SetLeft(settingSelection)
 	divider:SetRight(scrollRight)
 
 	self.PropertySheet:AddSheet(title, pan, icon)
@@ -415,6 +456,9 @@ return a normal settings row
 --]]
 
 function panel:NormalSettingsRow(v, k, row )
+
+	self.Clicked = true
+
 	return function( _, val )
 		local fn = function()
 			if ( !IsValid(row)) then return end
@@ -470,6 +514,9 @@ Return an admin settings row
 --]]
 
 function panel:AdminSettingsRow(v, k, row )
+
+	self.Clicked = true
+
 	return function( _, val )
 		local tab = string.Explode(" ",val)
 
@@ -494,11 +541,11 @@ function panel:AdminSettingsRow(v, k, row )
 			end
 
 			if (v.Type == MEDIA.Types.TABLE) then
-				MEDIA.Settings[v.Key][v.Type].Value[k] = val
-			elseif (v.TYpe == MEDIA.Types.INT) then
-				MEDIA.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
+				MEDIA.AdminSettings[v.Key][v.Type].Value[k] = val
+			elseif (v.Type == MEDIA.Types.INT) then
+				MEDIA.AdminSettings[v.Key][v.Type].Value[k] = math.Truncate(tab)
 			else
-				MEDIA.Settings[v.Key][v.Type].Value[k] = tab
+				MEDIA.AdminSettings[v.Key][v.Type].Value[k] = tab
 			end
 		end
 	end

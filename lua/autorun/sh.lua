@@ -6,6 +6,8 @@
 	are focused on the money side and I get that, which is why you very rarely see any sort of Open Source lua projects. I thank the current community of developers
 	who make their code accessible to all and allow others to extend off of it. Please feel free to email me at llydia@zyon.io if you have any questions about
 	this code. Thanks!
+
+	see ___.lua for where global table is defined + error capturing
 --]]
 
 
