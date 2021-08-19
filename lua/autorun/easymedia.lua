@@ -107,6 +107,7 @@ if (SERVER) then
     end
 end
 
+--test
 for k,v in pairs(file.Find("lyds/client/*.lua","LUA")) do
     if (SERVER) then
         AddCSLuaFile("lyds/client/" .. v)
