@@ -316,7 +316,7 @@ end
 
 if (SERVER) then
 	--server only
-	concommand.Add("MediaPlayer_reset_settings", function(ply, cmd, args )
+	concommand.Add("media_reset_settings", function(ply, cmd, args )
 		if (!ply:IsAdmin()) then return end
 
 		MediaPlayer.ResetSettings()
@@ -325,11 +325,11 @@ end
 
 if (CLIENT) then
 	--client only
-	concommand.Add("MediaPlayer_reset_cl_settings", function(ply, cmd, args )
+	concommand.Add("media_reset_cl_settings", function(ply, cmd, args )
 
 		MediaPlayer.ResetSettings()
 		--recreate UI
-		RunConsoleCommand("MediaPlayer_create_cl")
+		RunConsoleCommand("media_create_cl")
 	end)
 end
 
@@ -387,7 +387,7 @@ function MediaPlayer.SetConvars()
 end
 
 if (SERVER) then
-	concommand.Add("MediaPlayer_resync_convars", function(ply, cmd, args )
+	concommand.Add("media_resync_convars", function(ply, cmd, args )
 		MediaPlayer.ResyncConvars()
 
 		if (!ply:IsAdmin()) then
@@ -432,7 +432,7 @@ if (SERVER) then
 		end
 	end
 
-	concommand.Add("MediaPlayer_load_settings", function()
+	concommand.Add("media_load_settings", function()
 		MediaPlayer.LoadSettings()
 	end)
 end
@@ -474,7 +474,7 @@ if (CLIENT) then
 		end
 	end
 
-	concommand.Add("MediaPlayer_cl_load_settings", function()
+	concommand.Add("media_cl_load_settings", function()
 		MediaPlayer.LoadSettings()
 	end)
 end
@@ -509,7 +509,7 @@ if (SERVER) then
 		file.Write("lyds/settings.json", util.TableToJSON( values ))
 	end
 
-	concommand.Add( "MediaPlayer_save_settings", function()
+	concommand.Add( "media_save_settings", function()
 		MediaPlayer.SaveSettings()
 	end)
 end
@@ -549,7 +549,7 @@ if (CLIENT) then
 		file.Write("lyds/settings_client.json", util.TableToJSON( values ))
 	end
 
-	concommand.Add( "MediaPlayer_save_cl_settings", function()
+	concommand.Add( "media_save_cl_settings", function()
 		MediaPlayer.SaveSettings()
 	end)
 end

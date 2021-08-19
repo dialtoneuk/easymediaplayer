@@ -81,8 +81,38 @@ MediaPlayer = MediaPlayer or {
         TABLE = "table", --cant be a convar,
         FLOAT = "float"
     },
+    Files = {}
 }
 
 MediaPlayer.SettingsTypes = MediaPlayer.Type
 MediaPlayer.SettingTypes = MediaPlayer.Type
 MediaPlayer.Types = MediaPlayer.Type
+
+--autoloader for our scripts
+for k,v in pairs(file.Find("lyds/*.lua","LUA")) do
+    if (SERVER) then
+        AddCSLuaFile("lyds/" .. v)
+    end
+    include("lyds/" .. v)
+
+    MediaPlayer.Files.Shared =  MediaPlayer.Files.Shared or {}
+    MediaPlayer.Files.Shared["lyds/" .. v] = v
+end
+
+if (SERVER) then
+    for k,v in pairs(file.Find("lyds/server/*.lua","LUA")) do
+        include("lyds/server/" .. v)
+        MediaPlayer.Files.Server = MediaPlayer.Files.Server or {}
+        MediaPlayer.Files.Server["lyds/server/" .. v] = v
+    end
+end
+
+for k,v in pairs(file.Find("lyds/client/*.lua","LUA")) do
+    if (SERVER) then
+        AddCSLuaFile("lyds/client/" .. v)
+    else
+        include("lyds/client/" .. v)
+        MediaPlayer.Files.Client = MediaPlayer.Files.Client or {}
+        MediaPlayer.Files.Client["lyds/client/" .. v] = v
+    end
+end

@@ -123,7 +123,7 @@ function panel:CreateBrowserPanel()
 		local result = MediaPlayer.ParseYoutubeURL(val)
 
 		if (result != nil ) then
-			RunConsoleCommand("MediaPlayer_play", result )
+			RunConsoleCommand("media_play", result )
 			self.Browser:OpenURL("https://www.youtube.com")
 		else
 			self.Browser:OpenURL( val )
@@ -248,7 +248,7 @@ function panel:CreateBrowserPanel()
 		local result = MediaPlayer.ParseYoutubeURL(MediaPlayer.URL)
 
 		if (result != nil ) then
-			RunConsoleCommand("MediaPlayer_play", result )
+			RunConsoleCommand("media_play", result )
 			self.Browser:OpenURL("https://www.youtube.com")
 		end
 	end
@@ -269,7 +269,7 @@ function panel:CreateSearchPanel()
 
 	self.Search.OnEnter = function()
 		if (self.Search:GetValue() != "") then
-			RunConsoleCommand("MediaPlayer_youtube_search", self.Search:GetValue() )
+			RunConsoleCommand("media_youtube_search", self.Search:GetValue() )
 		end
 
 		self.Search:SetDisabled(true)
@@ -285,7 +285,7 @@ function panel:CreateSearchPanel()
 	self.SearchButton:SetWide(120)
 	self.SearchButton.DoClick = function()
 		if (self.Search:GetValue() != "") then
-			RunConsoleCommand("MediaPlayer_youtube_search", self.Search:GetValue() )
+			RunConsoleCommand("media_youtube_search", self.Search:GetValue() )
 		end
 
 		self.Search:SetDisabled(true)
@@ -332,7 +332,7 @@ function panel:PresentSearchResults(clear)
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("MediaPlayer_play", v.Video )
+			RunConsoleCommand("media_play", v.Video )
 		end
 
 		local html = vgui.Create("DHTML", pan)
@@ -377,7 +377,7 @@ function panel:CreateHistoryPanel()
 			self:RefreshHistoryGrid()
 		end
 
-		RunConsoleCommand("MediaPlayer_request_history", self.HistoryPage )
+		RunConsoleCommand("media_request_history", self.HistoryPage )
 		self.FetchButton:SetDisabled(true)
 
 		timer.Simple(1, function()
@@ -426,7 +426,7 @@ function panel:CreatePlayerHistoryPanel()
 			self:RefreshPlayerGrid()
 		end
 
-		RunConsoleCommand("MediaPlayer_request_personal_history", self.PlayerHistoryPage )
+		RunConsoleCommand("media_request_personal_history", self.PlayerHistoryPage )
 		self.PlayerFetchButton:SetDisabled(true)
 
 		timer.Simple(1, function()
@@ -481,7 +481,7 @@ function panel:PresentHistory()
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("MediaPlayer_play", k )
+			RunConsoleCommand("media_play", k )
 
 		end
 
@@ -527,7 +527,7 @@ function panel:PresentPlayerHistory()
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("MediaPlayer_play", k )
+			RunConsoleCommand("media_play", k )
 
 		end
 

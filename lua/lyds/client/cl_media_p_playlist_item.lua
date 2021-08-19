@@ -82,26 +82,26 @@ function panel:Init()
 			if (!self.Active) then
 				if (self.Item.Owner.SteamID != MediaPlayer.LocalPlayer:SteamID()) then
 					local del = menu:AddOption( "Delete Video", function()
-						RunConsoleCommand("MediaPlayer_delete", self.Item.Video )
+						RunConsoleCommand("media_delete", self.Item.Video )
 					end)
 
 					del:SetIcon("icon16/delete.png")
 				end
 
 				local bdel = menu:AddOption( "Blackist & Delete Video", function()
-					RunConsoleCommand("MediaPlayer_blacklist_video", self.Item.Video )
+					RunConsoleCommand("media_blacklist_video", self.Item.Video )
 				end)
 
 				bdel:SetIcon("icon16/cross.png")
 			else
 				local skip = menu:AddOption( "Skip Video", function()
-					RunConsoleCommand("MediaPlayer_skip_video", self.Item.Video )
+					RunConsoleCommand("media_skip_video", self.Item.Video )
 				end)
 
 				skip:SetIcon("icon16/resultset_next.png")
 
 				local bdel = menu:AddOption( "Blacklist & Skip Video", function()
-					RunConsoleCommand("MediaPlayer_blacklist_video", self.Item.Video )
+					RunConsoleCommand("media_blacklist_video", self.Item.Video )
 				end)
 
 				bdel:SetIcon("icon16/cross.png")
@@ -109,20 +109,20 @@ function panel:Init()
 		end
 
 		local like = menu:AddOption( "Like Video (" .. (self.Item.Likes or 0) .. " likes)", function()
-			RunConsoleCommand("MediaPlayer_like_video", self.Item.Video )
+			RunConsoleCommand("media_like_video", self.Item.Video )
 		end)
 
 		like:SetIcon("icon16/award_star_add.png")
 
 		local dislike = menu:AddOption( "Dislike Video (" .. (self.Item.Dislikes or 0) .. " dislikes)", function()
-			RunConsoleCommand("MediaPlayer_dislike_video", self.Item.Video )
+			RunConsoleCommand("media_dislike_video", self.Item.Video )
 		end)
 
 		dislike:SetIcon("icon16/award_star_delete.png")
 
 		if ( !self.Active and ( self.Item.Owner.SteamID == MediaPlayer.LocalPlayer:SteamID() ) ) then
 			local remove = menu:AddOption( "Remove Video", function()
-				RunConsoleCommand("MediaPlayer_remove", self.Item.Video )
+				RunConsoleCommand("media_remove", self.Item.Video )
 			end)
 			remove:SetIcon("icon16/bomb.png")
 		end
