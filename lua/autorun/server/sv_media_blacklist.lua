@@ -2,34 +2,34 @@
 	Holds our blacklist
 --]]
 
-MEDIA.Blacklist = MEDIA.Blacklist or {}
+MediaPlayer.Blacklist = MediaPlayer.Blacklist or {}
 
 --[[
 Loads the blacklist
 --]]
 
-function MEDIA.LoadBlacklist()
+function MediaPlayer.LoadBlacklist()
 	if (!file.IsDir("lyds", "DATA")) then return end
 	if (!file.Exists("lyds/blacklist.json", "DATA")) then return end
 
-	MEDIA.Blacklist = util.JSONToTable(file.Read("lyds/blacklist.json"))
+	MediaPlayer.Blacklist = util.JSONToTable(file.Read("lyds/blacklist.json"))
 end
 
 --[[
 	Saves blacklist
 --]]
 
-function MEDIA.SaveBlacklist()
+function MediaPlayer.SaveBlacklist()
 	if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
 
-	file.Write("lyds/blacklist.json", util.TableToJSON(MEDIA.Blacklist))
+	file.Write("lyds/blacklist.json", util.TableToJSON(MediaPlayer.Blacklist))
 end
 
 --[[
 	Adds video to blacklist
 --]]
 
-function MEDIA.AddToBlacklist(video, ply )
+function MediaPlayer.AddToBlacklist(video, ply )
 	if (!ply:IsAdmin() ) then return end
 
 	local _video = table.Copy(video)
@@ -46,13 +46,13 @@ function MEDIA.AddToBlacklist(video, ply )
 
 	_video.DateAdded = os.time()
 
-	MEDIA.Blacklist[video.Video] = _video
+	MediaPlayer.Blacklist[video.Video] = _video
 end
 
 --[[
 	Removes video from blacklist
 --]]
 
-function MEDIA.RemoveFromBlacklist(video)
-	MEDIA.Blacklist[video.Video] = nil
+function MediaPlayer.RemoveFromBlacklist(video)
+	MediaPlayer.Blacklist[video.Video] = nil
 end

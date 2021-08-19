@@ -1,8 +1,8 @@
 --[[
-	Parses a url from media
+	Parses a url from MediaPlayer
 --]]
 
-function MEDIA.ParseYoutubeURL(url) --bad method
+function MediaPlayer.ParseYoutubeURL(url) --bad method
 
 	if (url == "https://www.youtube.com"  or url == "http://youtube.com" ) then return nil end
 	if (string.sub(url, 1,23) != "https://www.youtube.com" and string.sub(url, 1,23) != "http://youtube.com" ) then return nil end
@@ -16,21 +16,48 @@ function MEDIA.ParseYoutubeURL(url) --bad method
 end
 
 --[[
+ Fetches Dailymotion api data
+--]]
+
+function MediaPlayer.DailymotionFetch(params, callback, one_object)
+
+end
+
+--[[
+ Fetches Dailymotion api data
+--]]
+
+function MediaPlayer.DailymotionFetch(params, callback, one_object)
+	one_object = one_object or false
+
+	local apikey = MediaPlayer.GetSetting("dailymotion_api_key")
+
+	if (CLIENT) then
+		apikey = MediaPlayer.GetSetting("dailymotion_client_api_key")
+	end
+
+	if (apikey.Value == apikey.DefValue or false ) then
+		error([[dailymotion_api_key not set! please goto https://console.cloud.google.com/google/ and create a new api key, it must have access to the Youtube 'Data' V3 Api,
+		then, type MediaPlayer_settings into console and find dailymotion_api_key and put in your new api key, and try again.]])
+	end
+end
+
+--[[
  Fetches youtube api data
 --]]
 
-function MEDIA.YoutubeAPIFetch(params, callback, one_object)
+function MediaPlayer.YoutubeFetch(params, callback, one_object)
 	one_object = one_object or false
 
-	local apikey = MEDIA.GetSetting("youtube_api_key")
+	local apikey = MediaPlayer.GetSetting("youtube_api_key")
 
 	if (CLIENT) then
-		apikey = MEDIA.GetSetting("youtube_client_api_key")
+		apikey = MediaPlayer.GetSetting("youtube_client_api_key")
 	end
 
 	if (apikey.Value == apikey.DefValue or false ) then
 		error([[youtube_api_key not set! please goto https://console.cloud.google.com/google/ and create a new api key, it must have access to the Youtube 'Data' V3 Api,
-		then, type media_settings into console and find youtube_api_key and put in your new api key, and try again.]])
+		then, type MediaPlayer_settings into console and find youtube_api_key and put in your new api key, and try again.]])
 	end
 
 	params = "https://www.googleapis.com/youtube/v3/" .. params .. "&key=" .. apikey.Value
@@ -76,7 +103,7 @@ end
 --[[
 	Converts ISO time to a numerical value
 --]]
-function MEDIA.ConvertFromISOTime(duration)
+function MediaPlayer.ConvertFromISOTime(duration)
 
 	local safeFunc = function()
 		local time = string.gsub(duration, "^.-(%d+)M(%d+)S","%1:%2")
@@ -91,7 +118,7 @@ function MEDIA.ConvertFromISOTime(duration)
 
 		--lame fix
 		if (#exp == 1) then
-			return MEDIA.ConvertFromISOTime(duration .. "1S")
+			return MediaPlayer.ConvertFromISOTime(duration .. "1S")
 		end
 
 		local total = 0

@@ -1,115 +1,115 @@
 --server settings
 local server = {
-    media_playlist_limit = {
+    MediaPlayer_playlist_limit = {
         Value = 10,
         Comment = "The maximum amount of playlist items allowed at the same"
     },
-    media_vote_time = {
+    MediaPlayer_vote_time = {
         Value = 30,
         Comment = "The maximum amount of playlist items allowed at the same"
     },
-    media_announce_admin = {
+    MediaPlayer_announce_admin = {
         Value = true,
         Comment = "Announced in the chat when an admin skips a video"
     },
-    media_admin_ignore_limits = {
+    MediaPlayer_admin_ignore_limits = {
         Value = true,
         Comment = "Admins can queue as many videos as they like"
     },
-    media_announce_video = {
+    MediaPlayer_announce_video = {
         Value = true,
         Comment = "Announces when a video has begun in the chat"
     },
-    media_announce_addition = {
+    MediaPlayer_announce_addition = {
         Value = true,
         Comment = "Announces the addition of a video to the playlist in the chat"
     },
-    media_announce_ending = {
+    MediaPlayer_announce_ending = {
         Value = true,
         Comment = "Announces the end of a video in the chat"
     },
-    media_announce_count = {
+    MediaPlayer_announce_count = {
         Value = true,
         Comment = "New vote additions as well as the total votes at the end will be announced in chat"
     },
-    media_announce_vote = {
+    MediaPlayer_announce_vote = {
         Value = true,
         Comment = "New votes will be announced in chat"
     },
-    media_tips_enabled = {
+    MediaPlayer_tips_enabled = {
         Value = true,
         Comment = "Disable tips completely here"
     },
-    media_tips_frequency = {
+    MediaPlayer_tips_frequency = {
         Value = 180,
         Max = 1000,
         Comment = "In seconds, how frequent tips are"
     },
-    media_history_max = {
+    MediaPlayer_history_max = {
         Value = 10,
         Max = 50,
         Comment = "How many items from the history to return to the player"
     },
-    media_cooldown_enabled = {
+    MediaPlayer_cooldown_enabled = {
         Value = true,
         Comment = "Will turn off cooldowns all together, not recommended"
     },
-    media_cooldown_play = {
+    MediaPlayer_cooldown_play = {
         Value = 45,
         Max = 500,
         Comment = "Cooldown in seconds a player experiences after playing"
     },
-    media_cooldown_vote = {
+    MediaPlayer_cooldown_vote = {
         Value = 60,
         Max = 500,
         Comment = "Cooldown in seconds a player experiences after starting a vote",
     },
-    media_cooldown_search = {
+    MediaPlayer_cooldown_search = {
         Value = 2,
         Max = 500,
-        Comment = "Cooldown in seconds a player experiences after searching for media",
+        Comment = "Cooldown in seconds a player experiences after searching for MediaPlayer",
     },
-    media_cooldown_interaction = {
+    MediaPlayer_cooldown_interaction = {
         Value = 180,
         Max = 500,
         Comment = "Cooldown in seconds a player experiences after interacting, so liking or disliking",
     },
-    media_command_prefix = {
+    MediaPlayer_command_prefix = {
         Value = "!",
         Comment = "Chat command prefix which is used to execute chat commands, change this if the ! conflicts with something else"
     },
-    media_cooldown_history = {
+    MediaPlayer_cooldown_history = {
         Value = 1,
         Max = 500,
         Comment = "Cooldown in seconds the player experiences with History page"
     },
-    media_cooldown_refreshrate = {
+    MediaPlayer_cooldown_refreshrate = {
         Value = 1,
         Max = 6,
         Comment = "The time it takes for each cooldown to be decreased by one, by default its a second, you double all cooldowns by setting this to two"
     },
-    media_cooldown_command = {
+    MediaPlayer_cooldown_command = {
         Value = 1,
         Max = 600,
         Comment = "Cooldown in seconds the player experiences with chat commands"
     },
-    media_max_duration = {
+    MediaPlayer_max_duration = {
         Value = 1200,
         Max = 60000,
-        Comment = "The maximum length in seconds a piece of media can be"
+        Comment = "The maximum length in seconds a piece of MediaPlayer can be"
     },
-    media_max_results = {
+    MediaPlayer_max_results = {
         Value = 30,
         Max = 50,
         Comment = "The maximum amount of items a search will return"
     },
-    media_ban_after_dislikes = {
+    MediaPlayer_ban_after_dislikes = {
         Value = 50,
         Max = 500,
         Min = 0,
-        Comment = "After a piece of media has been disliked over this amount it will autoban a video, you can set this to zero if you wish not to ban videos based on dislikes"
+        Comment = "After a piece of MediaPlayer has been disliked over this amount it will autoban a video, you can set this to zero if you wish not to ban videos based on dislikes"
     },
-    media_custom_tips = {
+    MediaPlayer_custom_tips = {
         Value = {
             "this is a tip",
             "so is this"
@@ -122,6 +122,11 @@ local server = {
         Max = 20,
         Comment = "The max amount of videos a player can submit to the playlist"
     },
+    MediaPlayer_playlist_capacity = {
+        Value = 64,
+        Max = 248,
+        Comment = "The max amount of videos the playlist can hold"
+    },
     pointshop_enabled = {
         Value = false,
         Comment = "Enable this if you are using pointshop"
@@ -129,7 +134,7 @@ local server = {
     pointshop_cost = {
         Value = 2,
         Max = 20,
-        Comment = "Only works if pointshop is installed, if it is, this is price in coins to submit media"
+        Comment = "Only works if pointshop is installed, if it is, this is price in coins to submit MediaPlayer"
     },
     youtube_deep_check = {
         Value = false,
@@ -163,7 +168,7 @@ local server = {
         Value = false,
         Comment = "TODO: Fill"
     },
-    media_admin_only = {
+    MediaPlayer_admin_only = {
         Value = true,
         Comment = "Only admins can playlist things"
     }
@@ -171,129 +176,138 @@ local server = {
 
 --client settings
 local client = {
-    media_blocked_videos = {
+    youtube_client_api_key = {
+        Value = "(unimplemented)",
+        Comment = "(unimplemented)"
+    },
+    dailymotion_client_api_key = {
+        Value = "(unimplemented)",
+        Comment = "(unimplemented)"
+    },
+    MediaPlayer_blocked_videos = {
         Value = {
             Video_1 = "DRfidJNts6U"
         }
     },
-    media_player_display_video = {
+    MediaPlayer_player_display_video = {
         Value = true,
         Comment = "Displays the video"
     },
-    media_playlist_hide_active = {
+    MediaPlayer_playlist_hide_active = {
         Value = false,
         Comment = "If enabled, the current actuve video playing will not be displayed in the playlist"
     },
-    media_playlist_auto_resize = {
+    MediaPlayer_playlist_auto_resize = {
         Value = true,
         Comment = "Autosize the playlist to fit its elements"
     },
-    media_playlist_hide = {
+    MediaPlayer_playlist_hide = {
         Value = false,
         Comment = "Hides the playlist completely."
     },
-    media_warning_hide = {
+    MediaPlayer_warning_hide = {
         Value = false,
         Comment = "(unused)."
     },
-    media_playlist_centered = {
+    MediaPlayer_playlist_centered = {
         Value = false,
         Comment = "(unused)"
     },
-    media_playlist_invert_position = {
+    MediaPlayer_playlist_invert_position = {
         Value = true,
         Comment = "(unused)"
     },
-    media_player_centered = {
+    MediaPlayer_player_centered = {
         Value = false,
         Comment = "(unused)"
     },
-    media_vote_centered = {
+    MediaPlayer_vote_centered = {
         Value = false,
         Comment = "(unused)"
     },
-    media_playlist_show_constant = {
+    MediaPlayer_playlist_show_constant = {
         Value = false,
         Comment = "Will show the playlist all the time, not just in the scoreboard and context menu"
     },
-    media_settings_centered = {
+    MediaPlayer_settings_centered = {
         Value = false,
         SlowUpdate = 0.75,
         Comment = "Settings window will open center screen"
     },
-    media_admin_centered = {
+    MediaPlayer_admin_centered = {
         Value = false,
         Comment = "Admin window will open center screen"
     },
-    media_warning_centered = {
+    MediaPlayer_warning_centered = {
         Value = true,
         Comment = "Warning window will open center screen"
     },
-    media_search_centered = {
+    MediaPlayer_search_centered = {
         Value = true,
         Comment = "Search window will open center screen"
     },
-    media_playlist_show_in_context = {
+    MediaPlayer_playlist_show_in_context = {
         Value = false,
         Comment = "Show the playlist when you press 'c' / go in the context menu"
     },
-    media_playlist_show_in_scoreboard = {
+    MediaPlayer_playlist_show_in_scoreboard = {
         Value = true,
         Comment = "Show the playlist when you press 'tab' / see the scoreboard"
     },
-    media_player_hide = {
+    MediaPlayer_player_hide = {
         Value = false,
         Comment = "Hides the player completely"
     },
-    media_player_show_constant = {
+    MediaPlayer_player_show_constant = {
         Value = false,
         Comment = "Shows the player constantly"
     },
-    media_search_hide = {
+    MediaPlayer_search_hide = {
         Value = true,
         Comment = "(unused)"
     },
-    media_settings_hide = {
+    MediaPlayer_settings_hide = {
         Value = true,
         Comment = "(unused)"
     },
-    media_playlist_show_limit = {
+    MediaPlayer_playlist_show_limit = {
         Value = 10,
         Refresh = false,
+        Convar = false,
         Comment = "Will only show this amount of videos on the playlist at any given time"
     },
-    media_vote_hide = {
+    MediaPlayer_vote_hide = {
         Value = false,
         Comment = "(unused)"
     },
-    media_admin_hide = {
+    MediaPlayer_admin_hide = {
         Value = true,
         Comment = "(unused)"
     },
-    media_all_show = {
+    MediaPlayer_all_show = {
         Value = false,
-        Comment = "Useful for designing your look, will display all panels used by Easy MEDIA"
+        Comment = "Useful for designing your look, will display all panels used by Easy MediaPlayer"
     },
-    media_player_mute_video = {
+    MediaPlayer_player_mute_video = {
         Value = false,
         Comment = "Mutes the audio"
     },
-    media_admin_colours = {
+    MediaPlayer_admin_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value)
+                return MediaPlayer.TableToColour(value)
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            Background = MEDIA.Colours.FadedBlack,
-            Border = MEDIA.Colours.FadedBlack,
-            ButtonBackground = MEDIA.Colours.FadedRed,
-            ButtonBorder = MEDIA.Colours.Red,
-            TextColor = MEDIA.Colours.Black
+            Background = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack,
+            ButtonBackground = MediaPlayer.Colours.FadedRed,
+            ButtonBorder = MediaPlayer.Colours.Red,
+            TextColor = MediaPlayer.Colours.Black
         }
     },
-    media_admin_size = {
+    MediaPlayer_admin_size = {
         Min = 500,
         Max = 2000,
         Value = {
@@ -301,7 +315,7 @@ local client = {
             Height = 500
         }
     },
-    media_admin_position = {
+    MediaPlayer_admin_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -309,21 +323,21 @@ local client = {
             Y = 25
         }
     },
-    media_settings_colours = {
+    MediaPlayer_settings_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value)
+                return MediaPlayer.TableToColour(value)
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            Background = MEDIA.Colours.FadedBlack,
-            Border = MEDIA.Colours.FadedBlack,
-            SecondaryBorder = MEDIA.Colours.FadedGray,
-            TextColor = MEDIA.Colours.White
+            Background = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack,
+            SecondaryBorder = MediaPlayer.Colours.FadedGray,
+            TextColor = MediaPlayer.Colours.White
         }
     },
-    media_settings_size = {
+    MediaPlayer_settings_size = {
         Min = 1,
         Max = 2000,
         Value = {
@@ -333,7 +347,7 @@ local client = {
         },
         SlowUpdate = 0.75
     },
-    media_settings_position = {
+    MediaPlayer_settings_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -342,7 +356,7 @@ local client = {
         },
         SlowUpdate = 0.75
     },
-    media_base_size = {
+    MediaPlayer_base_size = {
         Min = 20,
         Max = 2000,
         Value = {
@@ -352,7 +366,7 @@ local client = {
             Padding = 5,
         }
     },
-    media_base_position = {
+    MediaPlayer_base_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -360,22 +374,22 @@ local client = {
             Y = 25
         }
     },
-    media_base_colours = {
+    MediaPlayer_base_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value) --TODO: Optimize to use pre-created colours instead of creating new ones
+                return MediaPlayer.TableToColour(value) --TODO: Optimize to use pre-created colours instead of creating new ones
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            Background = MEDIA.Colours.FadedBlack,
-            Border = MEDIA.Colours.FadedBlack,
-            TextColor = MEDIA.Colours.FadedWhite,
-            ItemBackground = MEDIA.Colours.FadedBlack,
-            ItemBorder = MEDIA.Colours.FadedBlue
+            Background = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack,
+            TextColor = MediaPlayer.Colours.FadedWhite,
+            ItemBackground = MediaPlayer.Colours.FadedBlack,
+            ItemBorder = MediaPlayer.Colours.FadedBlue
         }
     },
-    media_warning_size = {
+    MediaPlayer_warning_size = {
         Min = 20,
         Max = 2000,
         Value = {
@@ -384,7 +398,7 @@ local client = {
             RowHeight = 40,
         }
     },
-    media_warning_position = {
+    MediaPlayer_warning_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -392,23 +406,23 @@ local client = {
             Y = 25
         }
     },
-    media_warning_colours = {
+    MediaPlayer_warning_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value)
+                return MediaPlayer.TableToColour(value)
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            Background = MEDIA.Colours.FadedBlack,
-            Border = MEDIA.Colours.FadedBlack,
-            TextColor = MEDIA.Colours.FadedWhite,
-            ItemBackground = MEDIA.Colours.FadedBlack,
-            ItemBorder = MEDIA.Colours.FadedBlue
+            Background = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack,
+            TextColor = MediaPlayer.Colours.FadedWhite,
+            ItemBackground = MediaPlayer.Colours.FadedBlack,
+            ItemBorder = MediaPlayer.Colours.FadedBlue
         }
 
     },
-    media_search_size = {
+    MediaPlayer_search_size = {
         Min = 20,
         Max = 2000,
         Value = {
@@ -418,7 +432,7 @@ local client = {
             Padding = 5,
         }
     },
-    media_search_position = {
+    MediaPlayer_search_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -426,40 +440,40 @@ local client = {
             Y = 25
         }
     },
-    media_search_colours = {
+    MediaPlayer_search_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value)
+                return MediaPlayer.TableToColour(value)
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            Background = MEDIA.Colours.FadedBlack,
-            Border = MEDIA.Colours.FadedBlack,
-            TextColor = MEDIA.Colours.FadedWhite,
-            ItemBackground = MEDIA.Colours.FadedBlack,
-            ItemBorder = MEDIA.Colours.Blue,
-            HeaderBackground = MEDIA.Colours.FadedBlack,
-            HeaderBorder = MEDIA.Colours.Gray
+            Background = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack,
+            TextColor = MediaPlayer.Colours.FadedWhite,
+            ItemBackground = MediaPlayer.Colours.FadedBlack,
+            ItemBorder = MediaPlayer.Colours.Blue,
+            HeaderBackground = MediaPlayer.Colours.FadedBlack,
+            HeaderBorder = MediaPlayer.Colours.Gray
         }
     },
-    media_playlist_colours = {
+    MediaPlayer_playlist_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value)
+                return MediaPlayer.TableToColour(value)
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            Background = MEDIA.Colours.FadedBlack,
-            TextColor = MEDIA.Colours.White,
-            ItemActiveBackground = MEDIA.Colours.Red,
-            ItemBackground = MEDIA.Colours.FadedBlack,
-            ItemBorder = MEDIA.Colours.FadedBlack,
-            Border = MEDIA.Colours.FadedBlack
+            Background = MediaPlayer.Colours.FadedBlack,
+            TextColor = MediaPlayer.Colours.White,
+            ItemActiveBackground = MediaPlayer.Colours.Red,
+            ItemBackground = MediaPlayer.Colours.FadedBlack,
+            ItemBorder = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack
         }
     },
-    media_playlist_position = {
+    MediaPlayer_playlist_position = {
         Min = 5,
         Max = 2000,
         Value = {
@@ -467,7 +481,7 @@ local client = {
             Y = 10
         }
     },
-    media_playlist_size = {
+    MediaPlayer_playlist_size = {
         Min = 1,
         Max = 1000,
         Value = {
@@ -478,7 +492,7 @@ local client = {
             RowSpacing = 10
         }
     },
-    media_playlist_options = {
+    MediaPlayer_playlist_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -486,7 +500,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_player_options = {
+    MediaPlayer_player_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -494,7 +508,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_settings_options = {
+    MediaPlayer_settings_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -502,7 +516,7 @@ local client = {
             DisplayTitle = false
         }
     },
-    media_warning_options = {
+    MediaPlayer_warning_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -510,7 +524,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_search_options = {
+    MediaPlayer_search_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -518,7 +532,7 @@ local client = {
             DisplayTitle = false
         }
     },
-    media_vote_options = {
+    MediaPlayer_vote_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -526,7 +540,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_admin_options = {
+    MediaPlayer_admin_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -534,7 +548,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_player_position = {
+    MediaPlayer_player_position = {
         Min = 5,
         Max = 2000,
         Value = {
@@ -542,25 +556,25 @@ local client = {
             Y = 10
         }
     },
-    media_player_colours = {
+    MediaPlayer_player_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value)
+                return MediaPlayer.TableToColour(value)
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            Background = MEDIA.Colours.FadedBlack,
-            TextColor = MEDIA.Colours.White,
-            ItemActiveBackground = MEDIA.Colours.Red,
-            ItemBackground = MEDIA.Colours.FadedBlack,
-            ItemBorder = MEDIA.Colours.FadedBlack,
-            Border = MEDIA.Colours.FadedBlack,
-            SecondaryBorder = MEDIA.Colours.FadedBlack,
-            LoadingBarBackground = MEDIA.Colours.Red
+            Background = MediaPlayer.Colours.FadedBlack,
+            TextColor = MediaPlayer.Colours.White,
+            ItemActiveBackground = MediaPlayer.Colours.Red,
+            ItemBackground = MediaPlayer.Colours.FadedBlack,
+            ItemBorder = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack,
+            SecondaryBorder = MediaPlayer.Colours.FadedBlack,
+            LoadingBarBackground = MediaPlayer.Colours.Red
         }
     },
-    media_player_size = {
+    MediaPlayer_player_size = {
         Min = 5,
         Max = 1000,
         Value = {
@@ -569,7 +583,7 @@ local client = {
             LoadingBarHeight = 5
         }
     },
-    media_vote_position = {
+    MediaPlayer_vote_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -577,7 +591,7 @@ local client = {
             Y = 10
         }
     },
-    media_vote_size = {
+    MediaPlayer_vote_size = {
         Min = 5,
         Max = 400,
         Value = {
@@ -587,35 +601,35 @@ local client = {
             LoadingBarHeight = 5
         }
     },
-    media_vote_colours = {
+    MediaPlayer_vote_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value)
+                return MediaPlayer.TableToColour(value)
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            Background = MEDIA.Colours.FadedBlack,
-            Border = MEDIA.Colours.FadedBlack,
-            TextColor = MEDIA.Colours.Black,
-            LoadingBarBackground = MEDIA.Colours.Red
+            Background = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack,
+            TextColor = MediaPlayer.Colours.Black,
+            LoadingBarBackground = MediaPlayer.Colours.Red
         }
     },
-    media_chat_colours = {
+    MediaPlayer_chat_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
-                return MEDIA.TableToColour(value)
+                return MediaPlayer.TableToColour(value)
             end,
             __pack = function(self, index, value) --called when packing data into json.
                 return value
             end,
-            PrefixColor = MEDIA.Colours.Red,
-            TextColor = MEDIA.Colours.White
+            PrefixColor = MediaPlayer.Colours.Red,
+            TextColor = MediaPlayer.Colours.White
         }
     }
 }
 
 --register our settings
-hook.Add("MEDIA.SettingsLoaded","MEDIA.RegisterSettings", function()
-    MEDIA.RegisterSettings(server, client)
+hook.Add("MediaPlayer.SettingsLoaded","MediaPlayer.RegisterSettings", function()
+    MediaPlayer.RegisterSettings(server, client)
 end)

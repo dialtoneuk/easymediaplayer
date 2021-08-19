@@ -1,13 +1,13 @@
 --Current vote
-MEDIA.CurrentVote = MEDIA.CurrentVote or {}
+MediaPlayer.CurrentVote = MediaPlayer.CurrentVote or {}
 
 --Computed votes are put here and are not effected by file changes making this file easy to work with
-MEDIA.Votes = MEDIA.Votes or {
+MediaPlayer.Votes = MediaPlayer.Votes or {
 
 }
 
 --base vote to copy off of so we don't get missing fields
-MEDIA.BaseVote = {
+MediaPlayer.BaseVote = {
 	Owner = {},  --ply entity, steam id on client
 	Type = "Default", --type of Vote
 	Required = 1,
@@ -31,12 +31,12 @@ MEDIA.BaseVote = {
 	that works.
 --]]
 
-MEDIA.RegisteredVotes = {
+MediaPlayer.RegisteredVotes = {
 	--this is the type of vote and what we'll use to grab this vote
 	VoteSkip = {
 		Time = 30,
 		OnSuccess = function()
-			MEDIA.SkipVideo()
+			MediaPlayer.SkipVideo()
 
 			for k,v in pairs(player.GetAll()) do
 				v:SendMessage("Vote Passed! Skipping video..")
@@ -53,8 +53,8 @@ MEDIA.RegisteredVotes = {
 		Time = 45,
 		Required = 3, --two thirds of the server must agree
 		OnSuccess = function()
-			MEDIA.AddToBlacklist(MEDIA.CurrentVideo)
-			MEDIA.SkipVideo()
+			MediaPlayer.AddToBlacklist(MediaPlayer.CurrentVideo)
+			MediaPlayer.SkipVideo()
 
 			for k,v in pairs(player.GetAll()) do
 				v:SendMessage("Vote Passed! Blacklisting video..")
@@ -72,28 +72,28 @@ MEDIA.RegisteredVotes = {
 
 ]]--
 
-function MEDIA.LoadVotes()
+function MediaPlayer.LoadVotes()
 
-	hook.Call("MEDIA.PreloadRegisteredVotes")
+	hook.Call("MediaPlayer.PreloadRegisteredVotes")
 
-	for k,v in pairs(MEDIA.RegisteredVotes) do
-		v = table.Merge(MEDIA.GetNewVote(), v)
+	for k,v in pairs(MediaPlayer.RegisteredVotes) do
+		v = table.Merge(MediaPlayer.GetNewVote(), v)
 		v.Type = k
 
 		--register it
-		MEDIA.RegisterVote(v)
+		MediaPlayer.RegisterVote(v)
 	end
 end
 
-function MEDIA.AddRegisteredVotes(tab)
+function MediaPlayer.AddRegisteredVotes(tab)
 
 	for k,v in pairs(tab) do
 
-		if (MEDIA.RegisteredVotes[k] != nil ) then
+		if (MediaPlayer.RegisteredVotes[k] != nil ) then
 			warning(k .. " is an already registered vote")
 		end
 
-		MEDIA.RegisteredVotes[k] = v
+		MediaPlayer.RegisteredVotes[k] = v
 	end
 end
 
@@ -101,19 +101,19 @@ end
 returns copy of the table above
 --]]
 
-function MEDIA.GetNewVote()
-	return table.Copy(MEDIA.BaseVote)
+function MediaPlayer.GetNewVote()
+	return table.Copy(MediaPlayer.BaseVote)
 end
 
 --[[
 Broadcasts vote to the server
 --]]
 
-function MEDIA.BroadcastVote()
-	if (!MEDIA.HasCurrentVote()) then return end
+function MediaPlayer.BroadcastVote()
+	if (!MediaPlayer.HasCurrentVote()) then return end
 
 	for k,v in pairs(player.GetAll()) do
-		MEDIA.SendVoteToPlayer(v)
+		MediaPlayer.SendVoteToPlayer(v)
 	end
 end
 
@@ -122,10 +122,10 @@ Broadcasts End vote to the server
 --]]
 
 
-function MEDIA.BroadcastEndVote()
+function MediaPlayer.BroadcastEndVote()
 	for k,v in pairs(player.GetAll()) do
 		v:SetNWBool("Voted", false )
-		MEDIA.SendEndVoteToPlayer(v)
+		MediaPlayer.SendEndVoteToPlayer(v)
 	end
 end
 
@@ -133,18 +133,18 @@ end
 Broadcasts vote to the player
 --]]
 
-function MEDIA.SendVoteToPlayer( ply )
-	if (!MEDIA.HasCurrentVote()) then return end
+function MediaPlayer.SendVoteToPlayer( ply )
+	if (!MediaPlayer.HasCurrentVote()) then return end
 
 
-	net.Start("MEDIA.NewVote")
+	net.Start("MediaPlayer.NewVote")
 		--remove the owner field
 		local t = table.Merge({
 			Owner = {
 				Name = ply:GetName(),
 				SteamID = ply:SteamID()
 			},
-		}, MEDIA.CurrentVote)
+		}, MediaPlayer.CurrentVote)
 
 		net.WriteTable(t)
 	net.Send(ply)
@@ -154,8 +154,8 @@ end
 Notifys the player that a vote has ended
 --]]
 
-function MEDIA.SendEndVoteToPlayer( ply )
-	net.Start("MEDIA.EndVote")
+function MediaPlayer.SendEndVoteToPlayer( ply )
+	net.Start("MediaPlayer.EndVote")
 	net.Send(ply)
 end
 
@@ -163,55 +163,55 @@ end
 Adds a kind of vote to the table
 --]]
 
-function MEDIA.RegisterVote(vote)
-	MEDIA.Votes[vote.Type] = vote
+function MediaPlayer.RegisterVote(vote)
+	MediaPlayer.Votes[vote.Type] = vote
 end
 
 --[[
 Gets a kind of vote to the table
 --]]
 
-function MEDIA.GetKindOfVote(vote)
-	if ( !MEDIA.Votes[vote]) then return end
+function MediaPlayer.GetKindOfVote(vote)
+	if ( !MediaPlayer.Votes[vote]) then return end
 
-	return MEDIA.Votes[vote]
+	return MediaPlayer.Votes[vote]
 end
 
 --[[*
 Returns true if we have a current vote going on
 *--]]
 
-function MEDIA.HasCurrentVote() return !table.IsEmpty(MEDIA.CurrentVote) end
+function MediaPlayer.HasCurrentVote() return !table.IsEmpty(MediaPlayer.CurrentVote) end
 
-function MEDIA.AddToCount()
-	if (!MEDIA.HasCurrentVote()) then return end
+function MediaPlayer.AddToCount()
+	if (!MediaPlayer.HasCurrentVote()) then return end
 
-	MEDIA.CurrentVote.Count = MEDIA.CurrentVote.Count + 1
+	MediaPlayer.CurrentVote.Count = MediaPlayer.CurrentVote.Count + 1
 
-	if (MEDIA.IsSettingTrue("media_announce_count")) then
+	if (MediaPlayer.IsSettingTrue("MediaPlayer_announce_count")) then
 		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("Votes +1 to " .. MEDIA.CurrentVote.Type .. " (" .. MEDIA.CurrentVote.Count ..  " / " .. MEDIA.CurrentVote.Required  .. ")")
+			v:SendMessage("Votes +1 to " .. MediaPlayer.CurrentVote.Type .. " (" .. MediaPlayer.CurrentVote.Count ..  " / " .. MediaPlayer.CurrentVote.Required  .. ")")
 		end
 
-		if (MEDIA.HasPassed() ) then
-			MEDIA.CurrentVote.OnSuccess()
-			MEDIA.CurrentVote = {}
-			MEDIA.BroadcastEndVote()
+		if (MediaPlayer.HasPassed() ) then
+			MediaPlayer.CurrentVote.OnSuccess()
+			MediaPlayer.CurrentVote = {}
+			MediaPlayer.BroadcastEndVote()
 			return
 		end
 	end
 
-	MEDIA.BroadcastVote()
+	MediaPlayer.BroadcastVote()
 end
 
 --[[
 Starts a vote
 --]]
 
-function MEDIA.StartVote(vote, ply)
-	if ( !MEDIA.Votes[vote]) then return end
+function MediaPlayer.StartVote(vote, ply)
+	if ( !MediaPlayer.Votes[vote]) then return end
 
-	local v = table.Copy(MEDIA.Votes[vote])
+	local v = table.Copy(MediaPlayer.Votes[vote])
 	local count = table.Count( player.GetAll() )
 	local req = v.Required or 1
 
@@ -232,61 +232,61 @@ function MEDIA.StartVote(vote, ply)
 		end
 	end
 
-	local setting = MEDIA.GetSetting("media_vote_time") or { Value = 10 }
+	local setting = MediaPlayer.GetSetting("MediaPlayer_vote_time") or { Value = 10 }
 
 	v.Owner = ply
 	v.StartTime = CurTime()
 	v.Time = setting.Value
-	v.CurrentVideo = MEDIA.CurrentVideo or {}
+	v.CurrentVideo = MediaPlayer.CurrentVideo or {}
 
-	MEDIA.ExecuteVote(v)
+	MediaPlayer.ExecuteVote(v)
 end
 
 --[[
 Executes a vote
 --]]
 
-function MEDIA.ExecuteVote(vote)
-	if (!MEDIA.Votes[vote.Type]) then return end
-	if (MEDIA.CurrentVote.Type == vote.Type ) then return end
-	MEDIA.CurrentVote = vote
+function MediaPlayer.ExecuteVote(vote)
+	if (!MediaPlayer.Votes[vote.Type]) then return end
+	if (MediaPlayer.CurrentVote.Type == vote.Type ) then return end
+	MediaPlayer.CurrentVote = vote
 
 	local count = #player.GetAll()
 
 	if (count == 1) then
 		vote.OnSuccess()
-		MEDIA.CurrentVote = {}
+		MediaPlayer.CurrentVote = {}
 		return
 	end
 
-	if (MEDIA.IsSettingTrue("media_announce_vote")) then
+	if (MediaPlayer.IsSettingTrue("MediaPlayer_announce_vote")) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("A vote has been initiated. type !vote to participate! " .. vote.Required .. " votes are required for this to pass!")
 		end
 	end
 
-	MEDIA.BroadcastVote()
+	MediaPlayer.BroadcastVote()
 
 	timer.Simple(vote.Time, function()
 
-		if (table.IsEmpty(MEDIA.CurrentVideo) ) then
-			MEDIA.BroadcastEndVote()
+		if (table.IsEmpty(MediaPlayer.CurrentVideo) ) then
+			MediaPlayer.BroadcastEndVote()
 			return
 		end
 
-		if (MEDIA.CurrentVideo == nil or table.IsEmpty(MEDIA.CurrentVideo) ) then return end
+		if (MediaPlayer.CurrentVideo == nil or table.IsEmpty(MediaPlayer.CurrentVideo) ) then return end
 
-		if (vote.CurrentVideo != nil and !table.IsEmpty(vote.CurrentVideo) and (vote.CurrentVideo.Video != MEDIA.CurrentVideo.Video) ) then
+		if (vote.CurrentVideo != nil and !table.IsEmpty(vote.CurrentVideo) and (vote.CurrentVideo.Video != MediaPlayer.CurrentVideo.Video) ) then
 			return end
 
-			if (MEDIA.HasPassed()) then
+			if (MediaPlayer.HasPassed()) then
 				vote.OnSuccess()
 			else
 				vote.OnFailire()
 			end
 
-			MEDIA.CurrentVote = {}
-			MEDIA.BroadcastEndVote()
+			MediaPlayer.CurrentVote = {}
+			MediaPlayer.BroadcastEndVote()
 		end)
 	end
 
@@ -294,14 +294,14 @@ function MEDIA.ExecuteVote(vote)
 	Return true if a vote passed
 	--]]
 
-	function MEDIA.HasPassed()
+	function MediaPlayer.HasPassed()
 
-		if (!MEDIA.HasCurrentVote()) then return false end
-		if (MEDIA.CurrentVote.Count == 0 ) then return false end
+		if (!MediaPlayer.HasCurrentVote()) then return false end
+		if (MediaPlayer.CurrentVote.Count == 0 ) then return false end
 
 		local count = #player.GetAll()
 
-		if (MEDIA.CurrentVote.Count <= math.floor( count / 2 ) ) then return false end
+		if (MediaPlayer.CurrentVote.Count <= math.floor( count / 2 ) ) then return false end
 
 		return true
 	end
@@ -310,4 +310,4 @@ function MEDIA.ExecuteVote(vote)
 	Hook call
 	--]]
 
-	hook.Run("MEDIA.VotingLoaded")
+	hook.Run("MediaPlayer.VotingLoaded")

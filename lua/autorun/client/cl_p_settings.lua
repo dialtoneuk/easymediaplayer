@@ -14,34 +14,34 @@ panel.Settings = {
 
 --client settings
 panel.ClientSettings = {
-	media_create_cl = "Refresh All Panels",
-	media_refresh_cl = "Refresh All Panels (Except for this one)",
-	media_create_playlist_panel = "Refresh Playlist Panel",
-	media_create_player_panel = "Refresh Player Panel",
-	media_create_search_panel = "Refresh Search Panel",
-	media_create_settings_panel = "Refresh Settings Panel",
-	media_search_panel = "Show search panel",
-	media_like_video = "Like Current Video",
-	media_dislike_video = "Dislike Current Video",
-	media_reset_cl_settings = "Reset Client Settings To Default",
-	media_save_cl_settings = "Save Client Settings",
-	media_remove_all = "Remove all  your videos"
+	MediaPlayer_create_cl = "Refresh All Panels",
+	MediaPlayer_refresh_cl = "Refresh All Panels (Except for this one)",
+	MediaPlayer_create_playlist_panel = "Refresh Playlist Panel",
+	MediaPlayer_create_player_panel = "Refresh Player Panel",
+	MediaPlayer_create_search_panel = "Refresh Search Panel",
+	MediaPlayer_create_settings_panel = "Refresh Settings Panel",
+	MediaPlayer_search_panel = "Show search panel",
+	MediaPlayer_like_video = "Like Current Video",
+	MediaPlayer_dislike_video = "Dislike Current Video",
+	MediaPlayer_reset_cl_settings = "Reset Client Settings To Default",
+	MediaPlayer_save_cl_settings = "Save Client Settings",
+	MediaPlayer_remove_all = "Remove all  your videos"
 }
 
 --admin settings
 panel.AdminSettings = {
-	media_blacklist_video = "Blacklist Current Video",
-	media_skip_video = "Skip Current Video",
-	media_create_admin_panel = "Refresh Admin Panel",
-	media_reset_settings = "Reset Server Settings To Default",
-	media_resync_convars = "Sync settings with convars",
-	media_reload_cooldowns = "Reload Cooldowns (can fix some time issues)",
-	media_reload_playlist = "Reload Playlist (can fix some issues)",
-	media_reload_blacklist = "Reload Blacklist",
-	media_reload_chatcommands = "Reload Chat Commands",
-	media_reload_votes = "Reload Votes",
-	media_save_settings = "Save Server Settings",
-	media_admin_panel = "Show Admin Panel",
+	MediaPlayer_blacklist_video = "Blacklist Current Video",
+	MediaPlayer_skip_video = "Skip Current Video",
+	MediaPlayer_create_admin_panel = "Refresh Admin Panel",
+	MediaPlayer_reset_settings = "Reset Server Settings To Default",
+	MediaPlayer_resync_convars = "Sync settings with convars",
+	MediaPlayer_reload_cooldowns = "Reload Cooldowns (can fix some time issues)",
+	MediaPlayer_reload_playlist = "Reload Playlist (can fix some issues)",
+	MediaPlayer_reload_blacklist = "Reload Blacklist",
+	MediaPlayer_reload_chatcommands = "Reload Chat Commands",
+	MediaPlayer_reload_votes = "Reload Votes",
+	MediaPlayer_save_settings = "Save Server Settings",
+	MediaPlayer_admin_panel = "Show Admin Panel",
 }
 
 panel.Selected = {}
@@ -54,7 +54,7 @@ function panel:Init()
 
 	self:BaseInit()
 
-	if ( MEDIA.Settings == nil or table.IsEmpty(MEDIA.Settings)) then
+	if ( MediaPlayer.Settings == nil or table.IsEmpty(MediaPlayer.Settings)) then
 		errorBad("no settings")
 	end
 
@@ -77,7 +77,7 @@ function panel:Init()
 	end
 
 	if (self.Settings.Options.Value.DisplayTitle) then
-		self:SetTitle("Easy Media Settings Editor")
+		self:SetTitle("Easy MediaPlayer Settings Editor")
 	else
 		self:SetTitle("")
 	end
@@ -90,7 +90,7 @@ Fills the property sheet
 function panel:FillPropertySheet(settings)
 	for k,v in pairs(settings) do
 		if ( k == "Server") then
-			if (MEDIA.LocalPlayer:IsAdmin()) then
+			if (MediaPlayer.LocalPlayer:IsAdmin()) then
 				self:AddPropertySheetTab(k, v, "icon16/shield.png", true )
 			end
 			continue
@@ -109,20 +109,20 @@ end
 --]]
 
 function panel:MyThink()
-	if (self:HasRescaled() and MEDIA.Settings != nil ) then
+	if (self:HasRescaled() and MediaPlayer.Settings != nil ) then
 		self.PropertySheet:Remove()
 		self.PropertySheet = vgui.Create("DPropertySheet", self )
 		self.PropertySheet:Dock(FILL)
 		self.Edited = false
 
 		local admin = {}
-		if (MEDIA.LocalPlayer:IsAdmin()) then
-			admin = MEDIA.AdminSettings
+		if (MediaPlayer.LocalPlayer:IsAdmin()) then
+			admin = MediaPlayer.AdminSettings
 		end
 
 		self:FillPropertySheet({
 			Server = admin,
-			Client = MEDIA.Settings
+			Client = MediaPlayer.Settings
 		})
 	end
 end
@@ -133,7 +133,7 @@ Add Preset tab
 
 function panel:AddPresetTab()
 
-	self.PresetEditor = vgui.Create("MEDIA.SettingPresets", self.PropertySheet)
+	self.PresetEditor = vgui.Create("MediaPlayer.SettingPresets", self.PropertySheet)
 	self.PropertySheet:AddSheet("Presets", self.PresetEditor, "icon16/folder.png")
 end
 
@@ -181,7 +181,7 @@ function panel:AddCommandsTab()
 		but:SetFont("MediumText")
 		but:SetImage("icon16/" .. image)
 		but.Paint = function()
-			draw.SimpleTextOutlined( v, "MediumText", 25, 8, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MEDIA.Colours.Black )
+			draw.SimpleTextOutlined( v, "MediumText", 25, 8, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 		end
 		but:SetWide( self:GetWide() - 65 )
 		but.DoClick = function(_s)
@@ -204,7 +204,7 @@ function panel:AddCommandsTab()
 		fn(k,v, "user.png")
 	end
 
-	if (MEDIA.LocalPlayer:IsAdmin()) then
+	if (MediaPlayer.LocalPlayer:IsAdmin()) then
 
 		--add server commands devicer
 		divider = vgui.Create("DButton", grid )
@@ -251,7 +251,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	scrollRight.Paint = function(s)
 
 		if (admin and self.Edited) then
-			draw.SimpleTextOutlined( "Remember to click save!" , "BiggerText", 10, s:GetTall() / 2 , MEDIA.Colours.White, 10, 1, 0.5,  MEDIA.Colours.Black )
+			draw.SimpleTextOutlined( "Remember to click save!" , "BiggerText", 10, s:GetTall() / 2 , MediaPlayer.Colours.White, 10, 1, 0.5,  MediaPlayer.Colours.Black )
 		end
 	end
 
@@ -279,7 +279,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 		self.SendButton:Hide()
 		self.SendButton.DoClick = function()
 			if (self.Edited) then
-				MEDIA.SetAdminSettings()
+				MediaPlayer.SetAdminSettings()
 				self.SendButton:Hide()
 				self.Edited = false
 			end
@@ -313,13 +313,13 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 					i = "icon16/film.png"
 				elseif ( string.find(k, "soundcloud_")) then
 					i = "icon16/sound.png"
-				elseif ( string.find(k, "media_cooldown")) then
+				elseif ( string.find(k, "MediaPlayer_cooldown")) then
 					i = "icon16/clock.png"
-				elseif ( string.find(k, "media_announce")) then
+				elseif ( string.find(k, "MediaPlayer_announce")) then
 					i = "icon16/email.png"
-				elseif ( string.find(k, "media_command")) then
+				elseif ( string.find(k, "MediaPlayer_command")) then
 					i = "icon16/text_bold.png"
-				elseif ( string.find(k, "media_admin")) then
+				elseif ( string.find(k, "MediaPlayer_admin")) then
 					i = "icon16/shield.png"
 				end
 			else
@@ -341,7 +341,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 			local node = settingSelection:AddNode(k, i)
 
 			function node:DoClick()
-				MEDIA.LoadedPanels["SettingsPanel"].Panel:UpdateTable(title, v, admin )
+				MediaPlayer.LoadedPanels["SettingsPanel"].Panel:UpdateTable(title, v, admin )
 			end
 		end
 	end
@@ -376,9 +376,9 @@ function panel:UpdateTable(title, v, admin)
 
 		local str = v.Key
 
-		if (v.Type == MEDIA.Type.INT ) then
+		if (v.Type == MediaPlayer.Type.INT ) then
 			typ = "Int"
-		elseif ( v.Type == MEDIA.Type.BOOL) then
+		elseif ( v.Type == MediaPlayer.Type.BOOL) then
 			typ = "Boolean"
 		end
 
@@ -398,15 +398,15 @@ function panel:UpdateTable(title, v, admin)
 		row.DataChanged = function( _, val )
 
 			if (v.Refresh) then
-				RunConsoleCommand("media_refresh_cl")
+				RunConsoleCommand("MediaPlayer_refresh_cl")
 			end
 
 			if (!admin) then
-				MEDIA.ChangeSetting(v.Key, val)
+				MediaPlayer.ChangeSetting(v.Key, val)
 				return
 			end
 
-			MEDIA.AdminSettings[v.Key][v.Type].Value = val
+			MediaPlayer.AdminSettings[v.Key][v.Type].Value = val
 
 			if (self.Edited == false) then
 				self.SendButton:Show()
@@ -469,26 +469,26 @@ function panel:NormalSettingsRow(v, k, row )
 				tab = val
 			end
 
-			if ( MEDIA.Settings[v.Key][v.Type].DefValue.__unpack) then
-				MEDIA.Settings[v.Key][v.Type].Value[k] = MEDIA.Settings[v.Key][v.Type].DefValue.__unpack(MEDIA.Settings[v.Key][v.Type], k, tab)
+			if ( MediaPlayer.Settings[v.Key][v.Type].DefValue.__unpack) then
+				MediaPlayer.Settings[v.Key][v.Type].Value[k] = MediaPlayer.Settings[v.Key][v.Type].DefValue.__unpack(MediaPlayer.Settings[v.Key][v.Type], k, tab)
 			else
 
-				if (type(MEDIA.Settings[v.Key][v.Type].DefValue[k]) == "boolean") then
+				if (type(MediaPlayer.Settings[v.Key][v.Type].DefValue[k]) == "boolean") then
 					tab = (tab == 1 or tab == true)
-					MEDIA.Settings[v.Key][v.Type].Value[k] = tab
+					MediaPlayer.Settings[v.Key][v.Type].Value[k] = tab
 					return
 				end
 
-				if (v.Type == MEDIA.Types.TABLE) then
-					MEDIA.Settings[v.Key][v.Type].Value[k] = val
-				elseif (v.Type == MEDIA.Types.INT) then
-					MEDIA.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
+				if (v.Type == MediaPlayer.Types.TABLE) then
+					MediaPlayer.Settings[v.Key][v.Type].Value[k] = val
+				elseif (v.Type == MediaPlayer.Types.INT) then
+					MediaPlayer.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
 				else
-					MEDIA.Settings[v.Key][v.Type].Value[k] = tab
+					MediaPlayer.Settings[v.Key][v.Type].Value[k] = tab
 				end
 			end
 
-			row:SetValue(MEDIA.Settings[v.Key][v.Type].Value[k])
+			row:SetValue(MediaPlayer.Settings[v.Key][v.Type].Value[k])
 		end
 
 		if ( v.SlowUpdate ) then
@@ -529,26 +529,26 @@ function panel:AdminSettingsRow(v, k, row )
 			self.Edited = true
 		end
 
-		if ( MEDIA.AdminSettings[v.Key][v.Type].DefValue.__unpack) then
-			MEDIA.AdminSettings[v.Key][v.Type].Value[k] = MEDIA.AdminSettings[v.Key][v.Type].DefValue.__unpack(MEDIA.AdminSettings[v.Key][v.Type], k, tab)
+		if ( MediaPlayer.AdminSettings[v.Key][v.Type].DefValue.__unpack) then
+			MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = MediaPlayer.AdminSettings[v.Key][v.Type].DefValue.__unpack(MediaPlayer.AdminSettings[v.Key][v.Type], k, tab)
 		else
 
 			--seems to work for boolean packing/unpacking
-			if (type(MEDIA.AdminSettings[v.Key][v.Type].DefValue[k]) == "boolean") then
+			if (type(MediaPlayer.AdminSettings[v.Key][v.Type].DefValue[k]) == "boolean") then
 				tab = (tab == 1 or tab == true)
-				MEDIA.AdminSettings[v.Key][v.Type].Value[k] = tab
+				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = tab
 				return
 			end
 
-			if (v.Type == MEDIA.Types.TABLE) then
-				MEDIA.AdminSettings[v.Key][v.Type].Value[k] = val
-			elseif (v.Type == MEDIA.Types.INT) then
-				MEDIA.AdminSettings[v.Key][v.Type].Value[k] = math.Truncate(tab)
+			if (v.Type == MediaPlayer.Types.TABLE) then
+				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = val
+			elseif (v.Type == MediaPlayer.Types.INT) then
+				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = math.Truncate(tab)
 			else
-				MEDIA.AdminSettings[v.Key][v.Type].Value[k] = tab
+				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = tab
 			end
 		end
 	end
 end
 
-vgui.Register("MEDIA.SettingsPanel", panel, "MEDIA.Base")
+vgui.Register("MediaPlayer.SettingsPanel", panel, "MediaPlayer.Base")

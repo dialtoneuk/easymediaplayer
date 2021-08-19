@@ -51,9 +51,9 @@ function panel:DisplaySettings(k, v)
         end
     end
 
-    local setting = MEDIA.GetSetting(k)
+    local setting = MediaPlayer.GetSetting(k)
 
-    if (setting.Type == MEDIA.Types.TABLE) then
+    if (setting.Type == MediaPlayer.Types.TABLE) then
         for key,value in pairs(v) do
             local typ
 
@@ -62,11 +62,11 @@ function panel:DisplaySettings(k, v)
             end
 
             if (type(value) == "boolean") then
-                typ = MEDIA.Types.BOOL
+                typ = MediaPlayer.Types.BOOL
             elseif (type(value) == "number") then
-                typ = MEDIA.Types.INT
+                typ = MediaPlayer.Types.INT
             else
-                typ = MEDIA.Types.BOOL
+                typ = MediaPlayer.Types.BOOL
             end
 
             create(value, key, typ)
@@ -76,4 +76,4 @@ function panel:DisplaySettings(k, v)
     end
 end
 
-vgui.Register("MEDIA.PresetPreview", panel, "MEDIA.BasePanel")
+vgui.Register("MediaPlayer.PresetPreview", panel, "MediaPlayer.BasePanel")

@@ -69,7 +69,7 @@ function panel:Init()
 	end
 
 	if (self.Settings.Options.Value.DisplayTitle) then
-		self:SetTitle("Easy Media Media Search")
+		self:SetTitle("Easy MediaPlayer MediaPlayer Search")
 	else
 		self:SetTitle("")
 	end
@@ -120,10 +120,10 @@ function panel:CreateBrowserPanel()
 			return
 		end
 
-		local result = MEDIA.ParseYoutubeURL(val)
+		local result = MediaPlayer.ParseYoutubeURL(val)
 
 		if (result != nil ) then
-			RunConsoleCommand("media_play", result )
+			RunConsoleCommand("MediaPlayer_play", result )
 			self.Browser:OpenURL("https://www.youtube.com")
 		else
 			self.Browser:OpenURL( val )
@@ -210,7 +210,7 @@ function panel:CreateBrowserPanel()
 			self.BrowserPosition = #self.BrowserHistory
 		end
 
-		--if its just media or media.com
+		--if its just MediaPlayer or MediaPlayer.com
 		if ( url != "www.youtube.com/watch") then
 			self.UrlBox:SetValue(str)
 			return
@@ -218,7 +218,7 @@ function panel:CreateBrowserPanel()
 
 			self.UrlBox:SetValue(str)
 			self.GrabButton:SetDisabled(false)
-			MEDIA.URL = str
+			MediaPlayer.URL = str
 		end
 	end)
 
@@ -235,20 +235,20 @@ function panel:CreateBrowserPanel()
 	self.GrabButton:SetDisabled(true)
 	self.GrabButton.DoClick = function()
 
-		if (MEDIA.URL == nil) then
+		if (MediaPlayer.URL == nil) then
 			return
 		end
 
-		if (MEDIA.URL == "https://www.youtube.com" or MEDIA.URL == "http//www.youtube.com" ) then return end
+		if (MediaPlayer.URL == "https://www.youtube.com" or MediaPlayer.URL == "http//www.youtube.com" ) then return end
 
 		timer.Simple(2, function()
 			self.GrabButton:SetDisabled(false)
 		end)
 
-		local result = MEDIA.ParseYoutubeURL(MEDIA.URL)
+		local result = MediaPlayer.ParseYoutubeURL(MediaPlayer.URL)
 
 		if (result != nil ) then
-			RunConsoleCommand("media_play", result )
+			RunConsoleCommand("MediaPlayer_play", result )
 			self.Browser:OpenURL("https://www.youtube.com")
 		end
 	end
@@ -262,14 +262,14 @@ function panel:CreateSearchPanel()
 
 	self.Search = vgui.Create("DTextEntry", self.SearchContainer )
 	self.Search:Dock(TOP)
-	self.Search:SetPlaceholderText("Will search media.com for valid videos")
+	self.Search:SetPlaceholderText("Will search MediaPlayer.com for valid videos")
 	self.Search:DockMargin(15,15,15,15)
 	self.Search:SetWide(self:GetWidth())
 	self.Search:SetTall(30)
 
 	self.Search.OnEnter = function()
 		if (self.Search:GetValue() != "") then
-			RunConsoleCommand("media_youtube_search", self.Search:GetValue() )
+			RunConsoleCommand("MediaPlayer_youtube_search", self.Search:GetValue() )
 		end
 
 		self.Search:SetDisabled(true)
@@ -285,7 +285,7 @@ function panel:CreateSearchPanel()
 	self.SearchButton:SetWide(120)
 	self.SearchButton.DoClick = function()
 		if (self.Search:GetValue() != "") then
-			RunConsoleCommand("media_youtube_search", self.Search:GetValue() )
+			RunConsoleCommand("MediaPlayer_youtube_search", self.Search:GetValue() )
 		end
 
 		self.Search:SetDisabled(true)
@@ -298,7 +298,7 @@ function panel:CreateSearchPanel()
 
 	self:RefreshSearchGrid()
 
-	if (MEDIA.SearchResults and !table.IsEmpty(MEDIA.SearchResults)) then
+	if (MediaPlayer.SearchResults and !table.IsEmpty(MediaPlayer.SearchResults)) then
 		self:PresentSearchResults(false)
 	end
 end
@@ -313,12 +313,12 @@ function panel:PresentSearchResults(clear)
 		self:RefreshSearchGrid()
 	end
 
-	if (!MEDIA.SearchResults) then self:OnEmpty() return end
-	if (table.IsEmpty(MEDIA.SearchResults)) then self:OnEmpty() return end
+	if (!MediaPlayer.SearchResults) then self:OnEmpty() return end
+	if (table.IsEmpty(MediaPlayer.SearchResults)) then self:OnEmpty() return end
 
 	self.Grid:SetColWide(self:GetWidth())
 
-	for k,v in pairs(MEDIA.SearchResults) do
+	for k,v in pairs(MediaPlayer.SearchResults) do
 		local pan = vgui.Create("DButton", self.Grid )
 		pan:SetWide(self:GetWidth() - 40)
 		pan:SetHeight(self.Settings.Size.Value.RowHeight)
@@ -332,7 +332,7 @@ function panel:PresentSearchResults(clear)
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("media_play", v.Video )
+			RunConsoleCommand("MediaPlayer_play", v.Video )
 		end
 
 		local html = vgui.Create("DHTML", pan)
@@ -377,7 +377,7 @@ function panel:CreateHistoryPanel()
 			self:RefreshHistoryGrid()
 		end
 
-		RunConsoleCommand("media_request_history", self.HistoryPage )
+		RunConsoleCommand("MediaPlayer_request_history", self.HistoryPage )
 		self.FetchButton:SetDisabled(true)
 
 		timer.Simple(1, function()
@@ -403,7 +403,7 @@ function panel:CreateHistoryPanel()
 
 	self:RefreshHistoryGrid()
 
-	if (MEDIA.History != nil and !table.IsEmpty(MEDIA.History)) then
+	if (MediaPlayer.History != nil and !table.IsEmpty(MediaPlayer.History)) then
 		self:PresentHistory()
 	end
 end
@@ -426,7 +426,7 @@ function panel:CreatePlayerHistoryPanel()
 			self:RefreshPlayerGrid()
 		end
 
-		RunConsoleCommand("media_request_personal_history", self.PlayerHistoryPage )
+		RunConsoleCommand("MediaPlayer_request_personal_history", self.PlayerHistoryPage )
 		self.PlayerFetchButton:SetDisabled(true)
 
 		timer.Simple(1, function()
@@ -452,7 +452,7 @@ function panel:CreatePlayerHistoryPanel()
 
 	self:RefreshPlayerGrid()
 
-	if (MEDIA.PlayerHistory and !table.IsEmpty(MEDIA.PlayerHistory)) then
+	if (MediaPlayer.PlayerHistory and !table.IsEmpty(MediaPlayer.PlayerHistory)) then
 		self:PresentPlayerHistory()
 	end
 end
@@ -462,7 +462,7 @@ Presents history we get from the server
 --]]
 
 function panel:PresentHistory()
-	for k,v in SortedPairsByMemberValue(MEDIA.History, "LastPlayed", true ) do
+	for k,v in SortedPairsByMemberValue(MediaPlayer.History, "LastPlayed", true ) do
 
 		if (string.sub(k,1,2) == "__") then continue end
 		if ( v.Owner == nil ) then v.Owner = {} end
@@ -481,7 +481,7 @@ function panel:PresentHistory()
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("media_play", k )
+			RunConsoleCommand("MediaPlayer_play", k )
 
 		end
 
@@ -508,7 +508,7 @@ Presents history we get from the server
 --]]
 
 function panel:PresentPlayerHistory()
-	for k,v in SortedPairsByMemberValue(MEDIA.PlayerHistory, "LastPlayed", true ) do
+	for k,v in SortedPairsByMemberValue(MediaPlayer.PlayerHistory, "LastPlayed", true ) do
 
 		if (string.sub(k,1,2) == "__") then continue end
 		if ( v.Owner == nil ) then v.Owner = {} end
@@ -527,7 +527,7 @@ function panel:PresentPlayerHistory()
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("media_play", k )
+			RunConsoleCommand("MediaPlayer_play", k )
 
 		end
 
@@ -555,7 +555,7 @@ end
 
 function panel:AddPageHeader(that, page, count)
 	page = page or 0
-	count = count or MEDIA.HistoryCount
+	count = count or MediaPlayer.HistoryCount
 
 	local pan = vgui.Create("DButton", that )
 	pan:SetWide(self:GetWidth(true, true))
@@ -623,4 +623,4 @@ function panel:RefreshPlayerGrid()
 	self.PlayerHistoryGrid:SetRowHeight(self.Settings.Size.Value.RowHeight + self:GetPadding())
 end
 
-vgui.Register("MEDIA.SearchPanel", panel, "MEDIA.Base")
+vgui.Register("MediaPlayer.SearchPanel", panel, "MediaPlayer.Base")

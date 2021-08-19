@@ -1,15 +1,15 @@
 
-MEDIA.History = MEDIA.History or {}
+MediaPlayer.History = MediaPlayer.History or {}
 
 --[[
 	Adds a video to our history
 --]]
 
-function MEDIA.AddToHistory(video)
-	if (MEDIA.History[video.Video]) then
-		MEDIA.History[video.Video].Plays = MEDIA.History[video.Video].Plays + 1
-		MEDIA.History[video.Video].LastPlayed = os.time()
-		MEDIA.History[video.Video].Owner = {
+function MediaPlayer.AddToHistory(video)
+	if (MediaPlayer.History[video.Video]) then
+		MediaPlayer.History[video.Video].Plays = MediaPlayer.History[video.Video].Plays + 1
+		MediaPlayer.History[video.Video].LastPlayed = os.time()
+		MediaPlayer.History[video.Video].Owner = {
 			Name = video.Owner:GetName() or video.Owner.Name or "Unknown",
 			SteamID = video.Owner:SteamID() or video.Owner.SteamID or "Unknown"
 		}
@@ -17,7 +17,7 @@ function MEDIA.AddToHistory(video)
 	end
 
 	--replace with merge
-	MEDIA.History[video.Video] = {
+	MediaPlayer.History[video.Video] = {
 		Video = video.Video,
 		Title = video.Title,
 		Creator = video.Creator,
@@ -38,75 +38,75 @@ end
 	Return true if we have history on this video
 --]]
 
-function MEDIA.HasVideo(video)
-	return MEDIA.History[video.Video] != nil
+function MediaPlayer.HasVideo(video)
+	return MediaPlayer.History[video.Video] != nil
 end
 
 --[[
 Likes the current video
 --]]
 
-function MEDIA.LikeCurrentVideo()
-	if (table.IsEmpty(MEDIA.CurrentVideo)) then return end
-	local video = MEDIA.CurrentVideo
+function MediaPlayer.LikeCurrentVideo()
+	if (table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
+	local video = MediaPlayer.CurrentVideo
 
-	if (!MEDIA.HasVideo(video)) then MEDIA.AddToHistory(video) end
+	if (!MediaPlayer.HasVideo(video)) then MediaPlayer.AddToHistory(video) end
 
-	MEDIA.History[video.Video].Likes = MEDIA.History[video.Video].Likes + 1
+	MediaPlayer.History[video.Video].Likes = MediaPlayer.History[video.Video].Likes + 1
 end
 
 --[[
 	Dislikes a video
 --]]
 
-function MEDIA.LikeVideo(video)
+function MediaPlayer.LikeVideo(video)
 	if (table.IsEmpty(video)) then return end
-	if (!MEDIA.HasVideo(video)) then MEDIA.AddToHistory(video) end
-	MEDIA.History[video.Video].Likes = MEDIA.History[video.Video].Likes + 1
+	if (!MediaPlayer.HasVideo(video)) then MediaPlayer.AddToHistory(video) end
+	MediaPlayer.History[video.Video].Likes = MediaPlayer.History[video.Video].Likes + 1
 end
 
 --[[
 Dislikes the current video
 --]]
 
-function MEDIA.DislikeCurrentVideo()
-	if (table.IsEmpty(MEDIA.CurrentVideo)) then return end
-	local video = MEDIA.CurrentVideo
+function MediaPlayer.DislikeCurrentVideo()
+	if (table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
+	local video = MediaPlayer.CurrentVideo
 
-	if (!MEDIA.HasVideo(video)) then MEDIA.AddToHistory(video) end
-	if (!MEDIA.HasVideo(video)) then MEDIA.AddToHistory(video) end
+	if (!MediaPlayer.HasVideo(video)) then MediaPlayer.AddToHistory(video) end
+	if (!MediaPlayer.HasVideo(video)) then MediaPlayer.AddToHistory(video) end
 
-	MEDIA.History[video.Video].Dislikes = MEDIA.History[video.Video].Dislikes + 1
+	MediaPlayer.History[video.Video].Dislikes = MediaPlayer.History[video.Video].Dislikes + 1
 end
 
 --[[
 	Dislikes a video
 --]]
 
-function MEDIA.DislikeVideo(video)
+function MediaPlayer.DislikeVideo(video)
 	if (table.IsEmpty(video)) then return end
-	if (!MEDIA.HasVideo(video)) then MEDIA.AddToHistory(video) end
+	if (!MediaPlayer.HasVideo(video)) then MediaPlayer.AddToHistory(video) end
 
-	MEDIA.History[video.Video].Dislikes = MEDIA.History[video.Video].Dislikes + 1
+	MediaPlayer.History[video.Video].Dislikes = MediaPlayer.History[video.Video].Dislikes + 1
 end
 
 --[[
 	Loads our history
 --]]
 
-function MEDIA.LoadHistory()
+function MediaPlayer.LoadHistory()
 	if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
 	if (!file.Exists("lyds/history.json", "DATA")) then return end
 
-	MEDIA.History = util.JSONToTable( file.Read("lyds/history.json") )
+	MediaPlayer.History = util.JSONToTable( file.Read("lyds/history.json") )
 end
 
 --[[
 	Saves our history to file
 --]]
 
-function MEDIA.SaveHistory()
+function MediaPlayer.SaveHistory()
 	if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
 
-	file.Write("lyds/history.json", util.TableToJSON( MEDIA.History ))
+	file.Write("lyds/history.json", util.TableToJSON( MediaPlayer.History ))
 end

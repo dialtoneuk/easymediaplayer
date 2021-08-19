@@ -1,5 +1,5 @@
 --playlist global
-MEDIA.Playlist = MEDIA.Playlist or {}
+MediaPlayer.Playlist = MediaPlayer.Playlist or {}
 
 --get the player meta
 local ply = FindMetaTable("Player")
@@ -12,7 +12,7 @@ function ply:SendMessage(message)
 
 	if (string.len(message) > 125) then return end
 
-	net.Start("MEDIA.SendMessage")
+	net.Start("MediaPlayer.SendMessage")
 		net.WriteString(message)
 	net.Send(self)
 end
@@ -22,13 +22,13 @@ end
 --]]
 
 function ply:DoInitialSpawn()
-	self:SendMessage("This server is running " .. MEDIA.Name .. " v" .. MEDIA.Version )
-	self:SendMessage("Created by " .. MEDIA.Credits.Author )
+	self:SendMessage("This server is running " .. MediaPlayer.Name .. " v" .. MediaPlayer.Version )
+	self:SendMessage("Created by " .. MediaPlayer.Credits.Author )
 
 	if (self:IsAdmin()) then
-		MEDIA.SendBlacklist(self)
+		MediaPlayer.SendBlacklist(self)
 		self:SendAdminSettings()
-		self:ConCommand("media_create_admin_panel")
+		self:ConCommand("MediaPlayer_create_admin_panel")
 	end
 end
 
@@ -39,8 +39,8 @@ Sends the servers settings to the client
 function ply:SendAdminSettings()
 	if (!self:IsAdmin()) then return end
 
-	net.Start("MEDIA.SendAdminSettings")
-	net.WriteTable(MEDIA.Settings)
+	net.Start("MediaPlayer.SendAdminSettings")
+	net.WriteTable(MediaPlayer.Settings)
 	net.Send(self)
 end
 
@@ -51,7 +51,7 @@ end
 function ply:SendWarningBox(message, title)
 	title = title or "Warning"
 
-	net.Start("MEDIA.CreateWarningBox")
+	net.Start("MediaPlayer.CreateWarningBox")
 	net.WriteString(title)
 	net.WriteString(message)
 	net.Send(self)
@@ -63,14 +63,14 @@ Removes a video
 --]]
 
 function ply:RemoveVideo(id)
-	if (MEDIA.Playlist[id] == nil) then return end -- already in there
-	local video = MEDIA.GetVideo(id)
+	if (MediaPlayer.Playlist[id] == nil) then return end -- already in there
+	local video = MediaPlayer.GetVideo(id)
 
 	if ( video == nil) then return end
 	if (!IsValid(video.Owner)) then return end
 	if (video.Owner:SteamID() != self:SteamID()) then return end --not ours
 
-	MEDIA.RemoveVideo(id)
+	MediaPlayer.RemoveVideo(id)
 	ply:SendMessage("Video successfully removed!")
 end
 
@@ -82,7 +82,7 @@ function ply:GetPersonalHistory(max, start )
 	local results = {}
 	local count = 0
 
-	for k,v in SortedPairsByMemberValue(MEDIA.History, "LastPlayed", true ) do
+	for k,v in SortedPairsByMemberValue(MediaPlayer.History, "LastPlayed", true ) do
 		count = count + 1
 
 		if ( count < start) then continue end
@@ -105,7 +105,7 @@ function ply:GetPersonalHistoryCount()
 
 	local count = 0
 
-	for k,v in pairs(MEDIA.History) do
+	for k,v in pairs(MediaPlayer.History) do
 		if (v.Owner == nil) then continue end
 
 		if (self:SteamID() == v.Owner.SteamID) then
@@ -123,9 +123,9 @@ Gets the players videos
 function ply:GetVideos()
 	local results = {}
 
-	for k,v in pairs(MEDIA.Playlist) do
+	for k,v in pairs(MediaPlayer.Playlist) do
 		if (!IsValid(v.Owner)) then continue end
-		if (!table.IsEmpty(MEDIA.CurrentVideo) and MEDIA.CurrentVideo.Video == k) then continue end
+		if (!table.IsEmpty(MediaPlayer.CurrentVideo) and MediaPlayer.CurrentVideo.Video == k) then continue end
 		if (v.Owner:SteamID() != self:SteamID()) then continue end --not ours
 
 		results[k] = v
@@ -139,11 +139,11 @@ Removes all the users videos
 --]]
 
 function ply:RemoveVideos()
-	for k,v in pairs(MEDIA.Playlist) do
+	for k,v in pairs(MediaPlayer.Playlist) do
 		if (!IsValid(v.Owner)) then continue end
-		if (!table.IsEmpty(MEDIA.CurrentVideo) and MEDIA.CurrentVideo.Video == v.Video) then continue end
+		if (!table.IsEmpty(MediaPlayer.CurrentVideo) and MediaPlayer.CurrentVideo.Video == v.Video) then continue end
 		if (v.Owner:SteamID() != self:SteamID()) then continue end --not ours
 
-		MEDIA.RemoveVideo(v.Video)
+		MediaPlayer.RemoveVideo(v.Video)
 	end
 end

@@ -59,7 +59,7 @@ function panel:Init()
 		surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 
 		--todo: Optimise this
-		if (!table.IsEmpty(MEDIA.CurrentVideo)) then
+		if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
 
 			local time = CurTime() - self.Video.StartTime
 			local mins = math.Truncate(time / 60)
@@ -75,12 +75,12 @@ function panel:Init()
 			surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground)
 			surface.DrawRect(0, 0, math.Clamp((self:GetWide() / self.Video.Duration ) * time, 5, self:GetWide()), self.Settings.Size.Value.LoadingBarHeight)
 
-			draw.SimpleTextOutlined(self.Video.Title, "MediumText", 10, self:GetTall() - 30, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
-			draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetTall() - 45, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
+			draw.SimpleTextOutlined(self.Video.Title, "MediumText", 10, self:GetTall() - 30, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetTall() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 			draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner or "Unknown",
-				"SmallText", 10, self:GetTall() - 15, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
+				"SmallText", 10, self:GetTall() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 
-			draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10, self:GetTall() - 45, MEDIA.Colours.White, 10, 1, 0.5, MEDIA.Colours.Black)
+			draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10, self:GetTall() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 		end
 	end
 end
@@ -201,4 +201,4 @@ function panel:GetHTMLSourceCode(video, start_time, mute)
 end
 
 --Register
-vgui.Register("MEDIA.PlayerPanel", panel, "MEDIA.BasePanel")
+vgui.Register("MediaPlayer.PlayerPanel", panel, "MediaPlayer.BasePanel")

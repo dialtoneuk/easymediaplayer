@@ -71,37 +71,37 @@ function panel:Init()
 	--init do click
 	self.DoClick = function()
 		--does this each time if there is history for this video but too bad!
-		if ( MEDIA.History != nil and MEDIA.History[ self.Item.Video ] != nil ) then
-			self.Item = table.Merge(self.Item,  MEDIA.History[ self.Item.Video  ])
+		if ( MediaPlayer.History != nil and MediaPlayer.History[ self.Item.Video ] != nil ) then
+			self.Item = table.Merge(self.Item,  MediaPlayer.History[ self.Item.Video  ])
 		end
 
 		local menu = DermaMenu(false, self)
 		menu:SetDeleteSelf( true )
 
-		if (MEDIA.LocalPlayer:IsAdmin()) then
+		if (MediaPlayer.LocalPlayer:IsAdmin()) then
 			if (!self.Active) then
-				if (self.Item.Owner.SteamID != MEDIA.LocalPlayer:SteamID()) then
+				if (self.Item.Owner.SteamID != MediaPlayer.LocalPlayer:SteamID()) then
 					local del = menu:AddOption( "Delete Video", function()
-						RunConsoleCommand("media_delete", self.Item.Video )
+						RunConsoleCommand("MediaPlayer_delete", self.Item.Video )
 					end)
 
 					del:SetIcon("icon16/delete.png")
 				end
 
 				local bdel = menu:AddOption( "Blackist & Delete Video", function()
-					RunConsoleCommand("media_blacklist_video", self.Item.Video )
+					RunConsoleCommand("MediaPlayer_blacklist_video", self.Item.Video )
 				end)
 
 				bdel:SetIcon("icon16/cross.png")
 			else
 				local skip = menu:AddOption( "Skip Video", function()
-					RunConsoleCommand("media_skip_video", self.Item.Video )
+					RunConsoleCommand("MediaPlayer_skip_video", self.Item.Video )
 				end)
 
 				skip:SetIcon("icon16/resultset_next.png")
 
 				local bdel = menu:AddOption( "Blacklist & Skip Video", function()
-					RunConsoleCommand("media_blacklist_video", self.Item.Video )
+					RunConsoleCommand("MediaPlayer_blacklist_video", self.Item.Video )
 				end)
 
 				bdel:SetIcon("icon16/cross.png")
@@ -109,20 +109,20 @@ function panel:Init()
 		end
 
 		local like = menu:AddOption( "Like Video (" .. (self.Item.Likes or 0) .. " likes)", function()
-			RunConsoleCommand("media_like_video", self.Item.Video )
+			RunConsoleCommand("MediaPlayer_like_video", self.Item.Video )
 		end)
 
 		like:SetIcon("icon16/award_star_add.png")
 
 		local dislike = menu:AddOption( "Dislike Video (" .. (self.Item.Dislikes or 0) .. " dislikes)", function()
-			RunConsoleCommand("media_dislike_video", self.Item.Video )
+			RunConsoleCommand("MediaPlayer_dislike_video", self.Item.Video )
 		end)
 
 		dislike:SetIcon("icon16/award_star_delete.png")
 
-		if ( !self.Active and ( self.Item.Owner.SteamID == MEDIA.LocalPlayer:SteamID() ) ) then
+		if ( !self.Active and ( self.Item.Owner.SteamID == MediaPlayer.LocalPlayer:SteamID() ) ) then
 			local remove = menu:AddOption( "Remove Video", function()
-				RunConsoleCommand("media_remove", self.Item.Video )
+				RunConsoleCommand("MediaPlayer_remove", self.Item.Video )
 			end)
 			remove:SetIcon("icon16/bomb.png")
 		end
@@ -171,4 +171,4 @@ function panel:SetItemText()
 end
 
 --Register Item
-vgui.Register("MEDIA.PlaylistItem", panel, "MEDIA.BaseButton")
+vgui.Register("MediaPlayer.PlaylistItem", panel, "MediaPlayer.BaseButton")

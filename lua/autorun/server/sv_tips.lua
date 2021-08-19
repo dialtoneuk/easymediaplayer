@@ -5,9 +5,9 @@
 --]]
 
 --default harcoded tips
-MEDIA.Tips = {
+MediaPlayer.Tips = {
 	{
-		body = "Admins can use {media_command_prefix}admin to remove videos from the blacklist.",
+		body = "Admins can use {MediaPlayer_command_prefix}admin to remove videos from the blacklist.",
 		admin = true
 	},
 	{
@@ -19,25 +19,25 @@ MEDIA.Tips = {
 		admin = true
 	},
 	{
-		body = "You can search for a video by typing {media_command_prefix}play or by typing {media_command_prefix}search into chat.",
+		body = "You can search for a video by typing {MediaPlayer_command_prefix}play or by typing {MediaPlayer_command_prefix}search into chat.",
 	},
 	{
-		body = MEDIA.Name .. " was created by " .. MEDIA.Credits.Author,
+		body = MediaPlayer.Name .. " was created by " .. MediaPlayer.Credits.Author,
 	},
 	{
-		body = "You can use {media_command_prefix}like or {media_command_prefix}dislike to engage with the current video!"
+		body = "You can use {MediaPlayer_command_prefix}like or {MediaPlayer_command_prefix}dislike to engage with the current video!"
 	},
 	{
-		body = "You can vote to skip a video through using {media_command_prefix}voteskip",
+		body = "You can vote to skip a video through using {MediaPlayer_command_prefix}voteskip",
 	},
 	{
-		body = "You can vote to ban a video by using {media_command_prefix}voteban or {media_command_prefix}voteblacklist",
+		body = "You can vote to ban a video by using {MediaPlayer_command_prefix}voteban or {MediaPlayer_command_prefix}voteblacklist",
 	},
 	{
-		body = "You can change the position of elements, colours and functionality by using {media_command_prefix}settings",
+		body = "You can change the position of elements, colours and functionality by using {MediaPlayer_command_prefix}settings",
 	},
 	{
-		body = "You can mute the current video with {media_command_prefix}mute",
+		body = "You can mute the current video with {MediaPlayer_command_prefix}mute",
 	}
 }
 
@@ -45,20 +45,20 @@ MEDIA.Tips = {
 	Loads our custom tips
 --]]
 
-function MEDIA.LoadCustomTips()
+function MediaPlayer.LoadCustomTips()
 
-	if ( MEDIA.GetSetting("media_custom_tips") == nil ) then
+	if ( MediaPlayer.GetSetting("MediaPlayer_custom_tips") == nil ) then
 		return
 	end
 
-	local tip = MEDIA.GetSetting("media_custom_tips")
+	local tip = MediaPlayer.GetSetting("MediaPlayer_custom_tips")
 
-	if (tip.Type != MEDIA.SettingTypes.TABLE ) then
+	if (tip.Type != MediaPlayer.SettingTypes.TABLE ) then
 		errorBad("invalid type")
 	end
 
 	for k,v in pairs(tip.Value) do
-		table.ForceInsert(MEDIA.Tips, {
+		table.ForceInsert(MediaPlayer.Tips, {
 			body = v
 		})
 	end
@@ -68,7 +68,7 @@ end
 
 --]]
 
-function MEDIA.SelectTip(is_admin)
+function MediaPlayer.SelectTip(is_admin)
 	is_admin = is_admin or false
 	local tip = {}
 	local count = 5;
@@ -79,7 +79,7 @@ function MEDIA.SelectTip(is_admin)
 			errorBad("failed to select tip")
 		end
 
-		local result = MEDIA.Tips[math.random( 1, #MEDIA.Tips )]
+		local result = MediaPlayer.Tips[math.random( 1, #MediaPlayer.Tips )]
 
 		if (result.admin != nil && result.admin != is_admin) then
 			count = count - 1;
@@ -96,7 +96,7 @@ end
 
 --]]
 
-function MEDIA.ParseTipBody(tip)
+function MediaPlayer.ParseTipBody(tip)
 	local str = tip;
 
 	if (type(tip) == "table") then
@@ -112,8 +112,8 @@ function MEDIA.ParseTipBody(tip)
 	for capture in string.gmatch(str, "%{(.-)%}") do
 		capture = string.lower(capture)
 
-		local setting = MEDIA.GetSetting( capture ) or { Value = "null", Type = MEDIA.Type.STRING }
-		if (MEDIA.Type == MEDIA.Type.TABLE ) then
+		local setting = MediaPlayer.GetSetting( capture ) or { Value = "null", Type = MediaPlayer.Type.STRING }
+		if (MediaPlayer.Type == MediaPlayer.Type.TABLE ) then
 			str = string.Replace(str, "{" .. capture .. "}", "invalid setting: table referenced" )
 		else
 			str = string.Replace(str, "{" .. capture .. "}", setting.Value )
@@ -127,21 +127,21 @@ end
 
 --]]
 
-function MEDIA.DisplayTip()
+function MediaPlayer.DisplayTip()
 
-	if ( MEDIA.IsSettingTrue("media_tips_enabled")) then
+	if ( MediaPlayer.IsSettingTrue("MediaPlayer_tips_enabled")) then
 		for k,v in pairs(player.GetAll()) do
-			local tip = MEDIA.SelectTip(v:IsAdmin())
+			local tip = MediaPlayer.SelectTip(v:IsAdmin())
 
 			if (tip != nil) then
-				v:SendMessage("psst - " .. MEDIA.ParseTipBody(tip))
+				v:SendMessage("psst - " .. MediaPlayer.ParseTipBody(tip))
 			end
 		end
 	end
 
-	timer.Create("MEDIA.Tips", MEDIA.GetSetting("media_tips_frequency").Value, 1, function()
-		if ( MEDIA.GetSetting("media_tips_enabled").Value) then
-			MEDIA.DisplayTip()
+	timer.Create("MediaPlayer.Tips", MediaPlayer.GetSetting("MediaPlayer_tips_frequency").Value, 1, function()
+		if ( MediaPlayer.GetSetting("MediaPlayer_tips_enabled").Value) then
+			MediaPlayer.DisplayTip()
 		end
 	end)
 end

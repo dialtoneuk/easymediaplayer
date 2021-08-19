@@ -227,7 +227,7 @@ function base:BaseThink()
 
     for k,v in pairs(self.Settings) do
         if (self.WatchedSettings[k] != nil ) then
-            if ( v.Type == MEDIA.Types.TABLE ) then
+            if ( v.Type == MediaPlayer.Types.TABLE ) then
                 for index,value in pairs(v.Value) do
                     if (self.WatchedSettings[k][index] != nil ) then
                         self.WatchedSettings[k][index](self)
@@ -257,9 +257,9 @@ function base:SetPanelSettings()
     self.Settings = self.Settings or {}
     for k,v in pairs(self.Settings) do
         if (type(v) == "string") then
-            self.Settings[k] = MEDIA.GetSetting(self:GetRealKey(v))
+            self.Settings[k] = MediaPlayer.GetSetting(self:GetRealKey(v))
         elseif (type(v) == "table") then
-            self.Settings[k] = MEDIA.GetSetting(v.Key)
+            self.Settings[k] = MediaPlayer.GetSetting(v.Key)
         end
     end
 end
@@ -292,12 +292,12 @@ function base:GetRealKey(t)
         return string.sub(t, 2)
     end
 
-    if (string.find(t, "media_" .. self.Name)) then
+    if (string.find(t, "MediaPlayer_" .. self.Name)) then
         warning("t already has extension present: " .. t )
         return t
     end
 
-    return "media_" .. self.Name .. "_" .. t
+    return "MediaPlayer_" .. self.Name .. "_" .. t
 end
 
 function base:CacheThink()
@@ -323,6 +323,6 @@ local panel = table.Copy(base)
 local button = table.Copy(base)
 
 --Register
-vgui.Register("MEDIA.Base", base, "DFrame")
-vgui.Register("MEDIA.BasePanel", panel, "DPanel") --register an exact copy but for a panel too
-vgui.Register("MEDIA.BaseButton", button, "DButton") --register an exact copy but for a  too
+vgui.Register("MediaPlayer.Base", base, "DFrame")
+vgui.Register("MediaPlayer.BasePanel", panel, "DPanel") --register an exact copy but for a panel too
+vgui.Register("MediaPlayer.BaseButton", button, "DButton") --register an exact copy but for a  too

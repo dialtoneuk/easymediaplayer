@@ -1,116 +1,114 @@
-MEDIA.LoadedPanels = MEDIA.LoadedPanels or {}
+MediaPlayer.LoadedPanels = MediaPlayer.LoadedPanels or {}
 
 --called when context menu opened
-function MEDIA.ExecuteContextMenu(has_opened)
+function MediaPlayer.ExecuteContextMenu(has_opened)
 	has_opened = has_opened or false
 
-	for k,v in pairs(MEDIA.LoadedPanels) do
+	for k,v in pairs(MediaPlayer.LoadedPanels) do
 		if ( v.OnContext != nil ) then
-			v.OnContext(MEDIA.LoadedPanels[k].Panel, k, MEDIA.LoadedPanels[k]._Settings, has_opened)
+			v.OnContext(MediaPlayer.LoadedPanels[k].Panel, k, MediaPlayer.LoadedPanels[k]._Settings, has_opened)
 		end
 	end
 end
 
 --called when scoreboard menu opened
-function MEDIA.ExecuteScoreboardMenu(has_opened)
+function MediaPlayer.ExecuteScoreboardMenu(has_opened)
 	has_opened = has_opened or false
 
-	for k,v in pairs(MEDIA.LoadedPanels) do
+	for k,v in pairs(MediaPlayer.LoadedPanels) do
 		if ( v.OnScoreboard != nil ) then
-			v.OnScoreboard(MEDIA.LoadedPanels[k].Panel, k, MEDIA.LoadedPanels[k]._Settings, has_opened)
+			v.OnScoreboard(MediaPlayer.LoadedPanels[k].Panel, k, MediaPlayer.LoadedPanels[k]._Settings, has_opened)
 		end
 	end
 end
 
 --loads all the panels required by our system
-function MEDIA.InstantiatePanels(reinstantiate, skip, only_do)
+function MediaPlayer.InstantiatePanels(reinstantiate, skip, only_do)
 	skip = skip or {}
 	only_do = only_do or {}
 	reinstantiate = reinstantiate or false
 
-	for key,v in pairs(MEDIA.Panels) do
-
+	for key,v in pairs(MediaPlayer.Panels) do
 
 		if (v.Preloaded != nil and !v.Preloaded and !table.HasValue(only_do, key)) then continue end
 		if (table.HasValue(skip, key)) then continue end
 		if (!table.IsEmpty(only_do) and !table.HasValue(only_do, key)) then continue end
 
-		MEDIA.Panels[key]._Settings = {}
+		MediaPlayer.Panels[key]._Settings = {}
 
-		--TODO replicate these inside the panel too so the panel doesn't have to
-		MEDIA.SetPanelSettings(key, table.Merge(MEDIA.Panels[key].Settings, {
-			Size = MEDIA.Panels[key].SettingsBase .. "_size",
-			Position = MEDIA.Panels[key].SettingsBase .. "_position",
-			Hide = MEDIA.Panels[key].SettingsBase .. "_hide",
-			Centered = MEDIA.Panels[key].SettingsBase .. "_centered",
-		}), MEDIA.Panels[key].SettingsBase)
+		MediaPlayer.SetPanelSettings(key, table.Merge(MediaPlayer.Panels[key].Settings, {
+			Size = MediaPlayer.Panels[key].SettingsBase .. "_size",
+			Position = MediaPlayer.Panels[key].SettingsBase .. "_position",
+			Hide = MediaPlayer.Panels[key].SettingsBase .. "_hide",
+			Centered = MediaPlayer.Panels[key].SettingsBase .. "_centered",
+		}), MediaPlayer.Panels[key].SettingsBase)
 
-		if (MEDIA.LoadedPanels[key] != nil ) then
+		if (MediaPlayer.LoadedPanels[key] != nil ) then
 
 			if (reinstantiate) then
-				if (IsValid(MEDIA.LoadedPanels[key].Panel)) then
-					MEDIA.LoadedPanels[key].Panel:Remove()
+				if (IsValid(MediaPlayer.LoadedPanels[key].Panel)) then
+					MediaPlayer.LoadedPanels[key].Panel:Remove()
 				end
 			else
 				continue
 			end
 		end
 
-		MEDIA.LoadedPanels[key] = table.Merge(MEDIA.Panels[key], {
-			Panel = vgui.Create("MEDIA." .. MEDIA.Panels[key].Element)
+		MediaPlayer.LoadedPanels[key] = table.Merge(MediaPlayer.Panels[key], {
+			Panel = vgui.Create("MediaPlayer." .. MediaPlayer.Panels[key].Element)
 		})
 
-		MEDIA.SetupPanel(MEDIA.LoadedPanels[key]._Settings, MEDIA.LoadedPanels[key].Panel, key)
+		MediaPlayer.SetupPanel(MediaPlayer.LoadedPanels[key]._Settings, MediaPlayer.LoadedPanels[key].Panel, key)
 
 		--overwrite our hide to essentially ignore it if show all isn't present
-		MEDIA.LoadedPanels[key].Panel._Hide = MEDIA.LoadedPanels[key].Panel.Hide
-		MEDIA.LoadedPanels[key].Panel.Hide = function()
-			local _as = MEDIA.GetSetting("media_all_show")
+		MediaPlayer.LoadedPanels[key].Panel._Hide = MediaPlayer.LoadedPanels[key].Panel.Hide
+		MediaPlayer.LoadedPanels[key].Panel.Hide = function()
+			local _as = MediaPlayer.GetSetting("MediaPlayer_all_show")
 			if ( _as.Value == false ) then
-				MEDIA.LoadedPanels[key].Panel:_Hide()
+				MediaPlayer.LoadedPanels[key].Panel:_Hide()
 			end
 		end
 
 		--implicit hide
-		if (MEDIA.LoadedPanels[key].IsVisible == nil or !MEDIA.LoadedPanels[key].IsVisible) then
-			MEDIA.LoadedPanels[key].Panel:Hide()
+		if (MediaPlayer.LoadedPanels[key].IsVisible == nil or !MediaPlayer.LoadedPanels[key].IsVisible) then
+			MediaPlayer.LoadedPanels[key].Panel:Hide()
 		end
 
-		MEDIA.LoadedPanels[key].PostInit(MEDIA.LoadedPanels[key].Panel, key, MEDIA.LoadedPanels[key]._Settings)
+		MediaPlayer.LoadedPanels[key].PostInit(MediaPlayer.LoadedPanels[key].Panel, key, MediaPlayer.LoadedPanels[key]._Settings)
 	end
 end
 
 --only instantiates a singular panel
-function MEDIA.ReinstantiatePanel(key, reopen)
+function MediaPlayer.ReinstantiatePanel(key, reopen)
 	reopen = reopen or false
-	MEDIA.InstantiatePanels(true, {}, {
+	MediaPlayer.InstantiatePanels(true, {}, {
 		key
 	})
 
 	if (reopen) then
-		MEDIA.ShowPanel(key)
+		MediaPlayer.ShowPanel(key)
 	end
 end
 
 --shows a panel
-function MEDIA.ShowPanel(key)
-	MEDIA.LoadedPanels[key].Panel:Show()
+function MediaPlayer.ShowPanel(key)
+	MediaPlayer.LoadedPanels[key].Panel:Show()
 end
 
-function MEDIA.GetPanel(key)
-	return 	MEDIA.LoadedPanels[key].Panel
+function MediaPlayer.GetPanel(key)
+	return 	MediaPlayer.LoadedPanels[key].Panel
 end
 
-function MEDIA.PanelValid(key)
-	return MEDIA.LoadedPanels[key] != nil and MEDIA.LoadedPanels[key].Panel != nil and IsValid(MEDIA.LoadedPanels[key].Panel)
+function MediaPlayer.PanelValid(key)
+	return MediaPlayer.LoadedPanels[key] != nil and MediaPlayer.LoadedPanels[key].Panel != nil and IsValid(MediaPlayer.LoadedPanels[key].Panel)
 end
 
 --hides a panel
-function MEDIA.HidePanel(key)
-	MEDIA.LoadedPanels[key].Panel:Hide()
+function MediaPlayer.HidePanel(key)
+	MediaPlayer.LoadedPanels[key].Panel:Hide()
 end
 
-function MEDIA.SetPanelSettings(key, tab, settings_base)
+function MediaPlayer.SetPanelSettings(key, tab, settings_base)
 	settings_base = settings_base or ""
 	for k,v in pairs(tab) do
 
@@ -118,11 +116,11 @@ function MEDIA.SetPanelSettings(key, tab, settings_base)
 			v = settings_base .. "_" .. v
 		end
 
-		MEDIA.Panels[key]._Settings[k] = MEDIA.GetSetting(v)
+		MediaPlayer.Panels[key]._Settings[k] = MediaPlayer.GetSetting(v)
 	end
 end
 
-function MEDIA.SetupPanel(settings, panel, key)
+function MediaPlayer.SetupPanel(settings, panel, key)
 	panel:SetSize(settings.Size.Value.Width, settings.Size.Value.Height)
 	panel:SetPos(settings.Position.Value.X, settings.Position.Value.Y)
 
@@ -133,10 +131,10 @@ function MEDIA.SetupPanel(settings, panel, key)
 
 	--for dframes
 	if (panel.SetDraggable != nil ) then
-		panel:SetDraggable(MEDIA.LoadedPanels[key].Draggable)
+		panel:SetDraggable(MediaPlayer.LoadedPanels[key].Draggable)
 
 		if (!settings.Centered.Value) then
-			panel._Reposition = !MEDIA.LoadedPanels[key].Draggable
+			panel._Reposition = !MediaPlayer.LoadedPanels[key].Draggable
 		end
 	end
 
@@ -154,7 +152,7 @@ end
 	function to create all client panels
 ]]--
 
-function MEDIA.CreateClientPanels()
+function MediaPlayer.CreateClientPanels()
 	warning("DEPRACATED! CreateClientPanels call somewhere")
-	MEDIA.InstantiatePanels(true)
+	MediaPlayer.InstantiatePanels(true)
 end

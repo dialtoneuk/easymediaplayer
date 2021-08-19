@@ -116,7 +116,7 @@ function panel:FillPresetCreator()
 	self.PresetAuthor = vgui.Create("DTextEntry", self.PresetCreator)
 	self.PresetAuthor:Dock(TOP)
 	self.PresetAuthor:DockMargin( 0, 0, 0, self:GetPadding() )
-	self.PresetAuthor:SetValue( MEDIA.LocalPlayer:Name() )
+	self.PresetAuthor:SetValue( MediaPlayer.LocalPlayer:Name() )
 
 	self.Checkbox = vgui.Create("DCheckBoxLabel", self.PresetCreator )
 	self.Checkbox:Dock(TOP)
@@ -134,7 +134,7 @@ function panel:FillPresetCreator()
 	add.DoClick = function(s)
 
 		if (!self:CreatePreset(self.PresetAuthor:GetValue(), self.PresetTitle:GetValue())) then
-			MEDIA.CreateWarningBox("Oh no!","Something went wrong making that preset! make sure the title has no spaces and only includes underscores as well as plain text, no extensions!")
+			MediaPlayer.CreateWarningBox("Oh no!","Something went wrong making that preset! make sure the title has no spaces and only includes underscores as well as plain text, no extensions!")
 		end
 	end
 end
@@ -231,7 +231,7 @@ function panel:FillPresetEditor()
 	self.ComboBox:Dock(TOP)
 	self.ComboBox:SetValue( "..." )
 
-	for k,v in pairs(MEDIA.Settings) do
+	for k,v in pairs(MediaPlayer.Settings) do
 		self.ComboBox:AddChoice(k)
 	end
 
@@ -266,7 +266,7 @@ function panel:FillPresetEditor()
 
 		if ( sel != nil and sel != "..." ) then
 
-			local tab = table.Copy(MEDIA.GetSetting(sel))
+			local tab = table.Copy(MediaPlayer.GetSetting(sel))
 			self.Preset.Settings[sel] = tab.Value
 			self.HasEdited = true
 			self:FillPresetEditor()
@@ -313,7 +313,7 @@ function panel:FillPresetEditor()
 
 		if ( sel != nil and sel != "..." ) then
 
-			local tab = table.Copy(MEDIA.GetSetting(sel))
+			local tab = table.Copy(MediaPlayer.GetSetting(sel))
 			self.Preset.Settings[sel] = tab.Value
 			self.HasEdited = true
 			self:FillPresetEditor()
@@ -322,7 +322,7 @@ function panel:FillPresetEditor()
 
 	if (IsValid(self.PresetPreview)) then self.PresetPreview:Remove() end
 
-	self.PresetPreview = vgui.Create("MEDIA.PresetPreview", p )
+	self.PresetPreview = vgui.Create("MediaPlayer.PresetPreview", p )
 	self.PresetPreview:Dock(TOP)
 	self.PresetPreview:DockMargin(0, self:GetPadding() * 2, 0, 0)
 	self.PresetPreview:SetTall(50)
@@ -333,7 +333,7 @@ function panel:FillPresetEditor()
 	self.LoadButton:DockMargin(0,self:GetPadding(),0,0)
 	self.LoadButton:SetText("Apply Preset")
 
-	if (MEDIA.LocalPlayer:IsAdmin() ) then
+	if (MediaPlayer.LocalPlayer:IsAdmin() ) then
 		self.DefaultButton = vgui.Create("DButton", p )
 		self.DefaultButton:SetTall(15)
 		self.DefaultButton:Dock(BOTTOM)
@@ -359,4 +359,4 @@ function panel:IsPresetLocked()
 	return self.Preset != nil and self.Preset.Locked != nil and self.Preset.Locked == true
 end
 
-vgui.Register("MEDIA.SettingPresets", panel, "MEDIA.BasePanel")
+vgui.Register("MediaPlayer.SettingPresets", panel, "MediaPlayer.BasePanel")

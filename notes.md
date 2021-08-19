@@ -20,4 +20,4 @@ thats it
 
 
 YouTube Data API v3
-https://console.cloud.google.com/marketplace/product/google/media.googleapis.com?q=search&referrer=search&authuser=1&supportedpurview=project
+https://console.cloud.google.com/marketplace/product/google/MediaPlayer.googleapis.com?q=search&referrer=search&authuser=1&supportedpurview=project

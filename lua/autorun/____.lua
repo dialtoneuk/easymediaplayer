@@ -1,4 +1,4 @@
-if (MEDIA == nil or table.IsEmpty(MEDIA)) then
+if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
     _errorLog = {}
 
     --overwrite error stuff
@@ -66,8 +66,8 @@ if (MEDIA == nil or table.IsEmpty(MEDIA)) then
     end)
 end
 
-MEDIA = MEDIA or {
-    Name = "Easy Media Player",
+MediaPlayer = MediaPlayer or {
+    Name = "Easy MediaPlayer",
     Credits = {
         Author = "llydia",
         Email = "llydia@zyon.io",
@@ -83,6 +83,6 @@ MEDIA = MEDIA or {
     },
 }
 
-MEDIA.SettingsTypes = MEDIA.Type
-MEDIA.SettingTypes = MEDIA.Type
-MEDIA.Types = MEDIA.Type
+MediaPlayer.SettingsTypes = MediaPlayer.Type
+MediaPlayer.SettingTypes = MediaPlayer.Type
+MediaPlayer.Types = MediaPlayer.Type

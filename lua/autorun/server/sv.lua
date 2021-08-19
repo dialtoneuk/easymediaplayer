@@ -3,36 +3,36 @@
 	---------------------------------------------------------------------------
 --]]
 
-util.AddNetworkString("MEDIA.SendPlaylist")
-util.AddNetworkString("MEDIA.SendCurrentVideo")
-util.AddNetworkString("MEDIA.RequestAdminSettings")
-util.AddNetworkString("MEDIA.SendAdminSettings")
-util.AddNetworkString("MEDIA.SetAdminSettings")
-util.AddNetworkString("MEDIA.SearchQuery")
-util.AddNetworkString("MEDIA.SendSearchResults")
-util.AddNetworkString("MEDIA.SendHistory")
-util.AddNetworkString("MEDIA.SendHistoryForVideo")
-util.AddNetworkString("MEDIA.RequestHistory")
-util.AddNetworkString("MEDIA.SendHistoryData")
-util.AddNetworkString("MEDIA.End")
-util.AddNetworkString("MEDIA.NewVote")
-util.AddNetworkString("MEDIA.EndVote")
-util.AddNetworkString("MEDIA.SendMessage")
-util.AddNetworkString("MEDIA.SendPersonalHistory")
-util.AddNetworkString("MEDIA.SendBlacklist")
-util.AddNetworkString("MEDIA.CreateWarningBox")
+util.AddNetworkString("MediaPlayer.SendPlaylist")
+util.AddNetworkString("MediaPlayer.SendCurrentVideo")
+util.AddNetworkString("MediaPlayer.RequestAdminSettings")
+util.AddNetworkString("MediaPlayer.SendAdminSettings")
+util.AddNetworkString("MediaPlayer.SetAdminSettings")
+util.AddNetworkString("MediaPlayer.SearchQuery")
+util.AddNetworkString("MediaPlayer.SendSearchResults")
+util.AddNetworkString("MediaPlayer.SendHistory")
+util.AddNetworkString("MediaPlayer.SendHistoryForVideo")
+util.AddNetworkString("MediaPlayer.RequestHistory")
+util.AddNetworkString("MediaPlayer.SendHistoryData")
+util.AddNetworkString("MediaPlayer.End")
+util.AddNetworkString("MediaPlayer.NewVote")
+util.AddNetworkString("MediaPlayer.EndVote")
+util.AddNetworkString("MediaPlayer.SendMessage")
+util.AddNetworkString("MediaPlayer.SendPersonalHistory")
+util.AddNetworkString("MediaPlayer.SendBlacklist")
+util.AddNetworkString("MediaPlayer.CreateWarningBox")
 
 --responds to a search query
-net.Receive("MEDIA.SearchQuery",function(len, ply)
+net.Receive("MediaPlayer.SearchQuery",function(len, ply)
 
-	if (MEDIA.HasCooldown(ply, "Search")) then return end
+	if (MediaPlayer.HasCooldown(ply, "Search")) then return end
 
 	local query = net.ReadString()
-	local setting = MEDIA.GetSetting("media_max_results")
+	local setting = MediaPlayer.GetSetting("MediaPlayer_max_results")
 
-	MEDIA.AddPlayerCooldown( ply, MEDIA.GetNewCooldown("Search") )
+	MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.GetNewCooldown("Search") )
 
-	MEDIA.YoutubeSearch(query, function(data)
+	MediaPlayer.YoutubeSearch(query, function(data)
 		local results = {}
 
 		for k,v in pairs(data) do
@@ -44,7 +44,7 @@ net.Receive("MEDIA.SearchQuery",function(len, ply)
 			}
 		end
 
-		net.Start("MEDIA.SendSearchResults")
+		net.Start("MediaPlayer.SendSearchResults")
 		net.WriteTable(results)
 		net.Send(ply)
 	end, setting.Value)
@@ -54,7 +54,7 @@ end)
 Sends the servers settings to the client if they are an admin
 --]]
 
-net.Receive("MEDIA.RequestAdminSettings",function(len, ply)
+net.Receive("MediaPlayer.RequestAdminSettings",function(len, ply)
 	ply:SendAdminSettings()
 end)
 
@@ -62,21 +62,21 @@ end)
 Sets settings from the player
 --]]
 
-net.Receive("MEDIA.SetAdminSettings",function(len, ply)
+net.Receive("MediaPlayer.SetAdminSettings",function(len, ply)
 	if (!ply:IsAdmin()) then return end
 
 	local tab = net.ReadTable()
 
 	for k,v in pairs(tab) do
 
-		if (MEDIA.Settings[k] == nil ) then
+		if (MediaPlayer.Settings[k] == nil ) then
 			errorBad("player with the steam id of " .. ply:SteamID() .. " has tried to add settings")
 		end
 
-		MEDIA.Settings[k] = v
+		MediaPlayer.Settings[k] = v
 	end
 
-	MEDIA.SetConvars()
+	MediaPlayer.SetConvars()
 end)
 
 --[[
@@ -87,16 +87,16 @@ end)
 	---------------------------------------------------------------
 --]]
 
-hook.Add("MEDIA.SettingsPostLoad","MEDIA.MiscStuffLoad", function()
+hook.Add("MediaPlayer.SettingsPostLoad","MediaPlayer.MiscStuffLoad", function()
 
 	--loads custom tips from settings
-	MEDIA.LoadCustomTips()
-	MEDIA.LoadHistory()
-	MEDIA.LoadBlacklist()
-	MEDIA.CooldownLoop()
+	MediaPlayer.LoadCustomTips()
+	MediaPlayer.LoadHistory()
+	MediaPlayer.LoadBlacklist()
+	MediaPlayer.CooldownLoop()
 
-	if ( MEDIA.GetSetting("media_tips_enabled").Value) then
-		MEDIA.DisplayTip()
+	if ( MediaPlayer.GetSetting("MediaPlayer_tips_enabled").Value) then
+		MediaPlayer.DisplayTip()
 	end
 end)
 
@@ -105,9 +105,9 @@ end)
 	---------------------------------------------------------------------------
 --]]
 
-hook.Add("PlayerSay", "MEDIA.PlayerSay", function(ply, msg, teamchat)
+hook.Add("PlayerSay", "MediaPlayer.PlayerSay", function(ply, msg, teamchat)
 	msg = string.lower(msg)
-	if ( MEDIA.ParseCommand( ply, msg ) == false ) then
+	if ( MediaPlayer.ParseCommand( ply, msg ) == false ) then
 		return msg
 	else
 		return ""
@@ -120,7 +120,7 @@ end)
 --]]
 
 
-hook.Add("OnFirstBadError","MEDIA.OnFirstBadError", function(error)
+hook.Add("OnFirstBadError","MediaPlayer.OnFirstBadError", function(error)
 	for k,v in pairs(player.GetAll()) do
 
 		if (!IsValid(v)) then continue end
@@ -135,7 +135,7 @@ end)
 	---------------------------------------------------------------------------
 --]]
 
-hook.Add("PlayerInitialSpawn","MEDIA.InitialSpawn",function(ply, transition)
+hook.Add("PlayerInitialSpawn","MediaPlayer.InitialSpawn",function(ply, transition)
 	ply:DoInitialSpawn()
 end)
 
@@ -145,8 +145,8 @@ end)
 	---------------------------------------------------------------------------
 --]]
 
-hook.Add("MEDIA.LoadedChatCommands", "MEDIA.LoadedChatCommands", function()
-	MEDIA.LoadChatCommands()
+hook.Add("MediaPlayer.LoadedChatCommands", "MediaPlayer.LoadedChatCommands", function()
+	MediaPlayer.LoadChatCommands()
 end)
 
 --[[
@@ -155,53 +155,53 @@ end)
 	---------------------------------------------------------------------------
 --]]
 
-hook.Add("MEDIA.CooldownLoaded","MEDIA.LoadCooldowns", function()
-	MEDIA.LoadCooldowns()
+hook.Add("MediaPlayer.CooldownLoaded","MediaPlayer.LoadCooldowns", function()
+	MediaPlayer.LoadCooldowns()
 end)
 
 --[[
 	VOTES!
 
-	Votes are defined inside the media_voting.lua file on the Server. They have a callback
+	Votes are defined inside the MediaPlayer_voting.lua file on the Server. They have a callback
 	which is executed when they pass, and one when they fail.
 
 	Its very basic, and votes will always pass if half the server agrees.
 
 	Note: votes are activated through a console command called "Youtube_start_vote", it looks for the name of the
-	vote defined inside the media_voting.lua file and creates a new vote of that type if none are currently active.
+	vote defined inside the MediaPlayer_voting.lua file and creates a new vote of that type if none are currently active.
 
 	Votes can be loaded as soon as the file has been read
 	See sv_media_voting.lua
 ---------------------------------------------------------------------------
 --]]
 
-hook.Add("MEDIA.VotingLoaded", "MEDIA.VotingLoaded", function()
-	MEDIA.LoadVotes()
+hook.Add("MediaPlayer.VotingLoaded", "MediaPlayer.VotingLoaded", function()
+	MediaPlayer.LoadVotes()
 end)
 
 --[[
 Console command to vote
 --]]
 
-concommand.Add("media_start_vote", function(ply, cmd, args)
-	if (MEDIA.HasCooldown(ply, "Vote")) then
+concommand.Add("MediaPlayer_start_vote", function(ply, cmd, args)
+	if (MediaPlayer.HasCooldown(ply, "Vote")) then
 		ply:SendMessage("You have started a vote too recently!")
 		return
 	end
 
 	--if there is no current vote
-	if (!table.IsEmpty(MEDIA.CurrentVideo)) then
+	if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
 		if ( args[1] == nil or args[1] == "") then return end
 
 		--if this vote doesn't exist
-		if (!MEDIA.Votes[args[1]]) then return end
-		if (MEDIA.HasCurrentVote()) then return end
+		if (!MediaPlayer.Votes[args[1]]) then return end
+		if (MediaPlayer.HasCurrentVote()) then return end
 
 		--add a cooldown to the activator so they can't spam vote
-		MEDIA.AddPlayerCooldown( ply, MEDIA.GetNewCooldown("Vote") )
+		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.GetNewCooldown("Vote") )
 
 		--start the vote
-		MEDIA.StartVote(args[1], ply )
+		MediaPlayer.StartVote(args[1], ply )
 	end
 end)
 
@@ -211,64 +211,64 @@ end)
 ---------------------------------------------------------------------------
 --]]
 
-concommand.Add("media_reload_cooldowns", function(ply)
+concommand.Add("MediaPlayer_reload_cooldowns", function(ply)
 	if (!ply:IsAdmin()) then return end
 
-	MEDIA.LoadCooldowns()
+	MediaPlayer.LoadCooldowns()
 end)
 
-concommand.Add("media_reload_chatcommands", function(ply)
+concommand.Add("MediaPlayer_reload_chatcommands", function(ply)
 	if (!ply:IsAdmin()) then return end
 
-	MEDIA.LoadChatCommands()
+	MediaPlayer.LoadChatCommands()
 end)
 
-concommand.Add("media_reload_votes", function(ply)
+concommand.Add("MediaPlayer_reload_votes", function(ply)
 	if (!ply:IsAdmin()) then return end
 
-	MEDIA.LoadVotes()
+	MediaPlayer.LoadVotes()
 end)
 
-concommand.Add("media_reload_blacklist", function(ply)
+concommand.Add("MediaPlayer_reload_blacklist", function(ply)
 	if (!ply:IsAdmin()) then return end
 
-	MEDIA.SendBlacklist(ply)
+	MediaPlayer.SendBlacklist(ply)
 end)
 
 --[[
 Requests personal history from the server
 --]]
 
-concommand.Add("media_request_personal_history", function(ply, cmd, args)
+concommand.Add("MediaPlayer_request_personal_history", function(ply, cmd, args)
 	if (!args[1]) then return end
-	if (MEDIA.HasCooldown(ply, "History")) then return end
+	if (MediaPlayer.HasCooldown(ply, "History")) then return end
 
 	local page = math.abs(tonumber(args[1]) - 1)
-	local setting = MEDIA.GetSetting("media_history_max")
+	local setting = MediaPlayer.GetSetting("MediaPlayer_history_max")
 
 	local data = ply:GetPersonalHistory(setting.Value, page * setting.Value )
 
 	if (data == nil or table.IsEmpty(data)) then return end
 
-	MEDIA.SendPersonalHistoryData(ply, data)
-	MEDIA.AddPlayerCooldown(ply, MEDIA.GetNewCooldown("History"))
+	MediaPlayer.SendPersonalHistoryData(ply, data)
+	MediaPlayer.AddPlayerCooldown(ply, MediaPlayer.GetNewCooldown("History"))
 end)
 
 --[[
 Requests history from the server
 --]]
 
-concommand.Add("media_request_history", function(ply, cmd, args)
+concommand.Add("MediaPlayer_request_history", function(ply, cmd, args)
 	if (!args[1]) then return end
-	if (MEDIA.HasCooldown(ply, "History")) then return end
+	if (MediaPlayer.HasCooldown(ply, "History")) then return end
 
 	local page = math.abs(tonumber(args[1]) - 1)
-	local setting = MEDIA.GetSetting("media_history_max")
+	local setting = MediaPlayer.GetSetting("MediaPlayer_history_max")
 	local results = {}
 
-	if (table.IsEmpty(MEDIA.History)) then return end
+	if (table.IsEmpty(MediaPlayer.History)) then return end
 
-	if (table.Count(MEDIA.History) < ( page * setting.Value) ) then
+	if (table.Count(MediaPlayer.History) < ( page * setting.Value) ) then
 		results = {}
 	else
 		local count = 0
@@ -276,7 +276,7 @@ concommand.Add("media_request_history", function(ply, cmd, args)
 		local finish = start + setting.Value
 		results = {}
 
-		for k,v in SortedPairsByMemberValue(MEDIA.History, "LastPlayed", true ) do
+		for k,v in SortedPairsByMemberValue(MediaPlayer.History, "LastPlayed", true ) do
 
 
 			if (count < start ) then
@@ -291,8 +291,8 @@ concommand.Add("media_request_history", function(ply, cmd, args)
 	end
 
 	if ( !table.IsEmpty(results)) then
-		MEDIA.SendHistoryData(ply, results)
-		MEDIA.AddPlayerCooldown(ply, MEDIA.GetNewCooldown("History"))
+		MediaPlayer.SendHistoryData(ply, results)
+		MediaPlayer.AddPlayerCooldown(ply, MediaPlayer.GetNewCooldown("History"))
 	end
 end)
 
@@ -300,7 +300,7 @@ end)
 Command to refresh settings
 --]]
 
-concommand.Add("media_refresh_settings", function(ply)
+concommand.Add("MediaPlayer_refresh_settings", function(ply)
 	ply:SendAdminSettings()
 end)
 
@@ -308,19 +308,19 @@ end)
 Reloads the playlist for everyone
 --]]
 
-concommand.Add("media_reload_playlist",function(ply)
+concommand.Add("MediaPlayer_reload_playlist",function(ply)
 	if (!ply:IsAdmin()) then return end
 
-	MEDIA.BroadcastPlaylist()
+	MediaPlayer.BroadcastPlaylist()
 end)
 
 --[[
 Skips a video
 --]]
 
-concommand.Add("media_skip_video", function(ply)
-	if (ply:IsAdmin() and !table.IsEmpty(MEDIA.CurrentVideo)) then
-		MEDIA.SkipVideo()
+concommand.Add("MediaPlayer_skip_video", function(ply)
+	if (ply:IsAdmin() and !table.IsEmpty(MediaPlayer.CurrentVideo)) then
+		MediaPlayer.SkipVideo()
 
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("Video skipped by admin (" .. ply:GetName() .. ")")
@@ -332,25 +332,25 @@ end)
 Blacklists as video
 --]]
 
-concommand.Add("media_blacklist_video", function(ply,cmd,args)
+concommand.Add("MediaPlayer_blacklist_video", function(ply,cmd,args)
 	if (ply:IsAdmin()) then
-		if (args[1] == nil and table.IsEmpty(MEDIA.CurrentVideo)) then return end
+		if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
 
 		local video
 
-		if (args[1] != nil ) then video = MEDIA.GetVideo(args[1]) else video = MEDIA.CurrentVideo end
+		if (args[1] != nil ) then video = MediaPlayer.GetVideo(args[1]) else video = MediaPlayer.CurrentVideo end
 		if (video == nil or table.IsEmpty(video)) then return end
 
-		MEDIA.AddToBlacklist(video, ply )
+		MediaPlayer.AddToBlacklist(video, ply )
 
-		if (MEDIA.CurrentVideo.Video == video.Video) then
-			MEDIA.SkipVideo()
+		if (MediaPlayer.CurrentVideo.Video == video.Video) then
+			MediaPlayer.SkipVideo()
 		else
-			MEDIA.RemoveVideo(video.Video)
-			MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
+			MediaPlayer.RemoveVideo(video.Video)
+			MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("MediaPlayer_playlist_limit").Value)
 		end
 
-		if (MEDIA.IsSettingTrue("media_announce_admin")) then
+		if (MediaPlayer.IsSettingTrue("MediaPlayer_announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
 				v:SendMessage("Video blacklisted by admin (" .. ply:GetName() .. ")")
 			end
@@ -362,15 +362,15 @@ end)
 Unblacklists as video
 --]]
 
-concommand.Add("media_unblacklist_video", function(ply, cmd, args)
-	if (ply:IsAdmin() and !table.IsEmpty(MEDIA.Blacklist)) then
+concommand.Add("MediaPlayer_unblacklist_video", function(ply, cmd, args)
+	if (ply:IsAdmin() and !table.IsEmpty(MediaPlayer.Blacklist)) then
 
 		if (args[1] == nil) then return end
 		if (tonumber(args[1]) != nil) then return end
-		if (MEDIA.Blacklist[args[1]] == nil) then return end
+		if (MediaPlayer.Blacklist[args[1]] == nil) then return end
 
-		MEDIA.Blacklist[args[1]] = nil
-		MEDIA.SendBlacklist(ply)
+		MediaPlayer.Blacklist[args[1]] = nil
+		MediaPlayer.SendBlacklist(ply)
 	end
 end)
 
@@ -378,18 +378,18 @@ end)
 Likes a current video
 --]]
 
-concommand.Add("media_like_video", function(ply, cmd, args)
-	if (MEDIA.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have liked a video too recently") return end
-	if (args[1] == nil and table.IsEmpty(MEDIA.CurrentVideo)) then return end
+concommand.Add("MediaPlayer_like_video", function(ply, cmd, args)
+	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have liked a video too recently") return end
+	if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
 
 	local video
 
-	if (args[1] != nil ) then video = MEDIA.GetVideo(args[1]) else video = MEDIA.CurrentVideo end
+	if (args[1] != nil ) then video = MediaPlayer.GetVideo(args[1]) else video = MediaPlayer.CurrentVideo end
 
 	if (video) then
-		MEDIA.LikeVideo(video)
-		MEDIA.SendHistoryForVideo(ply, MEDIA.History[video.Video])
-		MEDIA.AddPlayerCooldown( ply, MEDIA.GetNewCooldown("Interaction") )
+		MediaPlayer.LikeVideo(video)
+		MediaPlayer.SendHistoryForVideo(ply, MediaPlayer.History[video.Video])
+		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.GetNewCooldown("Interaction") )
 		ply:SendMessage("Video liked!")
 	end
 end)
@@ -398,17 +398,17 @@ end)
 Dislikes a current video
 --]]
 
-concommand.Add("media_dislike_video", function(ply, cmd, args)
-	if (MEDIA.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have disliked a video too recently") return end
-	if (args[1] == nil and table.IsEmpty(MEDIA.CurrentVideo)) then return end
+concommand.Add("MediaPlayer_dislike_video", function(ply, cmd, args)
+	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have disliked a video too recently") return end
+	if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
 
 	local video
-	if (args[1] != nil ) then video = MEDIA.GetVideo(args[1]) else video = MEDIA.CurrentVideo end
+	if (args[1] != nil ) then video = MediaPlayer.GetVideo(args[1]) else video = MediaPlayer.CurrentVideo end
 
 	if (video) then
-		MEDIA.DislikeVideo(video)
-		MEDIA.SendHistoryForVideo(ply, MEDIA.History[video.Video])
-		MEDIA.AddPlayerCooldown( ply, MEDIA.GetNewCooldown("Interaction") )
+		MediaPlayer.DislikeVideo(video)
+		MediaPlayer.SendHistoryForVideo(ply, MediaPlayer.History[video.Video])
+		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.GetNewCooldown("Interaction") )
 		ply:SendMessage("Video disliked!")
 	end
 end)
@@ -418,58 +418,58 @@ Plays a video
 TODO: Move some of this code, support multiple types
 --]]
 
-concommand.Add("media_play", function (ply, cmd, args)
+concommand.Add("MediaPlayer_play", function (ply, cmd, args)
 
 	if (!args[1]) then return end
 	if (tonumber(args[1]) != nil) then return end
 	if (string.len(args[1]) > 32) then return end
 
-	if (MEDIA.IsSettingTrue("media_admin_only") and !ply:IsAdmin()) then
+	if (MediaPlayer.IsSettingTrue("MediaPlayer_admin_only") and !ply:IsAdmin()) then
 		ply:SendMessage("Only admins can use this feature. Sorry.")
 		return
 	end
 
 	local vids = ply:GetVideos()
 	local _c = table.Count(vids)
-	local setting = MEDIA.GetSetting("player_playlist_max")
+	local setting = MediaPlayer.GetSetting("player_playlist_max")
 
-	if (_c >= setting.Value and (!ply:IsAdmin() or !MEDIA.IsSettingTrue("media_admin_ignore_limits") ) ) then
+	if (_c >= setting.Value and (!ply:IsAdmin() or !MediaPlayer.IsSettingTrue("MediaPlayer_admin_ignore_limits") ) ) then
 		ply:SendMessage("You are allowed a maximum of " .. setting.Value .. " in the playlist. You have " .. _c  .. "." )
 		return
 	end
 
-	if (MEDIA.Playlist[args[1]]) then
+	if (MediaPlayer.Playlist[args[1]]) then
 		ply:SendMessage("This video is already in the playlist!")
 		return
 	end
 
-	if (MEDIA.Blacklist[args[1]]) then
+	if (MediaPlayer.Blacklist[args[1]]) then
 		ply:SendMessage("This video is banned!")
 		return
 	end
 
-	if (MEDIA.HasCooldown(ply, "Play")) then
+	if (MediaPlayer.HasCooldown(ply, "Play")) then
 		ply:SendMessage("Wait a bit before playing something else!")
 		return
 	end
 
-	local video = MEDIA.GetNewVideo()
+	local video = MediaPlayer.GetNewVideo()
 	video.Video = args[1]
 	video.Owner = ply
-	video.Position =  MEDIA.Count or 0
+	video.Position =  MediaPlayer.Count or 0
 	video.StartTime = CurTime()
 
-	MEDIA.GetYoutubeVideo(video, function(_video)
+	MediaPlayer.GetYoutubeVideo(video, function(_video)
 
 		if ( _video.Duration <= 0 ) then
 			video.Owner:SendMessage("There was something wrong with that video! Please try another one")
 			return
 		end
 
-		MEDIA.AddVideo(video.Video, video)
-		MEDIA.AddPlayerCooldown(video.Owner, MEDIA.GetNewCooldown("Play"))
+		MediaPlayer.AddVideo(video.Video, video)
+		MediaPlayer.AddPlayerCooldown(video.Owner, MediaPlayer.GetNewCooldown("Play"))
 		ply:SendMessage("Video added!")
-		MEDIA.Begin(video)
+		MediaPlayer.Begin(video)
 	end)
 end)
 
@@ -477,43 +477,43 @@ end)
 Removes a video but doesn't check if its the players
 --]]
 
-concommand.Add("media_delete", function(ply, cmd, args)
+concommand.Add("MediaPlayer_delete", function(ply, cmd, args)
 	if (!args[1]) then return end
 	if (!ply:IsAdmin()) then return end
 	if (tonumber(args[1]) != nil) then return end
 	if (string.len(args[1]) > 32) then return end
-	if (!table.IsEmpty(MEDIA.CurrentVideo) and MEDIA.CurrentVideo.Video == args[1]) then return end
+	if (!table.IsEmpty(MediaPlayer.CurrentVideo) and MediaPlayer.CurrentVideo.Video == args[1]) then return end
 
-	MEDIA.RemoveVideo(args[1])
+	MediaPlayer.RemoveVideo(args[1])
 
-	if (MEDIA.IsSettingTrue("media_admin_only")) then
+	if (MediaPlayer.IsSettingTrue("MediaPlayer_admin_only")) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("Video deleted by admin (" .. ply:GetName() .. ")")
 		end
 	end
 
-	MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
+	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("MediaPlayer_playlist_limit").Value)
 end)
 
 --[[
 Removes a video but checks if its the players
 --]]
 
-concommand.Add("media_remove", function(ply, cmd, args)
+concommand.Add("MediaPlayer_remove", function(ply, cmd, args)
 	if (!args[1]) then return end
 	if (tonumber(args[1]) != nil) then return end
 	if (string.len(args[1]) > 32) then return end
-	if (!table.IsEmpty(MEDIA.CurrentVideo) and MEDIA.CurrentVideo.Video == args[1]) then return end
+	if (!table.IsEmpty(MediaPlayer.CurrentVideo) and MediaPlayer.CurrentVideo.Video == args[1]) then return end
 
 	ply:RemoveVideo(args[1])
-	MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
+	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("MediaPlayer_playlist_limit").Value)
 end)
 
 --[[
 Removes all your videos
 --]]
 
-concommand.Add("media_remove_all", function(ply, cmd, args)
+concommand.Add("MediaPlayer_remove_all", function(ply, cmd, args)
 	ply:RemoveVideos()
-	MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
+	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("MediaPlayer_playlist_limit").Value)
 end)

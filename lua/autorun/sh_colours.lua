@@ -1,9 +1,9 @@
-MEDIA.ComputedColours = MEDIA.ComputedColours or {
+MediaPlayer.ComputedColours = MediaPlayer.ComputedColours or {
     --holds our computer colours
 }
 
 --the colours for our stuff
-MEDIA.Colours = {
+MediaPlayer.Colours = {
     Black = Color(10,10,10),
     Gray = Color(145,145,145),
     PitchBlack = Color(0,0,0),
@@ -13,15 +13,15 @@ MEDIA.Colours = {
 }
 
 --generates some colours but only once
-if (table.IsEmpty(MEDIA.ComputedColours)) then
+if (table.IsEmpty(MediaPlayer.ComputedColours)) then
 
-    for key,colour in pairs(MEDIA.Colours) do
-        MEDIA.ComputedColours[ "Faded" .. key ] = Color(colour.r, colour.g, colour.b, 200 )
-        MEDIA.ComputedColours[ "Barely" .. key ] = Color(colour.r, colour.g, colour.b, 50 )
-        MEDIA.ComputedColours[ "Reverse" .. key ] = Color(colour.b, colour.g, colour.r, 255 )
+    for key,colour in pairs(MediaPlayer.Colours) do
+        MediaPlayer.ComputedColours[ "Faded" .. key ] = Color(colour.r, colour.g, colour.b, 200 )
+        MediaPlayer.ComputedColours[ "Barely" .. key ] = Color(colour.r, colour.g, colour.b, 50 )
+        MediaPlayer.ComputedColours[ "Reverse" .. key ] = Color(colour.b, colour.g, colour.r, 255 )
     end
 end
 
-if (!table.IsEmpty(MEDIA.ComputedColours)) then
-    MEDIA.Colours = table.Merge(MEDIA.Colours, MEDIA.ComputedColours)
+if (!table.IsEmpty(MediaPlayer.ComputedColours)) then
+    MediaPlayer.Colours = table.Merge(MediaPlayer.Colours, MediaPlayer.ComputedColours)
 end

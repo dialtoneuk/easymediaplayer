@@ -24,7 +24,7 @@ Init
 function panel:Init()
 	self:BaseInit()
 
-	if (!MEDIA.LocalPlayer:IsAdmin()) then self:Remove() return end
+	if (!MediaPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
 
 	self:SetSize(self:GetWidth(), self:GetHeight())
 	self:SetDeleteOnClose( false )
@@ -45,7 +45,7 @@ function panel:Init()
 	end
 
 	if (self.Settings.Options.Value.DisplayTitle) then
-		self:SetTitle("Easy Media Admin Settings")
+		self:SetTitle("Easy MediaPlayer Admin Settings")
 	else
 		self:SetTitle("")
 	end
@@ -109,17 +109,17 @@ function panel:CreateBlacklistPanel()
 	button.DoClick = function()
 		if (!self.Selected or table.IsEmpty(self.Selected)) then return end
 
-		RunConsoleCommand("media_unblacklist_video", self.Selected.Video )
-		MEDIA.Blacklist[self.Selected.Video] = nil
+		RunConsoleCommand("MediaPlayer_unblacklist_video", self.Selected.Video )
+		MediaPlayer.Blacklist[self.Selected.Video] = nil
 
-		if (table.IsEmpty(MEDIA.Blacklist)) then self.List:Clear() end
+		if (table.IsEmpty(MediaPlayer.Blacklist)) then self.List:Clear() end
 
 		self.Selected = {}
 		self.SelectedPanel:Hide()
 	end
 
 	self.List.OnRowSelected = function( lst, index, pnl )
-		self.Selected = MEDIA.Blacklist[pnl:GetColumnText(5)]
+		self.Selected = MediaPlayer.Blacklist[pnl:GetColumnText(5)]
 		self.SelectedPanel:Show()
 	end
 
@@ -130,10 +130,10 @@ function panel:CreateBlacklistPanel()
 	rbutton:SetText("Refresh")
 	rbutton:SetImage("icon16/tick.png")
 	rbutton.DoClick = function()
-		RunConsoleCommand("media_reload_blacklist")
+		RunConsoleCommand("MediaPlayer_reload_blacklist")
 	end
 
-	if (MEDIA.Blacklist and !table.IsEmpty(MEDIA.Blacklist)) then
+	if (MediaPlayer.Blacklist and !table.IsEmpty(MediaPlayer.Blacklist)) then
 		self:PresentBlacklist()
 	end
 end
@@ -144,14 +144,14 @@ end
 
 function panel:PresentBlacklist()
 
-	if (!MEDIA.LocalPlayer:IsAdmin()) then self:Remove() return end
+	if (!MediaPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
 
 	self.List:Clear()
 
-	for k,v in pairs( MEDIA.Blacklist ) do
+	for k,v in pairs( MediaPlayer.Blacklist ) do
 		self.List:AddLine(v.Title, os.date( "%H:%M:%S - %d/%m/%Y",v.DateAdded), v.Owner.Name, v.Admin.Name, v.Video )
 	end
 end
 
 --Register panel
-vgui.Register("MEDIA.AdminPanel", panel, "MEDIA.Base")
+vgui.Register("MediaPlayer.AdminPanel", panel, "MediaPlayer.Base")

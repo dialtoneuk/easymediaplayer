@@ -1,22 +1,22 @@
 --playlist global
-MEDIA.Playlist = MEDIA.Playlist or {}
-MEDIA.CurrentVideo = MEDIA.CurrentVideo or {}
-MEDIA.Count = MEDIA.Count or 0
+MediaPlayer.Playlist = MediaPlayer.Playlist or {}
+MediaPlayer.CurrentVideo = MediaPlayer.CurrentVideo or {}
+MediaPlayer.Count = MediaPlayer.Count or 0
 
 --types of videos
-MEDIA.MediaType = MEDIA.MediaType or {
+MediaPlayer.MediaPlayerType = MediaPlayer.MediaPlayerType or {
 	YOUTUBE = "youtube",
 	DAILYMOTION = "dailymotion",
 	SOUNDCLOUD = "soundcloud"
 }
 
 --Copy table
-MEDIA.BaseVideo = {
+MediaPlayer.BaseVideo = {
 	Video = "38enrQGRDhA",
 	Title = "Default",
 	Creator = "Default",
 	Views = 1,
-	Type = MEDIA.MediaType.YOUTUBE,
+	Type = MediaPlayer.MediaPlayerType.YOUTUBE,
 	Duration = 1,
 	Position = 1,
 	StartTime = 0, --Used for time tracking
@@ -28,11 +28,11 @@ MEDIA.BaseVideo = {
 Gets a number of videos
 --]]
 
-function MEDIA.GetVideos(owner, limit)
+function MediaPlayer.GetVideos(owner, limit)
 	local results = {}
 	local max = limit or 1000
 
-	for k,v in SortedPairsByMemberValue(MEDIA.Playlist, "Position") do
+	for k,v in SortedPairsByMemberValue(MediaPlayer.Playlist, "Position") do
 		if (max > 0) then
 			local copy = table.Copy(v)
 			if (!owner) then
@@ -62,18 +62,18 @@ end
 Return true if we have next
 --]]
 
-function MEDIA.HasNext()
-	return !table.IsEmpty(MEDIA.Playlist)
+function MediaPlayer.HasNext()
+	return !table.IsEmpty(MediaPlayer.Playlist)
 end
 
 --[[
 Broadcast's the next video to the player
 --]]
 
-function MEDIA.Next()
-	if (!MEDIA.HasNext() ) then return end
+function MediaPlayer.Next()
+	if (!MediaPlayer.HasNext() ) then return end
 
-	for k,v in SortedPairsByMemberValue(MEDIA.Playlist, "Position") do
+	for k,v in SortedPairsByMemberValue(MediaPlayer.Playlist, "Position") do
 		return v
 	end
 end
@@ -82,49 +82,49 @@ end
 Copys a new video table
 --]]
 
-function MEDIA.GetNewVideo()
-	return table.Copy(MEDIA.BaseVideo)
+function MediaPlayer.GetNewVideo()
+	return table.Copy(MediaPlayer.BaseVideo)
 end
 
 --[[
 Clears the playlist
 --]]
 
-function MEDIA.ClearPlaylist(ply)
+function MediaPlayer.ClearPlaylist(ply)
 
 	if (!ply:IsAdmin()) then return end
 
-	MEDIA.Playlist = {}
-	MEDIA.Count = 0
+	MediaPlayer.Playlist = {}
+	MediaPlayer.Count = 0
 end
 
 --[[
 Adds a video to the playlist
 --]]
 
-function MEDIA.AddVideo(video, tab)
-	if (MEDIA.Playlist[video]) then return end --already exists
+function MediaPlayer.AddVideo(video, tab)
+	if (MediaPlayer.Playlist[video]) then return end --already exists
 
-	MEDIA.Playlist[video] = tab
-	MEDIA.Count = MEDIA.Count + 1
+	MediaPlayer.Playlist[video] = tab
+	MediaPlayer.Count = MediaPlayer.Count + 1
 end
 
 --[[
 Removes a video to the playlist
 --]]
 
-function MEDIA.RemoveVideo(video)
-	if (MEDIA.Playlist[video] == nil) then return end --does not exist??
+function MediaPlayer.RemoveVideo(video)
+	if (MediaPlayer.Playlist[video] == nil) then return end --does not exist??
 
-	MEDIA.Playlist[video] = nil
+	MediaPlayer.Playlist[video] = nil
 end
 
 --[[`
 Gets a video
 --]]
 
-function MEDIA.GetVideo(video)
-	if (!MEDIA.Playlist[video]) then return nil end
+function MediaPlayer.GetVideo(video)
+	if (!MediaPlayer.Playlist[video]) then return nil end
 
-	return MEDIA.Playlist[video]
+	return MediaPlayer.Playlist[video]
 end

@@ -3,10 +3,10 @@
 	Holds our active cooldowns
 --]]
 
-MEDIA.Cooldown = MEDIA.Cooldown or {}
+MediaPlayer.Cooldown = MediaPlayer.Cooldown or {}
 
 --Stored cooldowns for use later
-MEDIA.StoredCooldowns = MEDIA.StoredCooldowns or {
+MediaPlayer.StoredCooldowns = MediaPlayer.StoredCooldowns or {
 	_CooldownType = {
 		Name = "Default",
 		Time = 5
@@ -22,98 +22,101 @@ ever so seconds in time.
 ---------------------------------------------------------------------------
 --]]
 
-function MEDIA.LoadCooldowns()
+function MediaPlayer.LoadCooldowns()
 	--Search Cooldown
-	local cooldown = MEDIA.GetCooldownType()
+	local cooldown = MediaPlayer.GetCooldownType()
 	cooldown.Name = "Search"
-	cooldown.Time = MEDIA.GetSetting("media_cooldown_search").Value
-	MEDIA.StoreCooldown(cooldown)
+	cooldown.Time = MediaPlayer.GetSetting("MediaPlayer_cooldown_search").Value
+	MediaPlayer.StoreCooldown(cooldown)
 
 	--Play Cooldown
-	cooldown = MEDIA.GetCooldownType()
+	cooldown = MediaPlayer.GetCooldownType()
 	cooldown.Name = "Play"
-	cooldown.Time = MEDIA.GetSetting("media_cooldown_play").Value
-	MEDIA.StoreCooldown(cooldown)
+	cooldown.Time = MediaPlayer.GetSetting("MediaPlayer_cooldown_play").Value
+	MediaPlayer.StoreCooldown(cooldown)
 
 	--Vote Cooldown
-	cooldown = MEDIA.GetCooldownType()
+	cooldown = MediaPlayer.GetCooldownType()
 	cooldown.Name = "Vote"
-	cooldown.Time = MEDIA.GetSetting("media_cooldown_vote").Value
-	MEDIA.StoreCooldown(cooldown)
+	cooldown.Time = MediaPlayer.GetSetting("MediaPlayer_cooldown_vote").Value
+	MediaPlayer.StoreCooldown(cooldown)
 
 	--Interaction Cooldown
-	cooldown = MEDIA.GetCooldownType()
+	cooldown = MediaPlayer.GetCooldownType()
 	cooldown.Name = "Interaction"
-	cooldown.Time = MEDIA.GetSetting("media_cooldown_interaction").Value
-	MEDIA.StoreCooldown(cooldown)
+	cooldown.Time = MediaPlayer.GetSetting("MediaPlayer_cooldown_interaction").Value
+	MediaPlayer.StoreCooldown(cooldown)
 
 	--History Cooldown
-	cooldown = MEDIA.GetCooldownType()
+	cooldown = MediaPlayer.GetCooldownType()
 	cooldown.Name = "History"
-	cooldown.Time = MEDIA.GetSetting("media_cooldown_history").Value
-	MEDIA.StoreCooldown(cooldown)
+	cooldown.Time = MediaPlayer.GetSetting("MediaPlayer_cooldown_history").Value
+	MediaPlayer.StoreCooldown(cooldown)
 
 	--Command Cooldown
-	cooldown = MEDIA.GetCooldownType()
+	cooldown = MediaPlayer.GetCooldownType()
 	cooldown.Name = "Command"
-	cooldown.Time = MEDIA.GetSetting("media_cooldown_command").Value
+	cooldown.Time = MediaPlayer.GetSetting("MediaPlayer_cooldown_command").Value
 
-	MEDIA.StoreCooldown(cooldown)
+	MediaPlayer.StoreCooldown(cooldown)
+
+	--when we have loaded this file
+	hook.Run("MediaPlayer.PreloadRegisteredCooldowns")
 end
 
 --[[
  Stores a copy of a cooldown for us to use
 --]]
 
-function MEDIA.StoreCooldown(typ)
-	if (MEDIA.StoredCooldowns[typ.Name]) then MEDIA.StoredCooldowns[typ.Name] = nil end
+function MediaPlayer.StoreCooldown(typ)
+	if (MediaPlayer.StoredCooldowns[typ.Name]) then MediaPlayer.StoredCooldowns[typ.Name] = nil end
 
-	MEDIA.StoredCooldowns[typ.Name] = typ
+	MediaPlayer.StoredCooldowns[typ.Name] = typ
 end
 
 --[[
 Gets a new copy of a stored cooldown
 --]]
 
-function MEDIA.GetNewCooldown(name)
-	return table.Copy( MEDIA.StoredCooldowns[name] )
+function MediaPlayer.GetNewCooldown(name)
+	return table.Copy( MediaPlayer.StoredCooldowns[name] )
 end
 
-function MEDIA.CooldownsAreDisabled()
+function MediaPlayer.CooldownsAreDisabled()
 
-	return !MEDIA.IsSettingTrue("media_cooldown_enabled")
+	return !MediaPlayer.IsSettingTrue("MediaPlayer_cooldown_enabled")
 end
 
 --[[
 	Return true if a player has a current cooldown
 --]]
 
-function MEDIA.HasCooldown(ply, name)
-	if (MEDIA.CooldownsAreDisabled()) then return false end
-	if (MEDIA.Cooldown[ply:UniqueID()] == nil) then return false end
+function MediaPlayer.HasCooldown(ply, name)
+	if (MediaPlayer.CooldownsAreDisabled()) then return false end
+	if (MediaPlayer.Cooldown[ply:UniqueID()] == nil) then return false end
 
-	return MEDIA.Cooldown[ply:UniqueID()][name] != nil
+	return MediaPlayer.Cooldown[ply:UniqueID()][name] != nil
 end
 
 --[[
 	Return true if a player has dat current cooldown type
 --]]
 
-function MEDIA.HasCooldownType(ply, typ)
-	if (!MEDIA.Cooldown[ply:UniqueID()]) then return false end
+function MediaPlayer.HasCooldownType(ply, typ)
+	if (!MediaPlayer.Cooldown[ply:UniqueID()]) then return false end
 
-	return MEDIA.Cooldown[ply:UniqueID()][typ.Name] != nil
+	return MediaPlayer.Cooldown[ply:UniqueID()][typ.Name] != nil
 end
 
 --[[
 Gets a new cooldown type
 --]]
 
-function MEDIA.GetCooldownType(time, name)
-		if (!time) then time = MEDIA.StoredCooldowns._CooldownType.Time end
-		if (!name) then name = MEDIA.StoredCooldowns._CooldownType.Default end
+function MediaPlayer.GetCooldownType(time, name)
+		if (!time) then time = MediaPlayer.StoredCooldowns._CooldownType.Time end
+		if (!name) then name = MediaPlayer.StoredCooldowns._CooldownType.Default end
 
-		local tab = table.Copy(MEDIA.StoredCooldowns._CooldownType)
+		local tab = table.Copy(MediaPlayer.StoredCooldowns._CooldownType)
 		tab.Time = time
 		tab.Name = name
 
@@ -124,27 +127,27 @@ end
 	Adds a cooldown to the player, takes a Type name
 --]]
 
-function MEDIA.AddPlayerCooldown(ply, typ)
-	if (MEDIA.CooldownsAreDisabled()) then return end
-	if (!MEDIA.Cooldown[ply:UniqueID()]) then MEDIA.Cooldown[ply:UniqueID()] = {} end
-	if (MEDIA.Cooldown[ply:UniqueID()][typ.Name] ) then return end
+function MediaPlayer.AddPlayerCooldown(ply, typ)
+	if (MediaPlayer.CooldownsAreDisabled()) then return end
+	if (!MediaPlayer.Cooldown[ply:UniqueID()]) then MediaPlayer.Cooldown[ply:UniqueID()] = {} end
+	if (MediaPlayer.Cooldown[ply:UniqueID()][typ.Name] ) then return end
 
-	MEDIA.Cooldown[ply:UniqueID()][typ.Name] = typ
+	MediaPlayer.Cooldown[ply:UniqueID()][typ.Name] = typ
 end
 
 --[[
-	Loops through all the cooldowns and updates, this is called each time in MEDIA.CooldownLoop()
+	Loops through all the cooldowns and updates, this is called each time in MediaPlayer.CooldownLoop()
 --]]
 
-function MEDIA.UpdateCooldowns()
-	for steamid,cooldowns in pairs(MEDIA.Cooldown) do
+function MediaPlayer.UpdateCooldowns()
+	for steamid,cooldowns in pairs(MediaPlayer.Cooldown) do
 		for k,v in pairs(cooldowns) do
-			if (!v.Time or v.Time < 1 ) then MEDIA.Cooldown[steamid][k] = nil end
+			if (!v.Time or v.Time < 1 ) then MediaPlayer.Cooldown[steamid][k] = nil end
 			v.Time = v.Time - 1
 		end
 
-		if (table.IsEmpty(MEDIA.Cooldown[steamid])) then
-			MEDIA.Cooldown[steamid] = nil
+		if (table.IsEmpty(MediaPlayer.Cooldown[steamid])) then
+			MediaPlayer.Cooldown[steamid] = nil
 		end
 	end
 end
@@ -154,15 +157,15 @@ end
 	The refreshrate can be halved to make it go faster
 --]]
 
-function MEDIA.CooldownLoop()
-	local setting = MEDIA.GetSetting("media_cooldown_refreshrate")
+function MediaPlayer.CooldownLoop()
+	local setting = MediaPlayer.GetSetting("MediaPlayer_cooldown_refreshrate")
 
 	--So we update our time
-	timer.Create("MEDIA.CooldownLoop", setting.Value, 1, function()
-		MEDIA.UpdateCooldowns()
-		MEDIA.CooldownLoop()
+	timer.Create("MediaPlayer.CooldownLoop", setting.Value, 1, function()
+		MediaPlayer.UpdateCooldowns()
+		MediaPlayer.CooldownLoop()
 	end)
 end
 
 --when we have loaded this file
-hook.Run("MEDIA.CooldownLoaded")
+hook.Run("MediaPlayer.CooldownLoaded")

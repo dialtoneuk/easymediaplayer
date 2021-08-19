@@ -2,10 +2,10 @@
 	Announces a new video
 --]]
 
-function MEDIA.AnnounceVideo()
-	if (!MEDIA.CurrentVideo or table.IsEmpty(MEDIA.CurrentVideo)) then return end
+function MediaPlayer.AnnounceVideo()
+	if (!MediaPlayer.CurrentVideo or table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
 	for k,v in pairs(player.GetAll()) do
-		v:SendMessage("Now playing [" .. MEDIA.CurrentVideo.Title .. "] submitted by " .. MEDIA.CurrentVideo.Owner:GetName())
+		v:SendMessage("Now playing [" .. MediaPlayer.CurrentVideo.Title .. "] submitted by " .. MediaPlayer.CurrentVideo.Owner:GetName())
 	end
 end
 
@@ -13,7 +13,7 @@ end
 	Announces an addition to the playlist
 --]]
 
-function MEDIA.AnnouncePlaylistAddition(video)
+function MediaPlayer.AnnouncePlaylistAddition(video)
 	if (!video or table.IsEmpty(video)) then return end
 	for k,v in pairs(player.GetAll()) do
 		v:SendMessage("Added [" .. video.Title .. "] submitted by " .. video.Owner:GetName())
@@ -24,7 +24,7 @@ end
 	Announces an ending to a video
 --]]
 
-function MEDIA.AnnounceVideoEnding(video)
+function MediaPlayer.AnnounceVideoEnding(video)
 	if (!video or table.IsEmpty(video)) then return end
 	for k,v in pairs(player.GetAll()) do
 		v:SendMessage("Video [" .. video.Title .. "] over!")
@@ -36,13 +36,13 @@ end
 	Send Data to player
 --]]
 
-function MEDIA.SendHistoryData(ply, data)
-	if (table.IsEmpty(MEDIA.History)) then return end
-	local setting = MEDIA.GetSetting("media_history_max") or { Value = 25 }
+function MediaPlayer.SendHistoryData(ply, data)
+	if (table.IsEmpty(MediaPlayer.History)) then return end
+	local setting = MediaPlayer.GetSetting("MediaPlayer_history_max") or { Value = 25 }
 
-	net.Start("MEDIA.SendHistoryData")
+	net.Start("MediaPlayer.SendHistoryData")
 		net.WriteTable(data)
-		net.WriteFloat(table.Count( MEDIA.History ))
+		net.WriteFloat(table.Count( MediaPlayer.History ))
 		net.WriteFloat(setting.Value)
 	net.Send(ply)
 end
@@ -51,11 +51,11 @@ end
 	Send Data to player
 --]]
 
-function MEDIA.SendPersonalHistoryData(ply, data)
-	if (table.IsEmpty(MEDIA.History)) then return end
-	local setting = MEDIA.GetSetting("media_history_max") or { Value = 25 }
+function MediaPlayer.SendPersonalHistoryData(ply, data)
+	if (table.IsEmpty(MediaPlayer.History)) then return end
+	local setting = MediaPlayer.GetSetting("MediaPlayer_history_max") or { Value = 25 }
 
-	net.Start("MEDIA.SendPersonalHistory")
+	net.Start("MediaPlayer.SendPersonalHistory")
 		net.WriteTable(data)
 		net.WriteFloat( ply:GetPersonalHistoryCount() )
 		net.WriteFloat(setting.Value)
@@ -66,21 +66,21 @@ end
 Send All History to player
 --]]
 
-function MEDIA.SendHistory(ply)
-	if (table.IsEmpty(MEDIA.History)) then return end
-	local setting = MEDIA.GetSetting("media_history_max") or { Value = 25 }
+function MediaPlayer.SendHistory(ply)
+	if (table.IsEmpty(MediaPlayer.History)) then return end
+	local setting = MediaPlayer.GetSetting("MediaPlayer_history_max") or { Value = 25 }
 
-	net.Start("MEDIA.SendHistory")
-		net.WriteTable(MEDIA.History)
-		net.WriteFloat( table.Count( MEDIA.History ) )
+	net.Start("MediaPlayer.SendHistory")
+		net.WriteTable(MediaPlayer.History)
+		net.WriteFloat( table.Count( MediaPlayer.History ) )
 		net.WriteFloat(setting.Value)
 	net.Send(ply)
 end
 
 
 
-function MEDIA.SendHistoryForVideo(ply, video)
-	net.Start("MEDIA.SendHistoryForVideo")
+function MediaPlayer.SendHistoryForVideo(ply, video)
+	net.Start("MediaPlayer.SendHistoryForVideo")
 		net.WriteTable(video)
 	net.Send(ply)
 end
@@ -89,11 +89,11 @@ end
 Send blacklist to player
 --]]
 
-function MEDIA.SendBlacklist(ply)
-	if (table.IsEmpty(MEDIA.Blacklist)) then return end
+function MediaPlayer.SendBlacklist(ply)
+	if (table.IsEmpty(MediaPlayer.Blacklist)) then return end
 
-	net.Start("MEDIA.SendBlacklist")
-		net.WriteTable(MEDIA.Blacklist)
+	net.Start("MediaPlayer.SendBlacklist")
+		net.WriteTable(MediaPlayer.Blacklist)
 	net.Send(ply)
 end
 
@@ -101,9 +101,9 @@ end
 Sends a section of the playlist
 --]]
 
-function MEDIA.SendPlaylistSection(ply, limit)
-	net.Start("MEDIA.SendPlaylist")
-		net.WriteTable(MEDIA.GetVideos(false, limit))
+function MediaPlayer.SendPlaylistSection(ply, limit)
+	net.Start("MediaPlayer.SendPlaylist")
+		net.WriteTable(MediaPlayer.GetVideos(false, limit))
 	net.Send(ply)
 end
 
@@ -111,9 +111,9 @@ end
 Broadcast a selection
 --]]
 
-function MEDIA.BroadcastSection(limit)
+function MediaPlayer.BroadcastSection(limit)
 	for k,v in pairs(player.GetAll()) do
-		MEDIA.SendPlaylistSection(v, limit )
+		MediaPlayer.SendPlaylistSection(v, limit )
 	end
 end
 
@@ -121,9 +121,9 @@ end
 	Broadcasts end to all players
 --]]
 
-function MEDIA.BroadcastEnd()
+function MediaPlayer.BroadcastEnd()
 	for k,v in pairs(player.GetAll()) do
-		MEDIA.SendEnd(v)
+		MediaPlayer.SendEnd(v)
 	end
 end
 
@@ -131,9 +131,9 @@ end
 	Sends the entire playlist
 --]]
 
-function MEDIA.SendPlaylist(ply)
-	net.Start("MEDIA.SendPlaylist")
-	net.WriteTable(MEDIA.GetVideos(false))
+function MediaPlayer.SendPlaylist(ply)
+	net.Start("MediaPlayer.SendPlaylist")
+	net.WriteTable(MediaPlayer.GetVideos(false))
 	net.Send(ply)
 end
 
@@ -141,8 +141,8 @@ end
 	Tells a player the playlist has ended / no next current video
 --]]
 
-function MEDIA.SendEnd(ply)
-	net.Start("MEDIA.End")
+function MediaPlayer.SendEnd(ply)
+	net.Start("MediaPlayer.End")
 	net.Send(ply)
 end
 
@@ -150,9 +150,9 @@ end
 	Broadcast the entire playlist
 --]]
 
-function MEDIA.BroadcastPlaylist()
+function MediaPlayer.BroadcastPlaylist()
 	for k,v in pairs(player.GetAll()) do
-		MEDIA.SendPlaylistSection(v)
+		MediaPlayer.SendPlaylistSection(v)
 	end
 end
 
@@ -160,17 +160,17 @@ end
 	Starts a new video
 --]]
 
-function MEDIA.StartVideo(video, callback)
-	MEDIA.CurrentVideo = video
-	MEDIA.BroadcastCurrentVideo()
-	MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
+function MediaPlayer.StartVideo(video, callback)
+	MediaPlayer.CurrentVideo = video
+	MediaPlayer.BroadcastCurrentVideo()
+	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("MediaPlayer_playlist_limit").Value)
 
-	if (MEDIA.GetSetting("media_announce_video").Value) then
-		MEDIA.AnnounceVideo()
+	if (MediaPlayer.GetSetting("MediaPlayer_announce_video").Value) then
+		MediaPlayer.AnnounceVideo()
 	end
 
-	timer.Create("MEDIA.VideoTimer", video.Duration, 1, function()
-		MEDIA.StopVideo()
+	timer.Create("MediaPlayer.VideoTimer", video.Duration, 1, function()
+		MediaPlayer.StopVideo()
 		callback()
 	end)
 end
@@ -179,53 +179,53 @@ end
 	Skips a video
 --]]
 
-function MEDIA.SkipVideo()
+function MediaPlayer.SkipVideo()
 
-	local video = MEDIA.CurrentVideo
-	MEDIA.AddToHistory(video)
-	MEDIA.RemoveVideo(video.Video)
-	MEDIA.StopVideo(video.Video)
+	local video = MediaPlayer.CurrentVideo
+	MediaPlayer.AddToHistory(video)
+	MediaPlayer.RemoveVideo(video.Video)
+	MediaPlayer.StopVideo(video.Video)
 
-	if (MEDIA.HasNext()) then
+	if (MediaPlayer.HasNext()) then
 		--Next please
-		MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
-		MEDIA.Begin(MEDIA.Next())
+		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("MediaPlayer_playlist_limit").Value)
+		MediaPlayer.Begin(MediaPlayer.Next())
 	else
 		--Ending
-		MEDIA.Playlist = {}
-		MEDIA.CurrentVideo = {}
-		MEDIA.BroadcastEnd()
+		MediaPlayer.Playlist = {}
+		MediaPlayer.CurrentVideo = {}
+		MediaPlayer.BroadcastEnd()
 	end
 end
 
 --[[
-	Calls when a new media video is added. Begins the playlist or broadcasts the current playlist
+	Calls when a new MediaPlayer video is added. Begins the playlist or broadcasts the current playlist
 --]]
 
-function MEDIA.Begin(video)
-	if (table.IsEmpty(MEDIA.CurrentVideo)) then
-		MEDIA.StartVideo(video, function()
-			MEDIA.AddToHistory(video)
-			MEDIA.RemoveVideo(video.Video)
-			MEDIA.StopVideo(video.Video)
+function MediaPlayer.Begin(video)
+	if (table.IsEmpty(MediaPlayer.CurrentVideo)) then
+		MediaPlayer.StartVideo(video, function()
+			MediaPlayer.AddToHistory(video)
+			MediaPlayer.RemoveVideo(video.Video)
+			MediaPlayer.StopVideo(video.Video)
 
-			if (MEDIA.HasNext()) then
+			if (MediaPlayer.HasNext()) then
 				--Next please
-				MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
-				MEDIA.Begin(MEDIA.Next())
+				MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("MediaPlayer_playlist_limit").Value)
+				MediaPlayer.Begin(MediaPlayer.Next())
 			else
 				--Ending
-				MEDIA.Playlist = {}
-				MEDIA.CurrentVideo = {}
-				MEDIA.BroadcastEnd()
+				MediaPlayer.Playlist = {}
+				MediaPlayer.CurrentVideo = {}
+				MediaPlayer.BroadcastEnd()
 			end
 		end)
 	else
-		if (MEDIA.GetSetting("media_announce_addition").Value) then
-			MEDIA.AnnouncePlaylistAddition(video)
+		if (MediaPlayer.GetSetting("MediaPlayer_announce_addition").Value) then
+			MediaPlayer.AnnouncePlaylistAddition(video)
 		end
 
-		MEDIA.BroadcastSection(MEDIA.GetSetting("media_playlist_limit").Value)
+		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("MediaPlayer_playlist_limit").Value)
 	end
 end
 
@@ -233,24 +233,24 @@ end
 	Stops the current video
 --]]
 
-function MEDIA.StopVideo()
-	if (timer.Exists("MEDIA.VideoTimer")) then timer.Remove("MEDIA.VideoTimer") end
+function MediaPlayer.StopVideo()
+	if (timer.Exists("MediaPlayer.VideoTimer")) then timer.Remove("MediaPlayer.VideoTimer") end
 
-	if (MEDIA.GetSetting("media_announce_ending").Value) then
-		MEDIA.AnnounceVideoEnding(MEDIA.CurrentVideo)
+	if (MediaPlayer.GetSetting("MediaPlayer_announce_ending").Value) then
+		MediaPlayer.AnnounceVideoEnding(MediaPlayer.CurrentVideo)
 	end
 
-	MEDIA.CurrentVideo = {}
+	MediaPlayer.CurrentVideo = {}
 end
 
 --[[
 	Broadcasts the current video to the players
 --]]
 
-function MEDIA.BroadcastCurrentVideo()
+function MediaPlayer.BroadcastCurrentVideo()
 	for k,v in pairs(player.GetAll()) do
-		net.Start("MEDIA.SendCurrentVideo")
-		net.WriteTable(MEDIA.CurrentVideo or {})
+		net.Start("MediaPlayer.SendCurrentVideo")
+		net.WriteTable(MediaPlayer.CurrentVideo or {})
 		net.Send(v)
 	end
 end
