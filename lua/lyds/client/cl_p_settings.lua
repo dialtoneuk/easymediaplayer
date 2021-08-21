@@ -452,11 +452,10 @@ function panel:UpdateTable(title, v, admin)
 		else
 			row.DataChanged = self:AdminSettingsRow(v, k, row )
 		end
-
 	end
 end
 
---[[
+--[[`
 return a normal settings row
 --]]
 

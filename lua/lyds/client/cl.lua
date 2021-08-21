@@ -454,11 +454,12 @@ net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 					v[k][key] = nil
 					continue
 				end
+
+				--applys the setting
+				MediaPlayer.ChangeSetting(k, v[key])
 			end
 		end
 
-		--applys the setting
-		MediaPlayer.ChangeSetting(k, v[key])
 	end
 end)
 

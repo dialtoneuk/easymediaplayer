@@ -33,3 +33,8 @@ Turns a table into a colour
 function MediaPlayer.TableToColour(tab)
 	return Color(tab.r or tab[1], tab.g or tab[2], tab.b or tab[3], tab.a or tab[4] or 255)
 end
+
+function MediaPlayer.VarToColour(...)
+	local tab = {...}
+	return MediaPlayer.TableToColour(tab[1])
+end

@@ -411,7 +411,7 @@ local client = {
         Value = {
             Width = 750,
             Height = 500,
-            RowHeight = 40,
+            Padding = 5,
         }
     },
     media_warning_position = {
@@ -444,7 +444,7 @@ local client = {
         Value = {
             Width = 400,
             Height = 400,
-            RowHeight = 40,
+            Padding = 5,
         }
     },
     media_success_position = {

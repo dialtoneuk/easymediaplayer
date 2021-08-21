@@ -73,9 +73,11 @@ function MediaPlayer.ApplyPreset(preset)
 					continue
 				end
 			end
-		end
 
-		MediaPlayer.ChangeSetting(k, v)
+			MediaPlayer.ChangeSetting(k, table.Copy(v))
+		else
+			MediaPlayer.ChangeSetting(k, v)
+		end
 	end
 end
 

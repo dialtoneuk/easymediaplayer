@@ -23,7 +23,7 @@ function panel:Init()
 	self.AcceptButton = vgui.Create("DButton", self )
 	self.AcceptButton:Dock(BOTTOM)
 	self.AcceptButton:SetTall(50)
-	self.AcceptButton:DockMargin(15,15,15,15)
+	self.AcceptButton:DockMargin(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
 	self.AcceptButton:SetText("OK!")
 	self.AcceptButton.DoClick = function()
 		self:OnClicked()
@@ -31,7 +31,7 @@ function panel:Init()
 
 	self.KeepButton = vgui.Create("DButton", self )
 	self.KeepButton:Dock(BOTTOM)
-	self.KeepButton:DockMargin(15,15,15,0)
+	self.KeepButton:DockMargin(self:GetPadding(),0,self:GetPadding(),0)
 	self.KeepButton:SetText("Keep Open")
 	self.KeepButton:Hide()
 	self.KeepButton.DoClick = function()
@@ -39,6 +39,8 @@ function panel:Init()
 		self.AcceptButton:SetText("OK!")
 		timer.Remove("success_panel_timer")
 	end
+
+	self:SetDockPadding(self, 2)
 end
 
 function panel:OnClicked()
@@ -52,9 +54,9 @@ function panel:SetBox(title, message, start_timeout)
 
 	if (message != self.LastMessage) then
 		self:SetTitle(title)
-		self:DockPadding(15,15,15,15)
 		self.Label:SetText(message)
 		self.Label:SetWrap(true)
+		self:SetDockPadding(self.Label, 4)
 
 		self.LastMessage = message
 

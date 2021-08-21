@@ -205,7 +205,7 @@ function panel:FillPresetEditor()
 		end
 
 		if (IsValid(self.PresetPreview) and self.LastValue != k ) then
-			self.PresetPreview:DisplaySettings(k, self.Preset.Settings[k])
+			self.PresetPreview:DisplaySettings(k, self.Preset.Settings[k], self)
 			self.LastValue = k
 		end
 
@@ -277,21 +277,13 @@ function panel:FillPresetEditor()
 		end
 	end
 
-	local label = vgui.Create("DLabel", p )
-	label:Dock(TOP)
-	label:SetText("The settings you add are linked to your current settings and they cannot be edited below! Edit your ettings normally and then update/add them here. Always save.")
-	label:SetTextColor(MediaPlayer.Colours.Black)
-	label:SetWrap(true)
-	label:SetTall(70)
-	self:SetDockMargin(label)
-
 	if (IsValid(self.RemoveButton)) then self.RemoveButton:Remove() end
 
 	self.RemoveButton = vgui.Create("DButton", p )
-	self.RemoveButton:SetTall(15)
+	self.RemoveButton:SetTall(20)
 	self.RemoveButton:Dock(TOP)
 	self.RemoveButton:SetDisabled(true)
-	self.RemoveButton:DockMargin(0,self:GetPadding(),0,0)
+	self.RemoveButton:DockMargin(0,self:GetPadding(),0,self:GetPadding() * 2)
 	self.RemoveButton:SetText("Remove Setting")
 
 	self.RemoveButton.DoClick = function()
@@ -317,7 +309,7 @@ function panel:FillPresetEditor()
 	self.UpdateButton:SetDisabled(true)
 	self.UpdateButton:DockMargin(0,self:GetPadding(),0,0)
 	self.UpdateButton:SetTall(20)
-	self.UpdateButton:SetText("Update Setting To Current Setting")
+	self.UpdateButton:SetText("Set Setting To Current Setting")
 
 	if (IsValid(self.UpdateAllButton)) then self.UpdateAllButton:Remove() end
 
@@ -327,7 +319,7 @@ function panel:FillPresetEditor()
 	self.UpdateAllButton:SetDisabled(true)
 	self.UpdateAllButton:DockMargin(0,self:GetPadding(),0,0)
 	self.UpdateAllButton:SetTall(20)
-	self.UpdateAllButton:SetText("Update All Settings")
+	self.UpdateAllButton:SetText("Set All Settings To Current Settings")
 
 	if (!self:IsPresetLocked() ) then
 		self.UpdateAllButton:SetDisabled(false)
@@ -361,9 +353,9 @@ function panel:FillPresetEditor()
 	if (IsValid(self.LoadButton)) then self.LoadButton:Remove() end
 
 	self.LoadButton = vgui.Create("DButton", p )
-	self.LoadButton:SetTall(15)
+	self.LoadButton:SetTall(30)
 	self.LoadButton:Dock(BOTTOM)
-	self.LoadButton:DockMargin(0,self:GetPadding(),0, 0)
+	self.LoadButton:DockMargin(0,self:GetPadding(),0,0)
 	self.LoadButton:SetText("Apply Preset")
 	self.LoadButton.DoClick = function()
 		MediaPlayer.ApplyPreset(self.Preset)
@@ -377,7 +369,7 @@ function panel:FillPresetEditor()
 		if (IsValid(self.DefaultButton)) then self.DefaultButton:Remove() end
 
 		self.DefaultButton = vgui.Create("DButton", p )
-		self.DefaultButton:SetTall(30)
+		self.DefaultButton:SetTall(20)
 		self.DefaultButton:Dock(BOTTOM)
 		self.DefaultButton:DockMargin(0, self:GetPadding() * 2, 0 ,self:GetPadding())
 		self.DefaultButton:SetIcon("icon16/shield.png")
@@ -411,7 +403,7 @@ function panel:FillPresetEditor()
 	self.CopyButton = vgui.Create("DButton", p )
 	self.CopyButton:SetTall(15)
 	self.CopyButton:Dock(BOTTOM)
-	self.CopyButton:DockMargin(0,self:GetPadding(),0,0)
+	self.CopyButton:DockMargin(0,self:GetPadding() * 2,0,0)
 	self.CopyButton:SetText("Copy Preset")
 
 	if (IsValid(self.SaveButton)) then self.SaveButton:Remove() end

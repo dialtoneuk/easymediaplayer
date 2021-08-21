@@ -5,7 +5,6 @@ function MediaPlayer.CreateWarningBox(title, message, timeout)
 	MediaPlayer.GetPanel("WarningBox"):SetWarning(title, message, timeout)
 end
 
-
 function MediaPlayer.CreateSuccessBox(title, message, timeout)
 	timeout = timeout or false
 

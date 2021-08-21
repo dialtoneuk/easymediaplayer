@@ -242,14 +242,16 @@ function base:BaseThink()
     end
 end
 
-function base:SetDockPadding(element)
+function base:SetDockPadding(element, times)
     element = element or self
-    element:DockPadding(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
+    times = times or 1
+    element:DockPadding(self:GetPadding() * times,self:GetPadding() * times,self:GetPadding() * times,self:GetPadding() * times)
 end
 
 function base:SetDockMargin(element)
     element = element or self
-    element:DockMargin(self:GetPadding(),self:GetPadding(),self:GetPadding(),self:GetPadding())
+    times = times or 1
+    element:DockMargin(self:GetPadding() * times,self:GetPadding() * times,self:GetPadding() * times,self:GetPadding() * times)
 end
 
 --rerefesh _OnChange settings
