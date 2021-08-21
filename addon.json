@@ -2,5 +2,5 @@
     "title": "Easy MediaPlayer",
     "type": "ServerContent",
     "tags": ["roleplay", "movie", "fun"],
-    "ignore": [".md"]
+    "ignore": ["*.md", "data/*"]
 }

@@ -37,5 +37,6 @@ hook.Add("ShutDown", "MediaPlayer.SaveSettingsShutdown", function()
 	if (SERVER) then
 		MediaPlayer.SaveHistory()
 		MediaPlayer.SaveBlacklist()
+		MediaPlayer.SaveJoinlist()
 	end
 end)

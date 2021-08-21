@@ -20,6 +20,7 @@ panel.ClientSettings = {
 	media_create_player_panel = "Refresh Player Panel",
 	media_create_search_panel = "Refresh Search Panel",
 	media_create_settings_panel = "Refresh Settings Panel",
+	media_write_default_presets = "Rewrite default presets from addon resources folder",
 	media_search_panel = "Show search panel",
 	media_like_video = "Like Current Video",
 	media_dislike_video = "Dislike Current Video",
@@ -280,8 +281,9 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 		self.SendButton.DoClick = function()
 			if (self.Edited) then
 				MediaPlayer.SetAdminSettings()
-				self.SendButton:Hide()
+				self.SendButton:SetDisabled(true)
 				self.Edited = false
+				MediaPlayer.CreateSuccessBox("Success","Server settings succesfully applied", 2)
 			end
 		end
 	end
@@ -363,6 +365,7 @@ function panel:UpdateTable(title, v, admin)
 		local _title = string.Replace(title," ", "_")
 
 		self.Comments[title].Text:SetText(v.Comment)
+		self.Comments[title]:Dock(BOTTOM)
 		self.Comments[title]:Show()
 	else
 		self.Comments[title]:Hide()
@@ -409,6 +412,8 @@ function panel:UpdateTable(title, v, admin)
 			MediaPlayer.AdminSettings[v.Key][v.Type].Value = val
 
 			if (self.Edited == false) then
+
+				self.SendButton:SetDisabled(false)
 				self.SendButton:Show()
 				self.Edited = true
 			end

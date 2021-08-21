@@ -22,7 +22,6 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
             ...
         }
 
-
         hook.Run("OnWarning", {...})
         ErrorNoHalt(...)
     end
@@ -107,7 +106,6 @@ if (SERVER) then
     end
 end
 
---test
 for k,v in pairs(file.Find("lyds/client/*.lua","LUA")) do
     if (SERVER) then
         AddCSLuaFile("lyds/client/" .. v)

@@ -21,6 +21,12 @@ util.AddNetworkString("MediaPlayer.SendMessage")
 util.AddNetworkString("MediaPlayer.SendPersonalHistory")
 util.AddNetworkString("MediaPlayer.SendBlacklist")
 util.AddNetworkString("MediaPlayer.CreateWarningBox")
+util.AddNetworkString("MediaPlayer.RequestDefaultPreset")
+util.AddNetworkString("MediaPlayer.RequestDefaultInitialPreset")
+util.AddNetworkString("MediaPlayer.ApplyDefaultPreset")
+util.AddNetworkString("MediaPlayer.RefreshDefaultPreset")
+util.AddNetworkString("MediaPlayer.RequestRefreshDefaultPreset")
+util.AddNetworkString("MediaPlayer.ApplyInitialPreset")
 
 --responds to a search query
 net.Receive("MediaPlayer.SearchQuery",function(len, ply)
@@ -57,6 +63,65 @@ Sends the servers settings to the client if they are an admin
 net.Receive("MediaPlayer.RequestAdminSettings",function(len, ply)
 	ply:SendAdminSettings()
 end)
+
+--
+net.Receive("MediaPlayer.RequestDefaultPreset",function(len, ply)
+
+	if (!file.Exists("lyds/presets/server_preset.json", "DATA")) then return end
+
+	MediaPlayer.SendDefaultPreset(ply)
+end)
+
+net.Receive("MediaPlayer.RequestRefreshDefaultPreset",function(len, ply)
+
+	if (!file.Exists("lyds/presets/server_preset.json", "DATA")) then return end
+
+	MediaPlayer.SendDefaultPreset(ply, "RefreshDefaultPreset")
+end)
+
+--request the initial preset from the server
+net.Receive("MediaPlayer.RequestDefaultInitialPreset",function(len, ply)
+
+	if (!file.Exists("lyds/presets/server_preset.json", "DATA")) then return end
+
+	if (MediaPlayer.Joinlist == nil) then
+		local tab = {}
+
+		if (file.Exists("lyds/join_list.json", "DATA")) then
+			tab = util.JSONToTable( file.Read("lyds/join_list.json", "DATA"))
+		end
+
+		MediaPlayer.Joinlist = tab
+	end
+
+	if MediaPlayer.Joinlist[ ply:SteamID() ] != nil then
+	 	return
+	end
+
+	print("sending default preset to player: " .. ply:GetName() )
+
+	MediaPlayer.SendDefaultPreset(ply)
+	MediaPlayer.Joinlist[ ply:SteamID() ] = {
+		Name = ply:GetName(),
+		Date = util.DateStamp()
+	}
+end)
+
+net.Receive("MediaPlayer.ApplyInitialPreset", function(len, ply)
+
+	if (!ply:IsAdmin()) then
+		warning("a unadmined player is sending admin hooks: " , ply:GetName() )
+		return
+	end
+
+	local tab = net.ReadTable()
+
+	if (table.IsEmpty(tab)) then error("table recieved is empty") end
+
+	print("writing initial preset")
+	file.Write("lyds/presets/server_preset.json", util.TableToJSON(tab) )
+end)
+
 
 --[[
 Sets settings from the player
@@ -120,13 +185,13 @@ end)
 --]]
 
 
-hook.Add("OnFirstBadError","MediaPlayer.OnFirstBadError", function(error)
+hook.Add("OnFirstBadError","MediaPlayer.OnFirstBadError", function(err)
 	for k,v in pairs(player.GetAll()) do
 
 		if (!IsValid(v)) then continue end
 		if (!v:IsAdmin() ) then continue end
 
-		v:SendWarningBox("There has been an bad error! Please check the admin panel inside the error log to see what occured! \n\n error: " .. error[1],"Oh no!")
+		v:SendWarningBox("There has been an bad error! Please check the admin panel inside the error log to see what occured! \n\n error: " .. err[1],"Oh no!")
 	end
 end)
 

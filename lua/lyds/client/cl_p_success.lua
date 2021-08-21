@@ -1,10 +1,6 @@
 local panel = {}
 
-panel.Name = "warning"
-
-panel.Settings = {
-	Options = "options"
-}
+panel.Name = "success"
 
 function panel:Init()
 	self:BaseInit()
@@ -14,6 +10,8 @@ function panel:Init()
 	self.Label:Dock(FILL)
 	self.Label:SetFont("BiggerText")
 	self.Label:SetTextColor( self.Settings.Colours.Value.TextColor )
+
+	self:SetDockPadding(self.Label)
 
 	self.Paint = function(s, w, h)
 		surface.SetDrawColor(self.Settings.Colours.Value.Background)
@@ -39,18 +37,17 @@ function panel:Init()
 	self.KeepButton.DoClick = function()
 		self.KeepButton:Hide()
 		self.AcceptButton:SetText("OK!")
-		timer.Remove("warning_panel_timer")
+		timer.Remove("success_panel_timer")
 	end
 end
 
 function panel:OnClicked()
-	--override me senpai
-	timer.Remove("warning_panel_timer")
+	timer.Remove("success_panel_timer")
 	self:Remove()
 end
 
-function panel:SetWarning(title, message, start_timeout)
-	title = title or "Warning"
+function panel:SetBox(title, message, start_timeout)
+	title = title or "Success"
 	start_timeout = start_timeout or true
 
 	if (message != self.LastMessage) then
@@ -64,7 +61,7 @@ function panel:SetWarning(title, message, start_timeout)
 		if (start_timeout != false) then
 			local seconds = 10
 
-			if (type(start_timeout) == number ) then
+			if (type(start_timeout) == "number" ) then
 				seconds = start_timeout
 			end
 
@@ -79,8 +76,8 @@ function panel:SetTimeout(seconds)
 	self.AcceptButton:SetText("OK! (will autoclose in " .. seconds .. " seconds)")
 	self.KeepButton:Show()
 
-	timer.Remove("warning_panel_timer")
-	timer.Create("warning_panel_timer", 1, seconds, function()
+	timer.Remove("success_panel_timer")
+	timer.Create("success_panel_timer", 1, seconds, function()
 		seconds = seconds - 1
 
 		if (IsValid(self.AcceptButton)) then
@@ -93,4 +90,4 @@ function panel:SetTimeout(seconds)
 	end)
 end
 
-vgui.Register("MediaPlayer.WarningBox", panel, "MediaPlayer.Base")
+vgui.Register("MediaPlayer.SuccessBox", panel, "MediaPlayer.Base")

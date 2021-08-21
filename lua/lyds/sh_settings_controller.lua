@@ -18,6 +18,36 @@ function MediaPlayer.RegisterClientSettings(client)
 	MediaPlayer.RegisterSettings({}, client)
 end
 
+if (CLIENT) then
+	function MediaPlayer.WriteDefaultPresets()
+
+		local files = MediaPlayer.GetPackedPresets()
+
+		if (table.IsEmpty(files)) then
+			print("no files found")
+			return
+		end
+
+		for k,v in pairs(files) do
+			if (file.Exists("lyds/presets/" .. k, "DATA" )) then print(k .. " already exists in folder")  continue end
+			if (!file.IsDir("lyds/presets/", "DATA")) then file.CreateDir("lyds/presets/") end
+
+			print("writing default preset file " .. k .. " into data/lyds/presets")
+			file.Write("lyds/presets/" .. k, v)
+		end
+	end
+end
+
+function MediaPlayer.HasSavedSettings()
+
+	local f = "lyds/settings.json"
+
+	if (CLIENT) then
+		f = "lyds/settings_client.json"
+	end
+
+	return file.Exists(f,"DATA")
+end
 --[[
 	Registers an array of server settings
 --]]

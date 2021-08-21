@@ -12,7 +12,7 @@ MediaPlayer.Panels = {
 			--can define extra settings here
 			--size, is centered and show is implicit
 		},
-		PostInit = function(panel)
+		PostInit = function(panel, key, settings)
 			panel:FillPropertySheet({
 				Server = MediaPlayer.AdminSettings or {},
 				Client = MediaPlayer.Settings or {}
@@ -23,6 +23,10 @@ MediaPlayer.Panels = {
 			panel.OnClose = function(self)
 				RunConsoleCommand("media_create_cl")
 				self:Hide()
+			end
+
+			if (settings.Hide.Value == false ) then
+				panel:Show()
 			end
 		end
 	},
@@ -47,6 +51,19 @@ MediaPlayer.Panels = {
 		Settings = {
 			--can define extra settings here
 			--size, is centered and show is implicit
+		},
+		PostInit = function(panel, key, settings)
+			panel:Show()
+			panel:MakePopup()
+		end
+	},
+	SuccessBox = {
+		Preloaded = false,
+		Element = "SuccessBox",
+		SettingsBase = "media_success",
+		Draggable = true,
+		Settings = {
+
 		},
 		PostInit = function(panel, key, settings)
 			panel:Show()

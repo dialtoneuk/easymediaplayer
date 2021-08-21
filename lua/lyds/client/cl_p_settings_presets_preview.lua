@@ -15,6 +15,7 @@ function panel:Init()
     self.Paint = function() end
 end
 
+--takes the key of the setting inside MEDIA.Settings and then the alue,
 function panel:DisplaySettings(k, v)
 
     if (IsValid(self.Properties)) then self.Properties:Remove() end
@@ -56,6 +57,10 @@ function panel:DisplaySettings(k, v)
     if (setting.Type == MediaPlayer.Types.TABLE) then
         for key,value in pairs(v) do
             local typ
+
+            if (setting.DefValue.__unpack != nil and string.sub(key, 1, 2) != "__" ) then
+                value = setting.DefValue.__unpack(v[key], key, value )
+            end
 
             if (string.sub(key, 1, 2) == "__") then
                 continue

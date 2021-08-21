@@ -42,6 +42,11 @@ function panel:Init()
 			error(k .. "not set in presets")
 		else
 			self.LastListValue = k
+
+			if (k == "server_preset.json" and !MediaPlayer.LocalPlayer:IsAdmin()) then
+				return
+			end
+
 			self.Preset = self.Presets[k]
 			self:FillPresetEditor()
 			self.PresetEditor:Show()
@@ -174,7 +179,6 @@ end
 function panel:FillPresetEditor()
 
 	if (self.Preset == nil or table.IsEmpty(self.Preset)) then return end
-
 	if (IsValid(self.CurrentPreset)) then self.CurrentPreset:Remove() end
 
 	self.CurrentPreset = vgui.Create("DPanel", self.PresetEditor )
@@ -253,7 +257,7 @@ function panel:FillPresetEditor()
 	self.AddButton:SetTall(30)
 	self.AddButton:Dock(TOP)
 	self.AddButton:SetDisabled(true)
-	self.AddButton:DockMargin(0,self:GetPadding(),0,self:GetPadding() * 4)
+	self.AddButton:DockMargin(0,self:GetPadding(),0,self:GetPadding() * 2)
 	self.AddButton:SetText("Add Setting")
 
 	self.AddButton.DoClick = function()
@@ -272,6 +276,16 @@ function panel:FillPresetEditor()
 			self:FillPresetEditor()
 		end
 	end
+
+	local label = vgui.Create("DLabel", p )
+	label:Dock(TOP)
+	label:SetText("The settings you add are linked to your settings and they cannot be edited below! Edit your ettings normally and then update/add them here. Always save.")
+	label:SetTextColor(MediaPlayer.Colours.Black)
+	label:SetWrap(true)
+	label:SetTall(70)
+	self:SetDockMargin(label)
+
+	if (IsValid(self.RemoveButton)) then self.RemoveButton:Remove() end
 
 	self.RemoveButton = vgui.Create("DButton", p )
 	self.RemoveButton:SetTall(15)
@@ -295,12 +309,29 @@ function panel:FillPresetEditor()
 		end
 	end
 
+	if (IsValid(self.UpdateButton)) then self.UpdateButton:Remove() end
+
 	self.UpdateButton = vgui.Create("DButton", p )
 	self.UpdateButton:SetTall(15)
 	self.UpdateButton:Dock(TOP)
 	self.UpdateButton:SetDisabled(true)
 	self.UpdateButton:DockMargin(0,self:GetPadding(),0,0)
+	self.UpdateButton:SetTall(20)
 	self.UpdateButton:SetText("Update Setting To Current Setting")
+
+	if (IsValid(self.UpdateAllButton)) then self.UpdateAllButton:Remove() end
+
+	self.UpdateAllButton = vgui.Create("DButton", p )
+	self.UpdateAllButton:SetTall(15)
+	self.UpdateAllButton:Dock(TOP)
+	self.UpdateAllButton:SetDisabled(true)
+	self.UpdateAllButton:DockMargin(0,self:GetPadding(),0,0)
+	self.UpdateAllButton:SetTall(20)
+	self.UpdateAllButton:SetText("Update All Settings")
+
+	if (!self:IsPresetLocked() ) then
+		self.UpdateAllButton:SetDisabled(false)
+	end
 
 	self.UpdateButton.DoClick = function()
 
@@ -327,23 +358,59 @@ function panel:FillPresetEditor()
 	self.PresetPreview:DockMargin(0, self:GetPadding() * 2, 0, 0)
 	self.PresetPreview:SetTall(50)
 
+
+	if (IsValid(self.LoadButton)) then self.LoadButton:Remove() end
+
 	self.LoadButton = vgui.Create("DButton", p )
 	self.LoadButton:SetTall(15)
 	self.LoadButton:Dock(BOTTOM)
-	self.LoadButton:DockMargin(0,self:GetPadding(),0,0)
+	self.LoadButton:DockMargin(0,self:GetPadding(),0, 0)
 	self.LoadButton:SetText("Apply Preset")
 
 	if (MediaPlayer.LocalPlayer:IsAdmin() ) then
+
+		if (IsValid(self.DefaultButton)) then self.DefaultButton:Remove() end
+
 		self.DefaultButton = vgui.Create("DButton", p )
-		self.DefaultButton:SetTall(15)
+		self.DefaultButton:SetTall(30)
 		self.DefaultButton:Dock(BOTTOM)
-		self.DefaultButton:DockMargin(0,self:GetPadding(),0,0)
+		self.DefaultButton:DockMargin(0, self:GetPadding() * 2, 0 ,self:GetPadding())
 		self.DefaultButton:SetIcon("icon16/shield.png")
-		self.DefaultButton:SetText("Save & Set As Initial Preset")
+		self.DefaultButton:SetText("Set As Initial Preset")
+
+		self.DefaultButton.DoClick = function()
+			if (table.IsEmpty(self.Preset)) then
+				return
+			end
+
+			if (self.LastListValue == "server_preset.json") then
+				MediaPlayer.CreateWarningBox("Error", "You cannot apply this preset as server_preset.json is already the initial preset, other presets rewrite this!", 4)
+				return
+			end
+
+			if (self.LastListValue == "server.json") then
+				MediaPlayer.CreateWarningBox("Error", "You cannot apply server.json as it is the same as server_preset.json and only exists on the client.", 4)
+				return
+			end
+
+			MediaPlayer.ApplyInitialPreset(self.Preset)
+			MediaPlayer.CreateSuccessBox("Success", "Server initial preset successfully applied! You will need to open and close the settings for server.json to appear", 4)
+			MediaPlayer.RefreshDefaultPreset()
+		end
 	end
 
+	if (IsValid(self.CopyButton)) then self.CopyButton:Remove() end
+
+	self.CopyButton = vgui.Create("DButton", p )
+	self.CopyButton:SetTall(15)
+	self.CopyButton:Dock(BOTTOM)
+	self.CopyButton:DockMargin(0,self:GetPadding(),0,0)
+	self.CopyButton:SetText("Copy Preset")
+
+	if (IsValid(self.SaveButton)) then self.SaveButton:Remove() end
+
 	self.SaveButton = vgui.Create("DButton", p )
-	self.SaveButton:SetTall(15)
+	self.SaveButton:SetTall(30)
 	self.SaveButton:Dock(BOTTOM)
 	self.SaveButton:DockMargin(0,self:GetPadding(),0,0)
 	self.SaveButton:SetText("Save Preset")

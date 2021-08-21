@@ -2,7 +2,7 @@
 local server = {
     media_playlist_limit = {
         Value = 10,
-        Comment = "The maximum amount of playlist items allowed at the same"
+        Comment = "The maxium amount of videos the server will broadcast at any given time to all players, regardless of how many playlist items the client is set to draw"
     },
     media_vote_time = {
         Value = 30,
@@ -209,6 +209,10 @@ local client = {
         Value = false,
         Comment = "(unused)."
     },
+    media_success_hide = {
+        Value = false,
+        Comment = "(unused)."
+    },
     media_playlist_centered = {
         Value = false,
         Comment = "(unused)"
@@ -225,6 +229,10 @@ local client = {
         Value = false,
         Comment = "(unused)"
     },
+    presets_allow_default = {
+        Value = true,
+        Comment = "Allows a servers default preset to override your settings"
+    },
     media_playlist_show_constant = {
         Value = false,
         Comment = "Will show the playlist all the time, not just in the scoreboard and context menu"
@@ -239,6 +247,10 @@ local client = {
         Comment = "Admin window will open center screen"
     },
     media_warning_centered = {
+        Value = true,
+        Comment = "Warning window will open center screen"
+    },
+    media_success_centered = {
         Value = true,
         Comment = "Warning window will open center screen"
     },
@@ -268,7 +280,7 @@ local client = {
     },
     media_settings_hide = {
         Value = true,
-        Comment = "(unused)"
+        Comment = "Will keep the settings window open forever (recommended when designing looks)"
     },
     media_playlist_show_limit = {
         Value = 10,
@@ -342,7 +354,7 @@ local client = {
         Max = 2000,
         Value = {
             Width = 715,
-            Height = 500,
+            Height = 715,
             Padding = 5
         },
         SlowUpdate = 0.75
@@ -365,6 +377,10 @@ local client = {
             RowHeight = 40,
             Padding = 5,
         }
+    },
+    media_base_hide = {
+        Value = false,
+        Comment = "(unused)"
     },
     media_base_position = {
         Min = 10,
@@ -407,6 +423,39 @@ local client = {
         }
     },
     media_warning_colours = {
+        Value = {
+            __unpack = function(self, index, value) --called when unpacking from save json
+                return MediaPlayer.TableToColour(value)
+            end,
+            __pack = function(self, index, value) --called when packing data into json.
+                return value
+            end,
+            Background = MediaPlayer.Colours.FadedBlack,
+            Border = MediaPlayer.Colours.FadedBlack,
+            TextColor = MediaPlayer.Colours.FadedWhite,
+            ItemBackground = MediaPlayer.Colours.FadedBlack,
+            ItemBorder = MediaPlayer.Colours.FadedBlue
+        }
+
+    },
+    media_success_size = {
+        Min = 20,
+        Max = 2000,
+        Value = {
+            Width = 400,
+            Height = 400,
+            RowHeight = 40,
+        }
+    },
+    media_success_position = {
+        Min = 10,
+        Max = 2000,
+        Value = {
+            X = 25,
+            Y = 25
+        }
+    },
+    media_success_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)
@@ -517,6 +566,14 @@ local client = {
         }
     },
     media_warning_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2,
+            DisplayTitle = true
+        }
+    },
+    media_success_options = {
         Min = 1,
         Max = 25,
         Value = {

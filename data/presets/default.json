@@ -1,0 +1,12 @@
+{
+    "Settings": {
+        "media_settings_size": {
+            "Width": 500,
+            "Height": 500,
+            "Padding": 50
+        }
+    },
+    "Locked": true,
+    "Description": "The default look and feel",
+    "Author": "Llydia"
+}

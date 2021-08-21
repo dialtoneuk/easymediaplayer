@@ -132,7 +132,7 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 
 	--settings panel
 	list.Add( "DesktopWindows", {
-		title		= "MediaPlayer Settings",
+		title		= "Media Settings",
 		icon		= "icon64/settings.png",
 		width		= 10,
 		height		= 10,
@@ -146,7 +146,7 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 	})
 
 	list.Add( "DesktopWindows", {
-		title		= "MediaPlayer Search",
+		title		= "Media Search",
 		icon		= "icon64/search.png",
 		width		= 10,
 		height		= 10,
@@ -200,7 +200,7 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 	})
 
 	list.Add( "DesktopWindows", {
-		title		= "MediaPlayer Admin",
+		title		= "Media Admin",
 		icon		= "icon64/admin.png",
 		width		= 10,
 		height		= 10,
@@ -223,6 +223,18 @@ end)
 hook.Add("InitPostEntity", "MediaPlayer.LoadClientAddon", function()
 	MediaPlayer.LocalPlayer = LocalPlayer()
 	MediaPlayer.InstantiatePanels(true)
+
+	--essentially if it is their first run
+	if (MediaPlayer.HasSavedSettings()) then
+
+		if (!MediaPlayer.IsSettingTrue("presets_allow_default")) then return end
+
+		MediaPlayer.RequestDefaultInitialPreset() --this will ask
+		return
+	end
+
+	MediaPlayer.WriteDefaultPresets() --this writes default presets from addon folder (if downloaded)
+	MediaPlayer.RequestDefaultPreset() --this asks the server for the servers default schema
 end)
 
 hook.Add("OnContextMenuOpen", "MediaPlayer.ContextMenu", function()
@@ -286,6 +298,14 @@ end
 Console Commands
 -----------------------------------------------------------------------------
 --]]
+
+concommand.Add("media_write_default_presets", function(ply, cmd, args)
+	MediaPlayer.WriteDefaultPresets()
+end)
+
+concommand.Add("media_refresh_initial_preset", function(ply, cmd, args)
+	MediaPlayer.RequestDefaultPreset()
+end)
 
 --[[
 Youtube search function
@@ -400,6 +420,50 @@ net.Receive("MediaPlayer.SendMessage", function()
 
 	chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, msg )
 	chat.PlaySound()
+end)
+
+--preset stuff
+
+local write = function(preset)
+	if (preset.Locked == nil or preset.Locked == false ) then
+		preset.Locked = true
+	end
+
+	file.Write("lyds/presets/server.json", util.TableToJSON(preset, true))
+end
+
+net.Receive("MediaPlayer.ApplyDefaultPreset", function()
+
+	local preset = net.ReadTable()
+
+	write(preset)
+
+	if (!MediaPlayer.IsSettingTrue("presets_allow_default")) then return end
+
+	for k,v in pairs(preset.Settings) do
+
+		if (type(v) == "table") then
+
+			local set = MediaPlayer.GetSetting(k).DefValue
+			for key,val in pairs(v) do
+
+				if (set.__unpack != nil and string.sub(key, 1, 2) != "__" ) then
+					v[key] = set.__unpack(v[key], key, val )
+				end
+
+				if (string.sub(key, 1, 2) == "__") then
+					v[key] = nil
+					continue
+				end
+			end
+		end
+	end
+
+	--TODO: Code to apply a preset
+end)
+
+net.Receive("MediaPlayer.RefreshDefaultPreset", function()
+	write(net.ReadTable())
 end)
 
 --[[

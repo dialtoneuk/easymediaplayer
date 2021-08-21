@@ -111,9 +111,13 @@ end
 function MediaPlayer.SetPanelSettings(key, tab, settings_base)
 	settings_base = settings_base or ""
 	for k,v in pairs(tab) do
-
 		if (string.find(v, settings_base) == nil ) then
 			v = settings_base .. "_" .. v
+		end
+
+		if (MediaPlayer.Settings[v] == nil ) then
+			warning(v .. " does not exist so default to base")
+			v = string.Replace(v, settings_base, "media_base")
 		end
 
 		MediaPlayer.Panels[key]._Settings[k] = MediaPlayer.GetSetting(v)
