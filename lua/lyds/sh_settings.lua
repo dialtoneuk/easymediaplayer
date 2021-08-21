@@ -239,7 +239,7 @@ local client = {
     },
     media_settings_centered = {
         Value = false,
-        SlowUpdate = 0.75,
+        Refresh = false,
         Comment = "Settings window will open center screen"
     },
     media_admin_centered = {
@@ -357,7 +357,7 @@ local client = {
             Height = 715,
             Padding = 5
         },
-        SlowUpdate = 0.75
+        Refresh = false
     },
     media_settings_position = {
         Min = 10,
@@ -366,7 +366,7 @@ local client = {
             X = 25,
             Y = 25
         },
-        SlowUpdate = 0.75
+        Refresh = false
     },
     media_base_size = {
         Min = 20,

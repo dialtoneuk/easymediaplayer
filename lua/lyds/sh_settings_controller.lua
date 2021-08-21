@@ -18,26 +18,6 @@ function MediaPlayer.RegisterClientSettings(client)
 	MediaPlayer.RegisterSettings({}, client)
 end
 
-if (CLIENT) then
-	function MediaPlayer.WriteDefaultPresets()
-
-		local files = MediaPlayer.GetPackedPresets()
-
-		if (table.IsEmpty(files)) then
-			print("no files found")
-			return
-		end
-
-		for k,v in pairs(files) do
-			if (file.Exists("lyds/presets/" .. k, "DATA" )) then print(k .. " already exists in folder")  continue end
-			if (!file.IsDir("lyds/presets/", "DATA")) then file.CreateDir("lyds/presets/") end
-
-			print("writing default preset file " .. k .. " into data/lyds/presets")
-			file.Write("lyds/presets/" .. k, v)
-		end
-	end
-end
-
 function MediaPlayer.HasSavedSettings()
 
 	local f = "lyds/settings.json"
@@ -195,18 +175,24 @@ chnanges the value of a setting
 ]]--
 
 function MediaPlayer.ChangeSetting(key, value, all_kinds)
-	all_kinds = all_kinds or false
+	all_kinds = all_kinds or true
 	for k,keys in pairs(MediaPlayer.Settings) do
-		if (k == key) then
-			for kind,v in pairs(keys) do
-				if (kind == MediaPlayer.Types.BOOL) then
-					value = ( value == 1 or value == true )
-				end
+		if (k != key) then
+			continue
+		end
 
-				if (kind == MediaPlayer.Type.INT) then
-					value = math.Truncate(value)
-				end
+		for kind,v in pairs(keys) do
+			if (kind == MediaPlayer.Types.BOOL) then
+				value = ( value == 1 or value == true )
+			end
 
+			if (kind == MediaPlayer.Type.INT) then
+				value = math.Truncate(value)
+			end
+
+			if (kind == MediaPlayer.Type.TABLE) then
+				MediaPlayer.Settings[key][kind].Value = table.Copy(value)
+			else
 				MediaPlayer.Settings[key][kind].Value = value
 
 				if (ConVarExists(key)) then
@@ -222,14 +208,14 @@ function MediaPlayer.ChangeSetting(key, value, all_kinds)
 
 					print("set convar " .. k .. " to ", value)
 
-					if (all_kinds) then
+					if (!all_kinds) then
 						return
 					end
 				end
-
-				--only once we'vefound
-				return
 			end
+
+			--only once we'vefound
+			return
 		end
 	end
 end

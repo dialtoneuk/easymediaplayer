@@ -435,7 +435,6 @@ end
 net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 
 	local preset = net.ReadTable()
-
 	write(preset)
 
 	if (!MediaPlayer.IsSettingTrue("presets_allow_default")) then return end
@@ -448,18 +447,19 @@ net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 			for key,val in pairs(v) do
 
 				if (set.__unpack != nil and string.sub(key, 1, 2) != "__" ) then
-					v[key] = set.__unpack(v[key], key, val )
+					v[k][key] = set.__unpack(v[key], key, val )
 				end
 
 				if (string.sub(key, 1, 2) == "__") then
-					v[key] = nil
+					v[k][key] = nil
 					continue
 				end
 			end
 		end
-	end
 
-	--TODO: Code to apply a preset
+		--applys the setting
+		MediaPlayer.ChangeSetting(k, v[key])
+	end
 end)
 
 net.Receive("MediaPlayer.RefreshDefaultPreset", function()

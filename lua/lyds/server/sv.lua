@@ -118,6 +118,21 @@ net.Receive("MediaPlayer.ApplyInitialPreset", function(len, ply)
 
 	if (table.IsEmpty(tab)) then error("table recieved is empty") end
 
+	tab.Locked = true
+
+	if (tab.Settings == nil ) then error("bad tab") end
+
+	--just incase pack and unpack statements are included
+	for k,v in pairs(tab.Settings) do
+		if (type(v) == "table") then
+			for index,_ in pairs(v) do
+				if (string.sub(index, 1, 2 ) == "__") then
+					v[k][index] = nil
+				end
+			end
+		end
+	end
+
 	print("writing initial preset")
 	file.Write("lyds/presets/server_preset.json", util.TableToJSON(tab) )
 end)

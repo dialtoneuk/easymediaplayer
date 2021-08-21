@@ -279,7 +279,7 @@ function panel:FillPresetEditor()
 
 	local label = vgui.Create("DLabel", p )
 	label:Dock(TOP)
-	label:SetText("The settings you add are linked to your settings and they cannot be edited below! Edit your ettings normally and then update/add them here. Always save.")
+	label:SetText("The settings you add are linked to your current settings and they cannot be edited below! Edit your ettings normally and then update/add them here. Always save.")
 	label:SetTextColor(MediaPlayer.Colours.Black)
 	label:SetWrap(true)
 	label:SetTall(70)
@@ -358,7 +358,6 @@ function panel:FillPresetEditor()
 	self.PresetPreview:DockMargin(0, self:GetPadding() * 2, 0, 0)
 	self.PresetPreview:SetTall(50)
 
-
 	if (IsValid(self.LoadButton)) then self.LoadButton:Remove() end
 
 	self.LoadButton = vgui.Create("DButton", p )
@@ -366,6 +365,12 @@ function panel:FillPresetEditor()
 	self.LoadButton:Dock(BOTTOM)
 	self.LoadButton:DockMargin(0,self:GetPadding(),0, 0)
 	self.LoadButton:SetText("Apply Preset")
+	self.LoadButton.DoClick = function()
+		MediaPlayer.ApplyPreset(self.Preset)
+		RunConsoleCommand("media_create_cl")
+
+		MediaPlayer.CreateSuccessBox("Success","Preset successfully applied")
+	end
 
 	if (MediaPlayer.LocalPlayer:IsAdmin() ) then
 
@@ -384,7 +389,7 @@ function panel:FillPresetEditor()
 			end
 
 			if (self.LastListValue == "server_preset.json") then
-				MediaPlayer.CreateWarningBox("Error", "You cannot apply this preset as server_preset.json is already the initial preset, other presets rewrite this!", 4)
+				MediaPlayer.CreateWarningBox("Error", "You cannot apply server_preset.json as it is the same as server.json and only exists on the server.", 4)
 				return
 			end
 
@@ -394,8 +399,10 @@ function panel:FillPresetEditor()
 			end
 
 			MediaPlayer.ApplyInitialPreset(self.Preset)
-			MediaPlayer.CreateSuccessBox("Success", "Server initial preset successfully applied! You will need to open and close the settings for server.json to appear", 4)
+			MediaPlayer.CreateSuccessBox("Success", "Server initial preset successfully applied!", 4)
 			MediaPlayer.RefreshDefaultPreset()
+
+			RunConsoleCommand("media_create_cl")
 		end
 	end
 
@@ -417,6 +424,11 @@ function panel:FillPresetEditor()
 
 	if (self:IsPresetLocked() or self.HasEdited == nil or self.HasEdited == false ) then
 		self.SaveButton:SetDisabled(true)
+	end
+
+	self.SaveButton.DoClick = function(s)
+		MediaPlayer.SavePreset(self.LastListValue, self.Preset)
+		MediaPlayer.CreateSuccessBox("Success", self.LastListValue .. " has been saved successfully!")
 	end
 
 	self.HasEdited = false
