@@ -64,6 +64,7 @@ function panel:Init()
 
 	self.Edited = false
 	self.Clicked = false
+	self.Changed = false
 
 	--Draw our custom colours if we have any
 	if (self.Settings.Colours != nil) then
@@ -118,14 +119,10 @@ function panel:MyThink()
 		self.PropertySheet = vgui.Create("DPropertySheet", self )
 		self.PropertySheet:Dock(FILL)
 		self.Edited = false
-
-		local admin = {}
-		if (MediaPlayer.LocalPlayer:IsAdmin()) then
-			admin = MediaPlayer.AdminSettings
-		end
+		self.Changed = false
 
 		self:FillPropertySheet({
-			Server = admin,
+			Server = MediaPlayer.AdminSettings,
 			Client = MediaPlayer.Settings
 		})
 	end
@@ -307,8 +304,10 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 		self.SendButton.DoClick = function()
 			if (self.Edited) then
 				MediaPlayer.SetAdminSettings()
+
 				self.SendButton:SetDisabled(true)
 				self.Edited = false
+				self.Changed = false
 				MediaPlayer.CreateSuccessBox("Success","Server settings succesfully applied", 2)
 			end
 		end
@@ -442,6 +441,7 @@ function panel:UpdateTable(title, v, admin)
 				self.SendButton:SetDisabled(false)
 				self.SendButton:Show()
 				self.Edited = true
+				self.Changed = true
 			end
 		end
 
@@ -558,6 +558,8 @@ function panel:AdminSettingsRow(v, k, row )
 			self.SendButton:Show()
 			self.Edited = true
 		end
+
+		self.Changed = true
 
 		if ( MediaPlayer.AdminSettings[v.Key][v.Type].DefValue.__unpack) then
 			MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = MediaPlayer.AdminSettings[v.Key][v.Type].DefValue.__unpack(MediaPlayer.AdminSettings[v.Key][v.Type], k, tab)

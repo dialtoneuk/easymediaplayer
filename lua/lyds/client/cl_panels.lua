@@ -21,8 +21,21 @@ MediaPlayer.Panels = {
 
 			--refreshes
 			panel.OnClose = function(self)
-				RunConsoleCommand("media_create_cl")
-				self:Hide()
+
+				if ( MediaPlayer.LocalPlayer:IsAdmin() and self.Changed) then
+					MediaPlayer.CreateWarningBox("Warning!","Admin settings hasnt been saved! please make sure everythings been saved or press close again to ignore")
+					self.Changed = false
+					panel:Show()
+				else
+					if (self.Edited or self.Clicked) then
+						RunConsoleCommand("media_refresh_cl")
+					else
+						if (settings.Hide.Value == false ) then
+							MediaPlayer.CreateWarningBox("Warning!","youtube_settings_hide is false so settings will always be visible")
+							panel:Show()
+						end
+					end
+				end
 			end
 
 			if (settings.Hide.Value == false ) then

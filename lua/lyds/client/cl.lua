@@ -289,7 +289,7 @@ function MediaPlayer.SetAdminSettings()
 	if (table.IsEmpty(MediaPlayer.AdminSettings)) then return end
 
 	net.Start("MediaPlayer.SetAdminSettings")
-	net.WriteTable(MediaPlayer.AdminSettings)
+		net.WriteTable(MediaPlayer.AdminSettings)
 	net.SendToServer()
 end
 
@@ -323,6 +323,11 @@ Creates all components
 
 concommand.Add("media_create_cl", function()
 	MediaPlayer.InstantiatePanels(true) --
+end)
+
+
+concommand.Add("media_settings_create", function()
+	MediaPlayer.ReinstantiatePanel("SettingsPanel")
 end)
 
 --[[

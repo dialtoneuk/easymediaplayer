@@ -44,6 +44,10 @@ local server = {
         Value = true,
         Comment = "The name of who ever dislikes a video will be announced in chat"
     },
+    media_announce_settings = {
+        Value = true,
+        Comment = "Announces settings updates to all the admins online."
+    },
     media_tips_enabled = {
         Value = true,
         Comment = "Disable tips completely here"

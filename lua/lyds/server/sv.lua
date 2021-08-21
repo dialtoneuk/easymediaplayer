@@ -153,10 +153,24 @@ net.Receive("MediaPlayer.SetAdminSettings",function(len, ply)
 			errorBad("player with the steam id of " .. ply:SteamID() .. " has tried to add settings")
 		end
 
+
 		MediaPlayer.Settings[k] = v
 	end
 
+	print("admin " .. ply:GetName() .. " has changed setting values at " .. util.DateStamp())
 	MediaPlayer.SetConvars()
+
+	for k,v in pairs(player.GetAll()) do
+		if (!v:IsAdmin()) then continue end
+
+		v:SendAdminSettings()
+
+		if (MediaPlayer.IsSettingTrue("media_announce_settings")) then
+			v:SendMessage("Admin settings have been updated by " .. ply:GetName()  .. " refreshing settings panel...")
+		end
+
+		v:ConCommand("media_settings_create")
+	end
 end)
 
 --[[

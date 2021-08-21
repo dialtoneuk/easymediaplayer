@@ -15,7 +15,7 @@ function MediaPlayer.PackDefaultPresets()
 
 		v = string.Replace(v, " ", "_")
 
-		local tab = util.TableToJSON(file.Read("data/presets/" .. v , "thirdparty"))
+		tab = util.TableToJSON(file.Read("data/presets/" .. v , "thirdparty"))
 
 		if (tab == nil ) then
 			error("bad json in " .. v .. ".json")

@@ -11,7 +11,8 @@ panel.DefaultSettings = {
 		"player",
 		"playlist",
 		"admin",
-		"vote"
+		"vote",
+		"search"
 	},
 	Keys = {
 		"colours",
@@ -184,7 +185,7 @@ function panel:CreatePreset(title, author, add_default)
 	end
 
 	--any special chars
-	if (string.match(title, '[\\/:;*£-+`=$?".@#~+^,()!{}<>|]')) then
+	if (string.match(title, "[\\/:;*£-+`=$?\".@#~+^,()!{}<>|]")) then
 		return false
 	end
 
@@ -378,34 +379,6 @@ function panel:FillPresetEditor()
 	self.UpdateButton:SetTall(20)
 	self.UpdateButton:SetText("Set Setting To Current Setting")
 
-	if (IsValid(self.UpdateAllButton)) then self.UpdateAllButton:Remove() end
-
-	self.UpdateAllButton = vgui.Create("DButton", p )
-	self.UpdateAllButton:SetTall(15)
-	self.UpdateAllButton:Dock(TOP)
-	self.UpdateAllButton:SetDisabled(true)
-	self.UpdateAllButton:DockMargin(0,self:GetPadding(),0,0)
-	self.UpdateAllButton:SetTall(30)
-	self.UpdateAllButton:SetText("Sync All Settings To Current")
-
-	self.UpdateAllButton.DoClick = function()
-
-		if (self:IsPresetLocked()) then
-			return
-		end
-
-		for k,v in pairs(self.Preset.Settings) do
-			local tab = table.Copy(MediaPlayer.GetSetting(k))
-			self.Preset.Settings[k] = tab.Value
-			self.HasEdited = true
-			self:FillPresetEditor()
-		end
-	end
-
-	if (!self:IsPresetLocked() ) then
-		self.UpdateAllButton:SetDisabled(false)
-	end
-
 	self.UpdateButton.DoClick = function()
 
 		if (self:IsPresetLocked()) then
@@ -422,6 +395,35 @@ function panel:FillPresetEditor()
 			self.HasEdited = true
 			self:FillPresetEditor()
 		end
+	end
+
+	if (IsValid(self.UpdateAllButton)) then self.UpdateAllButton:Remove() end
+
+	self.UpdateAllButton = vgui.Create("DButton", p )
+	self.UpdateAllButton:SetTall(15)
+	self.UpdateAllButton:Dock(TOP)
+	self.UpdateAllButton:SetDisabled(true)
+	self.UpdateAllButton:DockMargin(0,self:GetPadding(),0,0)
+	self.UpdateAllButton:SetTall(30)
+	self.UpdateAllButton:SetText("Sync All Settings To Current")
+
+	self.UpdateAllButton.DoClick = function()
+
+		if (self:IsPresetLocked()) then
+			return
+		end
+
+		self.HasEdited = true
+
+		for k,v in pairs(self.Preset.Settings) do
+			local tab = table.Copy(MediaPlayer.GetSetting(k))
+			self.Preset.Settings[k] = tab.Value
+			self:FillPresetEditor()
+		end
+	end
+
+	if (!self:IsPresetLocked() ) then
+		self.UpdateAllButton:SetDisabled(false)
 	end
 
 	if (IsValid(self.PresetPreview)) then self.PresetPreview:Remove() end
