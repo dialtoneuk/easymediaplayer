@@ -171,15 +171,22 @@ function panel:EmptyPanel()
 	if (IsValid(self.MiscPanel)) then self.MiscPanel:Remove() end
 
 	self.MiscPanel = vgui.Create("DButton", self.Grid )
-	self.MiscPanel:SetWide(self:GetWidth(true))
+	self.MiscPanel:SetWide(self:GetWidth(true, true ) -  self:GetPadding() * 2)
 	self.MiscPanel:SetTall( self.Settings.Size.Value.RowHeight)
 	self.MiscPanel:SetText("")
+
+
+	local str = MediaPlayer.Name
+
 	self.MiscPanel.Paint = function(s)
-		draw.RoundedBox(5, 0, 0, self.Settings.Size.Value.Width, self.Settings.Size.Value.RowHeight, MediaPlayer.Colours.FadedGray )
-		draw.SimpleTextOutlined( "Easy", "SmallText", 10,12, MediaPlayer.Colours.FadedWhite, 5, 1, 0.5, MediaPlayer.Colours.Black )
-		draw.SimpleTextOutlined( "MediaPlayer", "BiggerText", 10, 30, MediaPlayer.Colours.White, 5, 1, 0.5, MediaPlayer.Colours.Black )
-		draw.SimpleTextOutlined( "v" .. MediaPlayer.Version, "MediumText", 170, 28, MediaPlayer.Colours.White, 5, 1, 0.5, MediaPlayer.Colours.Black )
-		draw.SimpleTextOutlined("No videos queued - click me to search!", "MediumText", 10, 55, MediaPlayer.Colours.FadedWhite, 5, 1, 0.5, MediaPlayer.Colours.Black )
+
+		surface.SetFont("BiggerText")
+		local len = surface.GetTextSize(str)
+
+		draw.RoundedBox(5, 0, 0, s:GetWide() - self:GetPadding() * 3, self.Settings.Size.Value.RowHeight, self.Settings.Colours.Value.ItemBackground )
+		draw.SimpleTextOutlined( str, "BiggerText", 10, 30, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		draw.SimpleTextOutlined( "v" .. MediaPlayer.Version, "MediumText", len + 15, 30, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		draw.SimpleTextOutlined("No videos queued - click me to search!", "MediumText", 10, 50,self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 	end
 
 	self.MiscPanel.DoClick = function(s)
