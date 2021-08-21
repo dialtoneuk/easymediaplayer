@@ -111,6 +111,9 @@ end
 
 function panel:MyThink()
 	if (self:HasRescaled() and MediaPlayer.Settings != nil ) then
+
+		if (!IsValid(self.PropertySheet)) then return end
+
 		self.PropertySheet:Remove()
 		self.PropertySheet = vgui.Create("DPropertySheet", self )
 		self.PropertySheet:Dock(FILL)
@@ -125,6 +128,24 @@ function panel:MyThink()
 			Server = admin,
 			Client = MediaPlayer.Settings
 		})
+	end
+
+	if (self:GetWidth() < 400 ) then
+
+		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " .. math.floor( self:GetWidth() ) .. " pixels wide! We've put it back for you. Try again!")
+		self.Settings.Size.Value.Width = 600
+		MediaPlayer.ChangeSetting("media_settings_size", self.Settings.Size.Value)
+		MediaPlayer.InstantiatePanels(true)
+		self:Remove()
+	end
+
+	if (self:GetHeight() < 400 ) then
+
+		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " .. math.floor( self:GetHeight() ) .. " pixels tall! We've put it back for you. Try again!")
+		self.Settings.Size.Value.Height = 600
+		MediaPlayer.ChangeSetting("media_settings_size", self.Settings.Size.Value)
+		MediaPlayer.InstantiatePanels(true)
+		self:Remove()
 	end
 end
 

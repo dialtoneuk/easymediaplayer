@@ -461,6 +461,10 @@ Likes a current video
 concommand.Add("media_like_video", function(ply, cmd, args)
 	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have liked a video too recently") return end
 	if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
+	if (ply:GetNWBool("engaged")) then
+		ply:SendMessage("You have already engaged with this video!")
+		return
+	end
 
 	local video
 
@@ -468,9 +472,23 @@ concommand.Add("media_like_video", function(ply, cmd, args)
 
 	if (video) then
 		MediaPlayer.LikeVideo(video)
-		MediaPlayer.SendHistoryForVideo(ply, MediaPlayer.History[video.Video])
+
+		for k,v in pairs(player.GetAll()) do
+			MediaPlayer.SendHistoryForVideo(v, MediaPlayer.History[video.Video])
+
+			if (MediaPlayer.IsSettingTrue("media_announce_likes")) then
+				v:SendMessage( ply:GetName() .. " has liked this video!")
+			end
+		end
+
 		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.GetNewCooldown("Interaction") )
-		ply:SendMessage("Video liked!")
+
+		if (!MediaPlayer.IsSettingTrue("media_announce_dislikes")) then
+			ply:SendMessage("Video liked!")
+		end
+
+
+		ply:SetNWBool("engaged", true )
 	end
 end)
 
@@ -481,15 +499,32 @@ Dislikes a current video
 concommand.Add("media_dislike_video", function(ply, cmd, args)
 	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have disliked a video too recently") return end
 	if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
+	if (ply:GetNWBool("engaged")) then
+		ply:SendMessage("You have already engaged with this video!")
+		return
+	end
 
 	local video
 	if (args[1] != nil ) then video = MediaPlayer.GetVideo(args[1]) else video = MediaPlayer.CurrentVideo end
 
 	if (video) then
 		MediaPlayer.DislikeVideo(video)
-		MediaPlayer.SendHistoryForVideo(ply, MediaPlayer.History[video.Video])
+
+		for k,v in pairs(player.GetAll()) do
+			MediaPlayer.SendHistoryForVideo(v, MediaPlayer.History[video.Video])
+
+			if (MediaPlayer.IsSettingTrue("media_announce_dislikes")) then
+				v:SendMessage( ply:GetName() .. " has disliked this video!")
+			end
+		end
+
 		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.GetNewCooldown("Interaction") )
-		ply:SendMessage("Video disliked!")
+
+		if (!MediaPlayer.IsSettingTrue("media_announce_dislikes")) then
+			ply:SendMessage("Video disliked!")
+		end
+
+		ply:SetNWBool("engaged", true )
 	end
 end)
 

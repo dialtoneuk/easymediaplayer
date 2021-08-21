@@ -3,15 +3,15 @@ things to do:
 !Play argument parsing
 
 table additions inside setting box - so can add new custom tips inside settings panel
-the warning box for when bad stuff happen
+
 implement a changelog
 
 implement inverse position + options as default setting inside CL panel base
-position exactly in center of screen toggle settings for UI elemenets
 
-PRESETS!
-Presets which are automatically adopted when you join the server as a default preset so default preset
-
+Preset - add new preset
+    -check name is not sever_*
+    -check file is fresh
+    -init with some default settings
 More admin fuctionality
  - Remove all a users videos
  - etc

@@ -2,6 +2,25 @@ local panel = {}
 
 panel.Name = "settings"
 
+panel.DefaultSettings = {
+	Panels = {
+		"warning",
+		"success",
+		"base",
+		"settings",
+		"player",
+		"playlist",
+		"admin",
+		"vote"
+	},
+	Keys = {
+		"colours",
+		"size",
+		"position",
+		"options"
+	}
+}
+
 function panel:Init()
 	self:BaseInit()
 
@@ -108,7 +127,8 @@ end
 function panel:FillPresetCreator()
 	local label_title = vgui.Create("DLabel", self.PresetCreator)
 	label_title:Dock(TOP)
-	label_title:SetText("Preset Title (must be unique)")
+	label_title:SetText("Preset Title (must be unique and alphabetical containing no special characters)")
+	label_title:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	self.PresetTitle = vgui.Create("DTextEntry", self.PresetCreator)
 	self.PresetTitle:Dock(TOP)
@@ -137,15 +157,62 @@ function panel:FillPresetCreator()
 	add:SetText("Create Preset")
 
 	add.DoClick = function(s)
+		local result = self:CreatePreset(self.PresetTitle:GetValue(), self.PresetAuthor:GetValue(), self.Checkbox:GetChecked())
 
-		if (!self:CreatePreset(self.PresetAuthor:GetValue(), self.PresetTitle:GetValue())) then
-			MediaPlayer.CreateWarningBox("Oh no!","Something went wrong making that preset! make sure the title has no spaces and only includes underscores as well as plain text, no extensions!")
+		if (!result) then
+			MediaPlayer.CreateWarningBox("Unsuccessful","Please make sure the title is not taken by something else and it also doesn't contain any special characters. Please change: " .. self.PresetTitle:GetValue())
+		else
+			self.ListView:AddLine(result)
+			self.PresetCreator:Hide()
+			self:CreateAddButton()
 		end
 	end
 end
 
-function panel:CreatePreset(title, autor)
-	return false
+function panel:CreatePreset(title, author, add_default)
+
+	title = string.Trim(title)
+	title = string.Replace(title, " ", "_")
+	title = string.Replace(title, "[", "")
+	title = string.Replace(title, "]", "")
+	title = string.Replace(title, "%", "")
+	title = string.Replace(title, ".json", "")
+	title = string.lower(title)
+
+	if (title == "" or title == "_"  or string.len(title) > 52) then
+		return false
+	end
+
+	--any special chars
+	if (string.match(title, '[\\/:;*£-+`=$?".@#~+^,()!{}<>|]')) then
+		return false
+	end
+
+	local settings = {}
+
+	if (add_default) then
+		for k,v in pairs(self.DefaultSettings.Panels) do
+			for _,setting in pairs(self.DefaultSettings.Keys) do
+				settings["media_" .. v .. "_" .. setting] = MediaPlayer.GetSetting("media_" .. v .. "_" .. setting).Value
+			end
+		end
+	end
+
+	local preset =  {
+		Author = author,
+		Locked = false,
+		Description = "User created preset",
+		Settings = settings
+	}
+
+	if (file.Exists("lyds/presets/" .. title .. ".json", "DATA")) then
+		return false
+	end
+
+	MediaPlayer.SavePreset(title, table.Copy(preset))
+	self.Presets[title .. ".json"] = table.Copy(preset)
+
+	return title .. ".json"
 end
 
 function panel:GetPresets()
@@ -318,8 +385,22 @@ function panel:FillPresetEditor()
 	self.UpdateAllButton:Dock(TOP)
 	self.UpdateAllButton:SetDisabled(true)
 	self.UpdateAllButton:DockMargin(0,self:GetPadding(),0,0)
-	self.UpdateAllButton:SetTall(20)
-	self.UpdateAllButton:SetText("Set All Settings To Current Settings")
+	self.UpdateAllButton:SetTall(30)
+	self.UpdateAllButton:SetText("Sync All Settings To Current")
+
+	self.UpdateAllButton.DoClick = function()
+
+		if (self:IsPresetLocked()) then
+			return
+		end
+
+		for k,v in pairs(self.Preset.Settings) do
+			local tab = table.Copy(MediaPlayer.GetSetting(k))
+			self.Preset.Settings[k] = tab.Value
+			self.HasEdited = true
+			self:FillPresetEditor()
+		end
+	end
 
 	if (!self:IsPresetLocked() ) then
 		self.UpdateAllButton:SetDisabled(false)
@@ -362,6 +443,7 @@ function panel:FillPresetEditor()
 		RunConsoleCommand("media_create_cl")
 
 		MediaPlayer.CreateSuccessBox("Success","Preset successfully applied")
+		RunConsoleCommand("media_settings")
 	end
 
 	if (MediaPlayer.LocalPlayer:IsAdmin() ) then
@@ -381,20 +463,21 @@ function panel:FillPresetEditor()
 			end
 
 			if (self.LastListValue == "server_preset.json") then
-				MediaPlayer.CreateWarningBox("Error", "You cannot apply server_preset.json as it is the same as server.json and only exists on the server.", 4)
+				MediaPlayer.CreateWarningBox("Error", "server_preset.json is the same as server.json and only exists on the server.", 4)
 				return
 			end
 
 			if (self.LastListValue == "server.json") then
-				MediaPlayer.CreateWarningBox("Error", "You cannot apply server.json as it is the same as server_preset.json and only exists on the client.", 4)
+				MediaPlayer.CreateWarningBox("Error", "server.json is the same as server_preset.json and only exists on the client.", 4)
 				return
 			end
 
 			MediaPlayer.ApplyInitialPreset(self.Preset)
-			MediaPlayer.CreateSuccessBox("Success", "Server initial preset successfully applied!", 4)
 			MediaPlayer.RefreshDefaultPreset()
-
 			RunConsoleCommand("media_create_cl")
+
+			MediaPlayer.CreateSuccessBox("Success", "Server initial preset successfully applied!", 4)
+			RunConsoleCommand("media_settings")
 		end
 	end
 

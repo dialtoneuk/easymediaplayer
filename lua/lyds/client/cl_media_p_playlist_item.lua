@@ -5,8 +5,6 @@
 
 local panel = {}
 panel.Name = "playlist"
-panel.RescaleHeight = false
-panel._Reposition = false
 
 --the video data
 panel.Video = {}
@@ -16,16 +14,12 @@ panel.Settings = {
 	Options = "options"
 }
 
-panel.Invert = {
-	X = true,
-	Y = false
-}
-
 --[[
 	Initializes
 --]]
 
 function panel:Init()
+	self:SetIgnoreRescaling(true, true)
 	self:BaseInit()
 
 	self:DockPadding(10,10,0,5)
@@ -36,14 +30,14 @@ function panel:Init()
 	self.Text:Dock(TOP)
 	self.Text:SetWrap(true)
 	self.Text:SetWide(self:GetWidth())
-	self.Text:SetTall(40)
+	self.Text:SetTall(self.Settings.Size.Value.RowHeight / 2)
 	self.Text:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	self.Duration = vgui.Create("DLabel", self )
-	self.Duration:Dock(RIGHT)
-	self.Duration:SetWide(self:GetHeight() / 2)
-	self.Duration:SetFont("BigText")
-	self.Duration:DockMargin(0,0,self:GetPadding() * 2, self:GetPadding() * 2)
+	self.Duration:SetPos(self:GetWidth() - ( 85  + self:GetPadding() ), self.Settings.Size.Value.RowHeight - ( 20 + self:GetPadding() ) )
+	self.Duration:SetWide(self:GetWidth() / 2)
+	self.Duration:SetFont("SmallText")
+	self.Duration:DockMargin(0,0,0, 0)
 	self.Duration:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	self.TextOwner = vgui.Create("DLabel", self )
@@ -62,9 +56,9 @@ function panel:Init()
 				surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 			end
 
-			surface.DrawRect(0, 0, self.Settings.Size.Value.Width - (self.Settings.Size.Value.Padding * 2), self.Settings.Size.Value.RowHeight )
+			surface.DrawRect(0, 0, p:GetWidth(true, true) - self:GetPadding(),  self.Settings.Size.Value.RowHeight )
 			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0, self.Settings.Size.Value.Width - (self.Settings.Size.Value.Padding * 2), self.Settings.Size.Value.RowHeight, self.Settings.Options.Value.BorderThickness )
+			surface.DrawOutlinedRect(0, 0,  p:GetWidth(true, true ) - self:GetPadding(), self.Settings.Size.Value.RowHeight,  self.Settings.Options.Value.BorderThickness )
 	  	end
 	end
 
@@ -129,6 +123,8 @@ function panel:Init()
 
 		menu:Open()
 	end
+
+	self:SetTall(self:SetTall( self.Settings.Size.Value.RowHeight ))
 end
 
 --[[
@@ -146,6 +142,10 @@ function panel:SetVideo(video)
 	self.Item = video
 end
 
+function panel:MyThink()
+	self:SetTall( self.Settings.Size.Value.RowHeight )
+end
+
 --[[
 	Sets the texts
 --]]
@@ -159,7 +159,7 @@ function panel:SetItemText()
 	end
 
 	self.Text:SetText(self.Item.Title .. " by " .. self.Item.Creator )
-	self.Duration:SetText( mins .. ":" .. string.Replace(result,"-", "") )
+	self.Duration:SetText( mins .. " mins " .. string.Replace(result,"-", "") .. " secs")
 
 	local str = self.Item.Owner.Name
 

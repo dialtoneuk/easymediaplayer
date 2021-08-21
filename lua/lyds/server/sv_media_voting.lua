@@ -139,12 +139,22 @@ function MediaPlayer.SendVoteToPlayer( ply )
 
 	net.Start("MediaPlayer.NewVote")
 		--remove the owner field
-		local t = table.Merge({
-			Owner = {
-				Name = ply:GetName(),
-				SteamID = ply:SteamID()
-			},
-		}, MediaPlayer.CurrentVote)
+		local t = table.Copy(MediaPlayer.CurrentVote)
+
+		t.Owner = {
+			Name = ply:GetName(),
+			SteamID = ply:SteamID()
+		}
+
+		if (t.CurrentVideo) then t.CurrentVideo = nil end
+
+		for k,v in pairs(t) do
+			if (type(v) == "function") then
+				t[k] = nil
+			end
+		end
+
+		PrintTable(t)
 
 		net.WriteTable(t)
 	net.Send(ply)
@@ -221,7 +231,7 @@ function MediaPlayer.StartVote(vote, ply)
 		v.Required = count - math.floor(count / req)
 	end
 
-	if (v.Required >= count) then ply:SendMessage("Must have at over " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
+	if (v.Required > count) then ply:SendMessage("Must have at over " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
 
 	if (v.OnStart != nil ) then
 		local result = v.OnStart()
@@ -301,7 +311,7 @@ function MediaPlayer.ExecuteVote(vote)
 
 		local count = #player.GetAll()
 
-		if (MediaPlayer.CurrentVote.Count <= math.floor( count / 2 ) ) then return false end
+		if (MediaPlayer.CurrentVote.Count < math.floor( count / 2 ) ) then return false end
 
 		return true
 	end

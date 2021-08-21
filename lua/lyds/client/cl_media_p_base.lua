@@ -94,6 +94,11 @@ end
 function base:SetInverted(x, y)
     y = y or false
     x = x or true
+
+    if ( self.Invert == nil ) then
+        self.Invert = {}
+    end
+
     self.Invert.X = x
     self.Invert.Y = y
 end
@@ -116,23 +121,27 @@ function base:BaseInit()
     self.HasRescaled = self.HasResized
 
     self.Centered = false
-    self.Invert = {
+
+    self.Invert = self.Invert or {
         X = false,
         Y = false
     }
+
     self._Changes = {}
-    self.Resize = {
+
+    self.Resize = self.Resize or {
         Width = true,
         Height = true
     }
+
     self._Resized = false
 
     if (self.Name == nil ) then
         self.Name = "base"
     end
 
-    self:CacheThink()
     self:SetPanelSettings()
+    self:CacheThink()
 end
 
 
@@ -183,6 +192,11 @@ end
 function base:SetIgnoreRescaling(width, height)
     width = width or true
     height = height or true
+
+
+    if ( self.Resize == nil ) then
+        self.Resize = {}
+    end
 
     self.Resize.Width = width
     self.Resize.Height = height

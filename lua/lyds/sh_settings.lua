@@ -1,7 +1,7 @@
 --server settings
 local server = {
     media_playlist_limit = {
-        Value = 10,
+        Value = 50,
         Comment = "The maxium amount of videos the server will broadcast at any given time to all players, regardless of how many playlist items the client is set to draw"
     },
     media_vote_time = {
@@ -36,12 +36,20 @@ local server = {
         Value = true,
         Comment = "New votes will be announced in chat"
     },
+    media_announce_likes = {
+        Value = true,
+        Comment = "The name of who ever likes a video be announced in chat"
+    },
+    media_announce_dislikes = {
+        Value = true,
+        Comment = "The name of who ever dislikes a video will be announced in chat"
+    },
     media_tips_enabled = {
         Value = true,
         Comment = "Disable tips completely here"
     },
     media_tips_frequency = {
-        Value = 180,
+        Value = 600, --every 10 mins
         Max = 1000,
         Comment = "In seconds, how frequent tips are"
     },
@@ -60,7 +68,7 @@ local server = {
         Comment = "Cooldown in seconds a player experiences after playing"
     },
     media_cooldown_vote = {
-        Value = 60,
+        Value = 10,
         Max = 500,
         Comment = "Cooldown in seconds a player experiences after starting a vote",
     },
@@ -280,7 +288,7 @@ local client = {
     },
     media_settings_hide = {
         Value = true,
-        Comment = "Will keep the settings window open forever (recommended when designing looks)"
+        Comment = "Will keep the settings window open forever if set to false (recommended when designing looks without all show)"
     },
     media_playlist_show_limit = {
         Value = 10,
@@ -350,14 +358,15 @@ local client = {
         }
     },
     media_settings_size = {
-        Min = 1,
+        Min = 15,
         Max = 2000,
         Value = {
-            Width = 715,
-            Height = 715,
-            Padding = 5
+            Width = 750,
+            Height = 750,
+            Padding = 15
         },
-        Refresh = false
+        Refresh = false,
+        SlowUpdate = 1,
     },
     media_settings_position = {
         Min = 10,
@@ -550,6 +559,14 @@ local client = {
         }
     },
     media_player_options = {
+        Min = 1,
+        Max = 25,
+        Value = {
+            BorderThickness = 2,
+            DisplayTitle = true
+        }
+    },
+    media_base_options = {
         Min = 1,
         Max = 25,
         Value = {

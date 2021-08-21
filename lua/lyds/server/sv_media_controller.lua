@@ -169,6 +169,11 @@ function MediaPlayer.StartVideo(video, callback)
 		MediaPlayer.AnnounceVideo()
 	end
 
+	--for our voting
+	for k,v in pairs(player.GetAll()) do
+		v:SetNWBool("engaged", false )
+	end
+
 	timer.Create("MediaPlayer.VideoTimer", video.Duration, 1, function()
 		MediaPlayer.StopVideo()
 		callback()

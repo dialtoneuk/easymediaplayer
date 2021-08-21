@@ -15,6 +15,8 @@ function panel:Init()
 	self.Label:SetFont("BiggerText")
 	self.Label:SetTextColor( self.Settings.Colours.Value.TextColor )
 
+	self:SetDockMargin(self.Label, 4)
+
 	self.Paint = function(s, w, h)
 		surface.SetDrawColor(self.Settings.Colours.Value.Background)
 		surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
@@ -42,7 +44,7 @@ function panel:Init()
 		timer.Remove("warning_panel_timer")
 	end
 
-	self:SetDockPadding()
+	self:SetDockPadding(self, 4)
 end
 
 function panel:OnClicked()

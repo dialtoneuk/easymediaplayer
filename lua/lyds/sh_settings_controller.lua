@@ -243,6 +243,8 @@ function MediaPlayer.GetSetting(key, assure_type)
 			for kind,v in pairs(keys) do
 				if (assure_type and kind == MediaPlayer.Types.BOOL) then
 					v.Value = ( v.Value == 1 or v.Value == true )
+				elseif (assure_type and kind == MediaPlayer.Types.INT) then
+					v.Value = math.Truncate(v.Value)
 				end
 
 				return v
@@ -321,7 +323,7 @@ if ( CLIENT ) then
 				elseif (kind == MediaPlayer.Types.TABLE ) then
 					MediaPlayer.Settings[k][kind].Value = table.Copy(v.DefValue)
 				else
-					MediaPlayer.Settings[k][kind].Value = (0 + v.DefValue)
+					MediaPlayer.Settings[k][kind].Value = v.DefValue
 				end
 			end
 		end
