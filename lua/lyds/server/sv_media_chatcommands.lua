@@ -51,9 +51,9 @@ MediaPlayer.RegisteredCommands = {
 
 			if (!MediaPlayer.HasCurrentVote() ) then return end
 
-			if (!ply:GetNWBool("Voted")) then
+			if (!ply:GetNWBool("MediaPlayer.Voted")) then
 				MediaPlayer.AddToCount()
-				ply:SetNWBool("Voted", true )
+				ply:SetNWBool("MediaPlayer.Voted", true )
 			else
 				ply:SendMessage("You have already voted in this vote!")
 			end

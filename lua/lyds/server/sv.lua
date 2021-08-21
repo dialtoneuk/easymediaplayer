@@ -461,7 +461,7 @@ Likes a current video
 concommand.Add("media_like_video", function(ply, cmd, args)
 	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have liked a video too recently") return end
 	if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
-	if (ply:GetNWBool("engaged")) then
+	if (ply:GetNWBool("MediaPlayer.Engaged")) then
 		ply:SendMessage("You have already engaged with this video!")
 		return
 	end
@@ -488,7 +488,7 @@ concommand.Add("media_like_video", function(ply, cmd, args)
 		end
 
 
-		ply:SetNWBool("engaged", true )
+		ply:SetNWBool("MediaPlayer.Engaged", true )
 	end
 end)
 
@@ -499,7 +499,7 @@ Dislikes a current video
 concommand.Add("media_dislike_video", function(ply, cmd, args)
 	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have disliked a video too recently") return end
 	if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
-	if (ply:GetNWBool("engaged")) then
+	if (ply:GetNWBool("MediaPlayer.Engaged")) then
 		ply:SendMessage("You have already engaged with this video!")
 		return
 	end
@@ -524,7 +524,7 @@ concommand.Add("media_dislike_video", function(ply, cmd, args)
 			ply:SendMessage("Video disliked!")
 		end
 
-		ply:SetNWBool("engaged", true )
+		ply:SetNWBool("MediaPlayer.Engaged", true )
 	end
 end)
 

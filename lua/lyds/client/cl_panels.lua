@@ -91,7 +91,9 @@ MediaPlayer.Panels = {
 		Settings = {
 			--can define extra settings here
 			--size, is centered and show is implicit
-			Show_Constant = "show_constant"
+			Show_Constant = "show_constant",
+			Context = "show_in_context",
+			Scoreboard = "show_in_scoreboard",
 		},
 		PostInit = function(panel, key, settings)
 			panel:Reposition()
@@ -99,7 +101,7 @@ MediaPlayer.Panels = {
 			if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
 				panel:SetVideo(MediaPlayer.CurrentVideo)
 
-				if (!settings.Hide.Value) then
+				if (settings.Show_Constant.Value or !settings.Hide.Value and !settings.Context.Value and !settings.Scoreboard.Value) then
 					panel:Show()
 				end
 			else
@@ -111,9 +113,18 @@ MediaPlayer.Panels = {
 		OnContext = function(panel, key, settings, opened)
 			panel:SetKeyboardInputEnabled(opened)
 			panel:SetMouseInputEnabled(opened)
+
+			if (settings.Context.Value and !settings.Show_Constant.Value) then
+				panel:SetVisible(opened)
+			end
 		end,
 		OnScoreboard =  function(panel, key, settings, opened)
-			MediaPlayer.LoadedPanels[key].OnContext(panel,key,settings,opened)
+			panel:SetKeyboardInputEnabled(opened)
+			panel:SetMouseInputEnabled(opened)
+
+			if (settings.Scoreboard.Value and !settings.Show_Constant.Value) then
+				panel:SetVisible(opened)
+			end
 		end
 	},
 	VotePanel = {

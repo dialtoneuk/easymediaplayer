@@ -429,6 +429,8 @@ local write = function(preset)
 		preset.Locked = true
 	end
 
+	print("writing server.json")
+
 	file.Write("lyds/presets/server.json", util.TableToJSON(preset, true))
 end
 
@@ -648,7 +650,10 @@ net.Receive("MediaPlayer.SendCurrentVideo",function()
 
 	panel = MediaPlayer.GetPanel("PlayerPanel")
 	panel:SetVideo(MediaPlayer.CurrentVideo)
-	panel:Show()
+
+	if (MediaPlayer.IsSettingTrue("media_player_show_constant")) then
+		panel:Show()
+	end
 end)
 
 --[[

@@ -132,20 +132,25 @@ function panel:MyThink()
 
 	if (self:GetWidth() < 400 ) then
 
-		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " .. math.floor( self:GetWidth() ) .. " pixels wide! We've put it back for you. Try again!")
+		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
+			math.floor( self:GetWidth() ) .. " pixels wide! We've put it back for you. Try again!")
+
 		self.Settings.Size.Value.Width = 600
 		MediaPlayer.ChangeSetting("media_settings_size", self.Settings.Size.Value)
-		MediaPlayer.InstantiatePanels(true)
+
 		self:Remove()
+		MediaPlayer.InstantiatePanels(true)
 	end
 
 	if (self:GetHeight() < 400 ) then
 
-		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " .. math.floor( self:GetHeight() ) .. " pixels tall! We've put it back for you. Try again!")
+		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
+			math.floor( self:GetHeight() ) .. " pixels tall! We've put it back for you. Try again!")
 		self.Settings.Size.Value.Height = 600
 		MediaPlayer.ChangeSetting("media_settings_size", self.Settings.Size.Value)
-		MediaPlayer.InstantiatePanels(true)
+
 		self:Remove()
+		MediaPlayer.InstantiatePanels(true)
 	end
 end
 

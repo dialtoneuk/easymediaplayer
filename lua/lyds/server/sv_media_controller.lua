@@ -171,7 +171,7 @@ function MediaPlayer.StartVideo(video, callback)
 
 	--for our voting
 	for k,v in pairs(player.GetAll()) do
-		v:SetNWBool("engaged", false )
+		v:SetNWBool("MediaPlayer.Engaged", false )
 	end
 
 	timer.Create("MediaPlayer.VideoTimer", video.Duration, 1, function()

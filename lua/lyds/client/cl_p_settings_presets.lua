@@ -442,7 +442,7 @@ function panel:FillPresetEditor()
 		MediaPlayer.ApplyPreset(self.Preset)
 		RunConsoleCommand("media_create_cl")
 
-		MediaPlayer.CreateSuccessBox("Success","Preset successfully applied")
+		MediaPlayer.CreateSuccessBox("Success","Preset " .. self.LastListValue .. " successfully applied")
 		RunConsoleCommand("media_settings")
 	end
 
@@ -474,10 +474,8 @@ function panel:FillPresetEditor()
 
 			MediaPlayer.ApplyInitialPreset(self.Preset)
 			MediaPlayer.RefreshDefaultPreset()
-			RunConsoleCommand("media_create_cl")
-
-			MediaPlayer.CreateSuccessBox("Success", "Server initial preset successfully applied!", 4)
-			RunConsoleCommand("media_settings")
+			MediaPlayer.InstantiatePanels(true)
+			MediaPlayer.CreateSuccessBox("Success", "Initial preset uploaded and set successfully applied!", 4)
 		end
 	end
 

@@ -266,6 +266,14 @@ local client = {
         Value = true,
         Comment = "Search window will open center screen"
     },
+    media_player_show_in_context = {
+        Value = false,
+        Comment = "Show the player when you press 'c' / go in the context menu"
+    },
+    media_player_show_in_scoreboard = {
+        Value = true,
+        Comment = "Show the player when you press 'tab' / see the scoreboard"
+    },
     media_playlist_show_in_context = {
         Value = false,
         Comment = "Show the playlist when you press 'c' / go in the context menu"

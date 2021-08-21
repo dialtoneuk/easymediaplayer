@@ -124,7 +124,7 @@ Broadcasts End vote to the server
 
 function MediaPlayer.BroadcastEndVote()
 	for k,v in pairs(player.GetAll()) do
-		v:SetNWBool("Voted", false )
+		v:SetNWBool("MediaPlayer.Voted", false )
 		MediaPlayer.SendEndVoteToPlayer(v)
 	end
 end

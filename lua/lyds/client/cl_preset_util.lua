@@ -14,11 +14,19 @@ function MediaPlayer.PackDefaultPresets()
 	for k,v in pairs(files) do
 
 		v = string.Replace(v, " ", "_")
-		tab[ v ] = file.Read("data/presets/" .. v , "thirdparty")
+
+		local tab = util.TableToJSON(file.Read("data/presets/" .. v , "thirdparty"))
+
+		if (tab == nil ) then
+			error("bad json in " .. v .. ".json")
+		end
+
+		tab.Locked = true
+		tab[ v ] = tab
 	end
 
 	for k,v in pairs(tab) do
-		str = str .. string.format("\t['%s'] = [[%s]],\n", k, v )
+		str = str .. string.format("\t['%s'] = [[%s]],\n", k, util.JSONToTable(v) )
 	end
 
 	str = str .. "}"
