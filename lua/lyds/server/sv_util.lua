@@ -9,7 +9,6 @@ function MediaPlayer.SendDefaultPreset(ply, usmg)
     net.Send(ply)
 end
 
-
 function MediaPlayer.SaveJoinlist()
 
     if (MediaPlayer.Joinlist == nil or table.IsEmpty(MediaPlayer.Joinlist)) then return end

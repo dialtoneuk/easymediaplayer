@@ -38,3 +38,28 @@ function MediaPlayer.VarToColour(...)
 	local tab = {...}
 	return MediaPlayer.TableToColour(tab[1])
 end
+
+--[[
+	Verifies an mp3 url
+--]]
+
+function MediaPlayer.VerifyMp3URL(url)
+
+	url = string.Trim(url)
+
+	if (string.find(".mp3", url) == nil ) then
+		return false
+	end
+
+	local exp = string.Explode(".", url)
+
+	if (table.IsEmpty(exp)) then
+		return false
+	end
+
+	if (exp[#exp] != "mp3") then
+		return false
+	end
+
+	return true
+end

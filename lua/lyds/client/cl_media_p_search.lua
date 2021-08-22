@@ -109,6 +109,7 @@ end
 
 --[[
 
+	TODO: Rewrite this
 --]]
 
 function panel:CreateBrowserPanel()
@@ -120,12 +121,19 @@ function panel:CreateBrowserPanel()
 			return
 		end
 
+		--check if its a youtube url
 		local result = MediaPlayer.ParseYoutubeURL(val)
+		local is_mp3 = MediaPlayer.VerifyMp3URL(val)
 
+		--if it is, play it
 		if (result != nil ) then
 			RunConsoleCommand("media_play", result )
 			self.Browser:OpenURL("https://www.youtube.com")
+		elseif (is_mp3 ) then
+			RunConsoleCommand("media_ y", is_mp3 )
+			self.Browser:OpenURL("https://www.youtube.com")
 		else
+			--just open the link
 			self.Browser:OpenURL( val )
 		end
 	end
@@ -199,8 +207,6 @@ function panel:CreateBrowserPanel()
 			str = string.Replace(str, "http://", "https://")
 		end
 
-		local url = string.sub(str, 9, 29);
-
 		if ( self.BrowserPosition == 2 ) then
 			self.BackButton:Show()
 		end
@@ -210,16 +216,10 @@ function panel:CreateBrowserPanel()
 			self.BrowserPosition = #self.BrowserHistory
 		end
 
-		--if its just MediaPlayer or MediaPlayer.com
-		if ( url != "www.youtube.com/watch") then
-			self.UrlBox:SetValue(str)
-			return
-		else
+		self.UrlBox:SetValue(str)
+		self.GrabButton:SetDisabled(false)
 
-			self.UrlBox:SetValue(str)
-			self.GrabButton:SetDisabled(false)
-			MediaPlayer.URL = str
-		end
+		MediaPlayer.URL = str
 	end)
 
 	self.Browser.OnChangeTitle = function(this)

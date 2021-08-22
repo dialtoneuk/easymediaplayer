@@ -28,7 +28,13 @@ function panel:Init()
 	self.HTML = vgui.Create("DHTML", self)
 	self.HTML:Dock(FILL)
 	self.HTML:SetAllowLua(true)
-	self.HTML:SetHTML("<marquee style='text-align: center; color: white; font-family: sans-serif; font-size: 15vw; padding-top: 10.99%;'>No Video</marquee>")
+	self.HTML:SetHTML([[
+		<div style='font-family: sans-serif; text-align: center; overflow: hidden'>
+			<marquee style='text-align: center; color: white; font-size: 30vw; padding-top: 10.99%;'>No Video</marquee>
+			<h1 style='margin-top: 15vh; font-size: 0vh; color: white'>PLEASE SWITCH TO THE CHROMIUM BRANCH ELSE YOU MIGHT CRASH</h1>
+		</div>
+	]])
+
 	--sets the volume of the player
 	self.SetPlayerVolume = function(this)
 		this = this or self.Wang
@@ -104,8 +110,13 @@ end
 --Sets the video HTML effectively playing it
 function panel:SetVideo(video)
 	if (table.IsEmpty(video)) then
-		self.HTML:SetHTML("<marquee style='text-align: center; color: white; font-family: sans-serif; font-size: 15vw; padding-top: 10.99%;'>No Video</marquee>")
 		self._CurrentVideoOwner = nil
+		self.HTML:SetHTML([[
+			<div style='font-family: sans-serif; text-align: center; overflow: hidden'>
+				<marquee style='text-align: center; color: white; font-size: 30vw; padding-top: 10.99%;'>No Video</marquee>
+				<h1 style='margin-top: 30vh; color: white'>PLEASE SWITCH TO THE CHROMIUM BRANCH ELSE YOU MIGHT CRASH</h1>
+			</div>
+		]])
 
 		if ( !self:IsSettingTrue("ShowConstant")) then
 			self:Hide()
