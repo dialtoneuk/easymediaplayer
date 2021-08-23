@@ -656,7 +656,7 @@ net.Receive("MediaPlayer.SendCurrentVideo",function()
 	panel = MediaPlayer.GetPanel("PlayerPanel")
 	panel:SetVideo(MediaPlayer.CurrentVideo)
 
-	if (MediaPlayer.IsSettingTrue("media_player_show_constant")) then
+	if (MediaPlayer.IsSettingTrue("media_player_show_new_video")) then
 		panel:Show()
 	end
 end)

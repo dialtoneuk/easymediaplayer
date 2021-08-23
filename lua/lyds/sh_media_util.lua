@@ -16,6 +16,32 @@ function MediaPlayer.ParseYoutubeURL(url) --bad method
 end
 
 --[[
+	Checks if a file is valid
+]]--
+
+function MediaPlayer.CheckMP3Link(video, callback, https)
+	https = https or false
+
+	local start = "http://"
+
+	if (https) then
+		start = "https://"
+	end
+
+	if (video.Custom == nil ) then
+		error("custom not set")
+	end
+
+	local r = pcall(function()
+		http.Post(start .. video.Custom.Url, {}, function() callback(true) end, function() callback(false) end)
+	end)
+
+	if (!r) then
+		return callback(false)
+	end
+end
+
+--[[
  Fetches Dailymotion api data
 --]]
 

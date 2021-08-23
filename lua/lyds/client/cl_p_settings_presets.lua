@@ -197,6 +197,9 @@ function panel:CreatePreset(title, author, add_default)
 				settings["media_" .. v .. "_" .. setting] = MediaPlayer.GetSetting("media_" .. v .. "_" .. setting).Value
 			end
 		end
+
+		settings["media_player_invert_position"] = MediaPlayer.GetSetting("media_player_invert_position").Value
+		settings["media_playlist_invert_position"] = MediaPlayer.GetSetting("media_playlist_invert_position").Value
 	end
 
 	local preset =  {
@@ -497,7 +500,7 @@ function panel:FillPresetEditor()
 	self.SaveButton:DockMargin(0,self:GetPadding(),0,0)
 	self.SaveButton:SetText("Save Preset")
 
-	if (self:IsPresetLocked() or self.HasEdited == nil or self.HasEdited == false ) then
+	if (self:IsPresetLocked()) then
 		self.SaveButton:SetDisabled(true)
 	end
 

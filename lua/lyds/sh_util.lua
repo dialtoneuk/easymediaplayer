@@ -1,3 +1,4 @@
+MediaPlayer.BaseSeed = math.floor( os.time() / 3600 )
 
 --[[
 Encode URI
@@ -38,16 +39,50 @@ function MediaPlayer.VarToColour(...)
 	local tab = {...}
 	return MediaPlayer.TableToColour(tab[1])
 end
+--[[
+Gens an id based off of a string (url in our usecase for the mp3 stuff)
+--]]
+function MediaPlayer.GenerateUniqueID(stringy)
+	local seed = 0
+	local id = ""
+
+	for i = 1, #stringy do
+		seed = seed + string.byte(stringy, i, i) --get the bytevalue of each of our string addit all together
+	end
+
+	seed = seed * MediaPlayer.BaseSeed --times it all together
+
+	if (seed < 1000) then
+		seed = seed * 10
+	end
+
+	local str = tostring(seed)
+
+	for i = 1, #str do --then by the length of the seed string
+		local c = string.sub(str, i, i) --take a singular number
+		id = id .. string.char( 100 + tonumber(c) ) --add it to char
+	end
+
+	while (#id < 12) do
+		id = id .. "_"
+	end
+
+	return id
+end
 
 --[[
 	Verifies an mp3 url
 --]]
 
 function MediaPlayer.VerifyMp3URL(url)
-
+	ensure_https = ensure_https or false
 	url = string.Trim(url)
 
-	if (string.find(".mp3", url) == nil ) then
+	if (string.find(url, ".mp3") == nil ) then
+		return false
+	end
+
+	if (string.sub(url, 1, 8) == "https://" or string.sub(url, 1, 8) == "http://" ) then
 		return false
 	end
 

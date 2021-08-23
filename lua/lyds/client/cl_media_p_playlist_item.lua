@@ -14,6 +14,18 @@ panel.Settings = {
 	Options = "options"
 }
 
+--on change
+panel.WatchedSettings = {
+	Size = {
+		Padding = function(p)
+			if (p:CheckChange("Padding")) then
+				p:SetHasResized()
+				p:SetDockPadding(p)
+			end
+		end,
+	}
+}
+
 --[[
 	Initializes
 --]]
@@ -22,22 +34,21 @@ function panel:Init()
 	self:SetIgnoreRescaling(true, true)
 	self:BaseInit()
 
-	self:DockPadding(10,10,0,5)
+	self:SetDockPadding()
 	self:SetText("")
 
 	self.Text = vgui.Create("DLabel", self )
 	self.Text:SetFont("PlaylistText")
-	self.Text:Dock(TOP)
+	self.Text:Dock(FILL)
 	self.Text:SetWrap(true)
-	self.Text:SetWide(self:GetWidth())
 	self.Text:SetTall(self.Settings.Size.Value.RowHeight / 2)
 	self.Text:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	self.Duration = vgui.Create("DLabel", self )
-	self.Duration:SetPos(self:GetWidth() - ( 85  + self:GetPadding() ), self.Settings.Size.Value.RowHeight - ( 20 + self:GetPadding() ) )
+	self.Duration:SetPos(self:GetWidth() - ( 85  + self:GetPadding() ), self.Settings.Size.Value.RowHeight - ( 15 + self:GetPadding() ) )
 	self.Duration:SetWide(self:GetWidth() / 2)
 	self.Duration:SetFont("SmallText")
-	self.Duration:DockMargin(0,0,0, 0)
+	self.Duration:DockMargin(0,0,0,0)
 	self.Duration:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	self.TextOwner = vgui.Create("DLabel", self )
@@ -161,12 +172,12 @@ function panel:SetItemText()
 	self.Text:SetText(self.Item.Title .. " by " .. self.Item.Creator )
 	self.Duration:SetText( mins .. " mins " .. string.Replace(result,"-", "") .. " secs")
 
-	local str = self.Item.Owner.Name
+	local str = "submitted by " .. self.Item.Owner.Name .. " / " .. self.Item.Type or "unknown"
 
 	if (!self.Active) then
-		self.TextOwner:SetText("submitted by " .. str)
+		self.TextOwner:SetText(str)
 	else
-		self.TextOwner:SetText("submitted by " .. str .. " (is playing)")
+		self.TextOwner:SetText(str .. " (is playing)")
 	end
 end
 

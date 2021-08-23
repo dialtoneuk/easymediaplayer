@@ -1,28 +1,49 @@
 --playlist global
 MediaPlayer.Playlist = MediaPlayer.Playlist or {}
+
 MediaPlayer.CurrentVideo = MediaPlayer.CurrentVideo or {}
 MediaPlayer.Count = MediaPlayer.Count or 0
-
---types of videos
-MediaPlayer.MediaPlayerType = MediaPlayer.MediaPlayerType or {
-	YOUTUBE = "youtube",
-	DAILYMOTION = "dailymotion",
-	SOUNDCLOUD = "soundcloud"
-}
 
 --Copy table
 MediaPlayer.BaseVideo = {
 	Video = "38enrQGRDhA",
 	Title = "Default",
 	Creator = "Default",
+	Custom = {}, --used with direct mp3s
 	Views = 1,
-	Type = MediaPlayer.MediaPlayerType.YOUTUBE,
+	Type = MediaPlayer.MediaType.YOUTUBE,
 	Duration = 1,
 	Position = 1,
 	StartTime = 0, --Used for time tracking
 	Player = {}, --this should be an array of the different kinds of quality of embeds
 	Owner = {} --this will be a player entity on the servers end and a table on the clients end
 }
+
+
+
+--[[
+
+--]]
+
+function MediaPlayer.CanSubmitVideo(id, ply )
+
+	if (MediaPlayer.Playlist[ id ]) then
+		ply:SendMessage("This video is already in the playlist!")
+		return false
+	end
+
+	if (MediaPlayer.Blacklist[ id ]) then
+		ply:SendMessage("This video is banned!")
+		return false
+	end
+
+	if (MediaPlayer.HasCooldown(ply, "Play")) then
+		ply:SendMessage("Wait a bit before playing something else!")
+		return false
+	end
+
+	return true
+end
 
 --[[
 Gets a number of videos
@@ -106,7 +127,7 @@ function MediaPlayer.AddVideo(video, tab)
 	if (MediaPlayer.Playlist[video]) then return end --already exists
 
 	MediaPlayer.Playlist[video] = tab
-	MediaPlayer.Count = MediaPlayer.Count + 1
+	MediaPlayer.Count = MediaPlayer.Count + 1 --used for position
 end
 
 --[[

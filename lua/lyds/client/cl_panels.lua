@@ -107,27 +107,49 @@ MediaPlayer.Panels = {
 			Show_Constant = "show_constant",
 			Context = "show_in_context",
 			Scoreboard = "show_in_scoreboard",
+			Show_New_Constant = "show_new_video_constant",
 		},
 		PostInit = function(panel, key, settings)
 			panel:Reposition()
 
+
+			if (settings.Hide.Value) then
+				panel:Hide()
+				return
+			end
+
 			if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
 				panel:SetVideo(MediaPlayer.CurrentVideo)
 
-				if (settings.Show_Constant.Value or !settings.Hide.Value and !settings.Context.Value and !settings.Scoreboard.Value) then
+				if (settings.Show_New_Constant.Value) then
 					panel:Show()
 				end
 			else
-				if (settings.Show_Constant.Value) then
+				if ( settings.Show_Constant.Value and !settings.Context.Value and !settings.Scoreboard.Value) then
 					panel:Show()
 				end
 			end
 		end,
-		OnContext = function(panel, key, settings, opened)
+		OnContext =  function(panel, key, settings, opened)
 			panel:SetKeyboardInputEnabled(opened)
 			panel:SetMouseInputEnabled(opened)
 
-			if (settings.Context.Value and !settings.Show_Constant.Value) then
+			if (settings.Hide.Value) then
+				panel:Hide()
+				return
+			end
+
+			if (settings.Show_Constant.Value) then
+				panel:Show()
+				return
+			end
+
+			if (!table.IsEmpty(MediaPlayer.CurrentVideo) and settings.Show_New_Constant.Value ) then
+				panel:Show()
+				return
+			end
+
+			if (settings.Context.Value) then
 				panel:SetVisible(opened)
 			end
 		end,
@@ -135,7 +157,22 @@ MediaPlayer.Panels = {
 			panel:SetKeyboardInputEnabled(opened)
 			panel:SetMouseInputEnabled(opened)
 
-			if (settings.Scoreboard.Value and !settings.Show_Constant.Value) then
+			if (settings.Hide.Value) then
+				panel:Hide()
+				return
+			end
+
+			if (settings.Show_Constant.Value) then
+				panel:Show()
+				return
+			end
+
+			if (!table.IsEmpty(MediaPlayer.CurrentVideo) and settings.Show_New_Constant.Value ) then
+				panel:Show()
+				return
+			end
+
+			if (settings.Scoreboard.Value) then
 				panel:SetVisible(opened)
 			end
 		end

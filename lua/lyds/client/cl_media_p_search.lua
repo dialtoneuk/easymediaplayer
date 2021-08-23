@@ -127,10 +127,10 @@ function panel:CreateBrowserPanel()
 
 		--if it is, play it
 		if (result != nil ) then
-			RunConsoleCommand("media_play", result )
+			RunConsoleCommand("media_play", MediaPlayer.MediaTypes.YOUTUBE,  result )
 			self.Browser:OpenURL("https://www.youtube.com")
 		elseif (is_mp3 ) then
-			RunConsoleCommand("media_ y", is_mp3 )
+			RunConsoleCommand("media_play", MediaPlayer.MediaTypes.MP3, is_mp3 )
 			self.Browser:OpenURL("https://www.youtube.com")
 		else
 			--just open the link
@@ -248,7 +248,7 @@ function panel:CreateBrowserPanel()
 		local result = MediaPlayer.ParseYoutubeURL(MediaPlayer.URL)
 
 		if (result != nil ) then
-			RunConsoleCommand("media_play", result )
+			RunConsoleCommand("media_play", MediaPlayer.MediaType.YOUTUBE, result )
 			self.Browser:OpenURL("https://www.youtube.com")
 		end
 	end
@@ -299,7 +299,7 @@ function panel:CreateSearchPanel()
 	self:RefreshSearchGrid()
 
 	if (MediaPlayer.SearchResults and !table.IsEmpty(MediaPlayer.SearchResults)) then
-		self:PresentSearchResults(false)
+		self:PresentSearchResults(false, MediaPlayer.MediaType.YOUTUBE)
 	end
 end
 
@@ -307,20 +307,19 @@ end
 Presents our search results
 --]]
 
-function panel:PresentSearchResults(clear)
-
+function panel:PresentSearchResults(clear, typ)
 	if (clear) then
 		self:RefreshSearchGrid()
 	end
 
-	if (!MediaPlayer.SearchResults) then self:OnEmpty() return end
-	if (table.IsEmpty(MediaPlayer.SearchResults)) then self:OnEmpty() return end
+	if (!MediaPlayer.SearchResults) then self:OnEmpty(self.Grid) return end
+	if (table.IsEmpty(MediaPlayer.SearchResults)) then self:OnEmpty(self.Grid)  return end
 
 	self.Grid:SetColWide(self:GetWidth())
 
 	for k,v in pairs(MediaPlayer.SearchResults) do
 		local pan = vgui.Create("DButton", self.Grid )
-		pan:SetWide(self:GetWidth() - 40)
+		pan:SetWide(self:GetWidth(true, true) - self:GetPadding() * 4 - 20)
 		pan:SetHeight(self.Settings.Size.Value.RowHeight)
 		pan:SetText("")
 
@@ -332,7 +331,7 @@ function panel:PresentSearchResults(clear)
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("media_play", v.Video )
+			RunConsoleCommand("media_play", typ, v.Video )
 		end
 
 		local html = vgui.Create("DHTML", pan)
@@ -468,7 +467,7 @@ function panel:PresentHistory()
 		if ( v.Owner == nil ) then v.Owner = {} end
 
 		local pan = vgui.Create("DButton", self.HistoryGrid )
-		pan:SetWide(self:GetWidth(true, true))
+		pan:SetWide(self:GetWidth(true, true) - self:GetPadding() * 4 )
 		pan:SetTall(self.Settings.Size.Value.RowHeight)
 		pan:SetText("")
 		pan:SetTooltip( "Likes: " .. v.Likes  .. "\n" .. "Dislikes: " .. v.Dislikes .. "\n" .. "Plays: " .. v.Plays )
@@ -481,8 +480,7 @@ function panel:PresentHistory()
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("media_play", k )
-
+			RunConsoleCommand("media_play", v.Type or MediaPlayer.MediaTypes.YOUTUBE,  k )
 		end
 
 		local text = vgui.Create("DLabel", pan )
@@ -514,7 +512,7 @@ function panel:PresentPlayerHistory()
 		if ( v.Owner == nil ) then v.Owner = {} end
 
 		local pan = vgui.Create("DButton", self.PlayerHistoryGrid )
-		pan:SetWide(self:GetWidth(true, true))
+		pan:SetWide(self:GetWidth(true, true) - self:GetPadding() * 4 )
 		pan:SetTall(self.Settings.Size.Value.RowHeight)
 		pan:SetText("")
 		pan:SetTooltip( "Likes: " .. v.Likes .. "\n" .. "Dislikes: " .. v.Dislikes .. "\n" .. "Plays: " .. v.Plays )
@@ -527,8 +525,7 @@ function panel:PresentPlayerHistory()
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("media_play", k )
-
+			RunConsoleCommand("media_play", v.Type or MediaPlayer.MediaTypes.YOUTUBE,  k )
 		end
 
 		local text = vgui.Create("DLabel", pan )
@@ -558,7 +555,7 @@ function panel:AddPageHeader(that, page, count)
 	count = count or MediaPlayer.HistoryCount
 
 	local pan = vgui.Create("DButton", that )
-	pan:SetWide(self:GetWidth(true, true))
+	pan:SetWide(self:GetWidth(true, true) - self:GetPadding() * 4 )
 	pan:SetTall(self.Settings.Size.Value.RowHeight)
 	pan:SetText( "page " .. page)
 	pan:SetFont("BigText")
@@ -573,6 +570,29 @@ function panel:AddPageHeader(that, page, count)
 
 	that:AddItem(pan)
 end
+
+--[[
+
+--]]
+
+function panel:OnEmpty(that)
+	local pan = vgui.Create("DButton", that )
+	pan:SetWide(self:GetWidth(true, true) - self:GetPadding() * 4 )
+	pan:SetTall(self.Settings.Size.Value.RowHeight)
+	pan:SetText( "No Results")
+	pan:SetFont("BigText")
+	pan:SetTextColor(self.Settings.Colours.Value.TextColor)
+
+	pan.Paint = function()
+		surface.SetDrawColor(self.Settings.Colours.Value.HeaderBackground)
+		surface.DrawRect(0, 0, pan:GetWide(), pan:GetTall() )
+		surface.SetDrawColor(self.Settings.Colours.Value.HeaderBorder)
+		surface.DrawOutlinedRect(0, 0, pan:GetWide(), pan:GetTall(), self.Settings.Options.Value.BorderThickness )
+	end
+
+	that:AddItem(pan)
+end
+
 
 --[[
 

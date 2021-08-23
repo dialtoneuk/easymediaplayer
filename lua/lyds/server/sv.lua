@@ -215,13 +215,18 @@ end)
 
 
 hook.Add("OnFirstBadError","MediaPlayer.OnFirstBadError", function(err)
-	for k,v in pairs(player.GetAll()) do
 
-		if (!IsValid(v)) then continue end
-		if (!v:IsAdmin() ) then continue end
+	local f = function()
+		for k,v in pairs(player.GetAll()) do
 
-		v:SendWarningBox("There has been an bad error! Please check the admin panel inside the error log to see what occured! \n\n error: " .. err[1],"Oh no!")
+			if (!IsValid(v)) then continue end
+			if (!v:IsAdmin() ) then continue end
+
+			v:SentMediaWarningBox("There has been an bad error! Please check the admin panel inside the error log to see what occured! \n\n error: " .. err[1],"Oh no!")
+		end
 	end
+
+	pcall(f)
 end)
 
 --[[
@@ -542,19 +547,17 @@ concommand.Add("media_dislike_video", function(ply, cmd, args)
 	end
 end)
 
---[[
-Plays a video
-TODO: Move some of this code, support multiple types
---]]
+concommand.Add("media_play", function(ply, cmd, args)
 
-concommand.Add("media_play", function (ply, cmd, args)
+	if (#args <= 1 ) then
+		return
+	end
 
-	if (!args[1]) then return end
-	if (tonumber(args[1]) != nil) then return end
-	if (string.len(args[1]) > 32) then return end
+	local typ = args[1]
+	local id = args[2] --does not take URL but video id unless it is of type mp3
 
 	if (MediaPlayer.IsSettingTrue("media_admin_only") and !ply:IsAdmin()) then
-		ply:SendMessage("Only admins can use this feature. Sorry.")
+		ply:SendMessage("Only admins can use this feature.")
 		return
 	end
 
@@ -567,39 +570,74 @@ concommand.Add("media_play", function (ply, cmd, args)
 		return
 	end
 
-	if (MediaPlayer.Playlist[args[1]]) then
-		ply:SendMessage("This video is already in the playlist!")
-		return
-	end
-
-	if (MediaPlayer.Blacklist[args[1]]) then
-		ply:SendMessage("This video is banned!")
-		return
-	end
-
-	if (MediaPlayer.HasCooldown(ply, "Play")) then
-		ply:SendMessage("Wait a bit before playing something else!")
-		return
-	end
-
 	local video = MediaPlayer.GetNewVideo()
-	video.Video = args[1]
+	video.Video = args[2]
 	video.Owner = ply
 	video.Position =  MediaPlayer.Count or 0
 	video.StartTime = CurTime()
 
-	MediaPlayer.GetYoutubeVideo(video, function(_video)
+	if (typ == MediaPlayer.MediaType.YOUTUBE or typ == MediaPlayer.MediaType.YOUTUBE_MUSIC ) then
 
-		if ( _video.Duration <= 0 ) then
-			video.Owner:SendMessage("There was something wrong with that video! Please try another one")
+		video.Type = MediaPlayer.MediaType.YOUTUBE
+
+		if (typ == MediaPlayer.MediaType.YOUTUBE_MUSIC) then
+			video.Type = MediaPlayer.MediaType.YOUTUBE_MUSIC
+		end
+
+		video.Custom = {
+			UniqueID = MediaPlayer.GenerateUniqueID(video.Video)
+		}
+
+		if (!MediaPlayer.CanSubmitVideo(video.Video, ply)) then
 			return
 		end
 
-		MediaPlayer.AddVideo(video.Video, video)
-		MediaPlayer.AddPlayerCooldown(video.Owner, MediaPlayer.GetNewCooldown("Play"))
-		ply:SendMessage("Video added!")
-		MediaPlayer.Begin(video)
-	end)
+		MediaPlayer.GetYoutubeVideoInfo(video, function(returnedVideo)
+
+			if (returnedVideo == false ) then
+				if (!IsValid(video.Owner)) then return end
+				video.Owner:SendMessage("There was something wrong with that video! Please try another one")
+				return
+			end
+
+			if ( returnedVideo.Duration <= 0 ) then
+
+				if (!IsValid(video.Owner)) then return end
+				video.Owner:SendMessage("There was something wrong with that video! Please try another one")
+				return
+			end
+
+			MediaPlayer.AddVideo(video.Video, video)
+			MediaPlayer.AddPlayerCooldown(video.Owner, MediaPlayer.GetNewCooldown("Play"))
+
+			ply:SendMessage("Youtube video added!")
+			MediaPlayer.Begin(video)
+		end)
+	elseif (typ == MediaPlayer.MediaType.MP3) then
+		if (!MediaPlayer.VerifyMp3URL(id)) then
+			print("invalid url given: " .. id)
+			return
+		end
+
+		video.Video = MediaPlayer.GenerateUniqueID(id)
+		video.Custom = {
+			Url = id
+		}
+
+		print(video.Video)
+
+		MediaPlayer.CheckMP3Link(video, function(result)
+			if (!result) then
+				if (!IsValid(video.Owner)) then return end
+				video.Owner:SendMessage("There was something wrong with that mp3 link! Please try another one")
+				return
+			end
+
+			if (!MediaPlayer.CanSubmitVideo(video.Video, ply)) then
+				return
+			end
+		end)
+	end
 end)
 
 --[[

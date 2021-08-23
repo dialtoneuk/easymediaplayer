@@ -2,9 +2,9 @@
 Sets the info for a video, including its duration
 --]]
 
-function MediaPlayer.GetYoutubeVideo(video, callback)
+function MediaPlayer.GetYoutubeVideoInfo(video, callback)
 	MediaPlayer.YoutubeVideoExists(video, function(result)
-		if (!result or result == nil) then return end
+		if (!result or result == nil) then callback(false) return end
 
 		MediaPlayer.YoutubeGetDeepInfo(video, function(data)
 			video.Duration = MediaPlayer.ConvertFromISOTime(data.contentDetails.duration)

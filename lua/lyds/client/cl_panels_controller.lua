@@ -43,7 +43,7 @@ function MediaPlayer.InstantiatePanels(reinstantiate, skip, only_do)
 			Centered = MediaPlayer.Panels[key].SettingsBase .. "_centered",
 		}), MediaPlayer.Panels[key].SettingsBase)
 
-		if (MediaPlayer.LoadedPanels[key] != nil ) then
+		if (MediaPlayer.LoadedPanels[key] != nil and IsValid(MediaPlayer.LoadedPanels[key].Panel) ) then
 
 			if (reinstantiate) then
 				if (IsValid(MediaPlayer.LoadedPanels[key].Panel)) then

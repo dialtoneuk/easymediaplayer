@@ -48,7 +48,7 @@ end
  Sends a warning box to a player
 --]]
 
-function ply:SendWarningBox(message, title)
+function ply:SentMediaWarningBox(message, title)
 	title = title or "Warning"
 
 	net.Start("MediaPlayer.CreateWarningBox")

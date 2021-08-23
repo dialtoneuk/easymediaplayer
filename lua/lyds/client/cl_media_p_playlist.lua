@@ -27,6 +27,11 @@ panel.WatchedSettings = {
 				p:SetHasResized()
 			end
 		end,
+		Padding = function(p)
+			if (p:CheckChange("Padding")) then
+				p:SetHasResized()
+			end
+		end,
 	}
 }
 
@@ -37,7 +42,10 @@ Sets up grid and paints our colours
 function panel:Init()
 	self:BaseInit()
 
-	self:InvertPosition(true)
+	if (self:IsSettingTrue("InvertPosition")) then
+		self:InvertPosition(true)
+	end
+
 	self:Reposition()
 	self:SetIgnoreRescaling(true, false)
 	self:SetupGrid()
@@ -70,7 +78,6 @@ function panel:SetupGrid()
 	end
 
 	self.Grid = vgui.Create("DGrid", self )
-
 	self:SetGrid()
 end
 
@@ -168,10 +175,11 @@ Displays playlist items
 
 function panel:EmptyPanel()
 
+	if (!IsValid(self.Grid)) then self:SetupGrid() end
 	if (IsValid(self.MiscPanel)) then self.MiscPanel:Remove() end
 
 	self.MiscPanel = vgui.Create("DButton", self.Grid )
-	self.MiscPanel:SetWide(self:GetWidth(true, true ) -  self:GetPadding() * 2)
+	self.MiscPanel:SetWide(self.Settings.Size.Value.Width - self:GetPadding() * 2)
 	self.MiscPanel:SetTall( self.Settings.Size.Value.RowHeight)
 	self.MiscPanel:SetText("")
 
@@ -183,7 +191,7 @@ function panel:EmptyPanel()
 		surface.SetFont("BiggerText")
 		local len = surface.GetTextSize(str)
 
-		draw.RoundedBox(5, 0, 0, s:GetWide() - self:GetPadding() * 3, self.Settings.Size.Value.RowHeight, self.Settings.Colours.Value.ItemBackground )
+		draw.RoundedBox(5, 0, 0, self.Settings.Size.Value.Width - self:GetPadding() * 2, self.Settings.Size.Value.RowHeight, self.Settings.Colours.Value.ItemBackground )
 		draw.SimpleTextOutlined( str, "BiggerText", 10, 30, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 		draw.SimpleTextOutlined( "v" .. MediaPlayer.Version, "MediumText", len + 15, 30, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 		draw.SimpleTextOutlined("No videos queued - click me to search!", "MediumText", 10, 50,self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
@@ -203,7 +211,7 @@ Displays playlist items
 
 function panel:CreateFullPanel()
 
-	if (	IsValid(self.FullPanel)) then self.FullPanel:Remove() end
+	if (IsValid(self.FullPanel)) then self.FullPanel:Remove() end
 
 	self.FullPanel = vgui.Create("DButton", self.Grid )
 	self.FullPanel:SetWide(self:GetWidth(true, true) - self:GetPadding())

@@ -231,7 +231,11 @@ local client = {
     },
     media_playlist_invert_position = {
         Value = true,
-        Comment = "(unused)"
+        Comment = "Inverts the x position of the playlist, use this to scale things better to resolutions"
+    },
+    media_player_invert_position = {
+        Value = false,
+        Comment = "Inverts the x position of the player, use this to scale things better to resolutions"
     },
     media_player_centered = {
         Value = false,
@@ -243,11 +247,19 @@ local client = {
     },
     presets_allow_default = {
         Value = true,
-        Comment = "Allows a servers default preset to override your settings"
+        Comment = "DISABLE THIS IF YOU HAVE A CUSTOM THEME! Allows a servers default client settings to override your current client settings"
     },
     media_playlist_show_constant = {
         Value = false,
         Comment = "Will show the playlist all the time, not just in the scoreboard and context menu"
+    },
+    media_player_show_new_video = {
+        Value = true,
+        Comment = "Disabling this will disallow the player being unhidden when a new video is played from it."
+    },
+    media_player_show_new_video_constant = {
+        Value = true,
+        Comment = "Player will always be visible when a video is playing"
     },
     media_settings_centered = {
         Value = false,

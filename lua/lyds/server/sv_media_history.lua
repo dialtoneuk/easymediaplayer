@@ -62,6 +62,7 @@ end
 function MediaPlayer.LikeVideo(video)
 	if (table.IsEmpty(video)) then return end
 	if (!MediaPlayer.HasVideo(video)) then MediaPlayer.AddToHistory(video) end
+
 	MediaPlayer.History[video.Video].Likes = MediaPlayer.History[video.Video].Likes + 1
 end
 

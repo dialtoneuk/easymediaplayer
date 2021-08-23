@@ -264,8 +264,8 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 
 	local divider = vgui.Create("DHorizontalDivider", pan )
 	divider:Dock(FILL)
-	divider:SetDividerWidth( 4 ) -- Set the divider width. Default is 8
-	divider:SetLeftMin( 200 ) -- Set the Minimum width of left side
+	divider:SetDividerWidth( 8 ) -- Set the divider width. Default is 8
+	divider:SetLeftMin( math.floor(self:GetWidth() / 3) + self:GetPadding() * 4 ) -- Set the Minimum width of left side
 	divider:SetRightMin( 200 )
 
 	local scrollRight = vgui.Create("DPanel", divider )
@@ -362,6 +362,8 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 					i = "icon16/shape_square.png"
 				elseif ( string.find(k, "_hide")) then
 					i = "icon16/zoom.png"
+				elseif ( string.find(k, "_show")) then
+					i = "icon16/eye.png"
 				end
 			end
 

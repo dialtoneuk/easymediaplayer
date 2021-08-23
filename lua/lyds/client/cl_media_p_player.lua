@@ -16,6 +16,7 @@ panel.Settings = {
 	DisplayVideo = "display_video",
 	Muted = "mute_video",
 	ShowConstant =  "show_constant",
+	InvertPosition =  "invert_position",
 	Options = "options"
 }
 
@@ -24,6 +25,12 @@ panel.Settings = {
 function panel:Init()
 
 	self:BaseInit()
+
+	if (self:IsSettingTrue("InvertPosition")) then
+		self:InvertPosition(true)
+	end
+
+	self:Reposition()
 
 	self.HTML = vgui.Create("DHTML", self)
 	self.HTML:Dock(FILL)
@@ -114,7 +121,7 @@ function panel:SetVideo(video)
 		self.HTML:SetHTML([[
 			<div style='font-family: sans-serif; text-align: center; overflow: hidden'>
 				<marquee style='text-align: center; color: white; font-size: 30vw; padding-top: 10.99%;'>No Video</marquee>
-				<h1 style='margin-top: 30vh; color: white'>PLEASE SWITCH TO THE CHROMIUM BRANCH ELSE YOU MIGHT CRASH</h1>
+				<h1 style='margin-top: 15vh; font-size: 0vh; color: white'>PLEASE SWITCH TO THE CHROMIUM BRANCH ELSE YOU MIGHT CRASH</h1>
 			</div>
 		]])
 

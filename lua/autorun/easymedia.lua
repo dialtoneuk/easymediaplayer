@@ -1,3 +1,7 @@
+--[[
+    Do not edit below
+--]]
+
 if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
     _errorLog = {}
 
@@ -23,6 +27,7 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
         }
 
         hook.Run("OnWarning", {...})
+
         ErrorNoHalt(...)
     end
 
