@@ -36,6 +36,7 @@ function panel:Init()
 
 	self:BaseInit()
 
+	--TODO: Move this code inside base init
 	if (self:IsSettingTrue("InvertPosition")) then
 		self:InvertPosition(true)
 	end
@@ -45,6 +46,8 @@ function panel:Init()
 	self.HTML = vgui.Create("DHTML", self)
 	self.HTML:Dock(FILL)
 	self.HTML:SetAllowLua(true)
+
+	--TODO: turn this into a method
 	self.HTML:SetHTML([[
 		<div style='font-family: sans-serif; text-align: center; overflow: hidden'>
 			<marquee style='text-align: center; color: white; font-size: 30vw; padding-top: 10.99%;'>No Video</marquee>

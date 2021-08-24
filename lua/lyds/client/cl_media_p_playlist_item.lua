@@ -91,6 +91,12 @@ function panel:Init()
 					end)
 
 					del:SetIcon("icon16/delete.png")
+
+					local delall = menu:AddOption( "Delete All Users Videos", function()
+						RunConsoleCommand("media_delete_all", self.Item.Video.Owner.SteamID )
+					end)
+
+					delall:SetIcon("icon16/exclamation.png")
 				end
 
 				local bdel = menu:AddOption( "Blackist & Delete Video", function()
@@ -98,6 +104,21 @@ function panel:Init()
 				end)
 
 				bdel:SetIcon("icon16/cross.png")
+
+
+				if (self.Item.Position > 1 ) then
+					local moveup = menu:AddOption( "Move Up Position", function()
+						RunConsoleCommand("media_reposition_video", "up", self.Item.Video )
+					end)
+
+					moveup:SetIcon("icon16/arrow_up.png")
+				end
+
+				local movedown = menu:AddOption( "Move Down Position", function()
+					RunConsoleCommand("media_reposition_video", "down", self.Item.Video )
+				end)
+
+				movedown:SetIcon("icon16/arrow_down.png")
 			else
 				local skip = menu:AddOption( "Skip Video", function()
 					RunConsoleCommand("media_skip_video", self.Item.Video )
@@ -129,7 +150,14 @@ function panel:Init()
 			local remove = menu:AddOption( "Remove Video", function()
 				RunConsoleCommand("media_remove", self.Item.Video )
 			end)
+
 			remove:SetIcon("icon16/bomb.png")
+
+			local removeall = menu:AddOption( "Remove All Your Videos", function()
+				RunConsoleCommand("media_remove_all")
+			end)
+
+			removeall:SetIcon("icon16/error.png")
 		end
 
 		menu:Open()
