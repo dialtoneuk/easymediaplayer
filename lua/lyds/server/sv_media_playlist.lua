@@ -22,10 +22,7 @@ MediaPlayer.BaseVideo = {
 	Owner = {} --this will be a player entity on the servers end and a table on the clients end
 }
 
---[[
-Removes a video
---]]
-
+--removes a video but checks that player owns it
 function MediaPlayer.RemovePlayerVideo(id, ply)
 	if (MediaPlayer.Playlist[id] == nil) then return end -- already in there
 	local video = MediaPlayer.GetVideo(id)
