@@ -131,26 +131,26 @@ function MediaPlayer.GetPackedPresets()
 	return MediaPlayerPresets;
 end
 
+function MediaPlayer.GetDefaultPreset()
+
+	net.Start("MediaPlayer.GetDefaultPreset")
+	net.SendToServer()
+end
+
+function MediaPlayer.RefreshDefaultPreset()
+
+	net.Start("MediaPlayer.AdminRefreshDefaultPreset")
+	net.SendToServer()
+end
+
 function MediaPlayer.RequestDefaultPreset()
 
 	net.Start("MediaPlayer.RequestDefaultPreset")
 	net.SendToServer()
 end
 
-function MediaPlayer.RefreshDefaultPreset()
-
-	net.Start("MediaPlayer.RequestRefreshDefaultPreset")
-		--nope
-	net.SendToServer()
-end
-
-function MediaPlayer.RequestDefaultInitialPreset()
-
-	net.Start("MediaPlayer.RequestDefaultInitialPreset")
-	net.SendToServer()
-end
-
-function MediaPlayer.ApplyInitialPreset(preset)
+--applies the initial preset sent to us by the server
+function MediaPlayer.SendPresetToServer(preset)
 
 	if (!MediaPlayer.LocalPlayer:IsAdmin()) then return end
 
@@ -178,7 +178,7 @@ function MediaPlayer.ApplyInitialPreset(preset)
 	end
 
 	print("sending initial preset to server")
-	net.Start("MediaPlayer.ApplyInitialPreset")
+	net.Start("MediaPlayer.SendPresetToServer")
 		net.WriteTable(preset)
 	net.SendToServer()
 end

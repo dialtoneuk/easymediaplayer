@@ -1,6 +1,5 @@
-MediaPlayer.ComputedColours = MediaPlayer.ComputedColours or {
-    --holds our computer colours
-}
+--holds our computer colours
+MediaPlayer.ComputedColours = MediaPlayer.ComputedColours or {}
 
 --the colours for our stuff
 MediaPlayer.Colours = {
@@ -22,6 +21,7 @@ if (table.IsEmpty(MediaPlayer.ComputedColours)) then
     end
 end
 
+--only do it once
 if (!table.IsEmpty(MediaPlayer.ComputedColours)) then
     MediaPlayer.Colours = table.Merge(MediaPlayer.Colours, MediaPlayer.ComputedColours)
 end

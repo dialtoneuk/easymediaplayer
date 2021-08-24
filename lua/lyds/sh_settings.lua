@@ -1,160 +1,166 @@
 --server settings
+
 local server = {
     media_playlist_limit = {
         Value = 50,
-        Comment = "The maxium amount of videos the server will broadcast at any given time to all players, regardless of how many playlist items the client is set to draw"
+        Comment = "This is the maximum amount of videos that the playlist will broadcast in a net message, turn this down if you are experiencing overflow errors."
     },
     media_vote_time = {
         Value = 30,
-        Comment = "The maximum amount of playlist items allowed at the same"
+        Comment = "How long votes will last for."
     },
     media_announce_admin = {
         Value = true,
-        Comment = "Announced in the chat when an admin skips a video"
+        Comment = "Announce to the server when an admin skips or removes videos from the playlist."
     },
     media_admin_ignore_limits = {
         Value = true,
-        Comment = "Admins can queue as many videos as they like"
+        Comment = "Admins are not restricted by player_playlist_max."
     },
     media_announce_video = {
         Value = true,
-        Comment = "Announces when a video has begun in the chat"
+        Comment = "Announce to the server when a new video has begun."
     },
     media_announce_addition = {
         Value = true,
-        Comment = "Announces the addition of a video to the playlist in the chat"
+        Comment = "Announce to the server when a new video has been added to the playlist."
     },
     media_announce_ending = {
         Value = true,
-        Comment = "Announces the end of a video in the chat"
+        Comment = "Announce to the server when a video has come to its end."
+    },
+    media_announce_spawn = {
+        Value = true,
+        Comment = "Announce to the player that the server is running this plugin."
     },
     media_announce_count = {
         Value = true,
-        Comment = "New vote additions as well as the total votes at the end will be announced in chat"
+        Comment = "Announce to the server when a vote has gained a new vote."
     },
     media_announce_vote = {
         Value = true,
-        Comment = "New votes will be announced in chat"
+        Comment = "Announce the creation of new votes to the server."
     },
     media_announce_likes = {
         Value = true,
-        Comment = "The name of who ever likes a video be announced in chat"
+        Comment = "Announce to the server when a player has liked a video."
     },
     media_announce_dislikes = {
         Value = true,
-        Comment = "The name of who ever dislikes a video will be announced in chat"
+        Comment = "Announce to the server when a player has disliked a video."
     },
     media_announce_settings = {
         Value = true,
-        Comment = "Announces settings updates to all the admins online."
+        Comment = "Announce to all admins online when edits to the servers settings are made."
     },
     media_tips_enabled = {
         Value = true,
-        Comment = "Disable tips completely here"
+        Comment = "Tips will be posted into the chats of players."
     },
     media_tips_frequency = {
         Value = 600, --every 10 mins
         Max = 1000,
-        Comment = "In seconds, how frequent tips are"
+        Comment = "In seconds, how frequent tips will be posted into the chats of players."
     },
     media_history_max = {
         Value = 10,
         Max = 50,
-        Comment = "How many items from the history to return to the player"
+        Comment = "The amount of items to return to the player when they request the servers history inside the search panel."
     },
     media_cooldown_enabled = {
         Value = true,
-        Comment = "Will turn off cooldowns all together, not recommended"
+        Comment = "Users will recieve cooldowns (it is recommended that you keep this enabled)"
     },
     media_cooldown_play = {
         Value = 45,
         Max = 500,
-        Comment = "Cooldown in seconds a player experiences after playing"
+        Comment = "How many seconds the player has to wait once submitting a video."
     },
     media_cooldown_vote = {
         Value = 10,
         Max = 500,
-        Comment = "Cooldown in seconds a player experiences after starting a vote",
+        Comment = "How many seconds the player has to wait once starting a vote.",
     },
     media_cooldown_search = {
-        Value = 2,
-        Max = 500,
-        Comment = "Cooldown in seconds a player experiences after searching for MediaPlayer",
+        Value = 1,
+        Max = 10,
+        Comment = "How many seconds the player has to wait after searching for media. (its recommended you keep this at its current value).",
     },
     media_cooldown_interaction = {
         Value = 180,
         Max = 500,
-        Comment = "Cooldown in seconds a player experiences after interacting, so liking or disliking",
-    },
-    media_command_prefix = {
-        Value = "!",
-        Comment = "Chat command prefix which is used to execute chat commands, change this if the ! conflicts with something else"
+        Comment = "How many seconds the player has to wait after liking or disliking a video. (players can only like/dislike the current video a single time anyway).",
     },
     media_cooldown_history = {
         Value = 1,
         Max = 500,
-        Comment = "Cooldown in seconds the player experiences with History page"
+        Comment = "How many seconds the player has to wait after requesting server history. (its recommended you keep this at its current value).",
     },
     media_cooldown_refreshrate = {
         Value = 1,
         Max = 6,
-        Comment = "The time it takes for each cooldown to be decreased by one, by default its a second, you double all cooldowns by setting this to two"
+        Comment = "Setting this to a value of two will effectively double the time all cooldowns take, setting it to three will tripple and so forth. Use this to change the server to slowmode temporarily."
     },
     media_cooldown_command = {
         Value = 1,
         Max = 600,
-        Comment = "Cooldown in seconds the player experiences with chat commands"
+        Comment = "How many seconds the player has to wait between using chat commmands."
+    },
+    media_command_prefix = {
+        Value = "!",
+        Comment = "This is the prefix which Easy Mediaplayer will attach to its chat commands. Change this to another character if it conflicts with one of your other addons."
     },
     media_max_duration = {
         Value = 1200,
         Max = 60000,
-        Comment = "The maximum length in seconds a piece of MediaPlayer can be"
+        Comment = "Roughly in seconds how long a piece of media can be no matter the platform."
     },
     media_max_results = {
         Value = 30,
         Max = 50,
-        Comment = "The maximum amount of items a search will return"
+        Comment = "How many search results will be returned when queries are made inside the search panel (max of 50)."
     },
     media_ban_after_dislikes = {
         Value = 50,
         Max = 500,
         Min = 0,
-        Comment = "After a piece of MediaPlayer has been disliked over this amount it will autoban a video, you can set this to zero if you wish not to ban videos based on dislikes"
+        Comment = "After a piece of media has been disliked over the ammount defined it will be added automatically to the ban list. You can set this to zero if you wish not to ban videos based on dislikes."
     },
     media_custom_tips = {
         Value = {
             "this is a tip",
             "so is this"
         },
+        Comment = "(editing coming soon)",
         Max = 20, --max elements
         Custom = true
     },
     player_playlist_max = {
         Value = 2,
         Max = 20,
-        Comment = "The max amount of videos a player can submit to the playlist"
+        Comment = "How many videos a player can have on the playlist at an given time, regardless of platform."
     },
     media_playlist_capacity = {
         Value = 64,
         Max = 248,
-        Comment = "The max amount of videos the playlist can hold"
+        Comment = "The total amount of videos the playlist can hold."
     },
     pointshop_enabled = {
         Value = false,
-        Comment = "Enable this if you are using pointshop"
+        Comment = "Players will be charged pointshop points in exchanging for putting videos into the playlist."
     },
     pointshop_cost = {
         Value = 2,
         Max = 20,
-        Comment = "Only works if pointshop is installed, if it is, this is price in coins to submit MediaPlayer"
+        Comment = "How much it costs for a video to be added to the playlist."
     },
     youtube_deep_check = {
         Value = false,
-        Comment = "Will use an api request up when verifying a videos existence"
+        Comment = "Will use an API call to check for a videos existience, can help fix some videos not working."
     },
     youtube_enabled = {
         Value = false,
-        Comment = "Since youtube only works on the Chromium branch, it is advised this disabled out right!"
+        Comment = "Enables youtube as being a supported media type."
     },
     youtube_api_key = {
         Value = "REPLACE WITH YOUR OWN",
@@ -162,7 +168,7 @@ local server = {
     },
     dailymotion_enabled = {
         Value = true,
-        Comment = "Will disable dailymotion videos from being supported"
+        Comment = "Enables dailymotion as being a supported media type."
     },
     dailymotion_api_key = {
         Value = "REPLACE WITH YOUR OWN",
@@ -170,23 +176,28 @@ local server = {
     },
     soundcloud_enabled = {
         Value = true,
-        Comment = "Will disable soundcloud music from being supported"
+        Comment = "Enables soundcloud as being a supported media type."
     },
     soundcloud_api_key = {
         Value = "REPLACE WITH YOUR OWN",
         Comment = "TODO: Fill"
     },
-    allow_custom_mp3 = {
+    mp3_enabled = {
         Value = false,
-        Comment = "TODO: Fill"
+        Comment = "Enables mp3 submissions. (please read the readme.md)."
     },
-    media_admin_only = {
+    mp3_https_only = {
         Value = true,
-        Comment = "Only admins can playlist things"
+        Comment = "Only allows https links to be submitted."
+    },
+    admin_only = {
+        Value = false,
+        Comment = "Admins are the only ones which are able to submit videos."
     }
 }
 
 --client settings
+
 local client = {
     youtube_client_api_key = {
         Value = "(unimplemented)",
@@ -199,23 +210,25 @@ local client = {
     media_blocked_videos = {
         Value = {
             Video_1 = "DRfidJNts6U"
-        }
+        },
+        Custom = true,
+        Comment = "(editing coming soon)"
     },
     media_player_display_video = {
         Value = true,
-        Comment = "Displays the video"
+        Comment = "Disabling this will make the video/audio player invisible."
     },
     media_playlist_hide_active = {
         Value = false,
-        Comment = "If enabled, the current actuve video playing will not be displayed in the playlist"
+        Comment = "Enabling this will hide the current active video from being displayed inside the playlist."
     },
     media_playlist_auto_resize = {
         Value = true,
-        Comment = "Autosize the playlist to fit its elements"
+        Comment = "Disabling will disable the playlists rescaling functionality and make it static."
     },
     media_playlist_hide = {
         Value = false,
-        Comment = "Hides the playlist completely."
+        Comment = "Enabling this will hide the playlist from the screen completely."
     },
     media_warning_hide = {
         Value = false,
@@ -231,11 +244,11 @@ local client = {
     },
     media_playlist_invert_position = {
         Value = true,
-        Comment = "Inverts the x position of the playlist, use this to scale things better to resolutions"
+        Comment = "Inverts the x position of the playlist, you can use this to make things position from the right of the screen instead of the left."
     },
     media_player_invert_position = {
         Value = false,
-        Comment = "Inverts the x position of the player, use this to scale things better to resolutions"
+        Comment = "Inverts the x position of the player, you can use this to make things position from the right of the screen instead of the left."
     },
     media_player_centered = {
         Value = false,
@@ -245,66 +258,66 @@ local client = {
         Value = false,
         Comment = "(unused)"
     },
-    presets_allow_default = {
+    preset_enable_server_default = {
         Value = true,
-        Comment = "DISABLE THIS IF YOU HAVE A CUSTOM THEME! Allows a servers default client settings to override your current client settings"
+        Comment = "Disabling this will mean that your settings and in extension look are uneffected by joining servers which have an initial preset present."
     },
-    media_playlist_show_constant = {
+    media_playlist_show_constantly = {
         Value = false,
-        Comment = "Will show the playlist all the time, not just in the scoreboard and context menu"
+        Comment = "Enabling this will show the playlist in all areas of the ui (scoreboard, hud, context)."
     },
-    media_player_show_new_video = {
+    mediaplayer_show_current_video = {
         Value = true,
-        Comment = "Disabling this will disallow the player being unhidden when a new video is played from it."
+        Comment = "Diabling this will keep the player hidden even if a new video is playing. You would enable this if you were looking to stop the player reappearing, always keeping it hidden, except for instance in the scoreboard or context menu."
     },
-    media_player_show_new_video_constant = {
+    mediaplayer_show_current_video_constantly = {
         Value = true,
-        Comment = "Player will always be visible when a video is playing"
+        Comment = "Disabling this will mean that the player does not ignore other show settings when a video is active and function properly. You would disable this if you were looking to keep your player always hidden except for in the scoreboard or context menu."
     },
     media_settings_centered = {
         Value = false,
         Refresh = false,
-        Comment = "Settings window will open center screen"
+        Comment = "The settings window will open centered to the middle of your screen."
     },
     media_admin_centered = {
         Value = false,
-        Comment = "Admin window will open center screen"
+        Comment = "The admin window will open centered to the middle of your screen."
     },
     media_warning_centered = {
         Value = true,
-        Comment = "Warning window will open center screen"
+        Comment = "The warning box will open centered to the middle of your screen."
     },
     media_success_centered = {
         Value = true,
-        Comment = "Warning window will open center screen"
+        Comment = "The success box will open centered to the middle of your screen."
     },
     media_search_centered = {
         Value = true,
-        Comment = "Search window will open center screen"
+        Comment = "The search window will open centered to the middle of your screen."
     },
     media_player_show_in_context = {
         Value = false,
-        Comment = "Show the player when you press 'c' / go in the context menu"
+        Comment = "Enabling this will make the player visible in the context menu."
     },
     media_player_show_in_scoreboard = {
         Value = true,
-        Comment = "Show the player when you press 'tab' / see the scoreboard"
+        Comment = "Enabling this will make the player visible in the scoreboard menu."
     },
     media_playlist_show_in_context = {
         Value = false,
-        Comment = "Show the playlist when you press 'c' / go in the context menu"
+        Comment = "Enabling this will make the playlist visible in the context menu."
     },
     media_playlist_show_in_scoreboard = {
         Value = true,
-        Comment = "Show the playlist when you press 'tab' / see the scoreboard"
+        Comment = "Enabling this will make the playlist visible in the scoreboard menu."
     },
     media_player_hide = {
         Value = false,
-        Comment = "Hides the player completely"
+        Comment = "Enabling this will disable the player from being visible."
     },
-    media_player_show_constant = {
+    media_player_show_constantly = {
         Value = false,
-        Comment = "Shows the player constantly"
+        Comment = "Enabling this show the player in all areas of the game (scoreboard, hud, context)."
     },
     media_search_hide = {
         Value = true,
@@ -312,29 +325,41 @@ local client = {
     },
     media_settings_hide = {
         Value = true,
-        Comment = "Will keep the settings window open forever if set to false (recommended when designing looks without all show)"
+        Comment = "Disabling this will mean the settings panel will constantly be visible, making the creation of presets easier."
     },
-    media_playlist_show_limit = {
+    media_playlist_display_limit = {
         Value = 10,
+        Min = 2,
+        Max = 40,
         Refresh = false,
         Convar = false,
-        Comment = "Will only show this amount of videos on the playlist at any given time"
+        Comment = "How many videos to display inside the playlist, will add a panel after this amount with the total videos currently on the playlist."
     },
     media_vote_hide = {
         Value = false,
-        Comment = "(unused)"
+        Comment = "Will disable votes from appearing."
     },
     media_admin_hide = {
         Value = true,
         Comment = "(unused)"
     },
-    media_all_show = {
+    media_base_hide = {
         Value = false,
-        Comment = "Useful for designing your look, will display all panels used by Easy MediaPlayer"
+        Comment = "(unused)"
     },
-    media_player_mute_video = {
+    all_show = {
         Value = false,
-        Comment = "Mutes the audio"
+        Comment = "Enabling this will show all UI elements used by Easy Mediaplayer (recommended for preset creation)"
+    },
+    media_player_mute = {
+        Value = false,
+        Comment = "Enabling this will mute the audio completely."
+    },
+    media_player_volume = {
+        Value = 100,
+        Min = 0,
+        Max = 100,
+        Comment = "Sets the volume of the player."
     },
     media_admin_colours = {
         Value = {
@@ -410,10 +435,6 @@ local client = {
             RowHeight = 40,
             Padding = 5,
         }
-    },
-    media_base_hide = {
-        Value = false,
-        Comment = "(unused)"
     },
     media_base_position = {
         Min = 10,

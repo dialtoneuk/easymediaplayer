@@ -123,7 +123,7 @@ function panel:CreateBrowserPanel()
 
 		--check if its a youtube url
 		local result = MediaPlayer.ParseYoutubeURL(val)
-		local is_mp3 = MediaPlayer.VerifyMp3URL(val)
+		local is_mp3 = MediaPlayer.ValidMediaUrl(val)
 
 		--if it is, play it
 		if (result != nil ) then

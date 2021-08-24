@@ -83,6 +83,9 @@ function MediaPlayer.LoadVotes()
 		--register it
 		MediaPlayer.RegisterVote(v)
 	end
+
+	--called after votes are loaded
+	hook.Run("MediaPlayer.VotesLoaded")
 end
 
 function MediaPlayer.AddRegisteredVotes(tab)
@@ -315,9 +318,3 @@ function MediaPlayer.ExecuteVote(vote)
 
 		return true
 	end
-
-	--[[
-	Hook call
-	--]]
-
-	hook.Run("MediaPlayer.VotingLoaded")

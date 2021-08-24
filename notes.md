@@ -14,7 +14,7 @@
     - Report a users submission?
     - Move a video up and down in position
 * (CHECK THIS IS DONE) Basically for some arrangements player also needs to have various modes
-    - player_show_constant - no matter what
+    - player_show_constantly - no matter what
     - player_show_in_context - only in context menu
     - player_show_in_scoreboard - only in scoreboard menu
     - player_show_video - when new video plays

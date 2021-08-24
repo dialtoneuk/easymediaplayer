@@ -1,3 +1,5 @@
+
+--Sends a preset to the player
 function MediaPlayer.SendDefaultPreset(ply, usmg)
     usmg = usmg or "ApplyDefaultPreset"
     local tab = util.JSONToTable( file.Read("lyds/presets/server_preset.json", "DATA") )
@@ -9,6 +11,7 @@ function MediaPlayer.SendDefaultPreset(ply, usmg)
     net.Send(ply)
 end
 
+--saves the servers joinlist to a json file
 function MediaPlayer.SaveJoinlist()
 
     if (MediaPlayer.Joinlist == nil or table.IsEmpty(MediaPlayer.Joinlist)) then return end

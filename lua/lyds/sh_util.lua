@@ -1,9 +1,7 @@
-MediaPlayer.BaseSeed = math.floor( os.time() / 3600 )
+--Used in the GenerateUniqueID method
+MediaPlayer.BaseSeed = math.floor( os.time() / 3600 ) --hours since 1970
 
---[[
-Encode URI
---]]
-
+--Enocdes a string into URI format for use in a http call
 function MediaPlayer.EncodeURI(str)
 	if (str) then
 		str = string.gsub (str, "\n", "\r\n")
@@ -14,10 +12,7 @@ function MediaPlayer.EncodeURI(str)
 	return str
 end
 
---[[
-Decode URI
---]]
-
+--Decodes a string used in a http call (unused)
 function MediaPlayer.DecodeURI(s)
 	if (s) then
 		s = string.gsub(s, "%%(%x%x)", function (hex)
@@ -27,27 +22,24 @@ function MediaPlayer.DecodeURI(s)
 	return s
 end
 
---[[
-Turns a table into a colour
---]]
-
+--Takes a table and returns a colour using the indexes of the table provided, must be numerical
 function MediaPlayer.TableToColour(tab)
 	return Color(tab.r or tab[1], tab.g or tab[2], tab.b or tab[3], tab.a or tab[4] or 255)
 end
 
+--Takes variable arguments as a parameter and turns them into a table
 function MediaPlayer.VarToColour(...)
 	local tab = {...}
 	return MediaPlayer.TableToColour(tab[1])
 end
---[[
-Gens an id based off of a string (url in our usecase for the mp3 stuff)
---]]
-function MediaPlayer.GenerateUniqueID(stringy)
+
+--Generates a safe id based off of a master_string, the id returned will always be unique to the master_string
+function MediaPlayer.GenerateSafeID(master_string)
 	local seed = 0
 	local id = ""
 
-	for i = 1, #stringy do
-		seed = seed + string.byte(stringy, i, i) --get the bytevalue of each of our string addit all together
+	for i = 1, #master_string do
+		seed = seed + string.byte(master_string, i, i) --get the bytevalue of each of our string addit all together
 	end
 
 	seed = seed * MediaPlayer.BaseSeed --times it all together
@@ -70,12 +62,8 @@ function MediaPlayer.GenerateUniqueID(stringy)
 	return id
 end
 
---[[
-	Verifies an mp3 url
---]]
-
-function MediaPlayer.VerifyMp3URL(url)
-	ensure_https = ensure_https or false
+--Verifies that an mp3 url is valid and in an acceptable format
+function MediaPlayer.ValidMediaUrl(url)
 	url = string.Trim(url)
 
 	if (string.find(url, ".mp3") == nil ) then
@@ -97,4 +85,9 @@ function MediaPlayer.VerifyMp3URL(url)
 	end
 
 	return true
+end
+
+--returns true is a URL is https
+function MediaPlayer.IsUrlHTTPS(url)
+	return string.sub(url, 1, 5) == "https"
 end

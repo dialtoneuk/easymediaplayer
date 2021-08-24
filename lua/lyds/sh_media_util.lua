@@ -1,7 +1,4 @@
---[[
-	Parses a url from MediaPlayer
---]]
-
+--pareses a youtube url and returns the video id
 function MediaPlayer.ParseYoutubeURL(url) --bad method
 
 	if (url == "https://www.youtube.com"  or url == "http://youtube.com" ) then return nil end
@@ -15,11 +12,8 @@ function MediaPlayer.ParseYoutubeURL(url) --bad method
 	return str
 end
 
---[[
-	Checks if a file is valid
-]]--
-
-function MediaPlayer.CheckMP3Link(video, callback, https)
+--checks if a given link is a 404 page
+function MediaPlayer.IsNot404(url, callback, https)
 	https = https or false
 
 	local start = "http://"
@@ -28,12 +22,8 @@ function MediaPlayer.CheckMP3Link(video, callback, https)
 		start = "https://"
 	end
 
-	if (video.Custom == nil ) then
-		error("custom not set")
-	end
-
 	local r = pcall(function()
-		http.Post(start .. video.Custom.Url, {}, function() callback(true) end, function() callback(false) end)
+		http.Post(start .. url, function() callback(true) end, function() callback(false) end)
 	end)
 
 	if (!r) then
@@ -41,18 +31,7 @@ function MediaPlayer.CheckMP3Link(video, callback, https)
 	end
 end
 
---[[
- Fetches Dailymotion api data
---]]
-
-function MediaPlayer.DailymotionFetch(params, callback, one_object)
-
-end
-
---[[
- Fetches Dailymotion api data
---]]
-
+--TODO: Rewrite
 function MediaPlayer.DailymotionFetch(params, callback, one_object)
 	one_object = one_object or false
 
@@ -68,10 +47,7 @@ function MediaPlayer.DailymotionFetch(params, callback, one_object)
 	end
 end
 
---[[
- Fetches youtube api data
---]]
-
+--TODO: Rewrite this to api endpoint is not apart of params and params are at table
 function MediaPlayer.YoutubeFetch(params, callback, one_object)
 	one_object = one_object or false
 
@@ -126,9 +102,8 @@ function MediaPlayer.YoutubeFetch(params, callback, one_object)
 		print(params .. " failed")
 	end, {["accept-encoding"] = "gzip, deflate"})
 end
---[[
-	Converts ISO time to a numerical value
---]]
+
+--Converts ISO time to a numerical value, used with Youtube videos.
 function MediaPlayer.ConvertFromISOTime(duration)
 
 	local safeFunc = function()

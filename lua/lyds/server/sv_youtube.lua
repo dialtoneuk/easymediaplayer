@@ -1,12 +1,10 @@
---[[
-Sets the info for a video, including its duration
---]]
 
+--gets duration, title, creator, views and other information about a youtube video
 function MediaPlayer.GetYoutubeVideoInfo(video, callback)
 	MediaPlayer.YoutubeVideoExists(video, function(result)
 		if (!result or result == nil) then callback(false) return end
 
-		MediaPlayer.YoutubeGetDeepInfo(video, function(data)
+		MediaPlayer.YoutubeGetVideo(video, function(data)
 			video.Duration = MediaPlayer.ConvertFromISOTime(data.contentDetails.duration)
 			video.Title = data.snippet.title
 			video.Creator = data.snippet.channelTitle
@@ -20,14 +18,11 @@ function MediaPlayer.GetYoutubeVideoInfo(video, callback)
 	end)
 end
 
---[[
-Does a free check to see if a video exists using the api-less call (takes up no use of API key limit)
---]]
-
+--returns true if a video exists
 function MediaPlayer.YoutubeVideoExists(video, callback)
 
 	--This gets the info then executes a callback
-	MediaPlayer.YoutubeGetFreeInfo(video, function(data)
+	MediaPlayer.YoutubeIsValid(video, function(data)
 		if (data == nil) then
 			callback(false)
 		elseif (!table.IsEmpty(data)) then
@@ -35,7 +30,7 @@ function MediaPlayer.YoutubeVideoExists(video, callback)
 		else
 
 			if (MediaPlayer.IsSettingTrue("youtube_deep_check")) then
-				MediaPlayer.YoutubeGetDeepInfo(video, function(r)
+				MediaPlayer.YoutubeGetVideo(video, function(r)
 					if (table.IsEmpty(r)) then
 						callback(false)
 					else
@@ -49,34 +44,41 @@ function MediaPlayer.YoutubeVideoExists(video, callback)
 	end)
 end
 
---[[
-	This will search MediaPlayer and return videos for us.
---]]
-
+--preforms a youtube search, returns a table full of objects as the first argument in the callbacks parameter
 function MediaPlayer.YoutubeSearch(query, callback, count)
 	count = count or 1
+
+	if (type(callback) != "function") then
+		error("callback must be a function")
+	end
 
 	local params = "search?q=" .. MediaPlayer.EncodeURI(query) .. "&part=snippet&maxResults=" .. math.floor(count) .. "&type=video"
 	MediaPlayer.YoutubeFetch(params, callback)
 end
 
---[[
-	This gets data about a video and then calls a callback
---]]
+--queries youtube and gets information about a video, takes a table or the id of a video
+function MediaPlayer.YoutubeGetVideo(video, callback)
 
-function MediaPlayer.YoutubeGetDeepInfo(video, callback)
+	if (type(video) == "table") then
+		video = video.Video
+	end
 
-	local params = "videos?id=" .. video.Video .. "&part=snippet,contentDetails,statistics,status,player"
+	if (type(callback) != "function") then
+		error("callback must be a function")
+	end
+
+	local params = "videos?id=" .. video .. "&part=snippet,contentDetails,statistics,status,player"
 	MediaPlayer.YoutubeFetch(params, callback, true )
 end
 
---[[
-	Gets free info which does not take from your api key limit
---]]
+--returns true if a video is valid
+function MediaPlayer.YoutubeIsValid(video, callback)
 
-function MediaPlayer.YoutubeGetFreeInfo(video, callback)
+	if (type(video) == "table") then
+		video = video.Video
+	end
 
-	local params = "https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=" .. video.Video .. "&format=json"
+	local params = "https://www.youtube.com/oembed?url=http://www.youtube.com/watch?v=" .. video .. "&format=json"
 	http.Fetch( params, function( body, length, headers, code )
 		if (code == 404) then
 			callback({})

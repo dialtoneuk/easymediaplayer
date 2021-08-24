@@ -208,21 +208,6 @@ function base:GetSetting(index)
     return self.Settings[index].Value
 end
 
-function base:ExecuteOperations()
-
-    warning("DEPRACATED CALL ExecuteOperations")
-end
-
-function base:ResizePanel()
-
-    warning("DEPRACATED CALL ResizePanel")
-end
-
-function base:ResizePanel()
-
-    warning("DEPRACATED CALL ResizePanel")
-end
-
 function base:CheckChange(key, index)
     index = index or "Size"
 
@@ -262,7 +247,7 @@ function base:SetDockPadding(element, times)
     element:DockPadding(self:GetPadding() * times,self:GetPadding() * times,self:GetPadding() * times,self:GetPadding() * times)
 end
 
-function base:SetDockMargin(element)
+function base:SetDockMargin(element, times)
     element = element or self
     times = times or 1
     element:DockMargin(self:GetPadding() * times,self:GetPadding() * times,self:GetPadding() * times,self:GetPadding() * times)
@@ -281,7 +266,7 @@ function base:SetPanelSettings()
 end
 
 --[[
-Sets the vote position
+Repositions the panel when something changes position
 ]]
 function base:Reposition()
     if (self.Centered or self.Locked) then return end

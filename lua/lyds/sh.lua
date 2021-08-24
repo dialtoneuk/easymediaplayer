@@ -1,8 +1,3 @@
---[[
-	Easy MediaPlayer Player
-
-	see autorun folder for where global table is defined + error capturing
---]]
 
 --types of videos
 MediaPlayer.MediaType = MediaPlayer.MediaType or {
@@ -13,33 +8,26 @@ MediaPlayer.MediaType = MediaPlayer.MediaType or {
 	SOUNDCLOUD = "soundcloud"
 }
 
-
 --[[
-	Hooks
+	Shared Hooks
 	---------------------------------------------------------------------------
 --]]
 
---[[
- 	Start Up
---]]
-
+--This is executed after the gamemode is loaded and loads our settings from file for both the client and server
 hook.Add("PostGamemodeLoaded", "MediaPlayer.LoadSettings", function()
-	MediaPlayer.LoadSettings()
-	MediaPlayer.SetConvars()
+	MediaPlayer.LoadSettings() --Load our settings from file
+	MediaPlayer.SetConvars() --Set convar values to match the settings values just loaded by convar
 
-	--Client and server called
-	hook.Call("MediaPlayer.SettingsPostLoad")
+	hook.Call("MediaPlayer.SettingsPostLoad") --Call post load hook
 end)
---[[
-	Shutdown
---]]
 
-hook.Add("ShutDown", "MediaPlayer.SaveSettingsShutdown", function()
-	MediaPlayer.SaveSettings()
+--This is what we should do when we should down
+hook.Add("ShutDown", "MediaPlayer.Shutdown", function()
+	MediaPlayer.SaveSettings() --Save our settings
 
 	if (SERVER) then
-		MediaPlayer.SaveHistory()
-		MediaPlayer.SaveBlacklist()
-		MediaPlayer.SaveJoinlist()
+		MediaPlayer.SaveHistory() --Save our history file
+		MediaPlayer.SaveBlacklist() --Save our black list
+		MediaPlayer.SaveJoinlist() --Save our join list
 	end
 end)

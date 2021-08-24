@@ -477,7 +477,7 @@ function panel:FillPresetEditor()
 				return
 			end
 
-			MediaPlayer.ApplyInitialPreset(self.Preset)
+			MediaPlayer.SendPresetToServer(self.Preset)
 			MediaPlayer.RefreshDefaultPreset()
 			MediaPlayer.InstantiatePanels(true)
 			MediaPlayer.CreateSuccessBox("Success", "Initial preset uploaded and set successfully applied!", 4)

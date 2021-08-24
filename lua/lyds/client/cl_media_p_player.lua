@@ -15,7 +15,7 @@ panel._CurrentOwnerName = nil
 panel.Settings = {
 	DisplayVideo = "display_video",
 	Muted = "mute_video",
-	ShowConstant =  "show_constant",
+	ShowConstant =  "show_constantly",
 	InvertPosition =  "invert_position",
 	Options = "options"
 }

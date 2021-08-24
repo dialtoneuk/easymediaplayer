@@ -224,17 +224,18 @@ hook.Add("InitPostEntity", "MediaPlayer.LoadClientAddon", function()
 	MediaPlayer.LocalPlayer = LocalPlayer()
 	MediaPlayer.InstantiatePanels(true)
 
-	--essentially if it is their first run
+	--if the player has ran this addnon before and they have saved settings
 	if (MediaPlayer.HasSavedSettings()) then
 
-		if (!MediaPlayer.IsSettingTrue("presets_allow_default")) then return end
+		--if we don't have preset defaults enabled then we'll just return here
+		if (!MediaPlayer.IsSettingTrue("preset_enable_server_default")) then return end
 
-		MediaPlayer.RequestDefaultInitialPreset() --this will ask
+		MediaPlayer.RequestDefaultPreset() --This will check the servers join list and ask for a default preset
 		return
 	end
 
 	MediaPlayer.WriteDefaultPresets() --this writes default presets from addon folder (if downloaded)
-	MediaPlayer.RequestDefaultPreset() --this asks the server for the servers default schema
+	MediaPlayer.GetDefaultPreset() --this asks the server for the servers default schema
 end)
 
 hook.Add("OnContextMenuOpen", "MediaPlayer.ContextMenu", function()
@@ -304,7 +305,7 @@ concommand.Add("media_write_default_presets", function(ply, cmd, args)
 end)
 
 concommand.Add("media_refresh_initial_preset", function(ply, cmd, args)
-	MediaPlayer.RequestDefaultPreset()
+	MediaPlayer.GetDefaultPreset()
 end)
 
 --[[
@@ -444,7 +445,7 @@ net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 	local preset = net.ReadTable()
 	write(preset)
 
-	if (!MediaPlayer.IsSettingTrue("presets_allow_default")) then return end
+	if (!MediaPlayer.IsSettingTrue("preset_enable_server_default")) then return end
 
 	for k,v in pairs(preset.Settings) do
 
@@ -656,7 +657,7 @@ net.Receive("MediaPlayer.SendCurrentVideo",function()
 	panel = MediaPlayer.GetPanel("PlayerPanel")
 	panel:SetVideo(MediaPlayer.CurrentVideo)
 
-	if (MediaPlayer.IsSettingTrue("media_player_show_new_video")) then
+	if (MediaPlayer.IsSettingTrue("mediaplayer_show_current_video")) then
 		panel:Show()
 	end
 end)

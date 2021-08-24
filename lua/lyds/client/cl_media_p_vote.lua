@@ -45,8 +45,8 @@ function panel:Init()
 
 			if (self.Vote and !table.IsEmpty(self.Vote) and self.Vote.StartTime  ) then
 				local time = CurTime() - self.Vote.StartTime
-				mins = math.floor(time / 60)
-				seconds = math.floor(time - (mins * 60))
+				local mins = math.floor(time / 60)
+				local seconds = math.floor(time - (mins * 60))
 
 				if (seconds < 10) then
 					seconds = "0" .. seconds

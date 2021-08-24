@@ -1,7 +1,4 @@
---[[
-	Our chat commands!
---]]
-
+--chat commands global table
 MediaPlayer.Commands = MediaPlayer.Commands or {}
 
 --base commmand
@@ -17,10 +14,7 @@ MediaPlayer.BaseCommand = {
 	end
 }
 
---[[
-	Devs! You can add to this
-]]--
-
+--registered commands
 MediaPlayer.RegisteredCommands = {
 
 	--this is also registered a a command so !voteskip
@@ -142,14 +136,7 @@ MediaPlayer.RegisteredCommands = {
 	}
 }
 
---[[
-	Chat Commands
-	Devs: You can add to these through attaching a fun to the MediaPlayer.PreloadRegisteredCommands func!
-
-	TODO: Argument parsing for !play <url> command
----------------------------------------------------------------------------
---]]
-
+--loads our chat commands
 function MediaPlayer.LoadChatCommands()
 
 	--this is the hook you would attach your shit too
@@ -174,8 +161,11 @@ function MediaPlayer.LoadChatCommands()
 
 		MediaPlayer.AddChatCommand(v)
 	end
+
+	hook.Call("MediaPlayer.CommandsLoaded")
 end
 
+--takes an array and adds commands to be registered to the global table
 function MediaPlayer.AddRegisteredCommands(tab)
 
 	for k,v in pairs(tab) do
@@ -188,26 +178,18 @@ function MediaPlayer.AddRegisteredCommands(tab)
 	end
 end
 
---[[
-	Returns a new chat command table
---]]
-
+--gets a new chat command which is used in the register functions
 function MediaPlayer.GetNewChatCommand()
 	return table.Copy(MediaPlayer.BaseCommand)
 end
 
---[[
-	Adds a chat command
---]]
-
+--adds the command for use in the main global table
 function MediaPlayer.AddChatCommand(command)
 	MediaPlayer.Commands[command.Command] = command
 end
 
---[[
-	Parses a command and then executes the command
---]]
-
+--parses a command given through the PlayerSay hook and matches it to one of our registered commands
+--TODO: Add variable argument parsing for !play
 function MediaPlayer.ParseCommand(ply, str)
 	if (str.sub(str, 1,1) != MediaPlayer.GetSetting("media_command_prefix").Value ) then return false end
 
@@ -237,12 +219,9 @@ function MediaPlayer.ParseCommand(ply, str)
 		local result = command.OnExecute(ply, command)
 
 		if (result != false and command.Admin == false ) then
-			MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.GetNewCooldown("Command"))
+			MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.CopyCooldown("Command"))
 		end
 
 		return true
 	end
 end
-
---hook call
-hook.Run("MediaPlayer.LoadedChatCommands")

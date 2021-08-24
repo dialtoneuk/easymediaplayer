@@ -104,10 +104,10 @@ MediaPlayer.Panels = {
 		Settings = {
 			--can define extra settings here
 			--size, is centered and show is implicit
-			Show_Constant = "show_constant",
+			Show_Constant = "show_constantly",
 			Context = "show_in_context",
 			Scoreboard = "show_in_scoreboard",
-			Show_New_Constant = "show_new_video_constant",
+			Show_New_Constant = "show_new_video_constantly",
 		},
 		PostInit = function(panel, key, settings)
 			panel:Reposition()
@@ -206,7 +206,7 @@ MediaPlayer.Panels = {
 			--can define extra settings here
 			--size, is centered and show is implicit
 			Show_In_Context = "show_in_context", --this is equiv to media_playlist_show_in_context
-			Show_Constant = "show_constant", -- you can append a ! to ignore settings base
+			Show_Constant = "show_constantly", -- you can append a ! to ignore settings base
 			Show_In_Scoreboard = "show_in_scoreboard"
 		},
 		PostInit = function(panel, key, settings)

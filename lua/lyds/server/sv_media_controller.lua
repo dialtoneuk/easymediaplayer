@@ -1,41 +1,63 @@
---[[
-	Announces a new video
---]]
+--This is what actually start the playlist and what is called to begin,
+--if its the fisrt video it'll instantly play it, if not it'll go around in this callback loop until no videos are left
+function MediaPlayer.Begin(video)
 
+	if (type(video) != "table") then error("must be a table") end
+
+	if (table.IsEmpty(MediaPlayer.CurrentVideo)) then
+		MediaPlayer.StartVideo(video, function()
+			MediaPlayer.AddToHistory(video)
+			MediaPlayer.RemoveVideo(video.Video)
+			MediaPlayer.StopVideo(video.Video)
+
+			if (MediaPlayer.HasNext()) then
+				--Next please
+				MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+				MediaPlayer.Begin(MediaPlayer.Next())
+			else
+				--Ending
+				MediaPlayer.Playlist = {}
+				MediaPlayer.CurrentVideo = {}
+				MediaPlayer.BroadcastEnd()
+			end
+		end)
+	else
+		MediaPlayer.AnnouncePlaylistAddition(video)
+		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+	end
+end
+
+--announces a new video
 function MediaPlayer.AnnounceVideo()
 	if (!MediaPlayer.CurrentVideo or table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
+	if (!MediaPlayer.IsSettingTrue("media_announce_video")) then return end
+
 	for k,v in pairs(player.GetAll()) do
-		v:SendMessage("Now playing [" .. MediaPlayer.CurrentVideo.Title .. "] submitted by " .. MediaPlayer.CurrentVideo.Owner:GetName())
+		v:SendMessage("Now playing '" .. MediaPlayer.CurrentVideo.Title .. "' submitted by " .. MediaPlayer.CurrentVideo.Owner:GetName())
 	end
 end
 
---[[
-	Announces an addition to the playlist
---]]
-
+--announces the addition of a new video into the playlist
 function MediaPlayer.AnnouncePlaylistAddition(video)
 	if (!video or table.IsEmpty(video)) then return end
+	if (!MediaPlayer.IsSettingTrue("media_announce_addition")) then return end
+
 	for k,v in pairs(player.GetAll()) do
-		v:SendMessage("Added [" .. video.Title .. "] submitted by " .. video.Owner:GetName())
+		v:SendMessage("Added '" .. video.Title .. "' submitted by " .. video.Owner:GetName())
 	end
 end
 
---[[
-	Announces an ending to a video
---]]
-
+--announces the ending of the video
 function MediaPlayer.AnnounceVideoEnding(video)
 	if (!video or table.IsEmpty(video)) then return end
+	if (!MediaPlayer.IsSettingTrue("media_announce_ending")) then return end
+
 	for k,v in pairs(player.GetAll()) do
-		v:SendMessage("Video [" .. video.Title .. "] over!")
+		v:SendMessage("Video '" .. video.Title .. "' over!")
 	end
 end
 
-
---[[
-	Send Data to player
---]]
-
+--sends server history items to the player
 function MediaPlayer.SendHistoryData(ply, data)
 	if (table.IsEmpty(MediaPlayer.History)) then return end
 	local setting = MediaPlayer.GetSetting("media_history_max") or { Value = 25 }
@@ -47,10 +69,7 @@ function MediaPlayer.SendHistoryData(ply, data)
 	net.Send(ply)
 end
 
---[[
-	Send Data to player
---]]
-
+--sends the personal history of a player to them selves
 function MediaPlayer.SendPersonalHistoryData(ply, data)
 	if (table.IsEmpty(MediaPlayer.History)) then return end
 	local setting = MediaPlayer.GetSetting("media_history_max") or { Value = 25 }
@@ -62,10 +81,7 @@ function MediaPlayer.SendPersonalHistoryData(ply, data)
 	net.Send(ply)
 end
 
---[[
-Send All History to player
---]]
-
+--sends all of the history to the player
 function MediaPlayer.SendHistory(ply)
 	if (table.IsEmpty(MediaPlayer.History)) then return end
 	local setting = MediaPlayer.GetSetting("media_history_max") or { Value = 25 }
@@ -77,19 +93,16 @@ function MediaPlayer.SendHistory(ply)
 	net.Send(ply)
 end
 
-
-
+--sends the history just for that video
 function MediaPlayer.SendHistoryForVideo(ply, video)
 	net.Start("MediaPlayer.SendHistoryForVideo")
 		net.WriteTable(video)
 	net.Send(ply)
 end
 
---[[
-Send blacklist to player
---]]
-
+--sends all of the banned videos to a player if they are an admin
 function MediaPlayer.SendBlacklist(ply)
+	if (!ply:IsAdmin()) then return end
 	if (table.IsEmpty(MediaPlayer.Blacklist)) then return end
 
 	net.Start("MediaPlayer.SendBlacklist")
@@ -97,77 +110,53 @@ function MediaPlayer.SendBlacklist(ply)
 	net.Send(ply)
 end
 
---[[
-Sends a section of the playlist
---]]
-
+--sends a section of the playlist to the player, limit is set in admin settings under playist_max_limit
 function MediaPlayer.SendPlaylistSection(ply, limit)
 	net.Start("MediaPlayer.SendPlaylist")
 		net.WriteTable(MediaPlayer.GetVideos(false, limit))
 	net.Send(ply)
 end
 
---[[
-Broadcast a selection
---]]
-
+--broadcasts a section of the playlist to all players
 function MediaPlayer.BroadcastSection(limit)
 	for k,v in pairs(player.GetAll()) do
 		MediaPlayer.SendPlaylistSection(v, limit )
 	end
 end
 
---[[
-	Broadcasts end to all players
---]]
-
+--broadcasts the end of a video to all players
 function MediaPlayer.BroadcastEnd()
 	for k,v in pairs(player.GetAll()) do
 		MediaPlayer.SendEnd(v)
 	end
 end
 
---[[
-	Sends the entire playlist
---]]
-
+--sends the entire playlist to player
 function MediaPlayer.SendPlaylist(ply)
 	net.Start("MediaPlayer.SendPlaylist")
 	net.WriteTable(MediaPlayer.GetVideos(false))
 	net.Send(ply)
 end
 
---[[
-	Tells a player the playlist has ended / no next current video
---]]
-
+--tells a player that the video has ended
 function MediaPlayer.SendEnd(ply)
 	net.Start("MediaPlayer.End")
 	net.Send(ply)
 end
 
---[[
-	Broadcast the entire playlist
---]]
-
+--broadcasts th plailist to ever
 function MediaPlayer.BroadcastPlaylist()
 	for k,v in pairs(player.GetAll()) do
-		MediaPlayer.SendPlaylistSection(v)
+		MediaPlayer.SendPlaylist(v)
 	end
 end
 
---[[
-	Starts a new video
---]]
-
+--starts a new video
 function MediaPlayer.StartVideo(video, callback)
 	MediaPlayer.CurrentVideo = video
 	MediaPlayer.BroadcastCurrentVideo()
 	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
-
-	if (MediaPlayer.GetSetting("media_announce_video").Value) then
-		MediaPlayer.AnnounceVideo()
-	end
+	MediaPlayer.AnnounceVideo()
 
 	--for our voting
 	for k,v in pairs(player.GetAll()) do
@@ -180,10 +169,7 @@ function MediaPlayer.StartVideo(video, callback)
 	end)
 end
 
---[[
-	Skips a video
---]]
-
+--skips a video
 function MediaPlayer.SkipVideo()
 
 	local video = MediaPlayer.CurrentVideo
@@ -204,46 +190,14 @@ function MediaPlayer.SkipVideo()
 end
 
 --[[
-	Calls when a new MediaPlayer video is added. Begins the playlist or broadcasts the current playlist
---]]
-
-function MediaPlayer.Begin(video)
-	if (table.IsEmpty(MediaPlayer.CurrentVideo)) then
-		MediaPlayer.StartVideo(video, function()
-			MediaPlayer.AddToHistory(video)
-			MediaPlayer.RemoveVideo(video.Video)
-			MediaPlayer.StopVideo(video.Video)
-
-			if (MediaPlayer.HasNext()) then
-				--Next please
-				MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
-				MediaPlayer.Begin(MediaPlayer.Next())
-			else
-				--Ending
-				MediaPlayer.Playlist = {}
-				MediaPlayer.CurrentVideo = {}
-				MediaPlayer.BroadcastEnd()
-			end
-		end)
-	else
-		if (MediaPlayer.GetSetting("media_announce_addition").Value) then
-			MediaPlayer.AnnouncePlaylistAddition(video)
-		end
-
-		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
-	end
-end
-
---[[
 	Stops the current video
 --]]
 
 function MediaPlayer.StopVideo()
 	if (timer.Exists("MediaPlayer.VideoTimer")) then timer.Remove("MediaPlayer.VideoTimer") end
 
-	if (MediaPlayer.GetSetting("media_announce_ending").Value) then
-		MediaPlayer.AnnounceVideoEnding(MediaPlayer.CurrentVideo)
-	end
+
+	MediaPlayer.AnnounceVideoEnding(MediaPlayer.CurrentVideo)
 
 	MediaPlayer.CurrentVideo = {}
 end

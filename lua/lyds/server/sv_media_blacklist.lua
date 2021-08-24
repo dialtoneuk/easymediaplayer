@@ -1,13 +1,7 @@
---[[
-	Holds our blacklist
---]]
-
+--holds all of our banned videos
 MediaPlayer.Blacklist = MediaPlayer.Blacklist or {}
 
---[[
-Loads the blacklist
---]]
-
+--loads our banned videos from file
 function MediaPlayer.LoadBlacklist()
 	if (!file.IsDir("lyds", "DATA")) then return end
 	if (!file.Exists("lyds/blacklist.json", "DATA")) then return end
@@ -15,21 +9,15 @@ function MediaPlayer.LoadBlacklist()
 	MediaPlayer.Blacklist = util.JSONToTable(file.Read("lyds/blacklist.json"))
 end
 
---[[
-	Saves blacklist
---]]
-
+--save the blacklist to file
 function MediaPlayer.SaveBlacklist()
 	if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
 
 	file.Write("lyds/blacklist.json", util.TableToJSON(MediaPlayer.Blacklist))
 end
 
---[[
-	Adds video to blacklist
---]]
-
-function MediaPlayer.AddToBlacklist(video, ply )
+--add a video to a blacklist, video must be a table
+function MediaPlayer.AddToBlacklist(video, ply)
 	if (!ply:IsAdmin() ) then return end
 
 	local _video = table.Copy(video)
@@ -49,10 +37,7 @@ function MediaPlayer.AddToBlacklist(video, ply )
 	MediaPlayer.Blacklist[video.Video] = _video
 end
 
---[[
-	Removes video from blacklist
---]]
-
+--removes from banned videos, video must be a table
 function MediaPlayer.RemoveFromBlacklist(video)
 	MediaPlayer.Blacklist[video.Video] = nil
 end

@@ -16,7 +16,7 @@ panel.Settings = {
 	AutoResize = "auto_resize",
 	InvertPosition = "invert_position",
 	Options = "options",
-	Limit = "show_limit"
+	Limit = "display_limit"
 }
 
 --on change

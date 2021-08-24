@@ -63,7 +63,7 @@ function MediaPlayer.InstantiatePanels(reinstantiate, skip, only_do)
 		--overwrite our hide to essentially ignore it if show all isn't present
 		MediaPlayer.LoadedPanels[key].Panel._Hide = MediaPlayer.LoadedPanels[key].Panel.Hide
 		MediaPlayer.LoadedPanels[key].Panel.Hide = function()
-			local _as = MediaPlayer.GetSetting("media_all_show")
+			local _as = MediaPlayer.GetSetting("all_show")
 			if ( _as.Value == false ) then
 				MediaPlayer.LoadedPanels[key].Panel:_Hide()
 			end

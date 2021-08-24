@@ -4,10 +4,7 @@ MediaPlayer.Playlist = MediaPlayer.Playlist or {}
 --get the player meta
 local ply = FindMetaTable("Player")
 
---[[
-sends a message to the player
---]]
-
+--sends a message to the player
 function ply:SendMessage(message)
 
 	if (string.len(message) > 125) then return end
@@ -17,13 +14,13 @@ function ply:SendMessage(message)
 	net.Send(self)
 end
 
---[[
-	Players initial spawn
---]]
-
+--does the initial spawn of a player
 function ply:DoInitialSpawn()
-	self:SendMessage("This server is running " .. MediaPlayer.Name .. " v" .. MediaPlayer.Version )
-	self:SendMessage("Created by " .. MediaPlayer.Credits.Author )
+
+	if (MediaPlayer.IsSettingTrue("media_announce_spawn")) then
+		self:SendMessage("This server is running " .. MediaPlayer.Name .. " v" .. MediaPlayer.Version )
+		self:SendMessage("Created by " .. MediaPlayer.Credits.Author )
+	end
 
 	if (self:IsAdmin()) then
 		MediaPlayer.SendBlacklist(self)
@@ -32,10 +29,7 @@ function ply:DoInitialSpawn()
 	end
 end
 
---[[
-Sends the servers settings to the client
---]]
-
+--sends the settings to the player if they are an admin
 function ply:SendAdminSettings()
 	if (!self:IsAdmin()) then return end
 
@@ -44,11 +38,8 @@ function ply:SendAdminSettings()
 	net.Send(self)
 end
 
---[[
- Sends a warning box to a player
---]]
-
-function ply:SentMediaWarningBox(message, title)
+--creates a warning box to a player
+function ply:SendMediaWarningBox(message, title)
 	title = title or "Warning"
 
 	net.Start("MediaPlayer.CreateWarningBox")
@@ -58,26 +49,17 @@ function ply:SentMediaWarningBox(message, title)
 end
 
 
---[[
-Removes a video
---]]
+--creates a success box on the players screen
+function ply:SendSuccessWarningBox(message, title)
+	title = title or "Warning"
 
-function ply:RemoveVideo(id)
-	if (MediaPlayer.Playlist[id] == nil) then return end -- already in there
-	local video = MediaPlayer.GetVideo(id)
-
-	if ( video == nil) then return end
-	if (!IsValid(video.Owner)) then return end
-	if (video.Owner:SteamID() != self:SteamID()) then return end --not ours
-
-	MediaPlayer.RemoveVideo(id)
-	ply:SendMessage("Video successfully removed!")
+	net.Start("MediaPlayer.CreateSuccessBox")
+	net.WriteString(title)
+	net.WriteString(message)
+	net.Send(self)
 end
 
---[[
-Gets a players personal history
---]]
-
+--gets all of the playlist items the player has personally submitted
 function ply:GetPersonalHistory(max, start )
 	local results = {}
 	local count = 0
@@ -97,10 +79,7 @@ function ply:GetPersonalHistory(max, start )
 	return results
 end
 
---[[
-Used for pages
---]]
-
+--gets how many items there are in total
 function ply:GetPersonalHistoryCount()
 
 	local count = 0
@@ -116,10 +95,7 @@ function ply:GetPersonalHistoryCount()
 	return count
 end
 
---[[
-Gets the players videos
---]]
-
+--gets all the videos currently on the playlist by this user
 function ply:GetVideos()
 	local results = {}
 
@@ -132,18 +108,4 @@ function ply:GetVideos()
 	end
 
 	return results
-end
-
---[[
-Removes all the users videos
---]]
-
-function ply:RemoveVideos()
-	for k,v in pairs(MediaPlayer.Playlist) do
-		if (!IsValid(v.Owner)) then continue end
-		if (!table.IsEmpty(MediaPlayer.CurrentVideo) and MediaPlayer.CurrentVideo.Video == v.Video) then continue end
-		if (v.Owner:SteamID() != self:SteamID()) then continue end --not ours
-
-		MediaPlayer.RemoveVideo(v.Video)
-	end
 end

@@ -1,23 +1,12 @@
---[[
-	Super cool settings system that allows for tables, ints and strings to be saved to the /data/ folder on both the client
-	and server's end, all editable via an easy to use panel.
-
-	Each setting also has a server convar value attached to it, Server and client convars are synced so use them like you would normally and everything should work fine. The
-	settings will be replaced by the convars. The system will create all convars that do not exist with their current settings values.
-
-	Written by Llydia Cross 2020.
---]]
-
---Our settings
+--Shares settings table
 MediaPlayer.Settings = MediaPlayer.Settings or {}
 
---[[
-	Registers an array of client settings
---]]
+--function to register client settings
 function MediaPlayer.RegisterClientSettings(client)
 	MediaPlayer.RegisterSettings({}, client)
 end
 
+--returns true if we have saved settings or not depending on environment (client or server)
 function MediaPlayer.HasSavedSettings()
 
 	local f = "lyds/settings.json"
@@ -28,19 +17,15 @@ function MediaPlayer.HasSavedSettings()
 
 	return file.Exists(f,"DATA")
 end
---[[
-	Registers an array of server settings
---]]
 
+--function to register server settings
 function MediaPlayer.RegisterServerSettings(server)
 	MediaPlayer.RegisterSettings(server, {})
 end
 
---[[
-	Registers both server and client settings
---]]
-
+--this takes a table of settings and works out the type through the Value and then adds it using MediaPlayer.AddSetting, used in sh_settings.lua
 function MediaPlayer.RegisterSettings(server, client)
+	client = client or {}
 	local fn = function(tab, key, is_server)
 		if (tab.Value == nil ) then error("no value") end
 
@@ -104,10 +89,7 @@ function MediaPlayer.RegisterSettings(server, client)
 	end
 end
 
---[[
-Add Setting
---]]
-
+--Takes a table and adds it to the global settings table if it doesn't already exist, it also creates various convars if it needs too
 function MediaPlayer.AddSetting(tab)
 	if (!table.HasValue(MediaPlayer.Type,tab.Type)) then return end
 	if (MediaPlayer.Settings[tab.key]) then return end
@@ -170,10 +152,7 @@ function MediaPlayer.AddSetting(tab)
 	}
 end
 
---[[
-chnanges the value of a setting
-]]--
-
+--changes a setting to another value, will copy tables given.
 function MediaPlayer.ChangeSetting(key, value, all_kinds)
 	all_kinds = all_kinds or true
 	for k,keys in pairs(MediaPlayer.Settings) do
@@ -220,20 +199,14 @@ function MediaPlayer.ChangeSetting(key, value, all_kinds)
 	end
 end
 
---
+--returns true if the setting is true
 function MediaPlayer.IsSettingTrue(key)
 	return MediaPlayer.GetSetting(key, true ).Value == true
 end
 
-function MediaPlayer.SettingTrue(key)
-	warning("DEPRACATED! call to settings true")
-	return MediaPlayer.SettingTrue(key)
-end
+MediaPlayer.SettingTrue = MediaPlayer.IsSettingTrue
 
---[[
-Gets a setting
---]]
-
+--Gets a setting, second argument assures its type to be correct (1 to True, truncate ints)
 function MediaPlayer.GetSetting(key, assure_type)
 	assure_type = assure_type or false
 	if (table.IsEmpty(MediaPlayer.Settings)) then errorBad("SETTINGS EMPTY") end
@@ -261,77 +234,42 @@ function MediaPlayer.GetSetting(key, assure_type)
 	}
 end
 
---[[
-Resets our convars, works on client too
---]]
+--Resets settings to their default values on either the server or the client
+function MediaPlayer.ResetSettings()
+	for k,keys in pairs(MediaPlayer.Settings) do
+		for kind,v in pairs(keys) do
+			if (v.Server and CLIENT ) then continue end --skip server if we are client
+			if (!v.Server and SERVER ) then continue end --skip client if we are server
 
-if ( SERVER ) then
-	function MediaPlayer.ResetSettings()
-		for k,keys in pairs(MediaPlayer.Settings) do
-			for kind,v in pairs(keys) do
-				if (!v.Server and SERVER ) then continue end
-
-				if (ConVarExists(k) and v.Convar) then
-					local convar = GetConVar(k)
-					if ( kind == MediaPlayer.Type.INT) then
-						convar:SetInt(v.DefValue)
-					elseif (kind == MediaPlayer.Type.STRING) then
-						convar:SetString(v.DefValue)
-					elseif ( kind == MediaPlayer.Type.BOOL) then
-						convar:SetBool(v.DefValue)
-					end
-
-					print("reset server convar " .. k .. " to ", v.Value )
+			if (ConVarExists(k) and v.Convar) then
+				local convar = GetConVar(k)
+				if ( kind == MediaPlayer.Type.INT) then
+					convar:SetInt(v.DefValue)
+				elseif (kind == MediaPlayer.Type.STRING) then
+					convar:SetString(v.DefValue)
+				elseif ( kind == MediaPlayer.Type.BOOL) then
+					convar:SetBool(v.DefValue)
 				end
 
-				if (kind == MediaPlayer.Types.BOOL) then
-					MediaPlayer.Settings[k][kind].Value = ( v.DefValue == 1 or v.DefValue == true )
-				elseif (kind == MediaPlayer.Types.TABLE ) then
-					MediaPlayer.Settings[k][kind].Value = table.Copy(v.DefValue)
+				if (SERVER) then
+					print("reset server convar " .. k .. " to ", v.Value )
 				else
-					MediaPlayer.Settings[k][kind].Value = v.DefValue
+					print("reset client convar " .. k .. " to ", v.Value )
 				end
 			end
-		end
-	end
-end
 
-
---[[
-Resets our settings CL
---]]
-
-if ( CLIENT ) then
-	function MediaPlayer.ResetSettings()
-		for k,keys in pairs(MediaPlayer.Settings) do
-			for kind,v in pairs(keys) do
-				if (v.Server and CLIENT ) then continue end
-
-				if (ConVarExists(k) and v.Convar) then
-					local convar = GetConVar(k)
-					if ( kind == MediaPlayer.Type.INT) then
-						convar:SetInt(v.DefValue)
-					elseif (kind == MediaPlayer.Type.STRING) then
-						convar:SetString(v.DefValue)
-					elseif ( kind == MediaPlayer.Type.BOOL) then
-						convar:SetBool(v.DefValue)
-					end
-				end
-
-				if (kind == MediaPlayer.Types.BOOL) then
-					MediaPlayer.Settings[k][kind].Value = ( v.DefValue == 1 or v.DefValue == true )
-				elseif (kind == MediaPlayer.Types.TABLE ) then
-					MediaPlayer.Settings[k][kind].Value = table.Copy(v.DefValue)
-				else
-					MediaPlayer.Settings[k][kind].Value = v.DefValue
-				end
+			if (kind == MediaPlayer.Types.BOOL) then
+				MediaPlayer.Settings[k][kind].Value = ( v.DefValue == 1 or v.DefValue == true )
+			elseif (kind == MediaPlayer.Types.TABLE ) then
+				MediaPlayer.Settings[k][kind].Value = table.Copy(v.DefValue)
+			else
+				MediaPlayer.Settings[k][kind].Value = v.DefValue
 			end
 		end
 	end
 end
 
 --this is named differently if we are playing locally
-
 if (SERVER) then
 	--server only
 	concommand.Add("media_reset_settings", function(ply, cmd, args )
@@ -351,14 +289,13 @@ if (CLIENT) then
 	end)
 end
 
---[[
-	Syncs our settings with our convars and vice versa
---]]
-
+--takes the convar values and set settings to their value
 function MediaPlayer.ResyncConvars()
 	for k,keys in pairs(MediaPlayer.Settings) do
 		for kind,v in pairs(keys) do
 			if (v.Server and CLIENT) then continue end
+			if (!v.Server and SERVER) then continue end
+
 			if (!v.Convar ) then continue end --since some settings might not have associated convar values
 			if (!ConVarExists(k)) then continue end
 
@@ -381,10 +318,13 @@ function MediaPlayer.ResyncConvars()
 	end
 end
 
+--Sets the convars from the settings
 function MediaPlayer.SetConvars()
 	for k,keys in pairs(MediaPlayer.Settings) do
 		for kind,v in pairs(keys) do
 			if (v.Server and CLIENT) then continue end
+			if (!v.Server and SERVER) then continue end
+
 			if (!v.Convar ) then continue end --since some settings might not have associated convar values
 			if (!ConVarExists(k)) then continue end
 
@@ -404,7 +344,9 @@ function MediaPlayer.SetConvars()
 	end
 end
 
+--this is named differently if we are playing locally
 if (SERVER) then
+	--server only
 	concommand.Add("media_resync_convars", function(ply, cmd, args )
 		MediaPlayer.ResyncConvars()
 
@@ -415,10 +357,14 @@ if (SERVER) then
 	end)
 end
 
---[[
-loads our settings
---]]
+if (CLIENT) then
+	--client only
+	concommand.Add("media_cl_resync_convars", function(ply, cmd, args )
+		MediaPlayer.ResyncConvars()
+	end)
+end
 
+--loads our server settings
 if (SERVER) then
 	function MediaPlayer.LoadSettings()
 		if (!file.IsDir("lyds", "DATA")) then return end
@@ -455,10 +401,7 @@ if (SERVER) then
 	end)
 end
 
---[[
-loads our client settings
---]]
-
+--loads our client settings
 if (CLIENT) then
 	function MediaPlayer.LoadSettings()
 		if (!file.IsDir("lyds", "DATA")) then return end
@@ -497,11 +440,7 @@ if (CLIENT) then
 	end)
 end
 
-
---[[
-Saves our settings
---]]
-
+--saves our server settings
 if (SERVER) then
 	function MediaPlayer.SaveSettings()
 		if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
@@ -532,10 +471,7 @@ if (SERVER) then
 	end)
 end
 
---[[
-Saves our client settings
---]]
-
+--saves our client settings
 if (CLIENT) then
 	function MediaPlayer.SaveSettings()
 		if (!file.IsDir("lyds", "DATA")) then file.CreateDir("lyds", "DATA") end
@@ -572,7 +508,7 @@ if (CLIENT) then
 	end)
 end
 
---So we can actually add our settings when all of this code has executed, but only if we haven't loaded them already
+--only do this once
 if (table.IsEmpty(MediaPlayer.Settings)) then
-	hook.Run("MediaPlayer.SettingsLoaded") --this is the hook you would attach a func too
+	hook.Run("MediaPlayer.SettingsLoaded") --hook onto this and then use RegisterSettings, see sh_settings.lua
 end

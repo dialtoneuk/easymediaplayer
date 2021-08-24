@@ -1,10 +1,5 @@
 
---[[
-	Syntax
-		You can use {SETTING_NAME} to get the value of a setting, it can't be a table though!
---]]
-
---default harcoded tips
+--default hardcoded tips
 MediaPlayer.Tips = {
 	{
 		body = "Admins can use {media_command_prefix}admin to remove videos from the blacklist.",
@@ -41,10 +36,7 @@ MediaPlayer.Tips = {
 	}
 }
 
---[[
-	Loads our custom tips
---]]
-
+--load our custom tips
 function MediaPlayer.LoadCustomTips()
 
 	if ( MediaPlayer.GetSetting("media_custom_tips") == nil ) then
@@ -64,10 +56,7 @@ function MediaPlayer.LoadCustomTips()
 	end
 end
 
---[[
-
---]]
-
+--selects a tip, first argument will display admin tips if true
 function MediaPlayer.SelectTip(is_admin)
 	is_admin = is_admin or false
 	local tip = {}
@@ -92,10 +81,7 @@ function MediaPlayer.SelectTip(is_admin)
 	return tip;
 end
 
---[[
-
---]]
-
+--parses a tips body and adds settings values or evaluates the string
 function MediaPlayer.ParseTipBody(tip)
 	local str = tip;
 
@@ -123,10 +109,7 @@ function MediaPlayer.ParseTipBody(tip)
 	return str
 end
 
---[[
-
---]]
-
+--display the tip each frequency interval
 function MediaPlayer.DisplayTip()
 
 	if ( MediaPlayer.IsSettingTrue("media_tips_enabled")) then
