@@ -74,11 +74,11 @@ function MediaPlayer.ApplyPreset(preset)
 			local set = MediaPlayer.GetSetting(k).DefValue
 
 			--loop the default values as these assure all settings a present (incase presets are older)
-			for key,val in pairs(set) do
+			for key,val in pairs(v) do
 
 				--it isnt set in this aray
 				if (v[key] == nil ) then
-					v[key] = set.DefValue[key]
+					v[key] = set[key]
 				end
 
 				if (set.__unpack != nil and string.sub(key, 1, 2) != "__" ) then
@@ -88,6 +88,12 @@ function MediaPlayer.ApplyPreset(preset)
 				if (string.sub(key, 1, 2) == "__") then
 					v[key] = nil
 					continue
+				end
+			end
+
+			for _k,_v in pairs(set) do
+				if (v[_k] == nil and string.sub(_k, 1, 2) != "__" ) then
+					v[_k] = table.Copy(set)[_k]
 				end
 			end
 
