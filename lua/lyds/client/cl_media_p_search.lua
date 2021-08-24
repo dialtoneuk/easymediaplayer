@@ -8,10 +8,6 @@ local panel = {}
 --settings
 panel.Name = "search"
 
-panel.Settings = {
-	Options = "options"
-}
-
 --for the pages
 panel.HistoryPage = 1
 panel.BrowserHistory = {}

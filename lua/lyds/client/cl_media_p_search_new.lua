@@ -1,5 +1,7 @@
 local panel = {}
 
+panel.Name = "search"
+
 /*
     Needs to be able to search/request different types of media
     Needs to be able to present history
