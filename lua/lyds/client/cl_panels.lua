@@ -1,17 +1,21 @@
---[[
-  These are the panels which are used by this addon, they are defined here
-]]--
 
+--These are all the panels used by the addon.
+--see cl_panels_controller.lua for how the data here is then instantiated and ready for us to use
 MediaPlayer.Panels = {
+
+	--settings panel
 	SettingsPanel = {
-		Element = "SettingsPanel",
-		SettingsBase = "media_settings", --will default to media_default
+		Element = "SettingsPanel", --what we refer to it by
+		SettingsBase = "media_settings", --will look for settings this, so media_settings_<setting>
 		Draggable = true,
 		Admin = false,
 		Settings = {
 			--can define extra settings here
 			--size, is centered and show is implicit
+			--their suffix is the SettingsBase, so settings here will equate to media_settings_*
 		},
+
+		--called after initialized
 		PostInit = function(panel, key, settings)
 			panel:FillPropertySheet({
 				Server = MediaPlayer.AdminSettings or {},
@@ -43,6 +47,8 @@ MediaPlayer.Panels = {
 			end
 		end
 	},
+
+	--Admin Panel
 	AdminPanel = {
 		Element = "AdminPanel",
 		SettingsBase = "media_admin",
@@ -56,6 +62,8 @@ MediaPlayer.Panels = {
 			panel:MakePopup()
 		end
 	},
+
+	--Warning Message Box
 	WarningBox = {
 		Preloaded = false, --this won't be created and "hidden", instead it'll be created on demand
 		Element = "WarningBox",
@@ -70,6 +78,8 @@ MediaPlayer.Panels = {
 			panel:MakePopup()
 		end
 	},
+
+	--Success Message Box
 	SuccessBox = {
 		Preloaded = false,
 		Element = "SuccessBox",
@@ -96,6 +106,8 @@ MediaPlayer.Panels = {
 			panel:MakePopup()
 		end
 	},
+
+	--Player Panel
 	PlayerPanel = {
 		Element = "PlayerPanel",
 		SettingsBase = "media_player",
@@ -179,6 +191,8 @@ MediaPlayer.Panels = {
 			end
 		end
 	},
+
+	--Vote Panel
 	VotePanel = {
 		Element = "VotePanel",
 		SettingsBase = "media_vote",
@@ -199,6 +213,8 @@ MediaPlayer.Panels = {
 			end
 		end
 	},
+
+	--Playlist Panel
 	PlaylistPanel = {
 		Element = "PlaylistPanel",
 		SettingsBase = "media_playlist", --setting base, everything in settings array will build off of this string like so media_playlist_*

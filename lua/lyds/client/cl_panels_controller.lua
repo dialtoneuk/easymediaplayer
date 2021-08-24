@@ -1,9 +1,11 @@
+--all of the live, loaded panels in the addon sit here
 MediaPlayer.LoadedPanels = MediaPlayer.LoadedPanels or {}
 
 --called when context menu opened
 function MediaPlayer.ExecuteContextMenu(has_opened)
 	has_opened = has_opened or false
 
+	--loop through all our loaded panels and execute the OnContext method
 	for k,v in pairs(MediaPlayer.LoadedPanels) do
 		if ( v.OnContext != nil ) then
 			v.OnContext(MediaPlayer.LoadedPanels[k].Panel, k, MediaPlayer.LoadedPanels[k]._Settings, has_opened)
@@ -15,6 +17,7 @@ end
 function MediaPlayer.ExecuteScoreboardMenu(has_opened)
 	has_opened = has_opened or false
 
+	--loop through all our loaded panels and execute the OnScoreboard method
 	for k,v in pairs(MediaPlayer.LoadedPanels) do
 		if ( v.OnScoreboard != nil ) then
 			v.OnScoreboard(MediaPlayer.LoadedPanels[k].Panel, k, MediaPlayer.LoadedPanels[k]._Settings, has_opened)
@@ -95,10 +98,12 @@ function MediaPlayer.ShowPanel(key)
 	MediaPlayer.LoadedPanels[key].Panel:Show()
 end
 
+--gets the panel class attached to the object
 function MediaPlayer.GetPanel(key)
 	return 	MediaPlayer.LoadedPanels[key].Panel
 end
 
+--returns true only if the value of the Panel key is a valid panel
 function MediaPlayer.PanelValid(key)
 	return MediaPlayer.LoadedPanels[key] != nil and MediaPlayer.LoadedPanels[key].Panel != nil and IsValid(MediaPlayer.LoadedPanels[key].Panel)
 end
@@ -108,6 +113,7 @@ function MediaPlayer.HidePanel(key)
 	MediaPlayer.LoadedPanels[key].Panel:Hide()
 end
 
+--sets the internal settings of panel to that of real settings
 function MediaPlayer.SetPanelSettings(key, tab, settings_base)
 	settings_base = settings_base or ""
 	for k,v in pairs(tab) do
@@ -124,6 +130,7 @@ function MediaPlayer.SetPanelSettings(key, tab, settings_base)
 	end
 end
 
+--sets up a panel with its default pos, size, and other specifications
 function MediaPlayer.SetupPanel(settings, panel, key)
 	panel:SetSize(settings.Size.Value.Width, settings.Size.Value.Height)
 	panel:SetPos(settings.Position.Value.X, settings.Position.Value.Y)
@@ -149,14 +156,4 @@ function MediaPlayer.SetupPanel(settings, panel, key)
 	panel.OnClose = function(self)
 		self:Hide()
 	end
-end
-
-
---[[
-	function to create all client panels
-]]--
-
-function MediaPlayer.CreateClientPanels()
-	warning("DEPRACATED! CreateClientPanels call somewhere")
-	MediaPlayer.InstantiatePanels(true)
 end

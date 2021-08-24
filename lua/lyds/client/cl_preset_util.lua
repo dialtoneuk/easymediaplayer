@@ -34,6 +34,7 @@ function MediaPlayer.PackDefaultPresets()
 	return str
 end
 
+--saves ap reset to file
 function MediaPlayer.SavePreset(filename, preset)
 
 	if (preset.Settings == nil ) then error("bad preset") end
@@ -61,6 +62,7 @@ function MediaPlayer.SavePreset(filename, preset)
 	file.Write("lyds/presets/" .. filename .. ".json", util.TableToJSON(preset) )
 end
 
+--applies a preset
 function MediaPlayer.ApplyPreset(preset)
 
 	if (preset.Settings == nil ) then error("bad preset") end
@@ -89,6 +91,7 @@ function MediaPlayer.ApplyPreset(preset)
 	end
 end
 
+--applys the default preset
 function MediaPlayer.ApplyDefaultPreset()
 
 	if (!file.Exists("lyds/presets/default.json","DATA") ) then
@@ -105,6 +108,7 @@ function MediaPlayer.ApplyDefaultPreset()
 	MediaPlayer.InstantiatePanels(true)
 end
 
+--writes default presets to file
 function MediaPlayer.WriteDefaultPresets()
 
 	local files = MediaPlayer.GetPackedPresets()
@@ -123,6 +127,7 @@ function MediaPlayer.WriteDefaultPresets()
 	end
 end
 
+--used in the creation of the default assets payload
 function MediaPlayer.PrintDefaultPresets()
 
 	if (!file.IsDir("lyds/", "DATA")) then file.CreateDir("lyds/") end
@@ -137,28 +142,34 @@ function MediaPlayer.PrintDefaultPresets()
 	print("-- copy content of .txt into garrysmod/addons/<addon_name>/lua/autorun/presets.lua")
 end
 
+--returns either the defined global or an empty table
 function MediaPlayer.GetPackedPresets()
 
 	--this global is loaded from autorun
 	if ( MediaPlayerPresets == nil or table.IsEmpty(MediaPlayerPresets )) then
-		return
+		return {}
 	end
 
 	return MediaPlayerPresets;
 end
 
+--requests the initial default preset from the server
 function MediaPlayer.GetDefaultPreset()
 
 	net.Start("MediaPlayer.GetDefaultPreset")
 	net.SendToServer()
 end
 
+--Refreses the default preset, must be an admin to call this
 function MediaPlayer.RefreshDefaultPreset()
+
+	if (!MediaPlayer.LocalPlayer:IsAdmin()) then return end
 
 	net.Start("MediaPlayer.AdminRefreshDefaultPreset")
 	net.SendToServer()
 end
 
+--Request default preset from the server if we've only joined once
 function MediaPlayer.RequestDefaultPreset()
 
 	net.Start("MediaPlayer.RequestDefaultPreset")

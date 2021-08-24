@@ -1,36 +1,34 @@
---[[
-The main sorta client side file
 
-see cl_panels for where new panels are defined within the panel controller system
------------------------------------------------------------------------------
---]]
-
---player and playlist
+--playlist and current video
 MediaPlayer.CurrentVideo = MediaPlayer.CurrentVideo or {}
 MediaPlayer.Playlist = MediaPlayer.Playlist or {}
 
---search stuff
-MediaPlayer.History = MediaPlayer.History or {}
-MediaPlayer.PlayerHistory = MediaPlayer.PlayerHistory or {}
+--History and Playhistory client tables
+MediaPlayer.History = MediaPlayer.History or {} --contains servers history (is not 1 to 1 w/ server)
+MediaPlayer.PlayerHistory = MediaPlayer.PlayerHistory or {} --contains players history (is not 1 to 1)
 MediaPlayer.SearchResults = MediaPlayer.SearchResults or {}
 
 --admin stuff
-MediaPlayer.Blacklist = MediaPlayer.Blacklist or {}
+MediaPlayer.Blacklist = MediaPlayer.Blacklist or {} --only filled if admin
 
 --For our history page
-MediaPlayer.HistoryCount = MediaPlayer.HistoryCount or 1
-MediaPlayer.HistoryPageMax = MediaPlayer.HistoryPageMax or 1
+MediaPlayer.HistoryCount = MediaPlayer.HistoryCount or 1 --how many history elements in total
+
+--TODO: Move this to be completely a client side variable
+MediaPlayer.HistoryPageMax = MediaPlayer.HistoryPageMax or 1 --how many elements at max can appear
 
 --for our player history page
-MediaPlayer.PlayerHistoryCount = MediaPlayer.PlayerHistoryCount or 1
-MediaPlayer.PlayerPageMax = MediaPlayer.PlayerPageMax or 1
+MediaPlayer.PlayerHistoryCount = MediaPlayer.PlayerHistoryCount or 1 --how many history elements in total
+
+--TODO: Move this to be completely a client side variable
+MediaPlayer.PlayerPageMax = MediaPlayer.PlayerPageMax or 1 --how many elements at max can appear
 
 MediaPlayer.CurrentVote = MediaPlayer.CurrentVote or {}
 MediaPlayer.AdminSettings = MediaPlayer.AdminSettings  or {}
 
 --[[
-Fonts
------------------------------------------------------------------------------
+	Fonts
+	-----------------------------------------------------------------------------
 --]]
 
 surface.CreateFont( "BiggerText", {
@@ -124,10 +122,11 @@ surface.CreateFont( "SmallText", {
 })
 
 --[[
-Hooks
+	Hooks
 -----------------------------------------------------------------------------
 --]]
 
+--adds icons to sandbox context menu
 hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 
 	--settings panel
@@ -220,6 +219,7 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 	})
 end)
 
+--ran after all entities have been initiated, here we instantiate panels and apply a default preset if its our first time joining/running
 hook.Add("InitPostEntity", "MediaPlayer.LoadClientAddon", function()
 	MediaPlayer.LocalPlayer = LocalPlayer()
 	MediaPlayer.InstantiatePanels(true)
@@ -242,202 +242,123 @@ hook.Add("InitPostEntity", "MediaPlayer.LoadClientAddon", function()
 
 	--will reinstantiate panels
 	MediaPlayer.GetDefaultPreset() --this asks the server for the servers default schema
-
 end)
 
+--hook onto context menu open, see cl_panels_controller.lua, arg 1 is simply visibility
 hook.Add("OnContextMenuOpen", "MediaPlayer.ContextMenu", function()
 	MediaPlayer.ExecuteContextMenu(true)
 end)
 
+--hook onto context menu hide, see cl_panels_controller.lua, arg 1 is simply visibility
 hook.Add("OnContextMenuClose", "MediaPlayer.ContextMenu", function()
 	MediaPlayer.ExecuteContextMenu(false)
 end)
 
+--hook onto scoreboard menu, see cl_panels_controller.lua, arg 1 is simply visibility
 hook.Add("ScoreboardShow", "MediaPlayer.ScoreboardShow", function()
 	MediaPlayer.ExecuteScoreboardMenu(true)
 end)
 
+--hook onto scoreboard menu, see cl_panels_controller.lua, arg 1 is simply visibility
 hook.Add("ScoreboardHide", "MediaPlayer.ScoreboardHide", function()
 	MediaPlayer.ExecuteScoreboardMenu(false)
 end)
 
---[[
-Net Functions
------------------------------------------------------------------------------
---]]
-
-
-function MediaPlayer.YoutubeSearch(query)
-
-	if (query == nil or query == "") then return end
-
-	net.Start("MediaPlayer.SearchQuery")
-	net.WriteString(query)
-	net.SendToServer()
-end
 
 --[[
-Requests and then sets our admin settings if not already sent
+	Console Commands
+	-----------------------------------------------------------------------------
 --]]
 
-function MediaPlayer.GetAdminSettings()
-	if (!MediaPlayer.LocalPlayer:IsAdmin()) then return end
-
-	net.Start("MediaPlayer.RequestAdminSettings")
-	--nothing
-	net.SendToServer()
-end
-
---[[
-Pushes a change to server settings
---]]
-
-function MediaPlayer.SetAdminSettings()
-	if (!MediaPlayer.LocalPlayer:IsAdmin()) then return end
-	if (table.IsEmpty(MediaPlayer.AdminSettings)) then return end
-
-	net.Start("MediaPlayer.SetAdminSettings")
-		net.WriteTable(MediaPlayer.AdminSettings)
-	net.SendToServer()
-end
-
-
---[[
-Console Commands
------------------------------------------------------------------------------
---]]
-
+--writeDefaultPreset our default presets to file contained inside autorun/presets.lua
 concommand.Add("media_write_default_presets", function(ply, cmd, args)
 	MediaPlayer.WriteDefaultPresets()
 end)
 
+--gets the initial preset from the server and applies it
 concommand.Add("media_refresh_initial_preset", function(ply, cmd, args)
 	MediaPlayer.GetDefaultPreset()
 end)
 
---[[
-Youtube search function
---]]
-
+--searches youtube
 concommand.Add("media_youtube_search", function (ply, cmd, args)
 
 	if (args[1] == nil or args[1] == "" ) then return end
 	MediaPlayer.YoutubeSearch(args[1])
 end)
 
---[[
-Creates all components
---]]
-
+--recreates all UI components
 concommand.Add("media_create_cl", function()
 	MediaPlayer.InstantiatePanels(true) --
 end)
 
-
+--recreates settings panel
 concommand.Add("media_settings_create", function()
 	MediaPlayer.ReinstantiatePanel("SettingsPanel")
 end)
 
---[[
-Creates all components
---]]
-
+--recreates all panels except the settings panel
 concommand.Add("media_refresh_cl", function()
 	MediaPlayer.InstantiatePanels(true, {
 		"SettingsPanel" --skips settings panel
 	})
 end)
 
---[[
-Shows our Search Panel
---]]
-
+--show search panel
 concommand.Add("media_search_panel", function()
 	MediaPlayer.ShowPanel("SearchPanel")
 end)
 
---[[
-Shows our Admin Panel
---]]
-
+--show admin panel
 concommand.Add("media_admin_panel", function()
 	MediaPlayer.ShowPanel("AdminPanel")
 end)
 
---[[
-Shows our Settings Panel
---]]
-
+--show settings panel
 concommand.Add("media_settings", function()
 	MediaPlayer.ShowPanel("SettingsPanel")
 end)
 
-
---[[
-Creates Search Panel
---]]
-
+--various creation commands for panels
+--search
 concommand.Add("media_create_search_panel", function()
 	MediaPlayer.ReinstantiatePanel("SearchPanel")
 end)
 
---[[
-Creates admin panel
---]]
-
-
+--admin
 concommand.Add("media_create_admin_panel", function()
 	MediaPlayer.ReinstantiatePanel("AdminPanel")
 end)
 
---[[
-Creates Vote Panel
---]]
-
+--vote
 concommand.Add("media_create_vote_panel", function()
 	MediaPlayer.ReinstantiatePanel("VotePanel")
 end)
 
---[[
-Creates Playlist Panel
---]]
-
+--player
 concommand.Add("media_create_player_panel", function()
 	MediaPlayer.ReinstantiatePanel("PlayerPanel")
 end)
 
---[[
-Creates Playlist Panel
---]]
-
+--playlist
 concommand.Add("media_create_playlist_panel", function()
 	MediaPlayer.ReinstantiatePanel("PlaylistPanel")
 end)
 
---[[
-Displays the MediaPlayer settings
---]]
-
+--settings
 concommand.Add("media_create_settings_panel",function()
 	MediaPlayer.ReinstantiatePanel("SettingsPanel", true)
 end)
 
 --[[
-Net stuff
------------------------------------------------------------------------------
+	Clients Net Receieves
+	-----------------------------------------------------------------------------
 --]]
 
-net.Receive("MediaPlayer.SendMessage", function()
-	local msg = net.ReadString() or " null "
-	local setting = MediaPlayer.GetSetting("media_chat_colours")
 
-	chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, msg )
-	chat.PlaySound()
-end)
-
---preset stuff
-
-local write = function(preset)
+--writes the servers local preset to file
+--TODO: Maybe move this into a func inside MediaPlayer.?
+local writeDefaultPreset = function(preset)
 	if (preset.Locked == nil or preset.Locked == false ) then
 		preset.Locked = true
 	end
@@ -450,7 +371,7 @@ end
 net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 
 	local preset = net.ReadTable()
-	write(preset)
+	writeDefaultPreset(preset)
 
 	if (!MediaPlayer.IsSettingTrue("preset_enable_server_default")) then return end
 
@@ -459,13 +380,20 @@ net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 end)
 
 net.Receive("MediaPlayer.RefreshDefaultPreset", function()
-	write(net.ReadTable())
+	writeDefaultPreset(net.ReadTable())
 end)
 
---[[
-This receives a chunk of history data AKA Paged data
---]]
+--receives a message from the server and puts it into the players chat
+net.Receive("MediaPlayer.SendMessage", function()
+	local msg = net.ReadString() or " null "
+	local setting = MediaPlayer.GetSetting("media_chat_colours")
 
+	chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, msg )
+	chat.PlaySound()
+end)
+
+
+--receives a chunk of history data from the server, not the full thing
 net.Receive("MediaPlayer.SendHistoryData", function()
 	local tab = net.ReadTable();
 
@@ -486,10 +414,7 @@ net.Receive("MediaPlayer.SendHistoryData", function()
 	panel.HistoryPage = panel.HistoryPage + 1
 end)
 
---[[
-Recieves personal history data from the server (basically checks for steam id before sending history)
---]]
-
+--receives a chunk of personal history data from the server, not the full thing. (personal history data is simply videos the user has submitted)
 net.Receive("MediaPlayer.SendPersonalHistory", function()
 	local tab = net.ReadTable();
 
@@ -508,11 +433,7 @@ net.Receive("MediaPlayer.SendPersonalHistory", function()
 	panel.PlayerHistoryPage = panel.PlayerHistoryPage + 1
 end)
 
---[[
-This receives ALL data
-Note: not used atm
---]]
-
+--receives all the history from the server
 net.Receive("MediaPlayer.SendHistory", function()
 	MediaPlayer.History =  net.ReadTable()
 	MediaPlayer.HistoryCount = net.ReadFloat()
@@ -524,10 +445,8 @@ net.Receive("MediaPlayer.SendHistory", function()
 	panel:PresentHistory()
 end)
 
---[[
-Recieves history data from the server
---]]
 
+--Creates a warning box, sent from server
 net.Receive("MediaPlayer.CreateWarningBox", function()
 
 	if (MediaPlayer.PanelValid("WarningBox")) then
@@ -539,19 +458,13 @@ net.Receive("MediaPlayer.CreateWarningBox", function()
 end)
 
 
---[[
-Recieves history data from the server
---]]
-
+--Receives history for a singular video
 net.Receive("MediaPlayer.SendHistoryForVideo", function()
 	local tab = net.ReadTable()
 	MediaPlayer.History[tab.Video] = tab;
 end)
 
---[[
-Recieves blacklist data from the server
---]]
-
+--The blacklist full of banned videos
 net.Receive("MediaPlayer.SendBlacklist", function()
 	MediaPlayer.Blacklist = net.ReadTable()
 
@@ -561,10 +474,7 @@ net.Receive("MediaPlayer.SendBlacklist", function()
 	end
 end)
 
---[[
-Ends a new vote
---]]
-
+--Received when a vote has ended
 net.Receive("MediaPlayer.EndVote", function()
 	MediaPlayer.CurrentVote = {}
 	local panel = MediaPlayer.GetPanel("VotePanel")
@@ -572,10 +482,8 @@ net.Receive("MediaPlayer.EndVote", function()
 	panel:Hide()
 end)
 
---[[
-Starts a new vote
---]]
 
+--Received when a vote has begun
 net.Receive("MediaPlayer.NewVote", function()
 	MediaPlayer.CurrentVote = net.ReadTable()
 
@@ -584,10 +492,8 @@ net.Receive("MediaPlayer.NewVote", function()
 	panel:Show()
 end)
 
---[[
-Sets Search Data
---]]
 
+--Received when search results have been returned
 net.Receive("MediaPlayer.SendSearchResults",function()
 	MediaPlayer.SearchResults = net.ReadTable()
 
@@ -595,10 +501,7 @@ net.Receive("MediaPlayer.SendSearchResults",function()
 	panel:PresentSearchResults(true)
 end)
 
---[[
-Ends the current playlist/listening session
---]]
-
+--Received when the playlist has ended
 net.Receive("MediaPlayer.End", function()
 	MediaPlayer.Playlist = {}
 	MediaPlayer.CurrentVideo = {}
@@ -622,10 +525,7 @@ net.Receive("MediaPlayer.End", function()
 	panel:Hide()
 end)
 
---[[
-Sets the current video
---]]
-
+--Received when a new video is playing, sets the current video in the playlist and removes that video from the playlist position, updating all other positions to down one.
 net.Receive("MediaPlayer.SendCurrentVideo",function()
 	MediaPlayer.CurrentVideo = net.ReadTable()
 	MediaPlayer.CurrentVideo.StartTime = CurTime()
@@ -651,10 +551,7 @@ net.Receive("MediaPlayer.SendCurrentVideo",function()
 	end
 end)
 
---[[
-Sets the playlist
---]]
-
+--receives the playlist from the server
 net.Receive("MediaPlayer.SendPlaylist",function()
 
 	MediaPlayer.Playlist = net.ReadTable()
@@ -663,18 +560,7 @@ net.Receive("MediaPlayer.SendPlaylist",function()
 	panel:UpdatePlaylist()
 end)
 
---[[
-Sets admin settings
---]]
-
+--receives admin settings from the server
 net.Receive("MediaPlayer.SendAdminSettings",function()
 	MediaPlayer.AdminSettings = net.ReadTable()
-end)
-
---[[
-Sets history
---]]
-
-net.Receive("MediaPlayer.SendHistory",function()
-	MediaPlayer.History = net.ReadTable()
 end)
