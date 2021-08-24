@@ -18,7 +18,8 @@ panel.DefaultSettings = {
 		"colours",
 		"size",
 		"position",
-		"options"
+		"options",
+		"invert_position"
 	}
 }
 
@@ -197,9 +198,6 @@ function panel:CreatePreset(title, author, add_default)
 				settings["media_" .. v .. "_" .. setting] = MediaPlayer.GetSetting("media_" .. v .. "_" .. setting).Value
 			end
 		end
-
-		settings["media_player_invert_position"] = MediaPlayer.GetSetting("media_player_invert_position").Value
-		settings["media_playlist_invert_position"] = MediaPlayer.GetSetting("media_playlist_invert_position").Value
 	end
 
 	local preset =  {
@@ -284,6 +282,10 @@ function panel:FillPresetEditor()
 
 	if (self.Preset.Settings != nil and !table.IsEmpty(self.Preset.Settings)) then
 		for k,v in pairs(self.Preset.Settings) do
+			if (!MediaPlayer.HasSetting(k)) then
+				self.Preset.Settings[k] = nil
+				continue
+			end
 			if (k != nil ) then
 				listview:AddLine(k)
 			end

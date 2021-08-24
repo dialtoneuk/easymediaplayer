@@ -9,6 +9,12 @@ panel.Settings = {
 function panel:Init()
 	self:BaseInit()
 
+	if (self:IsSettingTrue("InvertPosition")) then
+		self:InvertPosition(true)
+	end
+
+	self:Reposition()
+
 	--add warning box here
 	self.Label = vgui.Create("DLabel", self )
 	self.Label:Dock(FILL)

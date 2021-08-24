@@ -56,6 +56,8 @@ function panel:Init()
 			surface.DrawRect(0, 0, p:GetWide(), p:GetTall(), self.Settings.Options.Value.BorderThickness)
 			surface.SetDrawColor(self.Settings.Colours.Value.Border)
 			surface.DrawOutlinedRect(0, 0, p:GetWide(), p:GetTall(), self.Settings.Options.Value.BorderThickness)
+			surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder or MediaPlayer.Colours.Black )
+			surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
 		end
 	end
 
@@ -192,9 +194,9 @@ function panel:EmptyPanel()
 		local len = surface.GetTextSize(str)
 
 		draw.RoundedBox(5, 0, 0, self.Settings.Size.Value.Width - self:GetPadding() * 2, self.Settings.Size.Value.RowHeight, self.Settings.Colours.Value.ItemBackground )
-		draw.SimpleTextOutlined( str, "BiggerText", 10, 30, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
-		draw.SimpleTextOutlined( "v" .. MediaPlayer.Version, "MediumText", len + 15, 30, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
-		draw.SimpleTextOutlined("No videos queued - click me to search!", "MediumText", 10, 50,self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		draw.SimpleTextOutlined( str, "BiggerText", 10, 20, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		draw.SimpleTextOutlined( "v" .. MediaPlayer.Version, "MediumText", len + 17, 15, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		draw.SimpleTextOutlined("No videos queued - click me to search!", "MediumText", 10, 45,self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 	end
 
 	self.MiscPanel.DoClick = function(s)
@@ -222,8 +224,8 @@ function panel:CreateFullPanel()
 		surface.DrawRect(0, 0, s:GetWide(), s:GetTall())
 		surface.SetDrawColor(self.Settings.Colours.Value.Border)
 		surface.DrawOutlinedRect(0, 0, s:GetWide(), s:GetTall(), self.Settings.Options.Value.BorderThickness)
-		draw.SimpleTextOutlined("Playlist Full", "BiggerText", self:GetPadding() + 10, self:GetPadding() + 17, MediaPlayer.Colours.FadedWhite, 5, 1, 0.5, MediaPlayer.Colours.Black )
-		draw.SimpleTextOutlined(self._Count  .. " videos in list", "BigText", self:GetPadding() + 150, self:GetPadding() + 18, MediaPlayer.Colours.FadedWhite, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		draw.SimpleText("Playlist Full", "BiggerText", self:GetPadding() * 2, self:GetPadding() , MediaPlayer.Colours.FadedWhite )
+		draw.SimpleText(self._Count  .. " videos are in playlist", "PlaylistText", self:GetPadding() + 140, self:GetPadding() * 2, MediaPlayer.Colours.FadedWhite)
 	end
 
 	self.Grid:AddItem(self.FullPanel)

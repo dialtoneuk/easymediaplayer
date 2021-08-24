@@ -32,6 +32,12 @@ Fills the property sheet with all our shit
 function panel:Init()
 	self:BaseInit()
 
+	if (self:IsSettingTrue("InvertPosition")) then
+		self:InvertPosition(true)
+	end
+
+	self:Reposition()
+
 	self:MakePopup()
 	self:SetWide(self:GetWidth())
 	self:SetTall(self:GetHeight())
@@ -331,7 +337,7 @@ function panel:PresentSearchResults(clear, typ)
 		end
 
 		pan.DoClick = function()
-			RunConsoleCommand("media_play", typ, v.Video )
+			RunConsoleCommand("media_play", MediaPlayer.MediaType.YOUTUBE, v.Video )
 		end
 
 		local html = vgui.Create("DHTML", pan)
@@ -467,9 +473,14 @@ function panel:PresentHistory()
 		if ( v.Owner == nil ) then v.Owner = {} end
 
 		local pan = vgui.Create("DButton", self.HistoryGrid )
-		pan:SetWide(self:GetWidth(true, true) - self:GetPadding() * 4 )
+		pan:SetWide( ( self:GetWidth(true, true) - self:GetPadding() * 4 ) - 20 )
 		pan:SetTall(self.Settings.Size.Value.RowHeight)
 		pan:SetText("")
+
+		if (v.Plays == nil ) then
+			v.Plays = 0
+		end
+
 		pan:SetTooltip( "Likes: " .. v.Likes  .. "\n" .. "Dislikes: " .. v.Dislikes .. "\n" .. "Plays: " .. v.Plays )
 
 		pan.Paint = function()
@@ -512,9 +523,14 @@ function panel:PresentPlayerHistory()
 		if ( v.Owner == nil ) then v.Owner = {} end
 
 		local pan = vgui.Create("DButton", self.PlayerHistoryGrid )
-		pan:SetWide(self:GetWidth(true, true) - self:GetPadding() * 4 )
+		pan:SetWide( ( self:GetWidth(true, true) - self:GetPadding() * 4 ) - 20 )
 		pan:SetTall(self.Settings.Size.Value.RowHeight)
 		pan:SetText("")
+
+		if (v.Plays == nil ) then
+			v.Plays = 0
+		end
+
 		pan:SetTooltip( "Likes: " .. v.Likes .. "\n" .. "Dislikes: " .. v.Dislikes .. "\n" .. "Plays: " .. v.Plays )
 
 		pan.Paint = function()
@@ -555,7 +571,7 @@ function panel:AddPageHeader(that, page, count)
 	count = count or MediaPlayer.HistoryCount
 
 	local pan = vgui.Create("DButton", that )
-	pan:SetWide(self:GetWidth(true, true) - self:GetPadding() * 4 )
+	pan:SetWide( ( self:GetWidth(true, true) - self:GetPadding() * 4 ) - 20  )
 	pan:SetTall(self.Settings.Size.Value.RowHeight)
 	pan:SetText( "page " .. page)
 	pan:SetFont("BigText")

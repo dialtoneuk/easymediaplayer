@@ -70,6 +70,7 @@ function MediaPlayer.LoadVotes()
 	for k,v in pairs(MediaPlayer.RegisteredVotes) do
 		v = table.Merge(MediaPlayer.GetNewVote(), table.Copy(v))
 		v.Type = k
+		v.Required = v.Required
 
 		--register it
 		MediaPlayer.RegisterVote(v)
@@ -190,16 +191,16 @@ function MediaPlayer.StartVote(vote, ply)
 	if ( !MediaPlayer.Votes[vote]) then return end
 
 	local v = table.Copy(MediaPlayer.Votes[vote])
+
 	local count = table.Count( player.GetAll() )
-	local req = v.Required or 1
 
-	if (req == 1 ) then
-		v.Required = math.floor(count / 2)
+	if (v.Required > count ) then ply:SendMessage("Must have at over " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
+
+	if (v.Required == 1 ) then
+		v.Required = math.Round(count / 2)
 	else
-		v.Required = count - math.floor(count / req)
+		v.Required = count - math.floor(count / v.Required)
 	end
-
-	if (v.Required > count) then ply:SendMessage("Must have at over " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
 
 	if (v.OnStart != nil ) then
 		local result = v.OnStart()
@@ -271,10 +272,7 @@ function MediaPlayer.HasPassed()
 
 	if (!MediaPlayer.HasCurrentVote()) then return false end
 	if (MediaPlayer.CurrentVote.Count == 0 ) then return false end
-
-	local count = #player.GetAll()
-
-	if (MediaPlayer.CurrentVote.Count < math.floor( count / 2 ) ) then return false end
+	if (MediaPlayer.CurrentVote.Count != MediaPlayer.CurrentVote.Required ) then return false end
 
 	return true
 end

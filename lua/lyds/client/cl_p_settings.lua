@@ -52,8 +52,13 @@ Init
 --]]
 
 function panel:Init()
-
 	self:BaseInit()
+
+	if (self:IsSettingTrue("InvertPosition")) then
+		self:InvertPosition(true)
+	end
+
+	self:Reposition()
 
 	if ( MediaPlayer.Settings == nil or table.IsEmpty(MediaPlayer.Settings)) then
 		errorBad("no settings")
@@ -319,7 +324,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	self.Comments[title]:Dock(BOTTOM)
 	self.Comments[title]:DockMargin(0,5,0,0)
 	self.Comments[title]:DockPadding(15,5,5,5)
-	self.Comments[title]:SetTall(65)
+	self.Comments[title]:SetTall(85)
 	self.Comments[title]:SetBackgroundColor(self.Settings.Colours.Value.Background)
 	self.Comments[title]:Hide()
 

@@ -15,18 +15,18 @@ function MediaPlayer.PackDefaultPresets()
 
 		v = string.Replace(v, " ", "_")
 
-		tab = util.TableToJSON(file.Read("data/presets/" .. v , "thirdparty"))
+		local t = util.JSONToTable(file.Read("data/presets/" .. v , "thirdparty"))
 
-		if (tab == nil ) then
+		if (t == nil ) then
 			error("bad json in " .. v .. ".json")
 		end
 
-		tab.Locked = true
-		tab[ v ] = tab
+		t.Locked = true
+		tab[ v ] = t
 	end
 
 	for k,v in pairs(tab) do
-		str = str .. string.format("\t['%s'] = [[%s]],\n", k, util.JSONToTable(v) )
+		str = str .. string.format("\t['%s'] = [[%s]],\n", k, util.TableToJSON(v) )
 	end
 
 	str = str .. "}"
@@ -87,6 +87,22 @@ function MediaPlayer.ApplyPreset(preset)
 			MediaPlayer.ChangeSetting(k, v)
 		end
 	end
+end
+
+function MediaPlayer.ApplyDefaultPreset()
+
+	if (!file.Exists("lyds/presets/default.json","DATA") ) then
+		return
+	end
+
+	local tab = util.JSONToTable(file.Read("lyds/presets/default.json"))
+
+	if (tab == nil) then
+		error("default preset is invalid")
+	end
+
+	MediaPlayer.ApplyPreset(tab)
+	MediaPlayer.InstantiatePanels(true)
 end
 
 function MediaPlayer.WriteDefaultPresets()

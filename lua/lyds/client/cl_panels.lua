@@ -107,7 +107,7 @@ MediaPlayer.Panels = {
 			Show_Constant = "show_constantly",
 			Context = "show_in_context",
 			Scoreboard = "show_in_scoreboard",
-			Show_New_Constant = "show_new_video_constantly",
+			Show_New_Constant = "show_current_video_constantly",
 		},
 		PostInit = function(panel, key, settings)
 			panel:Reposition()
@@ -121,12 +121,14 @@ MediaPlayer.Panels = {
 			if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
 				panel:SetVideo(MediaPlayer.CurrentVideo)
 
-				if (settings.Show_New_Constant.Value) then
+				if (settings.Show_New_Constant.Value or settings.Show_Constant.Value) then
 					panel:Show()
 				end
 			else
-				if ( settings.Show_Constant.Value and !settings.Context.Value and !settings.Scoreboard.Value) then
+				if (settings.Show_Constant.Value) then
 					panel:Show()
+				elseif ( settings.Context.Value or settings.Scoreboard.Value ) then
+					panel:Hide()
 				end
 			end
 		end,

@@ -4,6 +4,11 @@ MediaPlayer.History = MediaPlayer.History or {}
 --adds a video to the servers history
 function MediaPlayer.AddToHistory(video)
 	if (MediaPlayer.History[video.Video]) then
+
+		if (MediaPlayer.History[video.Video].Plays == nil ) then
+			MediaPlayer.History[video.Video].Plays = 0
+		end
+
 		MediaPlayer.History[video.Video].Plays = MediaPlayer.History[video.Video].Plays + 1
 		MediaPlayer.History[video.Video].LastPlayed = os.time()
 		MediaPlayer.History[video.Video].Owner = {
@@ -20,6 +25,7 @@ function MediaPlayer.AddToHistory(video)
 	}
 	history.Likes = 0
 	history.Dislikes = 0
+	history.Plays = 1
 	history.LastPlayed = os.time()
 
 	MediaPlayer.History[video.Video] = history

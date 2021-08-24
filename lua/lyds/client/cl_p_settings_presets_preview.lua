@@ -15,6 +15,12 @@ end
 
 --takes the key of the setting inside MEDIA.Settings and then the alue,
 function panel:DisplaySettings(k, v, parent)
+
+    if !(MediaPlayer.HasSetting(k)) then
+        self.Parent.Preset.Settings[k] = nil
+        return
+    end
+
     self.Parent = parent
     v = self.Parent.Preset.Settings[k]
 

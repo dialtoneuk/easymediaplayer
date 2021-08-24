@@ -34,18 +34,18 @@ function panel:Init()
 	self:SetIgnoreRescaling(true, true)
 	self:BaseInit()
 
-	self:SetDockPadding()
+	self:SetDockPadding(self, 4)
 	self:SetText("")
 
 	self.Text = vgui.Create("DLabel", self )
 	self.Text:SetFont("PlaylistText")
-	self.Text:Dock(FILL)
+	self.Text:Dock(TOP)
 	self.Text:SetWrap(true)
 	self.Text:SetTall(self.Settings.Size.Value.RowHeight / 2)
 	self.Text:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 	self.Duration = vgui.Create("DLabel", self )
-	self.Duration:SetPos(self:GetWidth() - ( 85  + self:GetPadding() ), self.Settings.Size.Value.RowHeight - ( 15 + self:GetPadding() ) )
+	self.Duration:SetPos(self:GetWidth() - ( 85  + self:GetPadding() ), self.Settings.Size.Value.RowHeight - ( 15 + self:GetPadding() * 2 ) )
 	self.Duration:SetWide(self:GetWidth() / 2)
 	self.Duration:SetFont("SmallText")
 	self.Duration:DockMargin(0,0,0,0)
@@ -169,10 +169,10 @@ function panel:SetItemText()
 		result = "0" .. result
 	end
 
-	self.Text:SetText(self.Item.Title .. " by " .. self.Item.Creator )
+	self.Text:SetText(self.Item.Title )
 	self.Duration:SetText( mins .. " mins " .. string.Replace(result,"-", "") .. " secs")
 
-	local str = "submitted by " .. self.Item.Owner.Name .. " / " .. self.Item.Type or "unknown"
+	local str = "by " .. self.Item.Creator .. " | " .. "subm: " .. self.Item.Owner.Name .. " on " .. self.Item.Type or "unknown"
 
 	if (!self.Active) then
 		self.TextOwner:SetText(str)

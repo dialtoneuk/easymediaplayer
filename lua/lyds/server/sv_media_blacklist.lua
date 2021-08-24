@@ -18,14 +18,18 @@ end
 
 --add a video to a blacklist, video must be a table
 function MediaPlayer.AddToBlacklist(video, ply)
-	if (!ply:IsAdmin() ) then return end
-
 	local bannedVideo = table.Copy(video)
-
 	bannedVideo.Admin = {
-		Name = ply:GetName(),
-		SteamID = ply:SteamID(),
+		Name = "System",
+		SteamID = "0"
 	}
+
+	if (ply) then
+		bannedVideo.Admin = {
+			Name = ply:GetName(),
+			SteamID = ply:SteamID(),
+		}
+	end
 
 	if (IsValid(video.Owner)) then
 		bannedVideo.Owner = {

@@ -54,8 +54,8 @@ surface.CreateFont( "BiggerText", {
 surface.CreateFont( "PlaylistText", {
 	font = "Arial",
 	extended = false,
-	size = 22,
-	weight = 100,
+	size = 19,
+	weight = 200,
 	blursize = 0,
 	scanlines = 0,
 	antialias = true,
@@ -72,7 +72,7 @@ surface.CreateFont( "PlaylistText", {
 surface.CreateFont( "BigText", {
 	font = "Arial",
 	extended = false,
-	size = 20,
+	size = 18,
 	weight = 200,
 	blursize = 0,
 	scanlines = 0,
@@ -90,7 +90,7 @@ surface.CreateFont( "BigText", {
 surface.CreateFont( "MediumText", {
 	font = "Arial",
 	extended = false,
-	size = 15,
+	size = 18,
 	weight = 100,
 	blursize = 0,
 	scanlines = 1,
@@ -108,7 +108,7 @@ surface.CreateFont( "MediumText", {
 surface.CreateFont( "SmallText", {
 	font = "Arial",
 	extended = false,
-	size = 13,
+	size = 12,
 	weight = 80,
 	blursize = 0,
 	scanlines = 0,
@@ -232,10 +232,17 @@ hook.Add("InitPostEntity", "MediaPlayer.LoadClientAddon", function()
 
 		MediaPlayer.RequestDefaultPreset() --This will check the servers join list and ask for a default preset
 		return
+	else
+		--this is their first time
+		MediaPlayer.WriteDefaultPresets()
+
+		--now lets try and load our default preset
+		MediaPlayer.ApplyDefaultPreset()
 	end
 
-	MediaPlayer.WriteDefaultPresets() --this writes default presets from addon folder (if downloaded)
+	--will reinstantiate panels
 	MediaPlayer.GetDefaultPreset() --this asks the server for the servers default schema
+
 end)
 
 hook.Add("OnContextMenuOpen", "MediaPlayer.ContextMenu", function()
@@ -447,28 +454,8 @@ net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 
 	if (!MediaPlayer.IsSettingTrue("preset_enable_server_default")) then return end
 
-	for k,v in pairs(preset.Settings) do
-
-		if (type(v) == "table") then
-
-			local set = MediaPlayer.GetSetting(k).DefValue
-			for key,val in pairs(v) do
-
-				if (set.__unpack != nil and string.sub(key, 1, 2) != "__" ) then
-					v[k][key] = set.__unpack(v[key], key, val )
-				end
-
-				if (string.sub(key, 1, 2) == "__") then
-					v[k][key] = nil
-					continue
-				end
-
-				--applys the setting
-				MediaPlayer.ChangeSetting(k, v[key])
-			end
-		end
-
-	end
+	MediaPlayer.ApplyPreset(preset)
+	MediaPlayer.InstantiatePanels(true)
 end)
 
 net.Receive("MediaPlayer.RefreshDefaultPreset", function()
@@ -568,8 +555,10 @@ Recieves blacklist data from the server
 net.Receive("MediaPlayer.SendBlacklist", function()
 	MediaPlayer.Blacklist = net.ReadTable()
 
-	local panel = MediaPlayer.GetPanel("SearchPanel")
-	panel:PresentBlacklist()
+	if (MediaPlayer.PanelValid("AdminPanel")) then
+		local panel = MediaPlayer.GetPanel("AdminPanel")
+		panel:PresentBlacklist()
+	end
 end)
 
 --[[
@@ -657,7 +646,7 @@ net.Receive("MediaPlayer.SendCurrentVideo",function()
 	panel = MediaPlayer.GetPanel("PlayerPanel")
 	panel:SetVideo(MediaPlayer.CurrentVideo)
 
-	if (MediaPlayer.IsSettingTrue("mediaplayer_show_current_video")) then
+	if (MediaPlayer.IsSettingTrue("media_player_show_current_video")) then
 		panel:Show()
 	end
 end)

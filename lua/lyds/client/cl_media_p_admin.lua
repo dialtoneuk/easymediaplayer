@@ -24,6 +24,12 @@ Init
 function panel:Init()
 	self:BaseInit()
 
+	if (self:IsSettingTrue("InvertPosition")) then
+		self:InvertPosition(true)
+	end
+
+	self:Reposition()
+
 	if (!MediaPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
 
 	self:SetSize(self:GetWidth(), self:GetHeight())
@@ -115,12 +121,13 @@ function panel:CreateBlacklistPanel()
 		if (table.IsEmpty(MediaPlayer.Blacklist)) then self.List:Clear() end
 
 		self.Selected = {}
-		self.SelectedPanel:Hide()
+		self.SelectedPanel:SetDisabled(true)
 	end
 
 	self.List.OnRowSelected = function( lst, index, pnl )
 		self.Selected = MediaPlayer.Blacklist[pnl:GetColumnText(5)]
 		self.SelectedPanel:Show()
+		self.SelectedPanel:SetDisabled(false)
 	end
 
 	local rbutton = vgui.Create("DButton", self.BContainer )

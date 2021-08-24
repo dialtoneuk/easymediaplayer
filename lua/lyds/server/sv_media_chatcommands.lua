@@ -100,11 +100,11 @@ MediaPlayer.RegisteredCommands = {
 				return false
 			end --returning false won't inhibit a cooldown
 
-			if (MediaPlayer.GetSeting("media_mute_video").Value) then
-				MediaPlayer.ChangeSetting("media_mute_video", false );
+			if (MediaPlayer.GetSeting("media_player_mute").Value) then
+				MediaPlayer.ChangeSetting("media_player_mute", false );
 				ply:SendMessage("Video unmuted")
 			else
-				MediaPlayer.ChangeSetting("media_mute_video", true );
+				MediaPlayer.ChangeSetting("media_player_mute", true );
 				ply:SendMessage("Video muted")
 			end
 

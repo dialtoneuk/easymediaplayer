@@ -407,7 +407,7 @@ concommand.Add("media_unblacklist_video", function(ply, cmd, args)
 
 		if (MediaPlayer.IsSettingTrue("media_announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
-				v:SendMessage( vid.Name or "Unknown" .. " has been unbanned by " ..  ply:GetName() .. " (admin)")
+				v:SendMessage( vid.Title .. " has been unbanned by " ..  ply:GetName() .. " (admin)")
 			end
 		end
 

@@ -23,6 +23,11 @@ function MediaPlayer.RegisterServerSettings(server)
 	MediaPlayer.RegisterSettings(server, {})
 end
 
+--returns true if setting exists
+function MediaPlayer.HasSetting(k)
+	return MediaPlayer.Settings[k] != nil
+end
+
 --this takes a table of settings and works out the type through the Value and then adds it using MediaPlayer.AddSetting, used in sh_settings.lua
 function MediaPlayer.RegisterSettings(server, client)
 	client = client or {}
@@ -384,8 +389,8 @@ if (SERVER) then
 				if (kind == MediaPlayer.Type.BOOL) then
 					tab.Value = ( v.Value == 1 or v.Value == true )
 				elseif (kind == MediaPlayer.Type.TABLE ) then
-					for key,index in pairs(v.Value) do
-						tab.Value[key] = index
+					for key,index in pairs(tab.DefValue) do
+						tab.Value[key] = v.Value[key] or tab.DefValue[key]
 					end
 				else
 					tab.Value = v.Value
@@ -423,8 +428,8 @@ if (CLIENT) then
 				if (kind == MediaPlayer.Type.BOOL) then
 					tab.Value = ( v.Value == 1 or v.Value == true )
 				elseif (kind == MediaPlayer.Type.TABLE ) then
-					for key,index in pairs(v.Value) do
-						tab.Value[key] = index
+					for key,index in pairs(tab.DefValue) do
+						tab.Value[key] = v.Value[key] or tab.DefValue[key]
 					end
 				else
 					tab.Value = v.Value

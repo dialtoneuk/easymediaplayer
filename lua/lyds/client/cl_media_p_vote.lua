@@ -23,6 +23,12 @@ function panel:Init()
 
 	self:BaseInit()
 
+	if (self:IsSettingTrue("InvertPosition")) then
+		self:InvertPosition(true)
+	end
+
+	self:Reposition()
+
 	self:SetDockPadding()
 
 	self.Type = vgui.Create("DLabel", self )

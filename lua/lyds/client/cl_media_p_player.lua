@@ -14,10 +14,20 @@ panel._CurrentOwnerName = nil
 --Extra Settings
 panel.Settings = {
 	DisplayVideo = "display_video",
-	Muted = "mute_video",
+	Muted = "mute",
 	ShowConstant =  "show_constantly",
-	InvertPosition =  "invert_position",
 	Options = "options"
+}
+
+--on change
+panel.WatchedSettings = {
+	Size = {
+		Padding = function(p)
+			if (p:CheckChange("Padding")) then
+				p:SetHasResized()
+			end
+		end,
+	}
 }
 
 --Our initial setup
@@ -67,39 +77,56 @@ function panel:Init()
 	self.Paint = function()
 
 		surface.SetDrawColor(self.Settings.Colours.Value.Background)
-		surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+		surface.DrawRect(0, 0, self:GetWidth(), self:GetHeight())
 		surface.SetDrawColor(self.Settings.Colours.Value.Border)
-		surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
+		surface.DrawOutlinedRect(0, 0, self:GetWidth(), self:GetHeight(), self.Settings.Options.Value.BorderThickness)
+		surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder)
+		surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
 
 		--todo: Optimise this
 		if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
 
 			local time = CurTime() - self.Video.StartTime
-			local mins = math.Truncate(time / 60)
-			local seconds = math.floor(time - (mins * 60))
+			local str = self:GetMinsSeconds(time)
+			local total = self:GetMinsSeconds(self.Video.Duration)
 
-			if (seconds < 10) then
-				seconds = "0" .. seconds
-			end
-
-			local str = mins .. ":" .. seconds
 			local w = surface.GetTextSize(str)
 
+			local tw = surface.GetTextSize("/" .. total)
+
 			surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground)
-			surface.DrawRect(0, 0, math.Clamp((self:GetWide() / self.Video.Duration ) * time, 5, self:GetWide()), self.Settings.Size.Value.LoadingBarHeight)
+			surface.DrawRect(0, 0, math.Clamp((self:GetWidth() / self.Video.Duration ) * time, 5, self:GetWidth()), self.Settings.Size.Value.LoadingBarHeight)
 
-			draw.SimpleTextOutlined(self.Video.Title, "MediumText", 10, self:GetTall() - 30, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetTall() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(self.Video.Title, "MediumText", 10, self:GetHeight() - 30, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 			draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner or "Unknown",
-				"SmallText", 10, self:GetTall() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+				"SmallText", 10, self:GetHeight() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 
-			draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10, self:GetTall() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw ) - self:GetPadding() * 2, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined("/" .. total, "MediumText", ( self:GetWidth() - tw ) - self:GetPadding() * 2, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 		end
 	end
 end
 
+function panel:GetMinsSeconds(time)
+	time = time or CurTime()
+	local mins = math.Truncate(time / 60)
+	local seconds = math.floor(time - (mins * 60))
+
+	if (seconds < 10) then
+		seconds = "0" .. seconds
+	end
+
+	return mins .. ":" .. seconds
+end
+
 --Normally use MyThink instead of Think
 function panel:MyThink()
+
+	if (self:HasRescaled()) then
+		self:SetDockPadding()
+	end
+
 	if (!self:IsSettingTrue("DisplayVideo")) then
 		self.HTML:Hide()
 	else

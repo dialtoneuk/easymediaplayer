@@ -55,7 +55,8 @@ base._Settings = {
     Colours = "colours",
     Position = "position",
     Size = "size",
-    Options = "options"
+    Options = "options",
+    InvertPosition =  "invert_position",
 }
 
 function base:CanResizeHeight()

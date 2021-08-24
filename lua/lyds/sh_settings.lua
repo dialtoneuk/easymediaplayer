@@ -250,6 +250,34 @@ local client = {
         Value = false,
         Comment = "Inverts the x position of the player, you can use this to make things position from the right of the screen instead of the left."
     },
+    media_settings_invert_position = {
+        Value = false,
+        Comment = "Inverts the x position of the settings panel, you can use this to make things position from the right of the screen instead of the left."
+    },
+    media_vote_invert_position = {
+        Value = false,
+        Comment = "Inverts the x position of a vote, you can use this to make things position from the right of the screen instead of the left."
+    },
+    media_admin_invert_position = {
+        Value = false,
+        Comment = "Inverts the x position of the admin panel, you can use this to make things position from the right of the screen instead of the left."
+    },
+    media_base_invert_position = {
+        Value = false,
+        Comment = "Inverts the x position of the base panel, you can use this to make things position from the right of the screen instead of the left."
+    },
+    media_warning_invert_position = {
+        Value = false,
+        Comment = "Inverts the x position of the warning box, you can use this to make things position from the right of the screen instead of the left."
+    },
+    media_success_invert_position = {
+        Value = false,
+        Comment = "Inverts the x position of the success box, you can use this to make things position from the right of the screen instead of the left."
+    },
+    media_search_invert_position = {
+        Value = false,
+        Comment = "Inverts the x position of the search panel, you can use this to make things position from the right of the screen instead of the left."
+    },
     media_player_centered = {
         Value = false,
         Comment = "(unused)"
@@ -266,11 +294,11 @@ local client = {
         Value = false,
         Comment = "Enabling this will show the playlist in all areas of the ui (scoreboard, hud, context)."
     },
-    mediaplayer_show_current_video = {
+    media_player_show_current_video = {
         Value = true,
         Comment = "Diabling this will keep the player hidden even if a new video is playing. You would enable this if you were looking to stop the player reappearing, always keeping it hidden, except for instance in the scoreboard or context menu."
     },
-    mediaplayer_show_current_video_constantly = {
+    media_player_show_current_video_constantly = {
         Value = true,
         Comment = "Disabling this will mean that the player does not ignore other show settings when a video is active and function properly. You would disable this if you were looking to keep your player always hidden except for in the scoreboard or context menu."
     },
@@ -573,7 +601,8 @@ local client = {
             ItemActiveBackground = MediaPlayer.Colours.Red,
             ItemBackground = MediaPlayer.Colours.FadedBlack,
             ItemBorder = MediaPlayer.Colours.FadedBlack,
-            Border = MediaPlayer.Colours.FadedBlack
+            Border = MediaPlayer.Colours.FadedBlack,
+            SecondaryBorder = MediaPlayer.Colours.FadedBlack,
         }
     },
     media_playlist_position = {
@@ -685,20 +714,18 @@ local client = {
             end,
             Background = MediaPlayer.Colours.FadedBlack,
             TextColor = MediaPlayer.Colours.White,
-            ItemActiveBackground = MediaPlayer.Colours.Red,
-            ItemBackground = MediaPlayer.Colours.FadedBlack,
-            ItemBorder = MediaPlayer.Colours.FadedBlack,
             Border = MediaPlayer.Colours.FadedBlack,
             SecondaryBorder = MediaPlayer.Colours.FadedBlack,
             LoadingBarBackground = MediaPlayer.Colours.Red
         }
     },
     media_player_size = {
-        Min = 5,
+        Min = 1,
         Max = 1000,
         Value = {
             Width = 500,
             Height = 300,
+            Padding = 2,
             LoadingBarHeight = 5
         }
     },

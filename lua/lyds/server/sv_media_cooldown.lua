@@ -30,7 +30,7 @@ function MediaPlayer.LoadCooldowns()
 		local setting =  MediaPlayer.GetSetting( v ) or {
 			Value = 1
 		}
-		MediaPlayer.StoreCooldown( MediaPlayer.GetBaseCooldown(k, setting.Value ) )
+		MediaPlayer.StoreCooldown( MediaPlayer.GetBaseCooldown(setting.Value, k ) )
 	end
 
 	--when we have loaded
