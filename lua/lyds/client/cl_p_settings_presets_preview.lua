@@ -109,7 +109,7 @@ function panel:DisplaySettings(k, v, parent)
 
     local setting = MediaPlayer.GetSetting(k)
 
-    if (setting.Type == MediaPlayer.Types.TABLE) then
+    if (setting.Type == MediaPlayer.Type.TABLE) then
         for key, value in pairs(v) do
             local typ
 
@@ -120,11 +120,11 @@ function panel:DisplaySettings(k, v, parent)
             if (string.sub(key, 1, 2) == "__") then continue end
 
             if (type(v[key]) == "boolean") then
-                typ = MediaPlayer.Types.BOOL
+                typ = MediaPlayer.Type.BOOL
             elseif (type(v[key]) == "number") then
-                typ = MediaPlayer.Types.INT
+                typ = MediaPlayer.Type.INT
             else
-                typ = MediaPlayer.Types.BOOL
+                typ = MediaPlayer.Type.BOOL
             end
 
             create(v[key], key, typ)

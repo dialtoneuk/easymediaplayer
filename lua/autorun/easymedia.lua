@@ -1,27 +1,26 @@
---[[
-    Do not edit below
---]]
-
+--only does this once
 if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
-    _errorLog = {}
+    MediaPlayerErrors = {}
 
-    --overwrite error stuff
-    _error = error
+    --original error function
+    local originalError = error
 
+    --rewrite it
     error = function(...)
         errorBad(...)
     end
 
+    --warning func
     warning = function(...)
         local seed = "Server"
-        _errorLog.Recoverable = _errorLog.Recoverable or {}
+        MediaPlayerErrors.Recoverable = MediaPlayerErrors.Recoverable or {}
 
         if (CLIENT) then
             seed = "Client"
         end
 
-        _errorLog.Recoverable[ seed ] = _errorLog.Recoverable[ seed ] or {}
-        _errorLog.Recoverable[ seed ][ #_errorLog.Recoverable[ seed ] ] =  {
+        MediaPlayerErrors.Recoverable[ seed ] = MediaPlayerErrors.Recoverable[ seed ] or {}
+        MediaPlayerErrors.Recoverable[ seed ][ #MediaPlayerErrors.Recoverable[ seed ] ] =  {
             Time = os.time(),
             ...
         }
@@ -31,36 +30,36 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
         ErrorNoHalt(...)
     end
 
-
+    --error
     errorBad = function(...)
         local seed = "Server"
-        _errorLog.Bad = _errorLog.Bad or {}
+        MediaPlayerErrors.Bad = MediaPlayerErrors.Bad or {}
 
         if (CLIENT) then
             seed = "Client"
         end
 
-        _errorLog.Bad[ seed ] = _errorLog.Bad[ seed ] or {}
+        MediaPlayerErrors.Bad[ seed ] = MediaPlayerErrors.Bad[ seed ] or {}
 
-        if (#_errorLog.Bad[ seed ] == 0) then
+        if (#MediaPlayerErrors.Bad[ seed ] == 0) then
             hook.Run("OnFirstBadError", {...})
         end
 
-        _errorLog.Bad[ seed ][ #_errorLog.Bad[ seed ] + 1 ] = {
+        MediaPlayerErrors.Bad[ seed ][ #MediaPlayerErrors.Bad[ seed ] + 1 ] = {
             Time = os.time(),
             ...
         }
 
         hook.Run("OnBadError", {...})
 
-        _error(...)
+        originalError(...)
     end
 
-
+    --save it when we shut down
     hook.Add("ShutDown", "SaveErrors", function()
         if (!file.IsDir("lyds/errors", "DATA")) then file.CreateDir("lyds/errors", "DATA") end
 
-        for f,v in pairs(_errorLog) do
+        for f,v in pairs(MediaPlayerErrors) do
             if (CLIENT) then
                 file.Write("lyds/errors/" .. f .. " " .. os.date("%A_%B%d_%y %H_%M_%S") .. " CLIENT.json", util.TableToJSON(v["Client"], true))
             elseif (SERVER) then
@@ -70,12 +69,13 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
     end)
 end
 
+--our global table
 MediaPlayer = MediaPlayer or {
     Name = "Easy MediaPlayer",
     Credits = {
         Author = "llydia",
         Email = "llydia@zyon.io",
-        SteamID = "STEAM_0:1:31630"
+        SteamID = "STEAM_0:1:31630" --doesn't do anything
     },
     Version = 1.9,
     Type = {
@@ -85,14 +85,12 @@ MediaPlayer = MediaPlayer or {
         TABLE = "table", --cant be a convar,
         FLOAT = "float"
     },
-    Files = {}
+    Files = {} --see below
 }
 
-MediaPlayer.SettingsTypes = MediaPlayer.Type
-MediaPlayer.SettingTypes = MediaPlayer.Type
-MediaPlayer.Types = MediaPlayer.Type
-
 --autoloader for our scripts
+
+--loads shared files
 for k,v in pairs(file.Find("lyds/*.lua","LUA")) do
     if (SERVER) then
         AddCSLuaFile("lyds/" .. v)
@@ -103,6 +101,7 @@ for k,v in pairs(file.Find("lyds/*.lua","LUA")) do
     MediaPlayer.Files.Shared["lyds/" .. v] = v
 end
 
+--loads server files (does not index dirs)
 if (SERVER) then
     for k,v in pairs(file.Find("lyds/server/*.lua","LUA")) do
         include("lyds/server/" .. v)
@@ -111,6 +110,7 @@ if (SERVER) then
     end
 end
 
+--loads client files (does not index dirs)
 for k,v in pairs(file.Find("lyds/client/*.lua","LUA")) do
     if (SERVER) then
         AddCSLuaFile("lyds/client/" .. v)

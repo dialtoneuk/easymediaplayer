@@ -122,15 +122,15 @@ function MediaPlayer.AddSetting(tab)
 		tab.Value = math.Truncate(tab.Value)
 	end
 
-	if (tab.Type  == MediaPlayer.Types.BOOL) then
+	if (tab.Type  == MediaPlayer.Type.BOOL) then
 		tab.Value = ( tab.Value == 1 or tab.Value == true )
 	end
 
-	if (tab.Type == MediaPlayer.Types.TABLE ) then
+	if (tab.Type == MediaPlayer.Type.TABLE ) then
 		tab.DefValue = table.Copy(tab.Value)
-	elseif (tab.Type == MediaPlayer.Types.STRING ) then
+	elseif (tab.Type == MediaPlayer.Type.STRING ) then
 		tab.DefValue = "" .. tab.Value
-	elseif ( tab.Type == MediaPlayer.Types.BOOL ) then
+	elseif ( tab.Type == MediaPlayer.Type.BOOL ) then
 		tab.DefValue = tab.Value
 	else
 		tab.DefValue = 0 + tab.Value
@@ -161,7 +161,7 @@ function MediaPlayer.ChangeSetting(key, value, all_kinds)
 		end
 
 		for kind,v in pairs(keys) do
-			if (kind == MediaPlayer.Types.BOOL) then
+			if (kind == MediaPlayer.Type.BOOL) then
 				value = ( value == 1 or value == true )
 			end
 
@@ -214,9 +214,9 @@ function MediaPlayer.GetSetting(key, assure_type)
 	for k,keys in pairs(MediaPlayer.Settings) do
 		if (k == key ) then
 			for kind,v in pairs(keys) do
-				if (assure_type and kind == MediaPlayer.Types.BOOL) then
+				if (assure_type and kind == MediaPlayer.Type.BOOL) then
 					v.Value = ( v.Value == 1 or v.Value == true )
-				elseif (assure_type and kind == MediaPlayer.Types.INT) then
+				elseif (assure_type and kind == MediaPlayer.Type.INT) then
 					v.Value = math.Truncate(v.Value)
 				end
 
@@ -258,9 +258,9 @@ function MediaPlayer.ResetSettings()
 				end
 			end
 
-			if (kind == MediaPlayer.Types.BOOL) then
+			if (kind == MediaPlayer.Type.BOOL) then
 				MediaPlayer.Settings[k][kind].Value = ( v.DefValue == 1 or v.DefValue == true )
-			elseif (kind == MediaPlayer.Types.TABLE ) then
+			elseif (kind == MediaPlayer.Type.TABLE ) then
 				MediaPlayer.Settings[k][kind].Value = table.Copy(v.DefValue)
 			else
 				MediaPlayer.Settings[k][kind].Value = v.DefValue
@@ -381,9 +381,9 @@ if (SERVER) then
 				local tab = MediaPlayer.Settings[k][kind]
 				tab.Value = v.Value
 
-				if (kind == MediaPlayer.Types.BOOL) then
+				if (kind == MediaPlayer.Type.BOOL) then
 					tab.Value = ( v.Value == 1 or v.Value == true )
-				elseif (kind == MediaPlayer.Types.TABLE ) then
+				elseif (kind == MediaPlayer.Type.TABLE ) then
 					for key,index in pairs(v.Value) do
 						tab.Value[key] = index
 					end
@@ -420,9 +420,9 @@ if (CLIENT) then
 
 				local tab = MediaPlayer.Settings[k][kind]
 
-				if (kind == MediaPlayer.Types.BOOL) then
+				if (kind == MediaPlayer.Type.BOOL) then
 					tab.Value = ( v.Value == 1 or v.Value == true )
-				elseif (kind == MediaPlayer.Types.TABLE ) then
+				elseif (kind == MediaPlayer.Type.TABLE ) then
 					for key,index in pairs(v.Value) do
 						tab.Value[key] = index
 					end

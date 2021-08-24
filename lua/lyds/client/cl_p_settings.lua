@@ -511,9 +511,9 @@ function panel:NormalSettingsRow(v, k, row )
 					return
 				end
 
-				if (v.Type == MediaPlayer.Types.TABLE) then
+				if (v.Type == MediaPlayer.Type.TABLE) then
 					MediaPlayer.Settings[v.Key][v.Type].Value[k] = val
-				elseif (v.Type == MediaPlayer.Types.INT) then
+				elseif (v.Type == MediaPlayer.Type.INT) then
 					MediaPlayer.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
 				else
 					MediaPlayer.Settings[v.Key][v.Type].Value[k] = tab
@@ -574,9 +574,9 @@ function panel:AdminSettingsRow(v, k, row )
 				return
 			end
 
-			if (v.Type == MediaPlayer.Types.TABLE) then
+			if (v.Type == MediaPlayer.Type.TABLE) then
 				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = val
-			elseif (v.Type == MediaPlayer.Types.INT) then
+			elseif (v.Type == MediaPlayer.Type.INT) then
 				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = math.Truncate(tab)
 			else
 				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = tab

@@ -226,7 +226,7 @@ function base:BaseThink()
 
     for k,v in pairs(self.Settings) do
         if (self.WatchedSettings[k] != nil ) then
-            if ( v.Type == MediaPlayer.Types.TABLE ) then
+            if ( v.Type == MediaPlayer.Type.TABLE ) then
                 for index,value in pairs(v.Value) do
                     if (self.WatchedSettings[k][index] != nil ) then
                         self.WatchedSettings[k][index](self)
