@@ -1,63 +1,63 @@
 --server settings
 
 local server = {
-    media_playlist_limit = {
+    playlist_broadcast_limit = {
         Value = 50,
         Comment = "This is the maximum amount of videos that the playlist will broadcast in a net message, turn this down if you are experiencing overflow errors."
     },
-    media_vote_time = {
+    vote_default_duration = {
         Value = 30,
         Comment = "How long votes will last for."
     },
-    media_announce_admin = {
+    announce_admin = {
         Value = true,
         Comment = "Announce to the server when an admin skips or removes videos from the playlist."
     },
-    media_admin_ignore_limits = {
+    admin_ignore_limits = {
         Value = true,
-        Comment = "Admins are not restricted by player_playlist_max."
+        Comment = "Admins are not restricted by player_max_videos."
     },
-    media_announce_video = {
+    announce_video = {
         Value = true,
         Comment = "Announce to the server when a new video has begun."
     },
-    media_announce_addition = {
+    announce_addition = {
         Value = true,
         Comment = "Announce to the server when a new video has been added to the playlist."
     },
-    media_announce_ending = {
+    announce_ending = {
         Value = true,
         Comment = "Announce to the server when a video has come to its end."
     },
-    media_announce_spawn = {
+    announce_spawn = {
         Value = true,
         Comment = "Announce to the player that the server is running this plugin."
     },
-    media_announce_count = {
+    announce_count = {
         Value = true,
         Comment = "Announce to the server when a vote has gained a new vote."
     },
-    media_announce_vote = {
+    announce_vote = {
         Value = true,
         Comment = "Announce the creation of new votes to the server."
     },
-    media_announce_likes = {
+    announce_likes = {
         Value = true,
         Comment = "Announce to the server when a player has liked a video."
     },
-    media_announce_dislikes = {
+    announce_dislikes = {
         Value = true,
         Comment = "Announce to the server when a player has disliked a video."
     },
-    media_announce_settings = {
+    announce_settings = {
         Value = true,
         Comment = "Announce to all admins online when edits to the servers settings are made."
     },
-    media_tips_enabled = {
+    tips_enabled = {
         Value = true,
         Comment = "Tips will be posted into the chats of players."
     },
-    media_tips_frequency = {
+    tips_frequency = {
         Value = 600, --every 10 mins
         Max = 1000,
         Comment = "In seconds, how frequent tips will be posted into the chats of players."
@@ -67,66 +67,66 @@ local server = {
         Max = 50,
         Comment = "The amount of items to return to the player when they request the servers history inside the search panel."
     },
-    media_cooldown_enabled = {
+    cooldown_enabled = {
         Value = true,
         Comment = "Users will recieve cooldowns (it is recommended that you keep this enabled)"
     },
-    media_cooldown_play = {
+    cooldown_play = {
         Value = 45,
         Max = 500,
         Comment = "How many seconds the player has to wait once submitting a video."
     },
-    media_cooldown_vote = {
+    cooldown_vote = {
         Value = 10,
         Max = 500,
         Comment = "How many seconds the player has to wait once starting a vote.",
     },
-    media_cooldown_search = {
+    cooldown_search = {
         Value = 1,
         Max = 10,
         Comment = "How many seconds the player has to wait after searching for media. (its recommended you keep this at its current value).",
     },
-    media_cooldown_interaction = {
+    cooldown_interaction = {
         Value = 180,
         Max = 500,
         Comment = "How many seconds the player has to wait after liking or disliking a video. (players can only like/dislike the current video a single time anyway).",
     },
-    media_cooldown_history = {
+    cooldown_history = {
         Value = 1,
         Max = 500,
         Comment = "How many seconds the player has to wait after requesting server history. (its recommended you keep this at its current value).",
     },
-    media_cooldown_refreshrate = {
+    cooldown_refreshrate = {
         Value = 1,
         Max = 6,
         Comment = "Setting this to a value of two will effectively double the time all cooldowns take, setting it to three will tripple and so forth. Use this to change the server to slowmode temporarily."
     },
-    media_cooldown_command = {
+    cooldown_command = {
         Value = 1,
         Max = 600,
         Comment = "How many seconds the player has to wait between using chat commmands."
     },
-    media_command_prefix = {
+    chatcommand_prefix = {
         Value = "!",
         Comment = "This is the prefix which Easy Mediaplayer will attach to its chat commands. Change this to another character if it conflicts with one of your other addons."
     },
-    media_max_duration = {
+    video_max_duration = {
         Value = 1200,
         Max = 60000,
         Comment = "Roughly in seconds how long a piece of media can be no matter the platform."
     },
-    media_max_results = {
+    search_result_count = {
         Value = 30,
         Max = 50,
         Comment = "How many search results will be returned when queries are made inside the search panel (max of 50)."
     },
-    media_ban_after_dislikes = {
+    video_ban_after_dislikes = {
         Value = 50,
         Max = 500,
         Min = 0,
         Comment = "After a piece of media has been disliked over the ammount defined it will be added automatically to the ban list. You can set this to zero if you wish not to ban videos based on dislikes."
     },
-    media_custom_tips = {
+    tips_custom = {
         Value = {
             "this is a tip",
             "so is this"
@@ -135,12 +135,20 @@ local server = {
         Max = 20, --max elements
         Custom = true
     },
-    player_playlist_max = {
+    player_max_videos = {
         Value = 2,
         Max = 20,
         Comment = "How many videos a player can have on the playlist at an given time, regardless of platform."
     },
-    media_playlist_capacity = {
+    player_disable_mp3 = {
+        Value = false,
+        Comment = "Disables the ability for players to post mp3s but does not restrict admins."
+    },
+    player_disable_youtube = {
+        Value = false,
+        Comment = "Disables the ability for players to post youtube videos but does not restrict admins."
+    },
+    playlist_capacity = {
         Value = 64,
         Max = 248,
         Comment = "The total amount of videos the playlist can hold."
@@ -180,7 +188,7 @@ local server = {
     },
     soundcloud_api_key = {
         Value = "REPLACE WITH YOUR OWN",
-        Comment = "TODO: Fill"
+        Comment = "(unimplemented as soundcloud has closed its doors to its API)"
     },
     mp3_enabled = {
         Value = false,
@@ -214,148 +222,149 @@ local client = {
         Custom = true,
         Comment = "(editing coming soon)"
     },
-    media_player_display_video = {
+    player_display_video = {
         Value = true,
         Comment = "Disabling this will make the video/audio player invisible."
     },
-    media_playlist_hide_active = {
+    playlist_hide_active = {
         Value = false,
         Comment = "Enabling this will hide the current active video from being displayed inside the playlist."
     },
-    media_playlist_auto_resize = {
+    playlist_auto_resize = {
         Value = true,
         Comment = "Disabling will disable the playlists rescaling functionality and make it static."
     },
-    media_playlist_hide = {
+    playlist_hide = {
         Value = false,
         Comment = "Enabling this will hide the playlist from the screen completely."
     },
-    media_warning_hide = {
+    warning_hide = {
         Value = false,
         Comment = "(unused)."
     },
-    media_success_hide = {
+    success_hide = {
         Value = false,
         Comment = "(unused)."
     },
-    media_playlist_centered = {
+    playlist_centered = {
         Value = false,
         Comment = "(unused)"
     },
-    media_playlist_invert_position = {
+    playlist_invert_position = {
         Value = true,
         Comment = "Inverts the x position of the playlist, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_player_invert_position = {
+    player_invert_position = {
         Value = false,
         Comment = "Inverts the x position of the player, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_settings_invert_position = {
+    settings_invert_position = {
         Value = false,
         Comment = "Inverts the x position of the settings panel, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_vote_invert_position = {
+    vote_invert_position = {
         Value = false,
         Comment = "Inverts the x position of a vote, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_admin_invert_position = {
+    admin_invert_position = {
         Value = false,
         Comment = "Inverts the x position of the admin panel, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_base_invert_position = {
+    base_invert_position = {
         Value = false,
         Comment = "Inverts the x position of the base panel, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_warning_invert_position = {
+    warning_invert_position = {
         Value = false,
         Comment = "Inverts the x position of the warning box, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_success_invert_position = {
+    success_invert_position = {
         Value = false,
         Comment = "Inverts the x position of the success box, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_search_invert_position = {
+    search_invert_position = {
         Value = false,
         Comment = "Inverts the x position of the search panel, you can use this to make things position from the right of the screen instead of the left."
     },
-    media_player_centered = {
+    player_centered = {
         Value = false,
         Comment = "(unused)"
     },
-    media_vote_centered = {
+    vote_centered = {
         Value = false,
         Comment = "(unused)"
     },
-    preset_enable_server_default = {
+    preset_allow_initial = {
+        Icon = "icon16/layout_add.png",
         Value = true,
         Comment = "Disabling this will mean that your settings and in extension look are uneffected by joining servers which have an initial preset present."
     },
-    media_playlist_show_constantly = {
+    playlist_show_constantly = {
         Value = false,
         Comment = "Enabling this will show the playlist in all areas of the ui (scoreboard, hud, context)."
     },
-    media_player_show_current_video = {
+    player_show_current_video = {
         Value = true,
         Comment = "Diabling this will keep the player hidden even if a new video is playing. You would enable this if you were looking to stop the player reappearing, always keeping it hidden, except for instance in the scoreboard or context menu."
     },
-    media_player_show_current_video_constantly = {
+    player_show_current_video_constantly = {
         Value = true,
         Comment = "Disabling this will mean that the player does not ignore other show settings when a video is active and function properly. You would disable this if you were looking to keep your player always hidden except for in the scoreboard or context menu."
     },
-    media_settings_centered = {
+    settings_centered = {
         Value = false,
         Refresh = false,
         Comment = "The settings window will open centered to the middle of your screen."
     },
-    media_admin_centered = {
+    admin_centered = {
         Value = false,
         Comment = "The admin window will open centered to the middle of your screen."
     },
-    media_warning_centered = {
+    warning_centered = {
         Value = true,
         Comment = "The warning box will open centered to the middle of your screen."
     },
-    media_success_centered = {
+    success_centered = {
         Value = true,
         Comment = "The success box will open centered to the middle of your screen."
     },
-    media_search_centered = {
+    search_centered = {
         Value = true,
         Comment = "The search window will open centered to the middle of your screen."
     },
-    media_player_show_in_context = {
+    player_show_in_context = {
         Value = false,
         Comment = "Enabling this will make the player visible in the context menu."
     },
-    media_player_show_in_scoreboard = {
+    player_show_in_scoreboard = {
         Value = true,
         Comment = "Enabling this will make the player visible in the scoreboard menu."
     },
-    media_playlist_show_in_context = {
+    playlist_show_in_context = {
         Value = false,
         Comment = "Enabling this will make the playlist visible in the context menu."
     },
-    media_playlist_show_in_scoreboard = {
+    playlist_show_in_scoreboard = {
         Value = true,
         Comment = "Enabling this will make the playlist visible in the scoreboard menu."
     },
-    media_player_hide = {
+    player_hide = {
         Value = false,
         Comment = "Enabling this will disable the player from being visible."
     },
-    media_player_show_constantly = {
+    player_show_constantly = {
         Value = false,
         Comment = "Enabling this show the player in all areas of the game (scoreboard, hud, context)."
     },
-    media_search_hide = {
+    search_hide = {
         Value = true,
         Comment = "(unused)"
     },
-    media_settings_hide = {
+    settings_hide = {
         Value = true,
         Comment = "Disabling this will mean the settings panel will constantly be visible, making the creation of presets easier."
     },
-    media_playlist_display_limit = {
+    playlist_display_limit = {
         Value = 10,
         Min = 2,
         Max = 40,
@@ -363,33 +372,34 @@ local client = {
         Convar = false,
         Comment = "How many videos to display inside the playlist, will add a panel after this amount with the total videos currently on the playlist."
     },
-    media_vote_hide = {
+    vote_hide = {
         Value = false,
         Comment = "Will disable votes from appearing."
     },
-    media_admin_hide = {
+    admin_hide = {
         Value = true,
         Comment = "(unused)"
     },
-    media_base_hide = {
+    base_hide = {
         Value = false,
         Comment = "(unused)"
     },
     all_show = {
+        Icon = "icon16/find.png",
         Value = false,
         Comment = "Enabling this will show all UI elements used by Easy Mediaplayer (recommended for preset creation)"
     },
-    media_player_mute = {
+    player_mute = {
         Value = false,
         Comment = "Enabling this will mute the audio completely."
     },
-    media_player_volume = {
+    player_volume = {
         Value = 100,
         Min = 0,
         Max = 100,
         Comment = "Sets the volume of the player."
     },
-    media_admin_colours = {
+    admin_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)
@@ -404,7 +414,7 @@ local client = {
             TextColor = MediaPlayer.Colours.Black
         }
     },
-    media_admin_size = {
+    admin_size = {
         Min = 500,
         Max = 2000,
         Value = {
@@ -412,7 +422,7 @@ local client = {
             Height = 500
         }
     },
-    media_admin_position = {
+    admin_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -420,7 +430,7 @@ local client = {
             Y = 25
         }
     },
-    media_settings_colours = {
+    settings_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)
@@ -434,18 +444,19 @@ local client = {
             TextColor = MediaPlayer.Colours.White
         }
     },
-    media_settings_size = {
+    settings_size = {
         Min = 15,
         Max = 2000,
         Value = {
             Width = 750,
             Height = 750,
-            Padding = 15
+            Padding = 15,
+            RowHeight = 30
         },
         Refresh = false,
         SlowUpdate = 1,
     },
-    media_settings_position = {
+    settings_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -454,7 +465,7 @@ local client = {
         },
         Refresh = false
     },
-    media_base_size = {
+    base_size = {
         Min = 20,
         Max = 2000,
         Value = {
@@ -464,7 +475,7 @@ local client = {
             Padding = 5,
         }
     },
-    media_base_position = {
+    base_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -472,7 +483,7 @@ local client = {
             Y = 25
         }
     },
-    media_base_colours = {
+    base_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value) --TODO: Optimize to use pre-created colours instead of creating new ones
@@ -487,7 +498,7 @@ local client = {
             ItemBorder = MediaPlayer.Colours.FadedBlue
         }
     },
-    media_warning_size = {
+    warning_size = {
         Min = 20,
         Max = 2000,
         Value = {
@@ -496,7 +507,7 @@ local client = {
             Padding = 5,
         }
     },
-    media_warning_position = {
+    warning_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -504,7 +515,7 @@ local client = {
             Y = 25
         }
     },
-    media_warning_colours = {
+    warning_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)
@@ -520,7 +531,7 @@ local client = {
         }
 
     },
-    media_success_size = {
+    success_size = {
         Min = 20,
         Max = 2000,
         Value = {
@@ -529,7 +540,7 @@ local client = {
             Padding = 5,
         }
     },
-    media_success_position = {
+    success_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -537,7 +548,7 @@ local client = {
             Y = 25
         }
     },
-    media_success_colours = {
+    success_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)
@@ -553,7 +564,7 @@ local client = {
         }
 
     },
-    media_search_size = {
+    search_size = {
         Min = 20,
         Max = 2000,
         Value = {
@@ -563,7 +574,7 @@ local client = {
             Padding = 5,
         }
     },
-    media_search_position = {
+    search_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -571,7 +582,7 @@ local client = {
             Y = 25
         }
     },
-    media_search_colours = {
+    search_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)
@@ -588,7 +599,7 @@ local client = {
             HeaderBorder = MediaPlayer.Colours.Gray
         }
     },
-    media_playlist_colours = {
+    playlist_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)
@@ -605,7 +616,7 @@ local client = {
             SecondaryBorder = MediaPlayer.Colours.FadedBlack,
         }
     },
-    media_playlist_position = {
+    playlist_position = {
         Min = 5,
         Max = 2000,
         Value = {
@@ -613,7 +624,7 @@ local client = {
             Y = 10
         }
     },
-    media_playlist_size = {
+    playlist_size = {
         Min = 1,
         Max = 1000,
         Value = {
@@ -624,7 +635,7 @@ local client = {
             RowSpacing = 10
         }
     },
-    media_playlist_options = {
+    playlist_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -632,7 +643,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_player_options = {
+    player_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -640,7 +651,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_base_options = {
+    base_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -648,7 +659,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_settings_options = {
+    settings_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -656,7 +667,7 @@ local client = {
             DisplayTitle = false
         }
     },
-    media_warning_options = {
+    warning_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -664,7 +675,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_success_options = {
+    success_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -672,7 +683,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_search_options = {
+    search_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -680,7 +691,7 @@ local client = {
             DisplayTitle = false
         }
     },
-    media_vote_options = {
+    vote_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -688,7 +699,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_admin_options = {
+    admin_options = {
         Min = 1,
         Max = 25,
         Value = {
@@ -696,7 +707,7 @@ local client = {
             DisplayTitle = true
         }
     },
-    media_player_position = {
+    player_position = {
         Min = 5,
         Max = 2000,
         Value = {
@@ -704,7 +715,7 @@ local client = {
             Y = 10
         }
     },
-    media_player_colours = {
+    player_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)
@@ -719,7 +730,7 @@ local client = {
             LoadingBarBackground = MediaPlayer.Colours.Red
         }
     },
-    media_player_size = {
+    player_size = {
         Min = 1,
         Max = 1000,
         Value = {
@@ -729,7 +740,7 @@ local client = {
             LoadingBarHeight = 5
         }
     },
-    media_vote_position = {
+    vote_position = {
         Min = 10,
         Max = 2000,
         Value = {
@@ -737,7 +748,7 @@ local client = {
             Y = 10
         }
     },
-    media_vote_size = {
+    vote_size = {
         Min = 5,
         Max = 400,
         Value = {
@@ -747,7 +758,7 @@ local client = {
             LoadingBarHeight = 5
         }
     },
-    media_vote_colours = {
+    vote_colours = {
         Value = {
             __unpack = function(self, index, value) --called when unpacking from save json
                 return MediaPlayer.TableToColour(value)

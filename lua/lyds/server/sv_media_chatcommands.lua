@@ -58,12 +58,12 @@ MediaPlayer.RegisteredCommands = {
 	},
 	Search = {
 		OnExecute = function(ply, cmd)
-			ply:ConCommand("media_search_panel")
+			ply:ConCommand("search_panel")
 		end
 	},
 	Settings = {
 		OnExecute = function(ply, cmd)
-			ply:ConCommand("media_settings")
+			ply:ConCommand("settings")
 		end,
 		Aliases = {
 			"s"
@@ -100,15 +100,8 @@ MediaPlayer.RegisteredCommands = {
 				return false
 			end --returning false won't inhibit a cooldown
 
-			if (MediaPlayer.GetSeting("media_player_mute").Value) then
-				MediaPlayer.ChangeSetting("media_player_mute", false );
-				ply:SendMessage("Video unmuted")
-			else
-				MediaPlayer.ChangeSetting("media_player_mute", true );
-				ply:SendMessage("Video muted")
-			end
 
-			ply:RunConsoleCommand("media_create_cl");
+			ply:ConCommand("media_mute_video");
 		end,
 		Aliases = {
 			"m",
@@ -131,7 +124,7 @@ MediaPlayer.RegisteredCommands = {
 	Admin = {
 		Admin = true,
 		OnExecute = function(ply, cmd)
-			ply:ConCommand("media_admin_panel")
+			ply:ConCommand("admin_panel")
 		end
 	}
 }
@@ -191,7 +184,7 @@ end
 --parses a command given through the PlayerSay hook and matches it to one of our registered commands
 --TODO: Add variable argument parsing for !play
 function MediaPlayer.ParseCommand(ply, str)
-	if (str.sub(str, 1,1) != MediaPlayer.GetSetting("media_command_prefix").Value ) then return false end
+	if (str.sub(str, 1,1) != MediaPlayer.GetSetting("chatcommand_prefix").Value ) then return false end
 
 	local command = str.sub(str, 2 )
 	command = str.Trim(command, " ")

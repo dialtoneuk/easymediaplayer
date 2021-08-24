@@ -294,12 +294,12 @@ function base:GetRealKey(t)
         return string.sub(t, 2)
     end
 
-    if (string.find(t, "media_" .. self.Name)) then
+    if (string.find(t, self.Name)) then
         warning("t already has extension present: " .. t )
         return t
     end
 
-    return "media_" .. self.Name .. "_" .. t
+    return self.Name .. "_" .. t
 end
 
 function base:CacheThink()

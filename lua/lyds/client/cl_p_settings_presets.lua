@@ -195,7 +195,7 @@ function panel:CreatePreset(title, author, add_default)
 	if (add_default) then
 		for k,v in pairs(self.DefaultSettings.Panels) do
 			for _,setting in pairs(self.DefaultSettings.Keys) do
-				settings["media_" .. v .. "_" .. setting] = MediaPlayer.GetSetting("media_" .. v .. "_" .. setting).Value
+				settings[v .. "_" .. setting] = MediaPlayer.GetSetting(v .. "_" .. setting).Value
 			end
 		end
 	end
@@ -450,7 +450,7 @@ function panel:FillPresetEditor()
 		RunConsoleCommand("media_create_cl")
 
 		MediaPlayer.CreateSuccessBox("Success","Preset " .. self.LastListValue .. " successfully applied")
-		RunConsoleCommand("media_settings")
+		RunConsoleCommand("settings")
 	end
 
 	if (MediaPlayer.LocalPlayer:IsAdmin() ) then

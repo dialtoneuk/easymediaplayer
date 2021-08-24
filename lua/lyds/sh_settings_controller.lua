@@ -148,6 +148,7 @@ function MediaPlayer.AddSetting(tab)
 		Key = tab.Key,
 		Max = tab.Max or 6400,
 		Min = tab.Min or 0,
+		Icon = tab.Icon or nil,
 		Custom = tab.Custom or false,
 		Server = tab.Server or false,
 		Convar = tab.Convar or false,
@@ -235,7 +236,8 @@ function MediaPlayer.GetSetting(key, assure_type)
 	return {
 		Value = nil,
 		DefValue = nil,
-		Type = nil
+		Type = nil,
+		Icon = nil
 	}
 end
 

@@ -2,7 +2,7 @@
 --default hardcoded tips
 MediaPlayer.Tips = {
 	{
-		body = "Admins can use {media_command_prefix}admin to remove videos from the blacklist.",
+		body = "Admins can use {chatcommand_prefix}admin to remove videos from the blacklist.",
 		admin = true
 	},
 	{
@@ -14,36 +14,36 @@ MediaPlayer.Tips = {
 		admin = true
 	},
 	{
-		body = "You can search for a video by typing {media_command_prefix}play or by typing {media_command_prefix}search into chat.",
+		body = "You can search for a video by typing {chatcommand_prefix}play or by typing {chatcommand_prefix}search into chat.",
 	},
 	{
 		body = MediaPlayer.Name .. " was created by " .. MediaPlayer.Credits.Author,
 	},
 	{
-		body = "You can use {media_command_prefix}like or {media_command_prefix}dislike to engage with the current video!"
+		body = "You can use {chatcommand_prefix}like or {chatcommand_prefix}dislike to engage with the current video!"
 	},
 	{
-		body = "You can vote to skip a video through using {media_command_prefix}voteskip",
+		body = "You can vote to skip a video through using {chatcommand_prefix}voteskip",
 	},
 	{
-		body = "You can vote to ban a video by using {media_command_prefix}voteban or {media_command_prefix}voteblacklist",
+		body = "You can vote to ban a video by using {chatcommand_prefix}voteban or {chatcommand_prefix}voteblacklist",
 	},
 	{
-		body = "You can change the position of elements, colours and functionality by using {media_command_prefix}settings",
+		body = "You can change the position of elements, colours and functionality by using {chatcommand_prefix}settings",
 	},
 	{
-		body = "You can mute the current video with {media_command_prefix}mute",
+		body = "You can mute the current video with {chatcommand_prefix}mute",
 	}
 }
 
 --load our custom tips
 function MediaPlayer.LoadCustomTips()
 
-	if ( MediaPlayer.GetSetting("media_custom_tips") == nil ) then
+	if ( MediaPlayer.GetSetting("tips_custom") == nil ) then
 		return
 	end
 
-	local tip = MediaPlayer.GetSetting("media_custom_tips")
+	local tip = MediaPlayer.GetSetting("tips_custom")
 
 	if (tip.Type != MediaPlayer.Type.TABLE ) then
 		errorBad("invalid type")
@@ -112,7 +112,7 @@ end
 --display the tip each frequency interval
 function MediaPlayer.DisplayTip()
 
-	if ( MediaPlayer.IsSettingTrue("media_tips_enabled")) then
+	if ( MediaPlayer.IsSettingTrue("tips_enabled")) then
 		for k,v in pairs(player.GetAll()) do
 			local tip = MediaPlayer.SelectTip(v:IsAdmin())
 
@@ -122,8 +122,8 @@ function MediaPlayer.DisplayTip()
 		end
 	end
 
-	timer.Create("MediaPlayer.Tips", MediaPlayer.GetSetting("media_tips_frequency").Value, 1, function()
-		if ( MediaPlayer.GetSetting("media_tips_enabled").Value) then
+	timer.Create("MediaPlayer.Tips", MediaPlayer.GetSetting("tips_frequency").Value, 1, function()
+		if ( MediaPlayer.GetSetting("tips_enabled").Value) then
 			MediaPlayer.DisplayTip()
 		end
 	end)

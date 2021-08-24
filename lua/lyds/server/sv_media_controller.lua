@@ -12,7 +12,7 @@ function MediaPlayer.Begin(video)
 
 			if (MediaPlayer.HasNext()) then
 				--Next please
-				MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+				MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
 				MediaPlayer.Begin(MediaPlayer.Next())
 			else
 				--Ending
@@ -23,14 +23,14 @@ function MediaPlayer.Begin(video)
 		end)
 	else
 		MediaPlayer.AnnouncePlaylistAddition(video)
-		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
 	end
 end
 
 --announces a new video
 function MediaPlayer.AnnounceVideo()
 	if (!MediaPlayer.CurrentVideo or table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
-	if (!MediaPlayer.IsSettingTrue("media_announce_video")) then return end
+	if (!MediaPlayer.IsSettingTrue("announce_video")) then return end
 
 	for k,v in pairs(player.GetAll()) do
 		v:SendMessage("Now playing '" .. MediaPlayer.CurrentVideo.Title .. "' submitted by " .. MediaPlayer.CurrentVideo.Owner:GetName())
@@ -40,7 +40,7 @@ end
 --announces the addition of a new video into the playlist
 function MediaPlayer.AnnouncePlaylistAddition(video)
 	if (!video or table.IsEmpty(video)) then return end
-	if (!MediaPlayer.IsSettingTrue("media_announce_addition")) then return end
+	if (!MediaPlayer.IsSettingTrue("announce_addition")) then return end
 
 	for k,v in pairs(player.GetAll()) do
 		v:SendMessage("Added '" .. video.Title .. "' submitted by " .. video.Owner:GetName())
@@ -50,7 +50,7 @@ end
 --announces the ending of the video
 function MediaPlayer.AnnounceVideoEnding(video)
 	if (!video or table.IsEmpty(video)) then return end
-	if (!MediaPlayer.IsSettingTrue("media_announce_ending")) then return end
+	if (!MediaPlayer.IsSettingTrue("announce_ending")) then return end
 
 	for k,v in pairs(player.GetAll()) do
 		v:SendMessage("Video '" .. video.Title .. "' over!")
@@ -155,7 +155,7 @@ end
 function MediaPlayer.StartVideo(video, callback)
 	MediaPlayer.CurrentVideo = video
 	MediaPlayer.BroadcastCurrentVideo()
-	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
 	MediaPlayer.AnnounceVideo()
 
 	--for our voting
@@ -179,7 +179,7 @@ function MediaPlayer.SkipVideo()
 
 	if (MediaPlayer.HasNext()) then
 		--Next please
-		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
 		MediaPlayer.Begin(MediaPlayer.Next())
 	else
 		--Ending

@@ -99,7 +99,7 @@ Called before votes are registered. Use this hook to add custom votes by invokin
 MediaPlayer.PreloadRegisteredCooldowns
 ```
 
-Called after the default cooldowns have been loaded, use this hook to add your own custom cooldowns (between actions). You can create new cooldowns by invoking `MediaPlayer.StoreCooldown(cooldown: table)`, see sv_media_cooldown.lua for an example
+Called after the default cooldowns have been loaded, use this hook to add your own custom cooldowns (between actions). You can create new cooldowns by invoking `MediaPlayer.StoreCooldown(cooldown: table)`, see sv_cooldown.lua for an example
 
 ```
 MediaPlayer.PreloadRegisteredCommands

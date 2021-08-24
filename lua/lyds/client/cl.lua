@@ -52,7 +52,7 @@ surface.CreateFont( "BiggerText", {
 surface.CreateFont( "PlaylistText", {
 	font = "Arial",
 	extended = false,
-	size = 19,
+	size = 20,
 	weight = 200,
 	blursize = 0,
 	scanlines = 0,
@@ -88,7 +88,7 @@ surface.CreateFont( "BigText", {
 surface.CreateFont( "MediumText", {
 	font = "Arial",
 	extended = false,
-	size = 18,
+	size = 16,
 	weight = 100,
 	blursize = 0,
 	scanlines = 1,
@@ -137,7 +137,7 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 		height		= 10,
 		onewindow	= true,
 		init		= function( icon, window )
-			RunConsoleCommand("media_settings")
+			RunConsoleCommand("settings")
 
 			--instantly remove
 			window:Remove()
@@ -151,7 +151,7 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 		height		= 10,
 		onewindow	= true,
 		init		= function( icon, window )
-			RunConsoleCommand("media_search_panel")
+			RunConsoleCommand("search_panel")
 
 			--instantly remove
 			window:Remove()
@@ -212,7 +212,7 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 				return
 			end
 
-			RunConsoleCommand("media_admin_panel")
+			RunConsoleCommand("admin_panel")
 			--instantly remove
 			window:Remove()
 		end
@@ -228,7 +228,7 @@ hook.Add("InitPostEntity", "MediaPlayer.LoadClientAddon", function()
 	if (MediaPlayer.HasSavedSettings()) then
 
 		--if we don't have preset defaults enabled then we'll just return here
-		if (!MediaPlayer.IsSettingTrue("preset_enable_server_default")) then return end
+		if (!MediaPlayer.IsSettingTrue("preset_allow_initial")) then return end
 
 		MediaPlayer.RequestDefaultPreset() --This will check the servers join list and ask for a default preset
 		return
@@ -293,7 +293,7 @@ concommand.Add("media_create_cl", function()
 end)
 
 --recreates settings panel
-concommand.Add("media_settings_create", function()
+concommand.Add("settings_create", function()
 	MediaPlayer.ReinstantiatePanel("SettingsPanel")
 end)
 
@@ -305,17 +305,30 @@ concommand.Add("media_refresh_cl", function()
 end)
 
 --show search panel
-concommand.Add("media_search_panel", function()
+concommand.Add("search_panel", function()
 	MediaPlayer.ShowPanel("SearchPanel")
 end)
 
+--mutes or unmutes a video
+concommand.Add("media_mute_video", function()
+	if (MediaPlayer.GetSetting("player_mute").Value) then
+		MediaPlayer.ChangeSetting("player_mute", false );
+		MediaPlayer.CreateChatMessage("Unmuted!")
+	else
+		MediaPlayer.ChangeSetting("player_mute", true );
+		MediaPlayer.CreateChatMessage("Muted")
+	end
+
+	MediaPlayer.ReinstantiatePanel("PlayerPanel")
+end)
+
 --show admin panel
-concommand.Add("media_admin_panel", function()
+concommand.Add("admin_panel", function()
 	MediaPlayer.ShowPanel("AdminPanel")
 end)
 
 --show settings panel
-concommand.Add("media_settings", function()
+concommand.Add("settings", function()
 	MediaPlayer.ShowPanel("SettingsPanel")
 end)
 
@@ -373,7 +386,7 @@ net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 	local preset = net.ReadTable()
 	writeDefaultPreset(preset)
 
-	if (!MediaPlayer.IsSettingTrue("preset_enable_server_default")) then return end
+	if (!MediaPlayer.IsSettingTrue("preset_allow_initial")) then return end
 
 	MediaPlayer.ApplyPreset(preset)
 	MediaPlayer.InstantiatePanels(true)
@@ -385,11 +398,7 @@ end)
 
 --receives a message from the server and puts it into the players chat
 net.Receive("MediaPlayer.SendMessage", function()
-	local msg = net.ReadString() or " null "
-	local setting = MediaPlayer.GetSetting("media_chat_colours")
-
-	chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, msg )
-	chat.PlaySound()
+	MediaPlayer.CreateChatMessage(net.ReadString())
 end)
 
 
@@ -511,7 +520,7 @@ net.Receive("MediaPlayer.End", function()
 	panel:UpdateGrid()
 	panel:EmptyPanel()
 
-	local setting = MediaPlayer.GetSetting("media_player_hide")
+	local setting = MediaPlayer.GetSetting("player_hide")
 	panel = MediaPlayer.GetPanel("PlayerPanel")
 	panel:SetVideo(MediaPlayer.CurrentVideo)
 
@@ -546,7 +555,7 @@ net.Receive("MediaPlayer.SendCurrentVideo",function()
 	panel = MediaPlayer.GetPanel("PlayerPanel")
 	panel:SetVideo(MediaPlayer.CurrentVideo)
 
-	if (MediaPlayer.IsSettingTrue("media_player_show_current_video")) then
+	if (MediaPlayer.IsSettingTrue("player_show_current_video")) then
 		panel:Show()
 	end
 end)

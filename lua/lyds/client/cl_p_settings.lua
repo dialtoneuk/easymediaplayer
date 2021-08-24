@@ -21,7 +21,7 @@ panel.ClientSettings = {
 	media_create_search_panel = "Refresh Search Panel",
 	media_create_settings_panel = "Refresh Settings Panel",
 	media_write_default_presets = "Rewrite default presets from addon resources folder",
-	media_search_panel = "Show search panel",
+	search_panel = "Show search panel",
 	media_like_video = "Like Current Video",
 	media_dislike_video = "Dislike Current Video",
 	media_reset_cl_settings = "Reset Client Settings To Default",
@@ -42,7 +42,7 @@ panel.AdminSettings = {
 	media_reload_chatcommands = "Reload Chat Commands",
 	media_reload_votes = "Reload Votes",
 	media_save_settings = "Save Server Settings",
-	media_admin_panel = "Show Admin Panel",
+	admin_panel = "Show Admin Panel",
 }
 
 panel.Selected = {}
@@ -138,7 +138,7 @@ function panel:MyThink()
 			math.floor( self:GetWidth() ) .. " pixels wide! We've put it back for you. Try again!")
 
 		self.Settings.Size.Value.Width = 600
-		MediaPlayer.ChangeSetting("media_settings_size", self.Settings.Size.Value)
+		MediaPlayer.ChangeSetting("settings_size", self.Settings.Size.Value)
 
 		self:Remove()
 		MediaPlayer.InstantiatePanels(true)
@@ -149,7 +149,7 @@ function panel:MyThink()
 		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
 			math.floor( self:GetHeight() ) .. " pixels tall! We've put it back for you. Try again!")
 		self.Settings.Size.Value.Height = 600
-		MediaPlayer.ChangeSetting("media_settings_size", self.Settings.Size.Value)
+		MediaPlayer.ChangeSetting("settings_size", self.Settings.Size.Value)
 
 		self:Remove()
 		MediaPlayer.InstantiatePanels(true)
@@ -183,7 +183,6 @@ Add commands tab
 --]]
 
 function panel:AddCommandsTab()
-
 	local pan = vgui.Create("DScrollPanel", self.PropertySheet)
 	self:SetDockMargin(pan)
 
@@ -193,26 +192,38 @@ function panel:AddCommandsTab()
 	grid:Dock(FILL)
 	grid:SetCols( 1 )
 	grid:SetColWide( self:GetWide() )
+	grid:SetRowHeight( self.Settings.Size.Value.RowHeight + self:GetPadding() )
 	self:SetDockPadding(grid)
+	self:SetDockMargin(grid)
 
 	local divider = vgui.Create("DButton", grid )
-	divider:SetText("Client Commands")
+	divider:SetText("")
 	divider:SetFont("BigText")
 	divider:SetTextColor(self.Settings.Colours.Value.TextColor)
-	divider:SetWide( self:GetWide() - 65 )
+	divider:SetTall( self.Settings.Size.Value.RowHeight)
+	divider:SetWide( ( self:GetWidth(true, true ) - self:GetPadding() * 2 )  - 30 )
+
 	divider.Paint = function()
+		draw.SimpleTextOutlined( "Client Commands", "BiggerText", 5, self.Settings.Size.Value.RowHeight / 2 , self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 	end
+
 	grid:AddItem( divider )
 
 	local fn = function(k,v, image)
 		local but = vgui.Create( "DButton", grid )
 		but:SetText( "" )
-		but:SetFont("MediumText")
+		but:SetFont("BigText")
 		but:SetImage("icon16/" .. image)
-		but.Paint = function()
-			draw.SimpleTextOutlined( v, "MediumText", 25, 8, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		but:SetTall( self.Settings.Size.Value.RowHeight)
+		but:SetWide( ( self:GetWidth(true, true ) - self:GetPadding() * 2 )  - 30 )
+
+		but.Paint = function(s)
+			surface.SetDrawColor(self.Settings.Colours.Value.Border)
+			surface.DrawOutlinedRect(0, 0, s:GetWide(), self.Settings.Size.Value.RowHeight , self.Settings.Options.Value.BorderThickness)
+			draw.SimpleTextOutlined( v, "MediumText", 25, self.Settings.Size.Value.RowHeight / 2, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 		end
-		but:SetWide( self:GetWide() - 65 )
+
+
 		but.DoClick = function(_s)
 			_s:SetDisabled(true)
 			_s:SetImage("icon16/tick.png")
@@ -230,23 +241,27 @@ function panel:AddCommandsTab()
 	end
 
 	for k,v in SortedPairs(self.ClientSettings) do
-		fn(k,v, "user.png")
+		fn(k,string.upper(v), "user.png")
 	end
 
 	if (MediaPlayer.LocalPlayer:IsAdmin()) then
 
 		--add server commands devicer
 		divider = vgui.Create("DButton", grid )
-		divider:SetText("Server Commands")
+		divider:SetText("")
 		divider:SetFont("BigText")
+		divider:SetTall( self.Settings.Size.Value.RowHeight)
+		divider:SetWide( ( self:GetWidth(true, true ) - self:GetPadding() * 2 )  - 30 )
 		divider:SetTextColor(self.Settings.Colours.Value.TextColor)
+
 		divider.Paint = function()
+			draw.SimpleTextOutlined( "Server Commands", "BiggerText", 5, self.Settings.Size.Value.RowHeight / 2 , self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 		end
-		divider:SetWide( self:GetWide() - 65 )
+
 		grid:AddItem( divider )
 
 		for k,v in SortedPairs(self.AdminSettings) do
-			fn(k, v, "cog.png")
+			fn(k, string.upper(v), "cog.png")
 		end
 	end
 
@@ -336,43 +351,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 
 	for k,keys in SortedPairs(data) do
 		for kind,v in SortedPairsByMemberValue(keys, "Convar") do
-			local i = "icon16/folder.png"
-
-			if (admin) then
-				if ( string.find(k, "youtube_")) then
-					i = "icon16/television.png"
-				elseif ( string.find(k, "dailymotion_")) then
-					i = "icon16/film.png"
-				elseif ( string.find(k, "soundcloud_")) then
-					i = "icon16/sound.png"
-				elseif ( string.find(k, "media_cooldown")) then
-					i = "icon16/clock.png"
-				elseif ( string.find(k, "media_announce")) then
-					i = "icon16/email.png"
-				elseif ( string.find(k, "media_command")) then
-					i = "icon16/text_bold.png"
-				elseif ( string.find(k, "media_admin")) then
-					i = "icon16/shield.png"
-				end
-			else
-				if (string.find(k,"_colours")) then
-					i = "icon16/color_wheel.png"
-				elseif ( string.find(k, "_size")) then
-					i = "icon16/layout.png"
-				elseif ( string.find(k, "_position")) then
-					i = "icon16/arrow_in.png"
-				elseif ( string.find(k, "_options")) then
-					i = "icon16/page_edit.png"
-				elseif ( string.find(k, "_centered")) then
-					i = "icon16/shape_square.png"
-				elseif ( string.find(k, "_hide")) then
-					i = "icon16/zoom.png"
-				elseif ( string.find(k, "_show")) then
-					i = "icon16/eye.png"
-				end
-			end
-
-			local node = settingSelection:AddNode(k, i)
+			local node = settingSelection:AddNode(k, MediaPlayer.GetSettingIcon(k, admin) )
 
 			function node:DoClick()
 				MediaPlayer.LoadedPanels["SettingsPanel"].Panel:UpdateTable(title, v, admin )

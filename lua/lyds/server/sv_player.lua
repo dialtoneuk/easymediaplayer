@@ -9,6 +9,12 @@ function ply:SendMessage(message)
 
 	if (string.len(message) > 125) then return end
 
+	--adds fullstop
+	local lc = string.sub(message, #message)
+	if ( lc != "!" and lc != ".") then
+		message = message .. "."
+	end
+
 	net.Start("MediaPlayer.SendMessage")
 		net.WriteString(message)
 	net.Send(self)
@@ -17,7 +23,7 @@ end
 --does the initial spawn of a player
 function ply:DoInitialSpawn()
 
-	if (MediaPlayer.IsSettingTrue("media_announce_spawn")) then
+	if (MediaPlayer.IsSettingTrue("announce_spawn")) then
 		self:SendMessage("This server is running " .. MediaPlayer.Name .. " v" .. MediaPlayer.Version )
 		self:SendMessage("Created by " .. MediaPlayer.Credits.Author )
 	end

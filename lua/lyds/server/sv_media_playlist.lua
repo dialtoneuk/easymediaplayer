@@ -60,7 +60,12 @@ function MediaPlayer.CanSubmitVideo(id, ply )
 	end
 
 	if (MediaPlayer.HasCooldown(ply, "Play")) then
-		ply:SendMessage("Wait a bit before playing something else!")
+		ply:SendMessage("Wait a bit before playing something else")
+		return false
+	end
+
+	if (MediaPlayer.GetSetting("playlist_capacity") == MediaPlayer.Count ) then
+		ply:SendMessage("The playlist is at full capacity")
 		return false
 	end
 

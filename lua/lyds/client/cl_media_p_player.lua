@@ -97,13 +97,17 @@ function panel:Init()
 			surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground)
 			surface.DrawRect(0, 0, math.Clamp((self:GetWidth() / self.Video.Duration ) * time, 5, self:GetWidth()), self.Settings.Size.Value.LoadingBarHeight)
 
-			draw.SimpleTextOutlined(self.Video.Title, "MediumText", 10, self:GetHeight() - 30, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner or "Unknown",
-				"SmallText", 10, self:GetHeight() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			local title = self.Video.Title
 
-			draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw ) - self:GetPadding() * 2, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleTextOutlined("/" .. total, "MediumText", ( self:GetWidth() - tw ) - self:GetPadding() * 2, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			if (self.Settings.Muted.Value) then
+				title = title .. " (AUDIO MUTED!)"
+			end
+
+			draw.SimpleTextOutlined(title, "MediumText", 10, self:GetHeight() - 30, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner, "SmallText", 10, self:GetHeight() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw - 15) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(" / " .. total, "MediumText", ( self:GetWidth() - tw - 15) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 		end
 	end
 end

@@ -47,7 +47,7 @@ function panel:Init()
 			surface.SetDrawColor(self.Settings.Colours.Value.Background)
 			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
 			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
+			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 
 			if (self.Vote and !table.IsEmpty(self.Vote) and self.Vote.StartTime  ) then
 				local time = CurTime() - self.Vote.StartTime

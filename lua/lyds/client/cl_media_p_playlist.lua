@@ -200,7 +200,7 @@ function panel:EmptyPanel()
 	end
 
 	self.MiscPanel.DoClick = function(s)
-		RunConsoleCommand("media_search_panel")
+		RunConsoleCommand("search_panel")
 	end
 
 	self.Grid:AddItem(self.MiscPanel)

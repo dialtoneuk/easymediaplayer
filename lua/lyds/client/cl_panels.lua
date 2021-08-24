@@ -6,13 +6,13 @@ MediaPlayer.Panels = {
 	--settings panel
 	SettingsPanel = {
 		Element = "SettingsPanel", --what we refer to it by
-		SettingsBase = "media_settings", --will look for settings this, so media_settings_<setting>
+		SettingsBase = "settings", --will look for settings this, so settings_<setting>
 		Draggable = true,
 		Admin = false,
 		Settings = {
 			--can define extra settings here
 			--size, is centered and show is implicit
-			--their suffix is the SettingsBase, so settings here will equate to media_settings_*
+			--their suffix is the SettingsBase, so settings here will equate to settings_*
 		},
 
 		--called after initialized
@@ -51,7 +51,7 @@ MediaPlayer.Panels = {
 	--Admin Panel
 	AdminPanel = {
 		Element = "AdminPanel",
-		SettingsBase = "media_admin",
+		SettingsBase = "admin",
 		Draggable = true,
 		Admin = true,
 		Settings = {
@@ -67,7 +67,7 @@ MediaPlayer.Panels = {
 	WarningBox = {
 		Preloaded = false, --this won't be created and "hidden", instead it'll be created on demand
 		Element = "WarningBox",
-		SettingsBase = "media_warning",
+		SettingsBase = "warning",
 		Draggable = true,
 		Settings = {
 			--can define extra settings here
@@ -83,7 +83,7 @@ MediaPlayer.Panels = {
 	SuccessBox = {
 		Preloaded = false,
 		Element = "SuccessBox",
-		SettingsBase = "media_success",
+		SettingsBase = "success",
 		Draggable = true,
 		Settings = {
 
@@ -95,7 +95,7 @@ MediaPlayer.Panels = {
 	},
 	SearchPanel = {
 		Element = "SearchPanel",
-		SettingsBase = "media_search",
+		SettingsBase = "search",
 		Draggable = true,
 		Admin = false,
 		Settings = {
@@ -110,7 +110,7 @@ MediaPlayer.Panels = {
 	--Player Panel
 	PlayerPanel = {
 		Element = "PlayerPanel",
-		SettingsBase = "media_player",
+		SettingsBase = "player",
 		Draggable = false,
 		Admin = false,
 		Settings = {
@@ -120,10 +120,10 @@ MediaPlayer.Panels = {
 			Context = "show_in_context",
 			Scoreboard = "show_in_scoreboard",
 			Show_New_Constant = "show_current_video_constantly",
+			Muted = "mute",
 		},
 		PostInit = function(panel, key, settings)
 			panel:Reposition()
-
 
 			if (settings.Hide.Value) then
 				panel:Hide()
@@ -135,6 +135,8 @@ MediaPlayer.Panels = {
 
 				if (settings.Show_New_Constant.Value or settings.Show_Constant.Value) then
 					panel:Show()
+				else
+					panel:Hide()
 				end
 			else
 				if (settings.Show_Constant.Value) then
@@ -195,7 +197,7 @@ MediaPlayer.Panels = {
 	--Vote Panel
 	VotePanel = {
 		Element = "VotePanel",
-		SettingsBase = "media_vote",
+		SettingsBase = "vote",
 		Draggable = true,
 		Admin = false,
 		Settings = {
@@ -217,13 +219,13 @@ MediaPlayer.Panels = {
 	--Playlist Panel
 	PlaylistPanel = {
 		Element = "PlaylistPanel",
-		SettingsBase = "media_playlist", --setting base, everything in settings array will build off of this string like so media_playlist_*
+		SettingsBase = "playlist", --setting base, everything in settings array will build off of this string like so playlist_*
 		Draggable = false,
 		Admin = false,
 		Settings = {
 			--can define extra settings here
 			--size, is centered and show is implicit
-			Show_In_Context = "show_in_context", --this is equiv to media_playlist_show_in_context
+			Show_In_Context = "show_in_context", --this is equiv to playlist_show_in_context
 			Show_Constant = "show_constantly", -- you can append a ! to ignore settings base
 			Show_In_Scoreboard = "show_in_scoreboard"
 		},

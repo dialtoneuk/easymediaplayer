@@ -170,7 +170,7 @@ function MediaPlayer.AddToCount()
 
 	MediaPlayer.CurrentVote.Count = MediaPlayer.CurrentVote.Count + 1
 
-	if (MediaPlayer.IsSettingTrue("media_announce_count")) then
+	if (MediaPlayer.IsSettingTrue("announce_count")) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("Votes +1 to " .. MediaPlayer.CurrentVote.Type .. " (" .. MediaPlayer.CurrentVote.Count ..  " / " .. MediaPlayer.CurrentVote.Required  .. ")")
 		end
@@ -211,7 +211,7 @@ function MediaPlayer.StartVote(vote, ply)
 		end
 	end
 
-	local setting = MediaPlayer.GetSetting("media_vote_time") or { Value = 10 }
+	local setting = MediaPlayer.GetSetting("vote_default_duration") or { Value = 10 }
 
 	v.Owner = ply
 	v.StartTime = CurTime()
@@ -235,7 +235,7 @@ function MediaPlayer.ExecuteVote(vote)
 		return
 	end
 
-	if (MediaPlayer.IsSettingTrue("media_announce_vote")) then
+	if (MediaPlayer.IsSettingTrue("announce_vote")) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("A vote has been initiated. type !vote to participate! " .. vote.Required .. " votes are required for this to pass!")
 		end

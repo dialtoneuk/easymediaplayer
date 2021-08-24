@@ -12,12 +12,12 @@ MediaPlayer.BaseCooldown = {
 
 --all of our default cooldowns
 MediaPlayer.RegisteredCooldowns = MediaPlayer.RegisteredCooldowns or {
-	Search = "media_cooldown_search",
-	Play = "media_cooldown_play",
-	Vote = "media_cooldown_vote",
-	Interaction = "media_cooldown_interaction",
-	History = "media_cooldown_history",
-	Command = "media_cooldown_command",
+	Search = "cooldown_search",
+	Play = "cooldown_play",
+	Vote = "cooldown_vote",
+	Interaction = "cooldown_interaction",
+	History = "cooldown_history",
+	Command = "cooldown_command",
 }
 
 --loops through RegisteredCooldowns and creates new cooldowns based on their values, hook a function onto PreloadRegisteredCools and use MediaPlayer.AddRegisteredCooldowns
@@ -61,7 +61,7 @@ end
 --returns true if cooldowns are disabled
 function MediaPlayer.CooldownsAreDisabled()
 
-	return !MediaPlayer.IsSettingTrue("media_cooldown_enabled")
+	return !MediaPlayer.IsSettingTrue("cooldown_enabled")
 end
 
 --returns true if a player currently has that cooldown, takes Name of cooldown defined above
@@ -117,7 +117,7 @@ end
 
 --called each interval updating all of the coolsdowns present in the system
 function MediaPlayer.CooldownLoop()
-	local setting = MediaPlayer.GetSetting("media_cooldown_refreshrate")
+	local setting = MediaPlayer.GetSetting("cooldown_refreshrate")
 
 	--So we update our time
 	timer.Create("MediaPlayer.CooldownLoop", setting.Value, 1, function()

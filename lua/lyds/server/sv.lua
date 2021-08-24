@@ -39,7 +39,7 @@ net.Receive("MediaPlayer.SearchQuery",function(len, ply)
 	if (MediaPlayer.HasCooldown(ply, "Search")) then return end
 
 	local query = net.ReadString()
-	local setting = MediaPlayer.GetSetting("media_max_results")
+	local setting = MediaPlayer.GetSetting("search_result_count")
 
 	MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.CopyCooldown("Search") )
 
@@ -167,11 +167,11 @@ net.Receive("MediaPlayer.SetAdminSettings",function(len, ply)
 
 		v:SendAdminSettings()
 
-		if (MediaPlayer.IsSettingTrue("media_announce_settings")) then
+		if (MediaPlayer.IsSettingTrue("announce_settings")) then
 			v:SendMessage("Admin settings have been updated by " .. ply:GetName()  .. " refreshing settings panel...")
 		end
 
-		v:ConCommand("media_settings_create")
+		v:ConCommand("settings_create")
 	end
 end)
 
@@ -195,7 +195,7 @@ hook.Add("MediaPlayer.SettingsPostLoad","MediaPlayer.LoadInternals", function()
 	MediaPlayer.CooldownLoop()
 
 	--this is where the tip loop begins
-	if ( MediaPlayer.GetSetting("media_tips_enabled").Value) then
+	if ( MediaPlayer.GetSetting("tips_enabled").Value) then
 		MediaPlayer.DisplayTip()
 	end
 end)
@@ -360,7 +360,7 @@ concommand.Add("media_skip_video", function(ply)
 	if (ply:IsAdmin() and !table.IsEmpty(MediaPlayer.CurrentVideo)) then
 		MediaPlayer.SkipVideo()
 
-		if (MediaPlayer.IsSettingTrue("media_announce_admin")) then
+		if (MediaPlayer.IsSettingTrue("announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
 				v:SendMessage("Video skipped by " .. ply:GetName() .. " (admin)")
 			end
@@ -384,10 +384,10 @@ concommand.Add("media_blacklist_video", function(ply,cmd,args)
 			MediaPlayer.SkipVideo()
 		else
 			MediaPlayer.RemoveVideo(video.Video)
-			MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+			MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
 		end
 
-		if (MediaPlayer.IsSettingTrue("media_announce_admin")) then
+		if (MediaPlayer.IsSettingTrue("announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
 				v:SendMessage("Video banned by " .. ply:GetName() .. " (admin)")
 			end
@@ -405,7 +405,7 @@ concommand.Add("media_unblacklist_video", function(ply, cmd, args)
 
 		local vid = MediaPlayer.Blacklist[args[1]]
 
-		if (MediaPlayer.IsSettingTrue("media_announce_admin")) then
+		if (MediaPlayer.IsSettingTrue("announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
 				v:SendMessage( vid.Title .. " has been unbanned by " ..  ply:GetName() .. " (admin)")
 			end
@@ -435,14 +435,14 @@ concommand.Add("media_like_video", function(ply, cmd, args)
 		for k,v in pairs(player.GetAll()) do
 			MediaPlayer.SendHistoryForVideo(v, MediaPlayer.History[video.Video])
 
-			if (MediaPlayer.IsSettingTrue("media_announce_likes")) then
+			if (MediaPlayer.IsSettingTrue("announce_likes")) then
 				v:SendMessage( ply:GetName() .. " has liked this video!")
 			end
 		end
 
 		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.CopyCooldown("Interaction") )
 
-		if (!MediaPlayer.IsSettingTrue("media_announce_dislikes")) then
+		if (!MediaPlayer.IsSettingTrue("announce_dislikes")) then
 			ply:SendMessage("Video liked!")
 		end
 
@@ -469,15 +469,28 @@ concommand.Add("media_dislike_video", function(ply, cmd, args)
 		for k,v in pairs(player.GetAll()) do
 			MediaPlayer.SendHistoryForVideo(v, MediaPlayer.History[video.Video])
 
-			if (MediaPlayer.IsSettingTrue("media_announce_dislikes")) then
+			if (MediaPlayer.IsSettingTrue("announce_dislikes")) then
 				v:SendMessage( ply:GetName() .. " has disliked this video!")
 			end
 		end
 
 		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.CopyCooldown("Interaction") )
 
-		if (!MediaPlayer.IsSettingTrue("media_announce_dislikes")) then
+		if (!MediaPlayer.IsSettingTrue("announce_dislikes")) then
 			ply:SendMessage("Video disliked!")
+		end
+
+		local val = MediaPlayer.GetSetting("video_ban_after_dislikes").Value
+
+		if (val != 0 and val == MediaPlayer.History[video.Video].Dislikes) then
+			MediaPlayer.AddToBlacklist(video, ply )
+			MediaPlayer.SkipVideo()
+
+			if (MediaPlayer.IsSettingTrue("announce_admin")) then
+				for k,v in pairs(player.GetAll()) do
+					v:SendMessage("Video automatically banned as it reached over the dislike fresh hold")
+				end
+			end
 		end
 
 		ply:SetNWBool("MediaPlayer.Engaged", true )
@@ -502,10 +515,10 @@ concommand.Add("media_play", function(ply, cmd, args)
 
 	local vids = ply:GetVideos()
 	local videoCount = table.Count(vids)
-	local setting = MediaPlayer.GetSetting("player_playlist_max")
+	local setting = MediaPlayer.GetSetting("player_max_videos")
 
 	--check if this user already has loads of videos
-	if (videoCount >= setting.Value and (!ply:IsAdmin() or !MediaPlayer.IsSettingTrue("media_admin_ignore_limits") ) ) then
+	if (videoCount >= setting.Value and (!ply:IsAdmin() or !MediaPlayer.IsSettingTrue("admin_ignore_limits") ) ) then
 		ply:SendMessage("You are allowed a maximum of " .. setting.Value .. " in the playlist. You have " .. videoCount  .. "." )
 		return
 	end
@@ -545,6 +558,12 @@ concommand.Add("media_play", function(ply, cmd, args)
 
 				if (!IsValid(video.Owner)) then return end
 				video.Owner:SendMessage("There was something wrong with that video! Please try another one")
+				return
+			end
+
+			if ( returnedVideo.Duration > MediaPlayer.GetSetting("video_max_duration").Value ) then
+				if (!IsValid(video.Owner)) then return end
+				video.Owner:SendMessage("This video is too long! Please select another one")
 				return
 			end
 
@@ -591,13 +610,13 @@ concommand.Add("media_delete", function(ply, cmd, args)
 
 	MediaPlayer.RemoveVideo(args[1])
 
-	if (MediaPlayer.IsSettingTrue("media_announce_admin")) then
+	if (MediaPlayer.IsSettingTrue("announce_admin")) then
 		for k,v in pairs(player.GetAll()) do
 			v:SendMessage("Video deleted by admin (" .. ply:GetName() .. ")")
 		end
 	end
 
-	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
 end)
 
 --removes a video from the playlist if the player owns it
@@ -608,13 +627,13 @@ concommand.Add("media_remove", function(ply, cmd, args)
 	if (!table.IsEmpty(MediaPlayer.CurrentVideo) and MediaPlayer.CurrentVideo.Video == args[1]) then return end
 
 	MediaPlayer.RemovePlayerVideo(args[1])
-	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
 end)
 
 --removes all a players videos
 concommand.Add("media_remove_all", function(ply, cmd, args)
 	MediaPlayer.RemovePlayerVideos(ply)
-	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("media_playlist_limit").Value)
+	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
 end)
 
 --removes all a players videos if they are an admin

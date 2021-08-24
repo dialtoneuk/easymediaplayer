@@ -123,7 +123,7 @@ function MediaPlayer.SetPanelSettings(key, tab, settings_base)
 
 		if (MediaPlayer.Settings[v] == nil ) then
 			warning(v .. " does not exist so default to base")
-			v = string.Replace(v, settings_base, "media_base")
+			v = string.Replace(v, settings_base, "base")
 		end
 
 		MediaPlayer.Panels[key]._Settings[k] = MediaPlayer.GetSetting(v)
