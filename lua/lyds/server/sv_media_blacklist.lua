@@ -20,21 +20,22 @@ end
 function MediaPlayer.AddToBlacklist(video, ply)
 	if (!ply:IsAdmin() ) then return end
 
-	local _video = table.Copy(video)
+	local bannedVideo = table.Copy(video)
 
-	_video.Admin = {
+	bannedVideo.Admin = {
 		Name = ply:GetName(),
 		SteamID = ply:SteamID(),
 	}
 
-	_video.Owner = {
-		Name = video.Owner:GetName(),
-		SteamID = video.Owner:SteamID()
-	}
+	if (IsValid(video.Owner)) then
+		bannedVideo.Owner = {
+			Name = video.Owner:GetName(),
+			SteamID = video.Owner:SteamID()
+		}
+	end
 
-	_video.DateAdded = os.time()
-
-	MediaPlayer.Blacklist[video.Video] = _video
+	bannedVideo.DateAdded = os.time()
+	MediaPlayer.Blacklist[video.Video] = bannedVideo
 end
 
 --removes from banned videos, video must be a table
