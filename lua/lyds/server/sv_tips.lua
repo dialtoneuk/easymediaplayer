@@ -45,7 +45,7 @@ function MediaPlayer.LoadCustomTips()
 
 	local tip = MediaPlayer.GetSetting("media_custom_tips")
 
-	if (tip.Type != MediaPlayer.SettingTypes.TABLE ) then
+	if (tip.Type != MediaPlayer.Type.TABLE ) then
 		errorBad("invalid type")
 	end
 
