@@ -26,8 +26,8 @@ Written by Llydia Cross.
 
 Easy MediaPlayer is a media addon which allows a garrysmod server (or just your self!) to watch and listen to media together via a server wide playlist. It currently supports several sites, such as Dailymotion and Youtube as well as Youtube Music and also mp3s.
 
-## Note: Chromium Branch is highly recommended
-As of 2021, the chromium web engine is not in the game by default due to some crashes and bugs that can occur. I myself have experienced several of these crashes, how ever I have found that crashes are actually more persitant on the "older html engine" than the newer one and _its really no bother switching to the chromium branch and sticking wih it_. In regards to using this plugin on a server, <u>the only thing which will work on the older html engine are mp3 links which use a very primative javascript api to function, no videos will ever be possible now **flash is dead**</u>.
+## Note:
+As of 2021, the chromium web engine is not in the game by default due to some crashes and bugs that can occur. I myself have experienced several of these crashes, how ever I have found that crashes are actually more persitant on the "older html engine" than the newer one and _its really no bother switching to the x86-x64 and sticking wih it_. In regards to using this plugin on a server, <u>the only thing which will work on the older html engine are mp3 links which use a very primative javascript api to function, no videos will ever be possible now **flash is dead**</u>.
 
 **NOTE:** I have noticed several game crashing bugs with this addon on branches other than the chromium branch. These are simply impossible for me to fix as they are due to the older html engine, so please don't submit bug reports if you aren't on the chromium branch.
 
@@ -49,7 +49,7 @@ What it will do is
 
 **NOTE:** Sever operators which use this plugin are advised to read each of comments provided for the settings to fully get an understanding of what each of them do. As for users, your client settings are seperated from the servers settings and will follow you through each server which uses Easy MediaPlayer, so you don't have to worry about your styling being messed up.
 
-**NOTE: <u>Always save your client settings as a preset!</u>** Or change the setting `preset_allow_default` to false overwise it will be overwritten when you join a server (for the first time) which has Easy Mediaplayer Installed. If you forget to flick the setting, you can always revert back to your saved preset. Remember to include any _centered or _inverted or _hide settings in the presets settings as they are not added implicitly when the default settings checkbox is true in the preset creator
+**NOTE: <u>Always save your client settings as a preset!</u>** Or change the setting `preset_allow_default` to false overwise it will be overwritten when you join a server (for the first time) which has Easy Mediaplayer Installed and a server initial server. If you forget to flick the setting, you can always revert back to your saved preset. Remember to include any _centered or _inverted or _hide settings in the presets settings as they are not added implicitly when the default settings checkbox is true in the preset creator
 
 # Features
 
