@@ -15,12 +15,11 @@ panel.Settings = {
 	HideActive = "hide_active",
 	AutoResize = "auto_resize",
 	InvertPosition = "invert_position",
-	Options = "options",
 	Limit = "display_limit"
 }
 
 --on change
-panel.WatchedSettings = {
+panel.Updates = {
 	Size = {
 		RowSpacing = function(p)
 			if (p:CheckChange("RowSpacing")) then
@@ -40,26 +39,14 @@ Sets up grid and paints our colours
 --]]
 
 function panel:Init()
-	self:BaseInit()
+	self:BaseInit({
+		DontResize = {
+			Width = false,
+			Height = true, --don't resize the height implicitly
+		}
+	})
 
-	if (self:IsSettingTrue("InvertPosition")) then
-		self:InvertPosition(true)
-	end
-
-	self:Reposition()
-	self:SetIgnoreRescaling(true, false)
 	self:SetupGrid()
-
-	if ( self.Settings.Colours != nil) then
-		self.Paint = function(p)
-			surface.SetDrawColor(self.Settings.Colours.Value.Background)
-			surface.DrawRect(0, 0, p:GetWide(), p:GetTall(), self.Settings.Options.Value.BorderThickness)
-			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, p:GetWide(), p:GetTall(), self.Settings.Options.Value.BorderThickness)
-			surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder or MediaPlayer.Colours.Black )
-			surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
-		end
-	end
 
 	if (table.IsEmpty(MediaPlayer.Playlist)) then
 		self:EmptyPanel()
@@ -68,6 +55,21 @@ function panel:Init()
 	end
 
 	self:RecalculateSize()
+end
+
+--paints
+function panel:Paint()
+
+	if (self.Settings.Colours == nil ) then
+		return
+	end
+
+	surface.SetDrawColor(self.Settings.Colours.Value.Background)
+	surface.DrawRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
+	surface.SetDrawColor(self.Settings.Colours.Value.Border)
+	surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
+	surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder or MediaPlayer.Colours.Black )
+	surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
 end
 
 --[[
@@ -101,7 +103,7 @@ function panel:MyThink()
 	end
 
 	if (self:IsSettingTrue("InvertPosition")) then
-		self:InvertPosition(true)
+		self:InvertXPosition(true)
 		self:Reposition()
 	end
 

@@ -1,16 +1,19 @@
 local panel = {}
+
 panel.Name = "settings"
 
-panel.Resize = {
-    Width = false,
-    Height = false
-}
-
 function panel:Init()
-    self:BaseInit()
-    self:SetIgnoreRescaling(true, true)
-    self:IgnoreReposition()
-    self.Paint = function() end
+    self:BaseInit({
+        DontResize = {
+            Width = true,
+            Height = true
+        },
+        Locked = true
+    })
+end
+
+function panel:Paint(p)
+    --nothing
 end
 
 --takes the key of the setting inside MEDIA.Settings and then the alue,

@@ -24,37 +24,20 @@ Init
 function panel:Init()
 	self:BaseInit()
 
-	if (self:IsSettingTrue("InvertPosition")) then
-		self:InvertPosition(true)
-	end
-
-	self:Reposition()
-
 	if (!MediaPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
-
-	self:SetSize(self:GetWidth(), self:GetHeight())
-	self:SetDeleteOnClose( false )
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
 	self.PropertySheet:Dock(FILL)
 
 	self:CreateBlacklistPanel()
 	self.PropertySheet:AddSheet("Blacklist", self.BContainer, "icon16/cross.png")
+end
 
-	if ( self.Settings.Colours != nil) then
-		self.Paint = function()
-			surface.SetDrawColor(self.Settings.Colours.Value.Background)
-			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
-		end
-	end
-
-	if (self.Settings.Options.Value.DisplayTitle) then
-		self:SetTitle("Easy MediaPlayer Admin Settings")
-	else
-		self:SetTitle("")
-	end
+function panel:Paint()
+	surface.SetDrawColor(self.Settings.Colours.Value.Background)
+	surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+	surface.SetDrawColor(self.Settings.Colours.Value.Border)
+	surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall())
 end
 
 --[[

@@ -1,12 +1,7 @@
---[[
-	Player Panel
-	----------------------------------------------------------------------------
---]]
-
-
+--player panel
 local panel = {}
+
 panel.Name = "player"
-panel.Video = {}
 
 --the current
 panel._CurrentOwnerName = nil
@@ -15,12 +10,11 @@ panel._CurrentOwnerName = nil
 panel.Settings = {
 	DisplayVideo = "display_video",
 	Muted = "mute",
-	ShowConstant =  "show_constantly",
-	Options = "options"
+	ShowConstant =  "show_constantly"
 }
 
 --on change
-panel.WatchedSettings = {
+panel.Updates = {
 	Size = {
 		Padding = function(p)
 			if (p:CheckChange("Padding")) then
@@ -33,28 +27,62 @@ panel.WatchedSettings = {
 --Our initial setup
 
 function panel:Init()
-
 	self:BaseInit()
 
-	--TODO: Move this code inside base init
-	if (self:IsSettingTrue("InvertPosition")) then
-		self:InvertPosition(true)
-	end
-
-	self:Reposition()
+	self.Video = {}
 
 	self.HTML = vgui.Create("DHTML", self)
 	self.HTML:Dock(FILL)
 	self.HTML:SetAllowLua(true)
+	self:SetDefaultHTML()
 
-	--TODO: turn this into a method
-	self.HTML:SetHTML([[
-		<div style='font-family: sans-serif; text-align: center; overflow: hidden'>
-			<marquee style='text-align: center; color: white; font-size: 30vw; padding-top: 10.99%;'>No Video</marquee>
-			<h1 style='margin-top: 15vh; font-size: 0vh; color: white'>PLEASE SWITCH TO THE CHROMIUM BRANCH ELSE YOU MIGHT CRASH</h1>
-		</div>
-	]])
+	self.Wang = vgui.Create("DNumberWang", self)
+	self.Wang:SetSize(45, 26)
+	self.Wang:SetMin(0)
+	self.Wang:SetMax(100)
+	self.Wang:SetMin(0)
+	self.Wang:SetMax(100)
+	self.Wang:SetValue(100)
+end
 
+function panel:Paint(p)
+
+	surface.SetDrawColor(self.Settings.Colours.Value.Background)
+	surface.DrawRect(0, 0, self:GetWidth(), self:GetHeight())
+	surface.SetDrawColor(self.Settings.Colours.Value.Border)
+	surface.DrawOutlinedRect(0, 0, self:GetWidth(), self:GetHeight(), self.Settings.Options.Value.BorderThickness)
+	surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder)
+	surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
+
+	--todo: Optimise this
+	if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
+
+		local time = CurTime() - self.Video.StartTime
+		local str = self:GetMinsSeconds(time)
+		local total = self:GetMinsSeconds(self.Video.Duration)
+
+		local w = surface.GetTextSize(str)
+
+		local tw = surface.GetTextSize("/" .. total)
+
+		surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground)
+		surface.DrawRect(0, 0, math.Clamp((self:GetWidth() / self.Video.Duration ) * time, 5, self:GetWidth()), self.Settings.Size.Value.LoadingBarHeight)
+
+		local title = self.Video.Title
+
+		if (self.Settings.Muted.Value) then
+			title = title .. " (AUDIO MUTED!)"
+		end
+
+		draw.SimpleTextOutlined(title, "MediumText", 10, self:GetHeight() - 30, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner, "SmallText", 10, self:GetHeight() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw - 15) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(" / " .. total, "MediumText", ( self:GetWidth() - tw - 15) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+	end
+end
+
+function panel:SetYoutubeWang()
 	--sets the volume of the player
 	self.SetPlayerVolume = function(this)
 		this = this or self.Wang
@@ -67,52 +95,21 @@ function panel:Init()
 		]])
 	end
 
-
-	self.Wang = vgui.Create("DNumberWang", self)
-	self.Wang:SetSize(45, 26)
-	self.Wang:SetMin(0)
-	self.Wang:SetMax(100)
-	self.Wang:SetMin(0)
-	self.Wang:SetMax(100)
-	self.Wang:SetValue(100)
 	self.Wang.OnValueChanged = self.SetPlayerVolume
+end
 
-	self.Paint = function()
+function panel:SetDefaultHTML()
 
-		surface.SetDrawColor(self.Settings.Colours.Value.Background)
-		surface.DrawRect(0, 0, self:GetWidth(), self:GetHeight())
-		surface.SetDrawColor(self.Settings.Colours.Value.Border)
-		surface.DrawOutlinedRect(0, 0, self:GetWidth(), self:GetHeight(), self.Settings.Options.Value.BorderThickness)
-		surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder)
-		surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
+	if (!IsValid(self.HTML)) then return end
 
-		--todo: Optimise this
-		if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
+	--TODO: turn this into a method
+	self.HTML:SetHTML([[
+		<div style='font-family: sans-serif; text-align: center; overflow: hidden'>
+			<marquee style='text-align: center; color: white; font-size: 30vw; padding-top: 10.99%;'>No Video</marquee>
+			<h1 style='margin-top: 15vh; font-size: 0vh; color: white'>PLEASE SWITCH TO THE CHROMIUM BRANCH ELSE YOU MIGHT CRASH</h1>
+		</div>
+	]])
 
-			local time = CurTime() - self.Video.StartTime
-			local str = self:GetMinsSeconds(time)
-			local total = self:GetMinsSeconds(self.Video.Duration)
-
-			local w = surface.GetTextSize(str)
-
-			local tw = surface.GetTextSize("/" .. total)
-
-			surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground)
-			surface.DrawRect(0, 0, math.Clamp((self:GetWidth() / self.Video.Duration ) * time, 5, self:GetWidth()), self.Settings.Size.Value.LoadingBarHeight)
-
-			local title = self.Video.Title
-
-			if (self.Settings.Muted.Value) then
-				title = title .. " (AUDIO MUTED!)"
-			end
-
-			draw.SimpleTextOutlined(title, "MediumText", 10, self:GetHeight() - 30, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner, "SmallText", 10, self:GetHeight() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw - 15) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleTextOutlined(" / " .. total, "MediumText", ( self:GetWidth() - tw - 15) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-		end
-	end
 end
 
 function panel:GetMinsSeconds(time)

@@ -24,15 +24,17 @@ panel.DefaultSettings = {
 }
 
 function panel:Init()
-	self:BaseInit()
+	self:BaseInit({
+		Locked = true,
+		Padding = true,
+		DontResize = {
+			Width = true,
+			Height = true
+		}
+	})
 
 	self.Presets = {}
-
-	self:SetDockPadding()
-	self:IgnoreReposition()
-	self:SetIgnoreRescaling(true, true )
-
-	self.Paint = function() end
+	self.LastListValue = nil
 
 	self:Dock(FILL)
 
@@ -42,10 +44,7 @@ function panel:Init()
 	self.ListView:SetTall( self:GetHeight() )
 	self.ListView:AddColumn("Presets")
 
-
 	self:SetDockMargin(self.ListView)
-
-	self.LastListValue = nil
 
 	self.ListView.OnRowSelected = function(p, index, row)
 		local k = row:GetValue(1)
@@ -74,12 +73,14 @@ function panel:Init()
 		end
 	end
 
+	--help button
 	local help = vgui.Create("DButton", self.ListView )
 	help:SetTall(15)
 	help:Dock(BOTTOM)
 	help:SetText("Help")
 	self:SetDockMargin(help)
 
+	--creates add button
 	self:CreateAddButton()
 
 	self.PresetEditor = vgui.Create("DPanel", self )
@@ -96,10 +97,13 @@ function panel:Init()
 	self.PresetCreator:SetWide( self.ListView:GetWide() * 2 - ( self:GetPadding() * 2 ))
 	self.PresetCreator:Hide()
 	self.PresetCreator.Paint = function() end
-
 	self:SetDockMargin(self.PresetCreator)
 
 	self:GetPresets()
+end
+
+function panel:Paint(p)
+	--nothing
 end
 
 function panel:CreateAddButton()

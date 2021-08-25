@@ -2,29 +2,18 @@ local panel = {}
 
 panel.Name = "success"
 
+--init
 function panel:Init()
-	self:BaseInit()
+	self:BaseInit({
+		PaddingPower = 4
+	})
 
-	if (self:IsSettingTrue("InvertPosition")) then
-		self:InvertPosition(true)
-	end
-
-	self:Reposition()
-
-	--add warning box here
 	self.Label = vgui.Create("DLabel", self )
 	self.Label:Dock(FILL)
 	self.Label:SetFont("BiggerText")
 	self.Label:SetTextColor( self.Settings.Colours.Value.TextColor )
 
 	self:SetDockMargin(self.Label, 4)
-
-	self.Paint = function(s, w, h)
-		surface.SetDrawColor(self.Settings.Colours.Value.Background)
-		surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-		surface.SetDrawColor(self.Settings.Colours.Value.Border)
-		surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
-	end
 
 	self.AcceptButton = vgui.Create("DButton", self )
 	self.AcceptButton:Dock(BOTTOM)
@@ -45,8 +34,13 @@ function panel:Init()
 		self.AcceptButton:SetText("OK!")
 		timer.Remove("success_panel_timer")
 	end
+end
 
-	self:SetDockPadding(self, 4)
+function panel:Paint(p)
+	surface.SetDrawColor(self.Settings.Colours.Value.Background)
+	surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+	surface.SetDrawColor(self.Settings.Colours.Value.Border)
+	surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 end
 
 function panel:OnClicked()

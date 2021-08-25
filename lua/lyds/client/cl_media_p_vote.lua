@@ -8,75 +8,61 @@ local panel = {}
 --panel settings
 panel.Name = "vote"
 
---the vote
-panel.Vote = {}
-
-panel.Settings = {
-	Options = "options"
-}
-
 --[[
 Create vote panel
 --]]
 
 function panel:Init()
+	self:BaseInit({
+		Padding = true
+	})
 
-	self:BaseInit()
-
-	if (self:IsSettingTrue("InvertPosition")) then
-		self:InvertPosition(true)
-	end
-
-	self:Reposition()
-
-	self:SetDockPadding()
+	--the vote
+	self.Vote = {}
 
 	self.Type = vgui.Create("DLabel", self )
 	self.Type:Dock(TOP)
 	self.Type:SetFont("BigText")
 	self.Type:SetText("Unknown Vote (0)")
+	self.Type:SetTextColor(self.Settings.Colours.Value.TextColor)
 	self.Type:SizeToContents()
 
 	self.VOwner = vgui.Create("DLabel", self )
 	self.VOwner:Dock(LEFT)
 	self.VOwner:SizeToContents()
 	self.VOwner:SetText("Penisman")
+	self.VOwner:SetTextColor(self.Settings.Colours.Value.TextColor)
+end
 
-	if ( self.Settings.Colours != nil) then
-		self.Paint = function()
-			surface.SetDrawColor(self.Settings.Colours.Value.Background)
-			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
+function panel:Paint(p)
+	surface.SetDrawColor(self.Settings.Colours.Value.Background)
+	surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+	surface.SetDrawColor(self.Settings.Colours.Value.Border)
+	surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 
-			if (self.Vote and !table.IsEmpty(self.Vote) and self.Vote.StartTime  ) then
-				local time = CurTime() - self.Vote.StartTime
-				local mins = math.floor(time / 60)
-				local seconds = math.floor(time - (mins * 60))
+	if (self.Vote and !table.IsEmpty(self.Vote) and self.Vote.StartTime  ) then
+		local time = CurTime() - self.Vote.StartTime
+		local mins = math.floor(time / 60)
+		local seconds = math.floor(time - (mins * 60))
 
-				if (seconds < 10) then
-					seconds = "0" .. seconds
-				end
-
-				local str =  mins .. ":" .. seconds
-				local w = surface.GetTextSize(str)
-
-				draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10 , self:GetTall() - 45, MediaPlayer.Colours.White, 10, 1, 0.5,  MediaPlayer.Colours.Black )
-				surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground )
-				surface.DrawRect( 0, 0, math.Clamp( ( self:GetWide() / self.Vote.Time ) * time , 5, self:GetWide() ), self.Settings.Size.Value.LoadingBarHeight)
-			end
+		if (seconds < 10) then
+			seconds = "0" .. seconds
 		end
+
+		local str =  mins .. ":" .. seconds
+		local w = surface.GetTextSize(str)
+
+		draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10 , self:GetTall() - 45, MediaPlayer.Colours.White, 10, 1, 0.5,  MediaPlayer.Colours.Black )
+		surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground )
+		surface.DrawRect( 0, 0, math.Clamp( ( self:GetWide() / self.Vote.Time ) * time , 5, self:GetWide() ), self.Settings.Size.Value.LoadingBarHeight)
 	end
 end
 
---[[
-
---]]
-
+--think
 function panel:MyThink()
-	if (self.Settings.Size != nil) then
-		self.Type:SetWide(self:GetWide())
-		self.VOwner:SetWide(self:GetWide())
+	if (self:HasResized()) then
+		self.Type:SetWide(self:GetWidth())
+		self.VOwner:SetWide(self:GetWidth())
 	end
 end
 

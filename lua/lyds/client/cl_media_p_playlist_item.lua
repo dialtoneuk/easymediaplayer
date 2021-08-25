@@ -6,16 +6,8 @@
 local panel = {}
 panel.Name = "playlist"
 
---the video data
-panel.Video = {}
-
---Settings
-panel.Settings = {
-	Options = "options"
-}
-
 --on change
-panel.WatchedSettings = {
+panel.Updates = {
 	Size = {
 		Padding = function(p)
 			if (p:CheckChange("Padding")) then
@@ -26,16 +18,22 @@ panel.WatchedSettings = {
 	}
 }
 
---[[
-	Initializes
---]]
-
+--init
 function panel:Init()
-	self:SetIgnoreRescaling(true, true)
-	self:BaseInit()
+	self:BaseInit({
+		--dont auto resize
+		DontResize = {
+			Width = true,
+			Height = true
+		},
+		PaddingPower = 4
+	})
 
-	self:SetDockPadding(self, 4)
-	self:SetText("")
+	--sets our own tall
+	self:SetTall(self.Settings.Size.Value.RowHeight)
+
+	--the video data
+	self.Video = {}
 
 	self.Text = vgui.Create("DLabel", self )
 	self.Text:SetFont("PlaylistText")
@@ -58,117 +56,115 @@ function panel:Init()
 	self.TextOwner:SetTextColor(self.Settings.Colours.Value.TextColor)
 	self:SetDockMargin(self.TextOwner)
 
-	if (self.Settings.Colours != nil) then
-	  	self.Paint = function(p)
-
-			if (self.Active) then
-				surface.SetDrawColor(self.Settings.Colours.Value.ItemActiveBackground)
-			else
-				surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
-			end
-
-			surface.DrawRect(0, 0, p:GetWidth(true, true) - self:GetPadding(),  self.Settings.Size.Value.RowHeight )
-			surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
-			surface.DrawOutlinedRect(0, 0,  p:GetWidth(true, true ) - self:GetPadding(), self.Settings.Size.Value.RowHeight,  self.Settings.Options.Value.BorderThickness )
-	  	end
-	end
-
-	--init do click
-	self.DoClick = function()
-		--does this each time if there is history for this video but too bad!
-		if ( MediaPlayer.History != nil and MediaPlayer.History[ self.Item.Video ] != nil ) then
-			self.Item = table.Merge(self.Item,  MediaPlayer.History[ self.Item.Video  ])
-		end
-
-		local menu = DermaMenu(false, self)
-		menu:SetDeleteSelf( true )
-
-		if (MediaPlayer.LocalPlayer:IsAdmin()) then
-			if (!self.Active) then
-				if (self.Item.Owner.SteamID != MediaPlayer.LocalPlayer:SteamID()) then
-					local del = menu:AddOption( "Delete Video", function()
-						RunConsoleCommand("media_delete", self.Item.Video )
-					end)
-
-					del:SetIcon("icon16/delete.png")
-
-					local delall = menu:AddOption( "Delete All Users Videos", function()
-						RunConsoleCommand("media_delete_all", self.Item.Video.Owner.SteamID )
-					end)
-
-					delall:SetIcon("icon16/exclamation.png")
-				end
-
-				local bdel = menu:AddOption( "Blackist & Delete Video", function()
-					RunConsoleCommand("media_blacklist_video", self.Item.Video )
-				end)
-
-				bdel:SetIcon("icon16/cross.png")
-
-
-				if (self.Item.Position > 1 ) then
-					local moveup = menu:AddOption( "Move Up Position", function()
-						RunConsoleCommand("media_reposition_video", "up", self.Item.Video )
-					end)
-
-					moveup:SetIcon("icon16/arrow_up.png")
-				end
-
-				local movedown = menu:AddOption( "Move Down Position", function()
-					RunConsoleCommand("media_reposition_video", "down", self.Item.Video )
-				end)
-
-				movedown:SetIcon("icon16/arrow_down.png")
-			else
-				local skip = menu:AddOption( "Skip Video", function()
-					RunConsoleCommand("media_skip_video", self.Item.Video )
-				end)
-
-				skip:SetIcon("icon16/resultset_next.png")
-
-				local bdel = menu:AddOption( "Blacklist & Skip Video", function()
-					RunConsoleCommand("media_blacklist_video", self.Item.Video )
-				end)
-
-				bdel:SetIcon("icon16/cross.png")
-			end
-		end
-
-		local like = menu:AddOption( "Like Video (" .. (self.Item.Likes or 0) .. " likes)", function()
-			RunConsoleCommand("media_like_video", self.Item.Video )
-		end)
-
-		like:SetIcon("icon16/award_star_add.png")
-
-		local dislike = menu:AddOption( "Dislike Video (" .. (self.Item.Dislikes or 0) .. " dislikes)", function()
-			RunConsoleCommand("media_dislike_video", self.Item.Video )
-		end)
-
-		dislike:SetIcon("icon16/award_star_delete.png")
-
-		if ( !self.Active and ( self.Item.Owner.SteamID == MediaPlayer.LocalPlayer:SteamID() ) ) then
-			local remove = menu:AddOption( "Remove Video", function()
-				RunConsoleCommand("media_remove", self.Item.Video )
-			end)
-
-			remove:SetIcon("icon16/bomb.png")
-
-			local removeall = menu:AddOption( "Remove All Your Videos", function()
-				RunConsoleCommand("media_remove_all")
-			end)
-
-			removeall:SetIcon("icon16/error.png")
-		end
-
-		menu:Open()
-	end
-
-	self:SetTall(self:SetTall( self.Settings.Size.Value.RowHeight ))
+	self:SetText("")
 end
 
---[[
-	Sets if we are active or not
---]]
+function panel:DoClick()
+	--does this each time if there is history for this video but too bad!
+	if ( MediaPlayer.History != nil and MediaPlayer.History[ self.Item.Video ] != nil ) then
+		self.Item = table.Merge(self.Item,  MediaPlayer.History[ self.Item.Video  ])
+	end
+
+	local menu = DermaMenu(false, self)
+	menu:SetDeleteSelf( true )
+
+	local like = menu:AddOption( "Like Video (" .. (self.Item.Likes or 0) .. " likes)", function()
+		RunConsoleCommand("media_like_video", self.Item.Video )
+	end)
+
+	like:SetIcon("icon16/award_star_add.png")
+
+	local dislike = menu:AddOption( "Dislike Video (" .. (self.Item.Dislikes or 0) .. " dislikes)", function()
+		RunConsoleCommand("media_dislike_video", self.Item.Video )
+	end)
+
+	dislike:SetIcon("icon16/award_star_delete.png")
+
+	if ( !self.Active and ( self.Item.Owner.SteamID == MediaPlayer.LocalPlayer:SteamID() ) ) then
+		local remove = menu:AddOption( "Remove Video", function()
+			RunConsoleCommand("media_remove", self.Item.Video )
+		end)
+
+		remove:SetIcon("icon16/bomb.png")
+
+		local removeall = menu:AddOption( "Remove All Your Videos", function()
+			RunConsoleCommand("media_remove_all")
+		end)
+
+		removeall:SetIcon("icon16/error.png")
+	end
+
+	if (MediaPlayer.LocalPlayer:IsAdmin()) then
+
+		menu:AddSpacer()
+
+		if (!self.Active) then
+			if (self.Item.Owner.SteamID != MediaPlayer.LocalPlayer:SteamID()) then
+				local del = menu:AddOption( "Delete Video", function()
+					RunConsoleCommand("media_delete", self.Item.Video )
+				end)
+
+				del:SetIcon("icon16/delete.png")
+
+				local delall = menu:AddOption( "Delete All Users Videos", function()
+					RunConsoleCommand("media_delete_all", self.Item.Video.Owner.SteamID )
+				end)
+
+				delall:SetIcon("icon16/exclamation.png")
+			end
+
+			local bdel = menu:AddOption( "Blackist & Delete Video", function()
+				RunConsoleCommand("media_blacklist_video", self.Item.Video )
+			end)
+
+			bdel:SetIcon("icon16/cross.png")
+
+
+			if (self.Item.Position > 1 ) then
+				local moveup = menu:AddOption( "Move Up Position", function()
+					RunConsoleCommand("media_reposition_video", "up", self.Item.Video )
+				end)
+
+				moveup:SetIcon("icon16/arrow_up.png")
+			end
+
+			local movedown = menu:AddOption( "Move Down Position", function()
+				RunConsoleCommand("media_reposition_video", "down", self.Item.Video )
+			end)
+
+			movedown:SetIcon("icon16/arrow_down.png")
+		else
+			local skip = menu:AddOption( "Skip Video", function()
+				RunConsoleCommand("media_skip_video", self.Item.Video )
+			end)
+
+			skip:SetIcon("icon16/resultset_next.png")
+
+			local bdel = menu:AddOption( "Blacklist & Skip Video", function()
+				RunConsoleCommand("media_blacklist_video", self.Item.Video )
+			end)
+
+			bdel:SetIcon("icon16/cross.png")
+		end
+	end
+
+	menu:Open()
+end
+
+--paint
+function panel:Paint()
+	if (self.Active) then
+		surface.SetDrawColor(self.Settings.Colours.Value.ItemActiveBackground)
+	else
+		surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
+	end
+
+	surface.DrawRect(0, 0, self:GetWidth(true, true) - self:GetPadding(),  self.Settings.Size.Value.RowHeight )
+	surface.SetDrawColor(self.Settings.Colours.Value.ItemBorder)
+	surface.DrawOutlinedRect(0, 0,  self:GetWidth(true, true ) - self:GetPadding(), self.Settings.Size.Value.RowHeight,  self.Settings.Options.Value.BorderThickness )
+end
+
+--sets active
 function panel:SetActive()
 	self.Active = true
 end

@@ -8,10 +8,6 @@ local panel = {}
 --panel settings
 panel.Name = "settings"
 
-panel.Settings = {
-	Options = "options"
-}
-
 --client settings
 panel.ClientSettings = {
 	media_create_cl = "Refresh All Panels",
@@ -45,8 +41,6 @@ panel.AdminSettings = {
 	admin_panel = "Show Admin Panel",
 }
 
-panel.Selected = {}
-
 --[[
 Init
 --]]
@@ -54,40 +48,22 @@ Init
 function panel:Init()
 	self:BaseInit()
 
-	if (self:IsSettingTrue("InvertPosition")) then
-		self:InvertPosition(true)
-	end
-
-	self:Reposition()
-
-	if ( MediaPlayer.Settings == nil or table.IsEmpty(MediaPlayer.Settings)) then
-		errorBad("no settings")
-	end
-
-	self.PropertySheet = vgui.Create("DPropertySheet", self )
-	self.PropertySheet:Dock(FILL)
-
+	self.Selected = {}
 	self.Edited = false
 	self.Clicked = false
 	self.Changed = false
 
-	--Draw our custom colours if we have any
-	if (self.Settings.Colours != nil) then
-		self.Paint = function()
-			surface.SetDrawColor(self.Settings.Colours.Value.Background)
-			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
-			surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder)
-			surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
-		end
-	end
+	self.PropertySheet = vgui.Create("DPropertySheet", self )
+	self.PropertySheet:Dock(FILL)
+end
 
-	if (self.Settings.Options.Value.DisplayTitle) then
-		self:SetTitle("Easy MediaPlayer Settings Editor")
-	else
-		self:SetTitle("")
-	end
+function panel:Paint(p)
+	surface.SetDrawColor(self.Settings.Colours.Value.Background)
+	surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+	surface.SetDrawColor(self.Settings.Colours.Value.Border)
+	surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
+	surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder)
+	surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
 end
 
 --[[

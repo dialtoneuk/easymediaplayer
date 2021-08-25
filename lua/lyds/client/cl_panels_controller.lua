@@ -136,7 +136,7 @@ function MediaPlayer.SetupPanel(settings, panel, key)
 	panel:SetPos(settings.Position.Value.X, settings.Position.Value.Y)
 
 	if (settings.Centered.Value) then
-		panel:IgnoreReposition()
+		panel:LockPanel()
 		panel:Center()
 	end
 

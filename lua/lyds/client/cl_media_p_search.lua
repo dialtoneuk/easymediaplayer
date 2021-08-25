@@ -8,12 +8,6 @@ local panel = {}
 --settings
 panel.Name = "search"
 
---for the pages
-panel.HistoryPage = 1
-panel.BrowserHistory = {}
-panel.PlayerHistoryPage = 1
-panel.BrowserPosition = 0
-
 --?
 panel._Empty = false
 
@@ -28,15 +22,11 @@ Fills the property sheet with all our shit
 function panel:Init()
 	self:BaseInit()
 
-	if (self:IsSettingTrue("InvertPosition")) then
-		self:InvertPosition(true)
-	end
-
-	self:Reposition()
-
-	self:MakePopup()
-	self:SetWide(self:GetWidth())
-	self:SetTall(self:GetHeight())
+	--for the pages
+	self.HistoryPage = 1
+	self.BrowserHistory = {}
+	self.PlayerHistoryPage = 1
+	self.BrowserPosition = 0
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
 	self.PropertySheet:SetTall(self:GetHeight())
@@ -60,21 +50,13 @@ function panel:Init()
 	self.PropertySheet.OnActiveTabChanged = function(old, new)
 		self.Browser:OpenURL("https://www.youtube.com")
 	end
+end
 
-	if ( self.Settings.Colours != nil) then
-		self.Paint = function()
-			surface.SetDrawColor(self.Settings.Colours.Value.Background)
-			surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
-			surface.SetDrawColor(self.Settings.Colours.Value.Border)
-			surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
-		end
-	end
-
-	if (self.Settings.Options.Value.DisplayTitle) then
-		self:SetTitle("Easy MediaPlayer MediaPlayer Search")
-	else
-		self:SetTitle("")
-	end
+function panel:Paint(p)
+	surface.SetDrawColor(self.Settings.Colours.Value.Background)
+	surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+	surface.SetDrawColor(self.Settings.Colours.Value.Border)
+	surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 end
 
 --[[
