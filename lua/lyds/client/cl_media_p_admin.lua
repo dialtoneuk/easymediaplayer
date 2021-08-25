@@ -8,21 +8,15 @@ local panel = {}
 
 --settings
 panel.Name = "admin"
-panel._Reposition = false
 
---data
-panel.Selected = {}
-
-panel.Settings = {
-	Options = "options"
-}
-
---[[
-Init
---]]
-
+--init
 function panel:Init()
-	self:BaseInit()
+	self:BaseInit({
+		--equiv to self.Selected = {}
+		Declare = {
+			Selected = {}
+		}
+	})
 
 	if (!MediaPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
 

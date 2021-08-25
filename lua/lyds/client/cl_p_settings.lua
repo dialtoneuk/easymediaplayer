@@ -46,12 +46,14 @@ Init
 --]]
 
 function panel:Init()
-	self:BaseInit()
-
-	self.Selected = {}
-	self.Edited = false
-	self.Clicked = false
-	self.Changed = false
+	self:BaseInit({
+		Declare = {
+			Selected = {},
+			Edited = false,
+			Changed = false,
+			Clicked = false
+		}
+	})
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
 	self.PropertySheet:Dock(FILL)

@@ -136,6 +136,12 @@ function base:SetOptions(options)
 		self:SetDockPadding(self, options.PaddingPower)
 	end
 
+	if (options.Declare) then
+		for k,v in pairs(options.Declare) do
+			self[k] = v
+		end
+	end
+
 	if (options.Padding) then
 		self:SetDockPadding()
 	end
@@ -151,6 +157,25 @@ end
 
 function base:InvertXPosition()
 	self.Invert.X = true
+end
+
+function base:RescaleTo(scale)
+	scale = scale or 1
+
+	local w = ScrW() / scale
+	local h = ScrH() / scale
+
+	self:SetWide(w + ( self:GetPadding() * 2 ))
+	self:SetTall(h + ( self:GetPadding() * 2 ))
+end
+
+function base:GetSettingInt(key)
+
+	if (type(self.Settings[key].Value) != "number") then
+		error("invalid type not a number: " .. key )
+	end
+
+	return self.Settings[key].Value
 end
 
 function base:BaseInit(options)
@@ -196,9 +221,9 @@ function base:GetSettingWidth(padding, negative_padding)
 	local width = self:GetSetting("Size").Width
 
 	if (padding and negative_padding) then
-		width = width - self:GetPadding()
+		width = width - (self:GetPadding() * 2)
 	elseif (padding) then
-		width = width + self:GetPadding()
+		width = width + (self:GetPadding() * 2)
 	end
 
 	return width
@@ -211,9 +236,9 @@ function base:GetSettingHeight(padding, negative_padding)
 	local height = self:GetSetting("Size").Height
 
 	if (padding and negative_padding) then
-		height = height - self:GetPadding()
+		height = height - ( self:GetPadding() * 2)
 	elseif (padding) then
-		height = height + self:GetPadding()
+		height = height + ( self:GetPadding() * 2 )
 	end
 
 	return height
@@ -233,6 +258,11 @@ function base:GetIndexedSetting(key, index)
 	index = index or "Size"
 
 	return self.Settings[index].Value[key]
+end
+
+function base:Rescale()
+	self:SetWidth(self:GetWidth())
+	self:SetTall(self:GetHeight())
 end
 
 function base:SetIgnoreRescaling(width, height)
@@ -260,7 +290,7 @@ function base:CheckChange(key, index)
 		self.SettingChanges[key] = self:GetIndexedSetting(key, index)
 
 		return true
-	elseif (self.SettingChanges[key] ~= self:GetIndexedSetting(key, index)) then
+	elseif (self.SettingChanges[key] != self:GetIndexedSetting(key, index)) then
 		self.SettingChanges[key] = self:GetIndexedSetting(key, index)
 
 		return true
@@ -271,15 +301,15 @@ end
 
 function base:BaseThink()
 	for k, v in pairs(self.Settings) do
-		if (self.Updates[k] ~= nil) then
+		if (self.Updates[k] != nil) then
 			if (v.Type == MediaPlayer.Type.TABLE) then
 				for index, value in pairs(v.Value) do
-					if (self.Updates[k][index] ~= nil) then
+					if (self.Updates[k][index] != nil) then
 						self.Updates[k][index](self)
 					end
 				end
 			else
-				if (self.Updates[k] ~= nil) then
+				if (self.Updates[k] != nil) then
 					self.Updates[k](self)
 				end
 			end
@@ -347,13 +377,13 @@ function base:CacheThink()
 	self.Think = function()
 		self.Resized = false
 
-		if (self._Think ~= nil) then
+		if (self._Think != nil) then
 			self:_Think()
 		end
 
 		self:BaseThink()
 
-		if (self.MyThink ~= nil) then
+		if (self.MyThink != nil) then
 			self:MyThink()
 		end
 	end

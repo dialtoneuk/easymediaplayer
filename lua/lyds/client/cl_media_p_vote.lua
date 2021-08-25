@@ -14,11 +14,11 @@ Create vote panel
 
 function panel:Init()
 	self:BaseInit({
-		Padding = true
+		Padding = true,
+		Declare = {
+			Vote = {}
+		}
 	})
-
-	--the vote
-	self.Vote = {}
 
 	self.Type = vgui.Create("DLabel", self )
 	self.Type:Dock(TOP)

@@ -1,9 +1,5 @@
---[[
-  Playlist Item
-	---------------------------------------------------------------------------
---]]
-
 local panel = {}
+
 panel.Name = "playlist"
 
 --on change
@@ -26,14 +22,14 @@ function panel:Init()
 			Width = true,
 			Height = true
 		},
-		PaddingPower = 4
+		PaddingPower = 4,
+		Declare = {
+			Video = {}
+		}
 	})
 
 	--sets our own tall
 	self:SetTall(self.Settings.Size.Value.RowHeight)
-
-	--the video data
-	self.Video = {}
 
 	self.Text = vgui.Create("DLabel", self )
 	self.Text:SetFont("PlaylistText")

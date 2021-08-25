@@ -3,9 +3,6 @@ local panel = {}
 
 panel.Name = "player"
 
---the current
-panel._CurrentOwnerName = nil
-
 --Extra Settings
 panel.Settings = {
 	DisplayVideo = "display_video",
@@ -13,23 +10,14 @@ panel.Settings = {
 	ShowConstant =  "show_constantly"
 }
 
---on change
-panel.Updates = {
-	Size = {
-		Padding = function(p)
-			if (p:CheckChange("Padding")) then
-				p:SetHasResized()
-			end
-		end,
-	}
-}
-
 --Our initial setup
 
 function panel:Init()
-	self:BaseInit()
-
-	self.Video = {}
+	self:BaseInit({
+		Declare = {
+			Video = {}
+		}
+	})
 
 	self.HTML = vgui.Create("DHTML", self)
 	self.HTML:Dock(FILL)

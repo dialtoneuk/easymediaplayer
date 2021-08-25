@@ -8,9 +8,6 @@ local panel = {}
 --settings
 panel.Name = "search"
 
---?
-panel._Empty = false
-
 --[[
 	TODO: Branch all this out into more custom vgui elements
 --]]
@@ -20,13 +17,14 @@ Fills the property sheet with all our shit
 --]]
 
 function panel:Init()
-	self:BaseInit()
-
-	--for the pages
-	self.HistoryPage = 1
-	self.BrowserHistory = {}
-	self.PlayerHistoryPage = 1
-	self.BrowserPosition = 0
+	self:BaseInit({
+		Declare = {
+			HistoryPage = 1,
+			BrowserHistory = {},
+			PlayerHistoryPage = 1,
+			BrowserPosition = 0
+		}
+	})
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
 	self.PropertySheet:SetTall(self:GetHeight())

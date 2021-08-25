@@ -30,11 +30,12 @@ function panel:Init()
 		DontResize = {
 			Width = true,
 			Height = true
+		},
+		Declare = {
+			Presets = {},
+			LastListView = nil
 		}
 	})
-
-	self.Presets = {}
-	self.LastListValue = nil
 
 	self:Dock(FILL)
 
