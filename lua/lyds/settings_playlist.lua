@@ -4,6 +4,7 @@ local server = {
 
 	playlist_broadcast_limit = {
 		Value = 50,
+		Dangerous = true,
 		Comment = "This is the maximum amount of videos that the playlist will broadcast in a net message, turn this down if you are experiencing overflow errors."
 	},
 	playlist_capacity = {
@@ -27,7 +28,7 @@ local client = {
 		Value = 1,
 		Max = 2.0,
 		Type = MediaPlayer.Type.FLOAT,
-		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value.",
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value.",
 		Refresh = false,
 	},
 	playlist_hide = {

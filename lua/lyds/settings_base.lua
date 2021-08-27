@@ -42,7 +42,7 @@ local client = {
 		Value = 1,
 		Refresh = false,
 		Type = MediaPlayer.Type.FLOAT,
-		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
 	base_invert_position = {
 		Value = false,

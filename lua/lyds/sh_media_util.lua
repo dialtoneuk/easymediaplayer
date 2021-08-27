@@ -36,11 +36,6 @@ function MediaPlayer.DailymotionFetch(params, callback, one_object)
 	one_object = one_object or false
 
 	local apikey = MediaPlayer.GetSetting("dailymotion_api_key")
-
-	if (CLIENT) then
-		apikey = MediaPlayer.GetSetting("dailymotion_client_api_key")
-	end
-
 	if (apikey.Value == apikey.DefValue or false ) then
 		error([[dailymotion_api_key not set! please goto https://console.cloud.google.com/google/ and create a new api key, it must have access to the Youtube 'Data' V3 Api,
 		then, type settings into console and find dailymotion_api_key and put in your new api key, and try again.]])
@@ -52,10 +47,6 @@ function MediaPlayer.YoutubeFetch(params, callback, one_object)
 	one_object = one_object or false
 
 	local apikey = MediaPlayer.GetSetting("youtube_api_key")
-
-	if (CLIENT) then
-		apikey = MediaPlayer.GetSetting("youtube_client_api_key")
-	end
 
 	if (apikey.Value == apikey.DefValue or false ) then
 		error([[youtube_api_key not set! please goto https://console.cloud.google.com/google/ and create a new api key, it must have access to the Youtube 'Data' V3 Api,

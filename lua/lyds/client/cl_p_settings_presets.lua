@@ -211,6 +211,7 @@ function panel:CreatePreset(title, author, add_default)
 		Author = author,
 		Locked = false,
 		Description = "User created preset",
+		Version = MediaPlayer.Version,
 		Settings = settings
 	}
 
@@ -330,6 +331,15 @@ function panel:FillPresetEditor()
 	if (self:IsPresetLocked()) then
 		self.ComboBox:SetDisabled(true)
 	end
+
+	if (IsValid(self.VersionText)) then self.VersionText:Remove() end
+
+	self.VersionText = vgui.Create("DLabel", p )
+	self.VersionText:SetTall(15)
+	self.VersionText:Dock(TOP)
+	self.VersionText:DockMargin(0,self:GetPadding(),0,0)
+	self.VersionText:SetText( "Version: " .. ( self.Preset.Version or "Unknown?") )
+	self.VersionText:SetTextColor(MediaPlayer.Colours.Black)
 
 	if (IsValid(self.AddButton)) then self.AddButton:Remove() end
 

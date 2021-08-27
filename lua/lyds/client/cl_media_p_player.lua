@@ -62,17 +62,17 @@ function panel:Paint(p)
 			title = title .. " (AUDIO MUTED!)"
 		end
 
-		draw.SimpleTextOutlined(title, "MediumText", 10, self:GetHeight() - 30, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-		draw.SimpleTextOutlined(self.Video.Creator, "SmallText", 10, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(title, "MediumText", 10, self:GetHeight() - 32, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(self.Video.Creator .. " | " .. ( self.Video.Views or 0 ) .. " Views", "SmallText", 10, self:GetHeight() - 47, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 		draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner, "SmallText", 10, self:GetHeight() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-		draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw - 15) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-		draw.SimpleTextOutlined(" / " .. total, "MediumText", ( self:GetWidth() - tw - 15) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw - 10) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(" / " .. total, "MediumText", ( self:GetWidth() - tw - 10) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 	end
 end
 
 function panel:SetYoutubeWang()
 	--sets the volume of the player
-	self.SetPlayerVolume = function(this)
+	self.SetYoutubeVolume = function(this)
 		this = this or self.Wang
 		self.HTML:QueueJavascript([[
 		try{
@@ -83,7 +83,7 @@ function panel:SetYoutubeWang()
 		]])
 	end
 
-	self.Wang.OnValueChanged = self.SetPlayerVolume
+	self.Wang.OnValueChanged = self.SetYoutubeVolume
 end
 
 function panel:SetDefaultHTML()
@@ -130,7 +130,7 @@ function panel:MyThink()
 	end
 
 	--eh
-	self.Wang:SetPos(self:GetWide() - (self.Wang:GetWide() + 5), self:GetTall() - (self.Wang:GetTall() + 5))
+	self.Wang:SetPos(self:GetWidth(true, true ) - (self.Wang:GetWide() + self:GetPadding() * 2), self:GetHeight(true, true ) - (self.Wang:GetTall() + self:GetPadding() * 2))
 end
 
 --Sets the video HTML effectively playing it
@@ -161,21 +161,26 @@ function panel:SetVideo(video)
 		mute = 1
 	end
 
-	self.HTML:SetHTML(self:GetHTMLSourceCode(video, time, mute))
 
-	--replace this is dumb needs to be done when browser loads
-	timer.Simple(1, function()
-		if (self.SetPlayerVolume) then
-			self.SetPlayerVolume()
-		end
-	end)
+	if (video.Type == MediaPlayer.MediaType.YOUTUBE) then
+
+		self.HTML:SetHTML(self:GetYoutubeSourceCode(video, time, mute))
+		self:SetYoutubeWang()
+
+		--replace this is dumb needs to be done when browser loads
+		timer.Simple(1, function()
+			if (self.SetYoutubeVolume) then
+				self.SetYoutubeVolume()
+			end
+		end)
+	end
 end
 
 --[[
 
 --]]
 
-function panel:GetHTMLSourceCode(video, start_time, mute)
+function panel:GetYoutubeSourceCode(video, start_time, mute)
 	mute = mute or 0
 
 	return [[

@@ -161,8 +161,9 @@ function MediaPlayer.AddSetting(tab)
 		Server = tab.Server,
 		Convar = tab.Convar,
 		Comment = tab.Comment,
-		Refresh = tab.Refresh,
-		SlowUpdate = tab.SlowUpdate
+		Refresh = tab.Refresh or false,
+		SlowUpdate = tab.SlowUpdate,
+		Dangerous = tab.Dangerous or false
 	}
 end
 

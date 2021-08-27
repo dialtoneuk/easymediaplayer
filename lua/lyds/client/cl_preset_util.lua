@@ -22,6 +22,11 @@ function MediaPlayer.PackDefaultPresets()
 		end
 
 		t.Locked = true
+
+		if (t.Version == nil ) then
+			t.Version = MediaPlayer.Version
+		end
+
 		tab[ v ] = t
 	end
 
@@ -56,6 +61,10 @@ function MediaPlayer.SavePreset(filename, preset)
 				end
 			end
 		end
+	end
+
+	if (preset.Version == nil ) then
+		preset.Version = MediaPlayer.Version
 	end
 
 	filename = string.Replace(filename, ".json", "")

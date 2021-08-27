@@ -28,19 +28,19 @@ local client = {
 		Value = 1,
 		Refresh = false,
 		Type = MediaPlayer.Type.FLOAT,
-		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
 	warning_resize_scale = {
 		Value = 1,
 		Refresh = false,
 		Type = MediaPlayer.Type.FLOAT,
-		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
 	vote_resize_scale = {
 		Value = 1,
 		Refresh = false,
 		Type = MediaPlayer.Type.FLOAT,
-		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
 	warning_auto_resize = {
 		Value = false,

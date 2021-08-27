@@ -77,7 +77,7 @@ MediaPlayer = MediaPlayer or {
         Email = "llydia@zyon.io",
         SteamID = "STEAM_0:1:31630" --doesn't do anything
     },
-    Version = 0.1,
+    Version = 0.15,
     Type = {
         INT = "int", --can be a convar
         STRING = "string", --can be a convar

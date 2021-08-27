@@ -56,6 +56,7 @@ local server = {
 	},
 	cooldown_enabled = {
 		Value = true,
+		Dangerous = true,
 		Comment = "Users will recieve cooldowns (it is recommended that you keep this enabled)"
 	},
 	cooldown_play = {
@@ -69,7 +70,7 @@ local server = {
 		Comment = "How many seconds the player has to wait once starting a vote.",
 	},
 	cooldown_search = {
-		Value = 1,
+		Value = 5,
 		Max = 10,
 		Comment = "How many seconds the player has to wait after searching for media. (its recommended you keep this at its current value).",
 	},
@@ -95,6 +96,7 @@ local server = {
 	},
 	chatcommand_prefix = {
 		Value = "!",
+		Dangerous = true,
 		Comment = "This is the prefix which Easy Mediaplayer will attach to its chat commands. Change this to another character if it conflicts with one of your other addons."
 	},
 	video_max_duration = {
@@ -131,7 +133,7 @@ local server = {
 		Comment = "Will use an API call to check for a videos existience, can help fix some videos not working."
 	},
 	youtube_enabled = {
-		Value = false,
+		Value = true,
 		Comment = "Enables youtube as being a supported media type."
 	},
 	youtube_music_enabled = {
@@ -143,7 +145,7 @@ local server = {
 		Comment = "Head over to google dashboard and create API credientials which have access to the Youtube Data API (version 3)"
 	},
 	dailymotion_enabled = {
-		Value = true,
+		Value = false,
 		Comment = "Enables dailymotion as being a supported media type."
 	},
 	dailymotion_api_key = {
@@ -151,7 +153,7 @@ local server = {
 		Comment = "TODO: Fill"
 	},
 	soundcloud_enabled = {
-		Value = true,
+		Value = false,
 		Comment = "Enables soundcloud as being a supported media type."
 	},
 	soundcloud_api_key = {
@@ -172,15 +174,6 @@ local server = {
 
 local client = {
 
-
-	youtube_client_api_key = {
-		Value = "(unimplemented)",
-		Comment = "(unimplemented)"
-	},
-	dailymotion_client_api_key = {
-		Value = "(unimplemented)",
-		Comment = "(unimplemented)"
-	},
 	media_blocked_videos = {
 		Value = {
 			Video_1 = "DRfidJNts6U"
@@ -190,7 +183,7 @@ local client = {
 	},
 	gui_resize_scale = {
 		Value = 4,
-		Max = 5,
+		Max = 10,
 		Refresh = true,
 		SlowUpdate = 2,
 		Comment = "Changing this to a lower value will increase the size of every element. Decreasing this number will decrease the size of every element."

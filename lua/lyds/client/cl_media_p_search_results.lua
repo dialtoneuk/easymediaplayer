@@ -16,13 +16,15 @@ function panel:Init()
 			Height = true,
 		},
 		Declare = {
-			Type = MediaPlayer.MediaType.YOUTUBE
+			Type = MediaPlayer.MediaType.YOUTUBE,
+			LastValue = ""
 		}
 	})
 
 	self.ScrollPanel = vgui.Create("DScrollPanel", self)
 	self.SearchBox = vgui.Create("DTextEntry", self )
 	self.ComboBox = vgui.Create( "DComboBox", self.SearchBox )
+	self.SearchButton = vgui.Create( "DButton", self.SearchBox )
 	self.ColumnWidth = self.Settings.ColumnWidth.Value
 
 	self:SetUpGrid()
@@ -33,18 +35,37 @@ function panel:Init()
 	self:SetDockMargin(self.SearchBox, 2 )
 	self.SearchBox:SetTall(40)
 	self.SearchBox:Dock(TOP)
+	self.SearchBox:SetPlaceholderText("Press enter to search this media platform for content")
 
 	self.SearchBox.OnEnter = function()
-		if (self.SearchBox:GetValue() != "") then
+		if (self.SearchBox:GetValue() != "" and self.LastValue != self.SearchBox:GetValue() ) then
 			RunConsoleCommand("media_search", self.ComboBox:GetValue(), self.SearchBox:GetValue() )
-		end
+			self.LastValue =  self.SearchBox:GetValue()
+			self.SearchBox:SetDisabled(true)
+			self.SearchButton:SetDisabled(true)
 
-		self.SearchBox:SetDisabled(true)
-		timer.Simple(1, function()
-			if (!IsValid(self.SearchBox)) then return end
-			self.SearchBox:SetDisabled(false)
-		end)
+			timer.Simple(1, function()
+				if (!IsValid(self.SearchBox)) then return end
+				self.SearchBox:SetDisabled(false)
+			end)
+		end
 	end
+
+	self.SearchBox.OnChange = function()
+		self.SearchButton:SetDisabled(false)
+
+		if (self.SearchBox:GetValue() == "") then
+			self.SearchButton:SetDisabled(true)
+		end
+	end
+
+	self.SearchButton:SetTall(30)
+	self.SearchButton:Dock(RIGHT)
+	self.SearchButton:SetText("Search")
+	self.SearchButton:SetWidth(100)
+	self.SearchButton:SetIcon("icon16/world.png")
+	self.SearchButton:SetDisabled(true)
+	self.SearchButton.DoClick = self.SearchBox.OnEnter
 
 	self:RebuildComboBox()
 end

@@ -385,12 +385,15 @@ function panel:UpdateTable(title, v, admin)
 	end
 
 	if (v.Refresh != true) then
-		PrintTable(v)
 		self.Notifications[title].Text:SetText("You will need to refresh all panels after changing this setting.")
 		self.Notifications[title]:Dock(BOTTOM)
 		self.Notifications[title]:Show()
 	elseif (v.SlowUpdate) then
-		self.Notifications[title].Text:SetText("This setting will update all client panels after " .. v.SlowUpdate .. " seconds of no activity.")
+		self.Notifications[title].Text:SetText("This setting once edited will update all client panels after " .. v.SlowUpdate .. " seconds.")
+		self.Notifications[title]:Dock(BOTTOM)
+		self.Notifications[title]:Show()
+	elseif (v.Dangerous) then
+		self.Notifications[title].Text:SetText("This setting is dangerous! Only change it if you know what you are doing.")
 		self.Notifications[title]:Dock(BOTTOM)
 		self.Notifications[title]:Show()
 	else

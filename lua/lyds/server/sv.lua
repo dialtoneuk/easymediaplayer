@@ -54,6 +54,7 @@ net.Receive("MediaPlayer.SearchQuery",function(len, ply)
 				Title = v.snippet.title,
 				Type = typ,
 				Creator = v.snippet.channelTitle,
+				Description = v.snippet.description or "No description...",
 				Thumbnail = v.snippet.thumbnails.default.url,
 			}
 		end
