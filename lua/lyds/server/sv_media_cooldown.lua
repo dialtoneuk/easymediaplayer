@@ -67,6 +67,7 @@ end
 --returns true if a player currently has that cooldown, takes Name of cooldown defined above
 function MediaPlayer.HasCooldown(ply, name)
 	if (MediaPlayer.CooldownsAreDisabled()) then return false end
+	if (ply:IsAdmin() and MediaPlayer.IsSettingTrue("admin_ignore_cooldown")) then return false end
 	if (MediaPlayer.Cooldown[ply:UniqueID()] == nil) then return false end
 
 	return MediaPlayer.Cooldown[ply:UniqueID()][name] != nil
@@ -95,6 +96,7 @@ end
 --adds a cooldown for a player
 function MediaPlayer.AddPlayerCooldown(ply, typ)
 	if (MediaPlayer.CooldownsAreDisabled()) then return end
+	if (ply:IsAdmin() and MediaPlayer.IsSettingTrue("admin_ignore_cooldown")) then return false end
 	if (!MediaPlayer.Cooldown[ply:UniqueID()]) then MediaPlayer.Cooldown[ply:UniqueID()] = {} end
 	if (MediaPlayer.Cooldown[ply:UniqueID()][typ.Name] ) then return end
 

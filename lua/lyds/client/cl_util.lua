@@ -39,6 +39,8 @@ function MediaPlayer.GetSettingIcon(key, admin)
 		--TODO: CLEAN UP THIS FUCKING MESS GOOD GOD
 		if ( string.find(key, "_key")) then
 			i = "icon16/key.png"
+		elseif ( string.find(key, "admin_") ) then
+			i = "icon16/shield.png"
 		elseif ( string.find(key, "youtube_")) then
 			i = "icon16/television.png"
 		elseif ( string.find(key, "dailymotion_")) then
@@ -61,8 +63,6 @@ function MediaPlayer.GetSettingIcon(key, admin)
 			i = "icon16/email.png"
 		elseif ( string.find(key, "commands")) then
 			i = "icon16/text_bold.png"
-		elseif ( string.find(key, "admin") ) then
-			i = "icon16/shield.png"
 		end
 	else
 

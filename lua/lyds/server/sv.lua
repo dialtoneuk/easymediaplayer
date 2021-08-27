@@ -37,7 +37,10 @@ util.AddNetworkString("MediaPlayer.EnabledMediaTypes")
 --TODO: Rewrite to support multiple medai types. Currently only search youtube.
 net.Receive("MediaPlayer.SearchQuery",function(len, ply)
 
-	if (MediaPlayer.HasCooldown(ply, "Search")) then return end
+	if (MediaPlayer.HasCooldown(ply, "Search")) then
+		ply:SendMessage("Please wait a bit before searching again")
+		return
+	end
 
 	local query = net.ReadString()
 	local typ = net.ReadString()

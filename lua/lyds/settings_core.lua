@@ -70,8 +70,8 @@ local server = {
 		Comment = "How many seconds the player has to wait once starting a vote.",
 	},
 	cooldown_search = {
-		Value = 5,
-		Max = 10,
+		Value = 30,
+		Max = 120,
 		Comment = "How many seconds the player has to wait after searching for media. (its recommended you keep this at its current value).",
 	},
 	cooldown_interaction = {

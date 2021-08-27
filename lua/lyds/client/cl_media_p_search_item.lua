@@ -67,8 +67,7 @@ function panel:SetVideo(video)
 
 	self.Button.DoClick = function()
 		RunConsoleCommand("media_play", video.Type, video.Video)
-		self.Parent.SearchController:Hide()
-		self.Parent.SearchContainer:Dock(FILL)
+		self:GetParent():Hide()
 	end
 end
 

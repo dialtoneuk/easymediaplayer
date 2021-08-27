@@ -27,18 +27,15 @@ function panel:Init()
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
 	self.PropertySheet:Dock(FILL)
 
-	self.SearchContainer = vgui.Create("MediaPlayer.SearchResults", self.PropertySheet )
-	self.SearchContainer.ColumnWidth = ( self:GetWidth() / self:GetSettingInt("ColumnCount") )
-	self.SearchContainer.Parent = self
+	self.SearchContainer = vgui.Create("MediaPlayer.SearchContainer", self.PropertySheet )
+	self.SearchContainer.ColumnWidth = ( self:GetWidth() / self:GetSettingInt("ColumnCount") ) - 15
 	self.SearchContainer:Dock(FILL)
-	self.SearchContainer:SetZPos(0)
-
+	self.SearchContainer:AddDefaultPanel()
 
 	self.SearchController = vgui.Create("DPanel", self.SearchContainer )
 	self.SearchController:Dock(BOTTOM)
 	self.SearchController:SetTall( self:GetWidth() / 6 )
 	self.SearchController:Hide()
-	self.SearchController:SetZPos(1)
 	self.SearchController.Paint = function()
 		return
 	end
@@ -54,7 +51,6 @@ end
 
 function panel:ShowVideoInfo(video)
 
-
 	if (IsValid(self.SearchItem)) then
 		self.SearchItem:SetVideo(video)
 		self.SearchController:Show()
@@ -62,7 +58,7 @@ function panel:ShowVideoInfo(video)
 	end
 
 	self.SearchItem = vgui.Create("MediaPlayer.SearchItem", self.SearchController)
-	self.SearchItem.Parent = self
+
 	self.SearchItem:Dock(FILL)
 	self.SearchItem:SetVideo(video)
 
@@ -71,7 +67,13 @@ end
 
 function panel:ShowResults(typ, tab)
 	self.SearchContainer:SetType(typ)
-	self.SearchContainer:SetResults(tab)
+
+	if (table.IsEmpty(tab)) then
+		self.SearchContainer:ClearGrid()
+		self.SearchContainer:AddDefaultPanel()
+	else
+		self.SearchContainer:SetResults(tab)
+	end
 end
 
 vgui.Register("MediaPlayer.SearchPanel", panel, "MediaPlayer.Base")

@@ -2,7 +2,7 @@ local server = {
 
 	search_result_count = {
 		Value = 30,
-		Max = 50,
+		Max = 30,
 		Comment = "How many search results will be returned when queries are made inside the search panel (max of 50)."
 	}
 }
@@ -14,8 +14,8 @@ local client = {
 		Comment = "The search window will open centered to the middle of your screen."
 	},
 	search_page_limit = {
-		Value = 20,
-		Comment = "20 items per page!"
+		Value = 10,
+		Comment = "How many items to show per page"
 	},
 	search_auto_resize = {
 		Value = true,

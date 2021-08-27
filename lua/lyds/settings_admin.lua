@@ -8,6 +8,10 @@ local server = {
 		Value = true,
 		Comment = "Admins are not restricted by player_max_videos."
 	},
+	admin_ignore_cooldown = {
+		Value = true,
+		Comment = "Admins are not restricted by cooldowns."
+	},
 }
 
 local client = {
