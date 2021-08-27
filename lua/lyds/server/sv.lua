@@ -27,6 +27,7 @@ util.AddNetworkString("MediaPlayer.ApplyDefaultPreset")
 util.AddNetworkString("MediaPlayer.RefreshDefaultPreset")
 util.AddNetworkString("MediaPlayer.AdminRefreshDefaultPreset")
 util.AddNetworkString("MediaPlayer.SendPresetToServer")
+util.AddNetworkString("MediaPlayer.EnabledMediaTypes")
 
 --[[
 	Net Receives
@@ -67,6 +68,7 @@ net.Receive("MediaPlayer.SearchQuery",function(len, ply)
 		MediaPlayer.YoutubeSearch(query, callback, setting.Value)
 	else
 		--more here
+		print("unimplemented")
 	end
 end)
 
@@ -171,7 +173,12 @@ net.Receive("MediaPlayer.SetAdminSettings",function(len, ply)
 	print("admin " .. ply:GetName() .. " has changed setting values at " .. util.DateStamp())
 	MediaPlayer.SetConvars()
 
+	local enabled = MediaPlayer.GetEnabledMediaTypes()
+
 	for k,v in pairs(player.GetAll()) do
+
+		MediaPlayer.SendEnabledMediaTypes(v, enabled )
+
 		if (!v:IsAdmin()) then continue end
 
 		v:SendAdminSettings()
@@ -182,6 +189,8 @@ net.Receive("MediaPlayer.SetAdminSettings",function(len, ply)
 
 		v:ConCommand("settings_create")
 	end
+
+
 end)
 
 --[[
@@ -238,6 +247,8 @@ end)
 --Does our initial spawn
 hook.Add("PlayerInitialSpawn","MediaPlayer.InitialSpawn",function(ply, transition)
 	ply:DoInitialSpawn()
+
+	MediaPlayer.SendEnabledMediaTypes(ply, MediaPlayer.GetEnabledMediaTypes())
 end)
 
 --[[

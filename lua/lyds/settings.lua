@@ -22,8 +22,15 @@ local client = {
 		Comment = "Inverts the x position of the settings panel, you can use this to make things position from the right of the screen instead of the left."
 	},
 	settings_auto_resize = {
-		Value = true,
+		Value = false,
 		Comment = "The settings panel will scale relative to gui_resize_scale."
+	},
+	settings_resize_scale = {
+		Value = 0.75,
+		Refresh = false,
+		Max = 2.0,
+		Type = MediaPlayer.Type.FLOAT,
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
 	},
 	settings_colours = {
 		Value = {

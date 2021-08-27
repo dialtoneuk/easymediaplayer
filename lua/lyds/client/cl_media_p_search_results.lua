@@ -3,13 +3,15 @@ local panel = {}
 panel.Name = "search"
 
 panel.Settings = {
-	PageLimit = "page_limit"
+	PageLimit = "page_limit",
+	ColumnCount = "column_count",
+	ColumnWidth = "column_width",
 }
 
 function panel:Init()
 
 	self:BaseInit({
-		DontRescale = {
+		DontResize = {
 			Width = true,
 			Height = true,
 		},
@@ -19,21 +21,22 @@ function panel:Init()
 	})
 
 	self.ScrollPanel = vgui.Create("DScrollPanel", self)
-	self.Grid = vgui.Create("DGrid", self.ScrollPanel )
-	self.SearchBox = vgui.Create("DEntryBox", self.ScrollPanel )
-	self.ColumnWidth = ( self:GetWidth() / 3 ) - self:GetPadding() * 3
+	self.SearchBox = vgui.Create("DTextEntry", self )
+	self.ComboBox = vgui.Create( "DComboBox", self.SearchBox )
+	self.ColumnWidth = self.Settings.ColumnWidth.Value
+
+	self:SetUpGrid()
 
 	self.ScrollPanel:Dock(FILL)
+	self:SetDockMargin(self.ScrollPanel, 2)
 
-	self.Grid:DockMargin(0, self:GetPadding() * 4, 0, 0)
-	self.Grid:SetCols( 3 )
-	self.Grid:SetTall(self:GetHeight())
-	self.Grid:SetColWide( self.ColumnWidth )
-	self.Grid:SetRowHeight( self.Settings.Size.Value.RowHeight + self:GetPadding() * 2 )
+	self:SetDockMargin(self.SearchBox, 2 )
+	self.SearchBox:SetTall(40)
+	self.SearchBox:Dock(TOP)
 
 	self.SearchBox.OnEnter = function()
 		if (self.SearchBox:GetValue() != "") then
-			RunConsoleCommand("media_youtube_search", self.SearchBox:GetValue() )
+			RunConsoleCommand("media_search", self.ComboBox:GetValue(), self.SearchBox:GetValue() )
 		end
 
 		self.SearchBox:SetDisabled(true)
@@ -42,10 +45,34 @@ function panel:Init()
 			self.SearchBox:SetDisabled(false)
 		end)
 	end
+
+	self:RebuildComboBox()
+end
+
+function panel:RebuildComboBox()
+
+	if (IsValid(self.ComboBox)) then self.ComboBox:Remove() end
+
+	self.ComboBox = vgui.Create("DComboBox", self.SearchBox)
+	self.ComboBox:SetTall(30)
+	self.ComboBox:SetWide(self:GetWidth() / 6)
+	self.ComboBox:Dock(RIGHT)
+	self.ComboBox:SetValue( next(MediaPlayer.EnabledMediaTypes) )
+
+	for k,v in pairs(MediaPlayer.EnabledMediaTypes) do
+		self.ComboBox:AddChoice(k)
+	end
 end
 
 function panel:SetUpGrid()
-	self.Grid:SetCols( 3 )
+
+	if (IsValid(self.Grid)) then self.Grid:Remove() end
+
+	self.Grid = vgui.Create("DGrid", self.ScrollPanel )
+	self:SetDockMargin(self.Grid)
+
+	self.Grid:SetCols( self:GetSettingInt("ColumnCount") )
+	self.Grid:SetTall(self:GetHeight())
 	self.Grid:SetColWide( self.ColumnWidth )
 	self.Grid:SetRowHeight( self.Settings.Size.Value.RowHeight + self:GetPadding() * 2 )
 end
@@ -63,14 +90,13 @@ function panel:SetResults(results)
 		if (limit == 0 ) then break end
 
 		self.Grid:AddItem(self:ResultPanel(v))
+
 		limit = limit - 1
 	end
 end
 
 function panel:ClearGrid()
-	for k,v in pairs(self.Grid:GetItems()) do
-		self.Grid:RemoveItem(v, false)
-	end
+	self:SetUpGrid()
 end
 
 function panel:ResultPanel(result)
@@ -86,10 +112,20 @@ function panel:ResultPanel(result)
 		surface.DrawOutlinedRect(0, 0, pan:GetWide(), self.Settings.Size.Value.RowHeight, self.Settings.Options.Value.BorderThickness)
 	end
 
-	local html = vgui.Create("DHTML", pan)
-	html:Dock(RIGHT)
-	html:SetSize( self.Settings.Size.Value.RowHeight * 2, self.Settings.Size.Value.RowHeight)
-	html:SetHTML("<style>body{margin:0}</style><img style='width:100%; height: 100%;' src=" .. ( result.Thumbnail or "" ) .. "></img>")
+	pan.DoClick = function()
+
+		if (!table.IsEmpty(MediaPlayer.CurrentVideo) and result.Video == MediaPlayer.CurrentVideo.Video ) then
+			MediaPlayer.CreateWarningBox("Video alreay present","Video is currently playing")
+			return
+		end
+
+		if (!table.IsEmpty(MediaPlayer.Playlist) and  MediaPlayer.Playlist[result.Video] != nil ) then
+			MediaPlayer.CreateWarningBox("Video alreay present","Video already in playlist!")
+			return
+		end
+
+		self.Parent:ShowVideoInfo(result)
+	end
 
 	local text = vgui.Create("DLabel", pan )
 	text:SetWide(self:GetWidth(true, true))
@@ -104,6 +140,13 @@ function panel:ResultPanel(result)
 	text2:SetText(result.Creator)
 	text2:SetFont("MediumText")
 	text2:SetTextColor(self.Settings.Colours.Value.TextColor)
+
+
+	local html = vgui.Create("DHTML", pan)
+	html:Dock(RIGHT)
+	html:SetSize( self.Settings.Size.Value.RowHeight, self.Settings.Size.Value.RowHeight)
+	html:SetHTML("<style>body{margin:0}</style><img style='width:100%; height: 100%;' src=" .. ( result.Thumbnail or "" ) .. "></img>")
+	html:SetMouseInputEnabled(false)
 
 	return pan
 end

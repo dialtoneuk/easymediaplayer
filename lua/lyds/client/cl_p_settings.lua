@@ -55,6 +55,14 @@ function panel:Init()
 		}
 	})
 
+	if (!self:IsSettingTrue("AutoResize")) then
+		self:SetWide(self:GetWidth())
+		self:SetTall(self:GetHeight())
+	else
+		self:SetIgnoreRescaling(true, true)
+		self:RescaleTo(self:GetSettingInt("ResizeScale"))
+	end
+
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
 	self.PropertySheet:Dock(FILL)
 end
@@ -110,24 +118,26 @@ function panel:MyThink()
 		})
 	end
 
-	if (self:GetWidth() < 400 ) then
+	if (self:GetWidth() < 300 ) then
 
 		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
 			math.floor( self:GetWidth() ) .. " pixels wide! We've put it back for you. Try again!")
 
 		self.Settings.Size.Value.Width = 600
 		MediaPlayer.ChangeSetting("settings_size", self.Settings.Size.Value)
+		MediaPlayer.ChangeSetting("settings_auto_resize", false)
 
 		self:Remove()
 		MediaPlayer.InstantiatePanels(true)
 	end
 
-	if (self:GetHeight() < 400 ) then
+	if (self:GetHeight() < 300 ) then
 
 		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
 			math.floor( self:GetHeight() ) .. " pixels tall! We've put it back for you. Try again!")
 		self.Settings.Size.Value.Height = 600
 		MediaPlayer.ChangeSetting("settings_size", self.Settings.Size.Value)
+		MediaPlayer.ChangeSetting("settings_auto_resize", false)
 
 		self:Remove()
 		MediaPlayer.InstantiatePanels(true)
@@ -283,6 +293,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 
 	if ( !self.settingsEdit) then self.settingsEdit = {} end
 	if ( !self.Comments) then self.Comments = {} end
+	if ( !self.Notifications) then self.Notifications = {} end
 
 	title = string.Replace(title," ", "_")
 
@@ -327,6 +338,20 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	self.Comments[title].Text:SetWrap( true )
 	self.Comments[title].Text:SetFont("MediumText")
 
+	self.Notifications[title] = vgui.Create("DPanel",self.settingsEdit[title])
+	self.Notifications[title]:Dock(BOTTOM)
+	self.Notifications[title]:DockMargin(0,5,0,0)
+	self.Notifications[title]:DockPadding(15,5,5,5)
+	self.Notifications[title]:SetTall(30)
+	self.Notifications[title]:SetBackgroundColor(MediaPlayer.Colours.FadedRed)
+	self.Notifications[title]:Hide()
+
+	self.Notifications[title].Text = vgui.Create("DLabel",  self.Notifications[title])
+	self.Notifications[title].Text:Dock(FILL)
+	self.Notifications[title].Text:SetTextColor(self.Settings.Colours.Value.TextColor)
+	self.Notifications[title].Text:SetWrap( true )
+	self.Notifications[title].Text:SetFont("MediumText")
+
 	for k,keys in SortedPairs(data) do
 		for kind,v in SortedPairsByMemberValue(keys, "Convar") do
 			local node = settingSelection:AddNode(k, MediaPlayer.GetSettingIcon(k, admin) )
@@ -349,15 +374,27 @@ Updates the selection table
 
 function panel:UpdateTable(title, v, admin)
 	self.settingsEdit[title]:Clear()
+	local settingsTitle = string.Replace(title," ", "_")
 
 	if (v.Comment) then
-		local _title = string.Replace(title," ", "_")
-
-		self.Comments[title].Text:SetText(v.Comment)
+		self.Comments[title].Text:SetText(settingsTitle .. ": " .. MediaPlayer.AddFullStop(v.Comment))
 		self.Comments[title]:Dock(BOTTOM)
 		self.Comments[title]:Show()
 	else
 		self.Comments[title]:Hide()
+	end
+
+	if (v.Refresh != true) then
+		PrintTable(v)
+		self.Notifications[title].Text:SetText("You will need to refresh all panels after changing this setting.")
+		self.Notifications[title]:Dock(BOTTOM)
+		self.Notifications[title]:Show()
+	elseif (v.SlowUpdate) then
+		self.Notifications[title].Text:SetText("This setting will update all client panels after " .. v.SlowUpdate .. " seconds of no activity.")
+		self.Notifications[title]:Dock(BOTTOM)
+		self.Notifications[title]:Show()
+	else
+		self.Notifications[title]:Hide()
 	end
 
 	local typ = "Generic"
@@ -370,6 +407,8 @@ function panel:UpdateTable(title, v, admin)
 
 		if (v.Type == MediaPlayer.Type.INT ) then
 			typ = "Int"
+		elseif (v.Type == MediaPlayer.Type.FLOAT ) then
+			typ = "Float"
 		elseif ( v.Type == MediaPlayer.Type.BOOL) then
 			typ = "Boolean"
 		end
@@ -390,11 +429,33 @@ function panel:UpdateTable(title, v, admin)
 		row.DataChanged = function( _, val )
 
 			if (v.Refresh) then
-				RunConsoleCommand("media_refresh_cl")
+
+				local fn = function()
+					RunConsoleCommand("media_refresh_cl")
+				end
+
+				if ( v.SlowUpdate ) then
+
+					local t
+
+					if (type(v.SlowUpdate) == "boolean") then
+						t = 0.1
+					else
+						t = v.SlowUpdate
+					end
+
+					timer.Remove("update")
+					timer.Create("update", t, 1, fn)
+				else
+					fn()
+				end
 			end
 
 			if (!admin) then
-				MediaPlayer.ChangeSetting(v.Key, val)
+				if (MediaPlayer.GetSetting(v.Key).Value != val ) then
+					MediaPlayer.ChangeSetting(v.Key, val)
+				end
+
 				return
 			end
 
@@ -419,8 +480,10 @@ function panel:UpdateTable(title, v, admin)
 			typ = "Int"
 		elseif (type(_v) == "boolean") then
 			typ = "Boolean"
-		else
+		elseif (type(_v) == "string") then
 			typ = "Generic"
+		else
+			typ = "Int"
 		end
 
 		if (IsColor(_v)) then
@@ -477,6 +540,8 @@ function panel:NormalSettingsRow(v, k, row )
 					MediaPlayer.Settings[v.Key][v.Type].Value[k] = val
 				elseif (v.Type == MediaPlayer.Type.INT) then
 					MediaPlayer.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
+				elseif (v.Type == MediaPlayer.Type.FLOAT) then
+					MediaPlayer.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab, 2)
 				else
 					MediaPlayer.Settings[v.Key][v.Type].Value[k] = tab
 				end
@@ -496,7 +561,7 @@ function panel:NormalSettingsRow(v, k, row )
 			end
 
 			timer.Remove("update")
-			timer.Create("update", t, 0, fn)
+			timer.Create("update", t, 1, fn)
 		else
 			fn()
 		end

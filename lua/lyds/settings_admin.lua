@@ -24,6 +24,16 @@ local client = {
 		Value = false,
 		Comment = "The admin window will open centered to the middle of your screen."
 	},
+	admin_auto_resize = {
+		Value = false,
+		Comment = "The admin window will open centered to the middle of your screen."
+	},
+	admin_resize_scale = {
+		Value = 0.75,
+		Refresh = false,
+		Type = MediaPlayer.Type.FLOAT,
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+	},
 	admin_size = {
 		Min = 500,
 		Max = 2000,

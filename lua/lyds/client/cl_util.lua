@@ -18,7 +18,7 @@ function MediaPlayer.CreateChatMessage(msg)
 	msg = msg or " null "
 	local setting = MediaPlayer.GetSetting("chat_colours")
 
-	chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, msg )
+	chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, MediaPlayer.AddFullStop(msg) )
 	chat.PlaySound()
 end
 

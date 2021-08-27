@@ -38,11 +38,21 @@ local client = {
 			ItemBorder = MediaPlayer.Colours.FadedBlue
 		}
 	},
+	base_resize_scale = {
+		Value = 1,
+		Refresh = false,
+		Type = MediaPlayer.Type.FLOAT,
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+	},
 	base_invert_position = {
 		Value = false,
 		Comment = "Inverts the x position of the base panel, you can use this to make things position from the right of the screen instead of the left."
 	},
 	base_hide = {
+		Value = false,
+		Comment = "(unused)"
+	},
+	base_auto_resize = {
 		Value = false,
 		Comment = "(unused)"
 	},

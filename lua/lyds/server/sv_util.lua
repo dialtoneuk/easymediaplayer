@@ -11,6 +11,25 @@ function MediaPlayer.SendDefaultPreset(ply, usmg)
     net.Send(ply)
 end
 
+function MediaPlayer.GetEnabledMediaTypes()
+
+    local t = {}
+
+    for k,v in pairs(MediaPlayer.MediaType) do
+        if (MediaPlayer.HasSetting(v .. "_enabled") and MediaPlayer.IsSettingTrue(v .. "_enabled")) then
+            t[v] = true
+        end
+    end
+
+    return t
+end
+
+function MediaPlayer.SendEnabledMediaTypes(ply, tab)
+    net.Start("MediaPlayer.EnabledMediaTypes")
+        net.WriteTable(tab)
+    net.Send(ply)
+end
+
 --saves the servers joinlist to a json file
 function MediaPlayer.SaveJoinlist()
 

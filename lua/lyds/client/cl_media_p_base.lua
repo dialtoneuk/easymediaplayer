@@ -61,6 +61,9 @@ base._Settings = {
 	Size = "size",
 	Options = "options",
 	InvertPosition = "invert_position",
+	ResizeScale = "!gui_resize_scale",
+	AutoResize = "auto_resize",
+	PersonalResizeScale = "resize_scale"
 }
 
 
@@ -122,7 +125,7 @@ function base:SetOptions(options)
 		Y = false
 	}
 
-	self.DontResize = options.Resize or {
+	self.DontResize = options.DontResize or {
 		Width = false,
 		Height = false
 	}
@@ -131,6 +134,7 @@ function base:SetOptions(options)
 	self.Resized = options.Resized or false
 	self.Locked = options.Locked or false
 	self.Title = options.Title or self.Name
+	self.RescalePanel = options.RescalePanel or nil
 
 	if (options.PaddingPower) then
 		self:SetDockPadding(self, options.PaddingPower)
@@ -162,11 +166,8 @@ end
 function base:RescaleTo(scale)
 	scale = scale or 1
 
-	local w = ScrW() / scale
-	local h = ScrH() / scale
-
-	self:SetWide(w + ( self:GetPadding() * 2 ))
-	self:SetTall(h + ( self:GetPadding() * 2 ))
+	self:SetWide( math.max(self:GetPadding(), math.min(ScrW() - self:GetPadding(), self:GetRescaledWidth() )))
+	self:SetTall( math.max(self:GetPadding(), math.min(ScrH() - self:GetPadding(), self:GetRescaledHeight() )))
 end
 
 function base:GetSettingInt(key)
@@ -189,6 +190,10 @@ function base:BaseInit(options)
 	self:SetOptions(options)
 	self:CacheThink()
 
+	if (self.RescalePanel == nil ) then
+		self.RescalePanel = self.Settings.PersonalResizeScale.Value
+	end
+
 	if (self:IsSettingTrue("InvertPosition")) then
 		self:InvertXPosition(true)
 	end
@@ -198,7 +203,7 @@ function base:BaseInit(options)
 	end
 
 	if (self:CanResizeHeight()) then
-		self:SetHeight(self:GetHeight())
+		self:SetTall(self:GetHeight())
 	end
 
 	if (self.SetTitle == nil ) then
@@ -216,7 +221,32 @@ function base:BaseInit(options)
 	self:Reposition()
 end
 
+function base:GetRescaledWidth()
+	local result = ( ScrW() / ( self:GetSettingInt("ResizeScale") - 0.15)) + ( self:GetPadding() * 2 )
+
+	if ( self.RescalePanel and type(self.RescalePanel) == "number") then
+		result = result / self.RescalePanel
+	end
+
+	return result * 0.76
+end
+
+function base:GetRescaledHeight()
+	local result = ( ScrH() / ( self:GetSettingInt("ResizeScale") - 0.15 )) + ( self:GetPadding() * 2 )
+
+	if (self.RescalePanel and type(self.RescalePanel) == "number") then
+		result = result / self.RescalePanel
+	end
+
+	return result * 0.93
+end
+
 function base:GetSettingWidth(padding, negative_padding)
+
+	if (self.Settings.AutoResize != nil and self.Settings.AutoResize.Value) then
+		return self:GetRescaledWidth()
+	end
+
 	negative_padding = negative_padding or false
 	local width = self:GetSetting("Size").Width
 
@@ -232,6 +262,11 @@ end
 base.GetWidth = base.GetSettingWidth
 
 function base:GetSettingHeight(padding, negative_padding)
+
+	if (self.Settings.AutoResize != nil and self.Settings.AutoResize.Value) then
+		return self:GetRescaledHeight()
+	end
+
 	negative_padding = negative_padding or false
 	local height = self:GetSetting("Size").Height
 
@@ -276,14 +311,11 @@ function base:Paint(p)
 end
 
 function base:Rescale()
-	self:SetWidth(self:GetWidth())
-	self:SetTall(self:GetHeight())
+	self:SetWidth(self.Settings.Size.Value.Width + self:GetPadding())
+	self:SetTall(self.Settings.Size.Value.Height + self:GetPadding())
 end
 
 function base:SetIgnoreRescaling(width, height)
-	width = width or true
-	height = height or true
-
 	if (self.DontResize == nil) then
 		self.DontResize = {}
 	end

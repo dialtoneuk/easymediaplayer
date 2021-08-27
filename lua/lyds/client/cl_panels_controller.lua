@@ -44,6 +44,7 @@ function MediaPlayer.InstantiatePanels(reinstantiate, skip, only_do)
 			Position = MediaPlayer.Panels[key].SettingsBase .. "_position",
 			Hide = MediaPlayer.Panels[key].SettingsBase .. "_hide",
 			Centered = MediaPlayer.Panels[key].SettingsBase .. "_centered",
+			AutoResize = MediaPlayer.Panels[key].SettingsBase .. "_auto_resize",
 		}), MediaPlayer.Panels[key].SettingsBase)
 
 		if (MediaPlayer.LoadedPanels[key] != nil and IsValid(MediaPlayer.LoadedPanels[key].Panel) ) then
@@ -132,7 +133,11 @@ end
 
 --sets up a panel with its default pos, size, and other specifications
 function MediaPlayer.SetupPanel(settings, panel, key)
-	panel:SetSize(settings.Size.Value.Width, settings.Size.Value.Height)
+
+	if (!settings.AutoResize.Value) then
+		panel:SetSize(settings.Size.Value.Width, settings.Size.Value.Height)
+	end
+
 	panel:SetPos(settings.Position.Value.X, settings.Position.Value.Y)
 
 	if (settings.Centered.Value) then

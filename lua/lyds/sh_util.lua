@@ -22,6 +22,21 @@ function MediaPlayer.DecodeURI(s)
 	return s
 end
 
+function MediaPlayer.AddFullStop(text)
+
+	local escape = {
+		"!","?","~"
+	}
+
+	for k,v in pairs(escape) do
+		if (string.sub(text, #text, #text) == v ) then
+			return text
+		end
+	end
+
+	return text .. "."
+end
+
 --Takes a table and returns a colour using the indexes of the table provided, must be numerical
 function MediaPlayer.TableToColour(tab)
 	return Color(tab.r or tab[1], tab.g or tab[2], tab.b or tab[3], tab.a or tab[4] or 255)

@@ -20,6 +20,36 @@ local client = {
 		Value = false,
 		Comment = "(unused)."
 	},
+	success_auto_resize = {
+		Value = false,
+		Comment = "(unused)."
+	},
+	success_resize_scale = {
+		Value = 1,
+		Refresh = false,
+		Type = MediaPlayer.Type.FLOAT,
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+	},
+	warning_resize_scale = {
+		Value = 1,
+		Refresh = false,
+		Type = MediaPlayer.Type.FLOAT,
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+	},
+	vote_resize_scale = {
+		Value = 1,
+		Refresh = false,
+		Type = MediaPlayer.Type.FLOAT,
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
+	},
+	warning_auto_resize = {
+		Value = false,
+		Comment = "(unused)."
+	},
+	vote_auto_resize = {
+		Value = false,
+		Comment = "(unused)."
+	},
 	vote_invert_position = {
 		Value = false,
 		Comment = "Inverts the x position of a vote, you can use this to make things position from the right of the screen instead of the left."

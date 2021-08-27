@@ -19,7 +19,9 @@ panel.DefaultSettings = {
 		"size",
 		"position",
 		"options",
-		"invert_position"
+		"invert_position",
+		"auto_resize",
+		"resize_scale"
 	}
 }
 
@@ -441,7 +443,7 @@ function panel:FillPresetEditor()
 	self.PresetPreview = vgui.Create("MediaPlayer.PresetPreview", p )
 	self.PresetPreview:Dock(TOP)
 	self.PresetPreview:DockMargin(0, self:GetPadding() * 2, 0, 0)
-	self.PresetPreview:SetTall(50)
+	self.PresetPreview:SetTall(self:GetHeight() / 3)
 
 	if (IsValid(self.LoadButton)) then self.LoadButton:Remove() end
 

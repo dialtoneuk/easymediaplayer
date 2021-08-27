@@ -29,7 +29,7 @@ Easy MediaPlayer is a media addon which allows a garrysmod server (or just your 
 ## Note:
 As of 2021, the chromium web engine is not in the game by default due to some crashes and bugs that can occur. I myself have experienced several of these crashes, how ever I have found that crashes are actually more persitant on the "older html engine" than the newer one and _its really no bother switching to the x86-x64 and sticking wih it_. In regards to using this plugin on a server, <u>the only thing which will work on the older html engine are mp3 links which use a very primative javascript api to function, no videos will ever be possible now **flash is dead**</u>.
 
-**NOTE:** I have noticed several game crashing bugs with this addon on branches other than the chromium branch. These are simply impossible for me to fix as they are due to the older html engine, so please don't submit bug reports if you aren't on the chromium branch.
+**NOTE:** I have noticed several game crashing bugs with this addon on branches other than the  x86-x64 branch. These are simply impossible for me to fix as they are due to the older html engine, so please don't submit bug reports if you aren't on the x86-x64.
 
 ### Direct MP3 Mode
 
@@ -59,6 +59,7 @@ What it will do is
 * Fully customisable user inferface with over 100 options. (See below)
 * Extremely comprehensive client and server settings editor allowing for full customizability of all parts of the addon inside of garrymosd its self. Please check out the wiki for more information on what each setting does.
 * Preset system for all client settings with the ability for admins to set a **default preset to apply to all new players who join that server, allowing Easy MediaPlayer to look and feel different between all servers.** Also allows for quick switching between themes, this addon comes with several included by default.
+* UI scales to all resolutions.
 * Comes packed with lots of ways to find the media you want to play. From using the built in UI or through chat commands (See Below)
 * Comes packed with lots of predefined chat commands, such as !vote and !voteskip. (Your severs command prefix can be changed in the settings panel)
 * Server-based historical records are kept of the videos being played, by who and when. (Does not use SQL and is purely json based)

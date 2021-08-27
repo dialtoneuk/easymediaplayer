@@ -23,6 +23,13 @@ local client = {
 		Value = true,
 		Comment = "Disabling will disable the playlists rescaling functionality and make it static."
 	},
+	playlist_resize_scale = {
+		Value = 1,
+		Max = 2.0,
+		Type = MediaPlayer.Type.FLOAT,
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value.",
+		Refresh = false,
+	},
 	playlist_hide = {
 		Value = false,
 		Comment = "Enabling this will hide the playlist from the screen completely."

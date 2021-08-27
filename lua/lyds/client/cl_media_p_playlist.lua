@@ -183,7 +183,7 @@ function panel:EmptyPanel()
 	if (IsValid(self.MiscPanel)) then self.MiscPanel:Remove() end
 
 	self.MiscPanel = vgui.Create("DButton", self.Grid )
-	self.MiscPanel:SetWide(self.Settings.Size.Value.Width - self:GetPadding() * 2)
+	self.MiscPanel:SetWide( self:GetWidth() - self:GetPadding() * 2)
 	self.MiscPanel:SetTall( self.Settings.Size.Value.RowHeight)
 	self.MiscPanel:SetText("")
 
@@ -195,7 +195,7 @@ function panel:EmptyPanel()
 		surface.SetFont("BiggerText")
 		local len = surface.GetTextSize(str)
 
-		draw.RoundedBox(5, 0, 0, self.Settings.Size.Value.Width - self:GetPadding() * 2, self.Settings.Size.Value.RowHeight, self.Settings.Colours.Value.ItemBackground )
+		draw.RoundedBox(5, 0, 0, self:GetWidth() - self:GetPadding() * 2, self.Settings.Size.Value.RowHeight, self.Settings.Colours.Value.ItemBackground )
 		draw.SimpleTextOutlined( str, "BiggerText", 10, 20, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 		draw.SimpleTextOutlined( "v" .. MediaPlayer.Version, "MediumText", len + 17, 15, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
 		draw.SimpleTextOutlined("No videos queued - click me to search!", "MediumText", 10, 45,self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
@@ -226,8 +226,8 @@ function panel:CreateFullPanel()
 		surface.DrawRect(0, 0, s:GetWide(), s:GetTall())
 		surface.SetDrawColor(self.Settings.Colours.Value.Border)
 		surface.DrawOutlinedRect(0, 0, s:GetWide(), s:GetTall(), self.Settings.Options.Value.BorderThickness)
-		draw.SimpleText("Playlist Full", "BiggerText", self:GetPadding() * 2, self:GetPadding() , MediaPlayer.Colours.FadedWhite )
-		draw.SimpleText(self._Count  .. " videos are in playlist", "PlaylistText", self:GetPadding() + 140, self:GetPadding() * 2, MediaPlayer.Colours.FadedWhite)
+		draw.SimpleText("Playlist Full", "PlaylistText", self:GetPadding(),  self:GetPadding(), MediaPlayer.Colours.FadedWhite )
+		draw.SimpleText(self._Count  .. " videos in total", "PlaylistText", self:GetPadding() + 90, self:GetPadding(), MediaPlayer.Colours.FadedWhite)
 	end
 
 	self.Grid:AddItem(self.FullPanel)
@@ -267,6 +267,7 @@ function panel:UpdateGrid()
 
 		p:SetVideo(v)
 		p:SetTall(self.Settings.Size.Value.RowHeight)
+		p:SetWide(self:GetWidth() - self:GetPadding() * 2 )
 		p:SetItemText()
 
 		self.Grid:AddItem(p)

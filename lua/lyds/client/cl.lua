@@ -281,10 +281,17 @@ concommand.Add("media_refresh_initial_preset", function(ply, cmd, args)
 end)
 
 --searches youtube
-concommand.Add("media_youtube_search", function (ply, cmd, args)
+concommand.Add("media_search", function (ply, cmd, args)
 
-	if (args[1] == nil or args[1] == "" ) then return end
-	MediaPlayer.YoutubeSearch(args[1])
+	local typ = args[1]
+	local query = args[2]
+
+	if (typ == MediaPlayer.MediaType.YOUTUBE or typ == MediaPlayer.MediaType.YoutubeMusic) then
+		MediaPlayer.YoutubeSearch(query)
+	else
+		--others
+		print("not implemented")
+	end
 end)
 
 --recreates all UI components
@@ -483,6 +490,16 @@ net.Receive("MediaPlayer.SendBlacklist", function()
 	end
 end)
 
+--Our enabled media types
+net.Receive("MediaPlayer.EnabledMediaTypes", function()
+	MediaPlayer.EnabledMediaTypes = net.ReadTable()
+
+	if (MediaPlayer.PanelValid("SearchPanel")) then
+		local panel = MediaPlayer.GetPanel("SearchPanel")
+		panel:RebuildComboBox()
+	end
+end)
+
 --Received when a vote has ended
 net.Receive("MediaPlayer.EndVote", function()
 	MediaPlayer.CurrentVote = {}
@@ -504,20 +521,11 @@ end)
 
 --Received when search results have been returned
 net.Receive("MediaPlayer.SendSearchResults",function()
-
-	--[[
 	local tab = net.ReadTable()
 	local typ = net.ReadString()
 	local panel = MediaPlayer.GetPanel("SearchPanel")
 
-	panel:AddSearchSet(typ, tab)
-	panel:ShowResultSet(typ)
-	]]--
-
-	MediaPlayer.SearchResults = net.ReadTable()
-
-	local panel = MediaPlayer.GetPanel("SearchPanel")
-	panel:PresentSearchResults(true)
+	panel:ShowResults(typ, tab)
 end)
 
 --Received when the playlist has ended

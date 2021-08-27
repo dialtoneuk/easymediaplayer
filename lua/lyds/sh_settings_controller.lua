@@ -75,7 +75,7 @@ function MediaPlayer.RegisterSettings(server, client)
 
 		tab.Server = is_server
 
-		if (tab.Server == false and tab.Refresh == nil and tab.Type != MediaPlayer.Type.TABLE ) then
+		if (tab.Refresh == nil) then
 			tab.Refresh = true
 		end
 
@@ -141,20 +141,28 @@ function MediaPlayer.AddSetting(tab)
 		tab.DefValue = 0 + tab.Value
 	end
 
+	if (tab.Comment == nil ) then
+		tab.Comment = "(unimplemented)"
+	end
+
+	if (tab.SlowUpdate == nil ) then
+		tab.SlowUpdate = false
+	end
+
 	MediaPlayer.Settings[tab.Key][tab.Type] = {
 		Value = tab.Value,
 		DefValue = tab.DefValue or {},
 		Type = tab.Type,
 		Key = tab.Key,
-		Max = tab.Max or 6400,
-		Min = tab.Min or 0,
-		Icon = tab.Icon or nil,
-		Custom = tab.Custom or false,
-		Server = tab.Server or false,
-		Convar = tab.Convar or false,
-		Comment = tab.Comment or false,
-		Refresh = tab.Refresh or false,
-		SlowUpdate = tab.SlowUpdate or false
+		Max = tab.Max,
+		Min = tab.Min,
+		Icon = tab.Icon,
+		Custom = tab.Custom,
+		Server = tab.Server,
+		Convar = tab.Convar,
+		Comment = tab.Comment,
+		Refresh = tab.Refresh,
+		SlowUpdate = tab.SlowUpdate
 	}
 end
 
@@ -190,8 +198,6 @@ function MediaPlayer.ChangeSetting(key, value, all_kinds)
 					elseif (kind == MediaPlayer.Type.STRING ) then
 						convar:SetString(value)
 					end
-
-					print("set convar " .. k .. " to ", value)
 
 					if (!all_kinds) then
 						return

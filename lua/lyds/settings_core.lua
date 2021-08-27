@@ -134,6 +134,10 @@ local server = {
 		Value = false,
 		Comment = "Enables youtube as being a supported media type."
 	},
+	youtube_music_enabled = {
+		Value = false,
+		Comment = "Enables youtube as being a supported media type."
+	},
 	youtube_api_key = {
 		Value = "REPLACE WITH YOUR OWN",
 		Comment = "Head over to google dashboard and create API credientials which have access to the Youtube Data API (version 3)"
@@ -185,7 +189,11 @@ local client = {
 		Comment = "(editing coming soon)"
 	},
 	gui_resize_scale = {
-		Value = 3 --about one third of the screen
+		Value = 4,
+		Max = 5,
+		Refresh = true,
+		SlowUpdate = 2,
+		Comment = "Changing this to a lower value will increase the size of every element. Decreasing this number will decrease the size of every element."
 	},
 	preset_allow_initial = {
 		Icon = "icon16/layout_add.png",
@@ -195,6 +203,7 @@ local client = {
 	all_show = {
 		Icon = "icon16/find.png",
 		Value = false,
+		Refresh = true,
 		Comment = "Enabling this will show all UI elements used by Easy Mediaplayer (recommended for preset creation)"
 	},
 	chat_colours = {

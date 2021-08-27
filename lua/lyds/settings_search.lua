@@ -4,7 +4,7 @@ local server = {
 		Value = 30,
 		Max = 50,
 		Comment = "How many search results will be returned when queries are made inside the search panel (max of 50)."
-	},
+	}
 }
 
 local client = {
@@ -28,6 +28,23 @@ local client = {
 	search_hide = {
 		Value = true,
 		Comment = "(unused)"
+	},
+	search_column_count = {
+		Value = 4,
+		Max = 50,
+		Comment = "How many search results will be returned when queries are made inside the search panel (max of 50)."
+	},
+	search_column_width = {
+		Value = 150,
+		Max = 500,
+		Comment = "How many search results will be returned when queries are made inside the search panel (max of 50)."
+	},
+	search_resize_scale = {
+		Value = 0.8,
+		Max = 2.0,
+		Refresh = false,
+		Type = MediaPlayer.Type.FLOAT,
+		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is based off of the current gui_resize_scale value."
 	},
 	search_size = {
 		Min = 20,

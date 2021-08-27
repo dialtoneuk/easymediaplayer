@@ -9,12 +9,6 @@ function ply:SendMessage(message)
 
 	if (string.len(message) > 125) then return end
 
-	--adds fullstop
-	local lc = string.sub(message, #message)
-	if ( lc != "!" and lc != ".") then
-		message = message .. "."
-	end
-
 	net.Start("MediaPlayer.SendMessage")
 		net.WriteString(message)
 	net.Send(self)

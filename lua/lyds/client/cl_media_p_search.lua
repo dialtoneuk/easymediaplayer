@@ -635,4 +635,4 @@ function panel:RefreshPlayerGrid()
 	self.PlayerHistoryGrid:SetRowHeight(self.Settings.Size.Value.RowHeight + self:GetPadding())
 end
 
-vgui.Register("MediaPlayer.SearchPanel", panel, "MediaPlayer.Base")
+--vgui.Register("MediaPlayer.SearchPanel", panel, "MediaPlayer.Base")
