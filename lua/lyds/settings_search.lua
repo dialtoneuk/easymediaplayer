@@ -13,6 +13,10 @@ local client = {
 		Value = true,
 		Comment = "The search window will open centered to the middle of your screen."
 	},
+	search_page_limit = {
+		Value = 20,
+		Comment = "20 items per page!"
+	},
 	search_auto_resize = {
 		Value = true,
 		Comment = "The search panel will scale relative to gui_resize_scale."

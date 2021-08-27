@@ -504,6 +504,16 @@ end)
 
 --Received when search results have been returned
 net.Receive("MediaPlayer.SendSearchResults",function()
+
+	--[[
+	local tab = net.ReadTable()
+	local typ = net.ReadString()
+	local panel = MediaPlayer.GetPanel("SearchPanel")
+
+	panel:AddSearchSet(typ, tab)
+	panel:ShowResultSet(typ)
+	]]--
+
 	MediaPlayer.SearchResults = net.ReadTable()
 
 	local panel = MediaPlayer.GetPanel("SearchPanel")

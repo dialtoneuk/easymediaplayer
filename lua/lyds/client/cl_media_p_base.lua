@@ -260,6 +260,21 @@ function base:GetIndexedSetting(key, index)
 	return self.Settings[index].Value[key]
 end
 
+function base:SetSuperParent(panel)
+	self.SuperPanel = panel
+end
+
+function base:GetSuperParent()
+	return self.SuperPanel
+end
+
+function base:Paint(p)
+	surface.SetDrawColor(self.Settings.Colours.Value.Background)
+	surface.DrawRect(0, 0, self:GetWide(), self:GetTall())
+	surface.SetDrawColor(self.Settings.Colours.Value.Border)
+	surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
+end
+
 function base:Rescale()
 	self:SetWidth(self:GetWidth())
 	self:SetTall(self:GetHeight())

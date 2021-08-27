@@ -103,7 +103,8 @@ function MediaPlayer.YoutubeSearch(query)
 	if (query == nil or query == "") then return end
 
 	net.Start("MediaPlayer.SearchQuery")
-	net.WriteString(query)
+		net.WriteString(query)
+		net.WriteString(MediaPlayer.MediaType.YOUTUBE)
 	net.SendToServer()
 end
 

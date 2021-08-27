@@ -39,26 +39,35 @@ net.Receive("MediaPlayer.SearchQuery",function(len, ply)
 	if (MediaPlayer.HasCooldown(ply, "Search")) then return end
 
 	local query = net.ReadString()
+	local typ = net.ReadString()
 	local setting = MediaPlayer.GetSetting("search_result_count")
 
 	MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.CopyCooldown("Search") )
 
-	MediaPlayer.YoutubeSearch(query, function(data)
+	local callback = function(data)
 		local results = {}
 
 		for k,v in pairs(data) do
 			results[v.id.videoId] = {
 				Video = v.id.videoId,
 				Title = v.snippet.title,
+				Type = typ,
 				Creator = v.snippet.channelTitle,
 				Thumbnail = v.snippet.thumbnails.default.url,
 			}
 		end
 
 		net.Start("MediaPlayer.SendSearchResults")
-		net.WriteTable(results)
+			net.WriteTable(results)
+			net.WriteString(typ)
 		net.Send(ply)
-	end, setting.Value)
+	end
+
+	if (typ == MediaPlayer.MediaType.YOUTUBE) then
+		MediaPlayer.YoutubeSearch(query, callback, setting.Value)
+	else
+		--more here
+	end
 end)
 
 --sends the admin settings to a player, checks if they are an admin inside the function.

@@ -244,7 +244,7 @@ function panel:CreateSearchPanel()
 
 	self.Search = vgui.Create("DTextEntry", self.SearchContainer )
 	self.Search:Dock(TOP)
-	self.Search:SetPlaceholderText("Will search MediaPlayer.com for valid videos")
+	self.Search:SetPlaceholderText("Will search youtube.com for valid videos")
 	self.Search:DockMargin(15,15,15,15)
 	self.Search:SetWide(self:GetWidth())
 	self.Search:SetTall(30)
