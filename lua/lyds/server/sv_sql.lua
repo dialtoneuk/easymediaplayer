@@ -80,8 +80,6 @@ function MediaPlayer.GetHistory(orderby, asc, limit, page)
 
     local obj = sql.Query("SELECT * FROM media_history" .. " ORDER BY " .. orderby .. " LIMIT " .. limit .. " OFFSET " .. limit * page)
 
-    print("SELECT * FROM media_history" .. " ORDER BY " .. orderby .. " LIMIT " .. limit .. " OFFSET " .. limit * page)
-
     if (obj == false) then
         error(sql.LastError())
     else
@@ -124,7 +122,6 @@ function MediaPlayer.GetPlayerHistory(id, orderby, asc, limit, page)
     end
 
     local r = sql.Query("SELECT * FROM media_history WHERE SteamID = " .. sql.SQLStr(id) .. " ORDER BY " .. orderby .. " LIMIT " .. limit .. " OFFSET " .. limit * page)
-
 
     if (r == false ) then
         error(sql.LastError())

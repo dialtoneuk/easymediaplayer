@@ -33,7 +33,7 @@ function panel:Init()
 	self.ScrollPanel:Dock(FILL)
 	self:SetDockMargin(self.ScrollPanel, 2)
 
-	local w = self:GetWidth() / 3
+	local w = ( self:GetWidth() / 3 ) + self:GetPadding() * 2
 
 	self.SearchButton:SetTall(30)
 	self.SearchButton:SetWidth(w)

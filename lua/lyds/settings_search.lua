@@ -31,13 +31,15 @@ local client = {
 	},
 	search_column_count = {
 		Value = 4,
-		Max = 50,
-		Comment = "How many search results will be returned when queries are made inside the search panel (max of 50)."
+		Max = 10,
+		Min = 1,
+		Comment = "Defines how many vertical columns will be present in the search area.",
+		SlowUpdate = 1
 	},
 	search_column_width = {
 		Value = 150,
 		Max = 500,
-		Comment = "How many search results will be returned when queries are made inside the search panel (max of 50)."
+		Comment = "(unused)."
 	},
 	search_resize_scale = {
 		Value = 0.8,
