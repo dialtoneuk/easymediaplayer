@@ -6,7 +6,7 @@ function MediaPlayer.Begin(video)
 
 	if (table.IsEmpty(MediaPlayer.CurrentVideo)) then
 		MediaPlayer.StartVideo(video, function()
-			MediaPlayer.AddToHistory(video)
+			MediaPlayer.AddToSession(video)
 			MediaPlayer.RemoveVideo(video.Video)
 			MediaPlayer.StopVideo(video.Video)
 
@@ -57,45 +57,36 @@ function MediaPlayer.AnnounceVideoEnding(video)
 	end
 end
 
---sends server history items to the player
-function MediaPlayer.SendHistoryData(ply, data)
-	if (table.IsEmpty(MediaPlayer.History)) then return end
-	local setting = MediaPlayer.GetSetting("media_history_max") or { Value = 25 }
+--sends the session data
+function MediaPlayer.SendSessionChunk(ply, data)
+	if (table.IsEmpty(MediaPlayer.Session)) then return end
 
-	net.Start("MediaPlayer.SendHistoryData")
+	net.Start("MediaPlayer.SendSessionChunk")
 		net.WriteTable(data)
-		net.WriteFloat(table.Count( MediaPlayer.History ))
-		net.WriteFloat(setting.Value)
 	net.Send(ply)
 end
 
---sends the personal history of a player to them selves
-function MediaPlayer.SendPersonalHistoryData(ply, data)
-	if (table.IsEmpty(MediaPlayer.History)) then return end
-	local setting = MediaPlayer.GetSetting("media_history_max") or { Value = 25 }
+--sends all the videos the user has played this session
+function MediaPlayer.SendPersonalSessionData(ply, data)
+	if (table.IsEmpty(MediaPlayer.Session)) then return end
 
-	net.Start("MediaPlayer.SendPersonalHistory")
+	net.Start("MediaPlayer.SendPersonalSession")
 		net.WriteTable(data)
-		net.WriteFloat( ply:GetPersonalHistoryCount() )
-		net.WriteFloat(setting.Value)
 	net.Send(ply)
 end
 
 --sends all of the history to the player
-function MediaPlayer.SendHistory(ply)
-	if (table.IsEmpty(MediaPlayer.History)) then return end
-	local setting = MediaPlayer.GetSetting("media_history_max") or { Value = 25 }
+function MediaPlayer.SendSession(ply)
+	if (table.IsEmpty(MediaPlayer.Session)) then return end
 
-	net.Start("MediaPlayer.SendHistory")
-		net.WriteTable(MediaPlayer.History)
-		net.WriteFloat( table.Count( MediaPlayer.History ) )
-		net.WriteFloat(setting.Value)
+	net.Start("MediaPlayer.SendSession")
+		net.WriteTable(MediaPlayer.Session)
 	net.Send(ply)
 end
 
 --sends the history just for that video
-function MediaPlayer.SendHistoryForVideo(ply, video)
-	net.Start("MediaPlayer.SendHistoryForVideo")
+function MediaPlayer.SendSessionForVideo(ply, video)
+	net.Start("MediaPlayer.SendSessionForVideo")
 		net.WriteTable(video)
 	net.Send(ply)
 end
@@ -173,7 +164,7 @@ end
 function MediaPlayer.SkipVideo()
 
 	local video = MediaPlayer.CurrentVideo
-	MediaPlayer.AddToHistory(video)
+	MediaPlayer.AddToSession(video)
 	MediaPlayer.RemoveVideo(video.Video)
 	MediaPlayer.StopVideo(video.Video)
 

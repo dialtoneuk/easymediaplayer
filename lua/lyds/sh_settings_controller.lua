@@ -217,6 +217,11 @@ function MediaPlayer.IsSettingTrue(key)
 	return MediaPlayer.GetSetting(key, true ).Value == true
 end
 
+function MediaPlayer.GetSettingInt(key)
+
+	return MediaPlayer.GetSetting(key, true ).Value
+end
+
 MediaPlayer.SettingTrue = MediaPlayer.IsSettingTrue
 
 --Gets a setting, second argument assures its type to be correct (1 to True, truncate ints)

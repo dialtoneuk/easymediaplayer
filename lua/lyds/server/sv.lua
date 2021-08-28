@@ -10,15 +10,15 @@ util.AddNetworkString("MediaPlayer.SendAdminSettings")
 util.AddNetworkString("MediaPlayer.SetAdminSettings")
 util.AddNetworkString("MediaPlayer.SearchQuery")
 util.AddNetworkString("MediaPlayer.SendSearchResults")
-util.AddNetworkString("MediaPlayer.SendHistory")
-util.AddNetworkString("MediaPlayer.SendHistoryForVideo")
+util.AddNetworkString("MediaPlayer.SendSession")
+util.AddNetworkString("MediaPlayer.SendSessionForVideo")
 util.AddNetworkString("MediaPlayer.RequestHistory")
-util.AddNetworkString("MediaPlayer.SendHistoryData")
+util.AddNetworkString("MediaPlayer.SendSessionChunk")
 util.AddNetworkString("MediaPlayer.End")
 util.AddNetworkString("MediaPlayer.NewVote")
 util.AddNetworkString("MediaPlayer.EndVote")
 util.AddNetworkString("MediaPlayer.SendMessage")
-util.AddNetworkString("MediaPlayer.SendPersonalHistory")
+util.AddNetworkString("MediaPlayer.SendPersonalSession")
 util.AddNetworkString("MediaPlayer.SendBlacklist")
 util.AddNetworkString("MediaPlayer.CreateWarningBox")
 util.AddNetworkString("MediaPlayer.GetDefaultPreset")
@@ -27,6 +27,7 @@ util.AddNetworkString("MediaPlayer.ApplyDefaultPreset")
 util.AddNetworkString("MediaPlayer.RefreshDefaultPreset")
 util.AddNetworkString("MediaPlayer.AdminRefreshDefaultPreset")
 util.AddNetworkString("MediaPlayer.SendPresetToServer")
+util.AddNetworkString("MediaPlayer.SendHistory")
 util.AddNetworkString("MediaPlayer.EnabledMediaTypes")
 
 --[[
@@ -207,11 +208,13 @@ hook.Add("MediaPlayer.SettingsPostLoad","MediaPlayer.LoadInternals", function()
 
 	--loads custom tips from settings
 	MediaPlayer.LoadCustomTips()
-	MediaPlayer.LoadHistory()
 	MediaPlayer.LoadBlacklist()
 	MediaPlayer.LoadChatCommands()
 	MediaPlayer.LoadCooldowns()
 	MediaPlayer.LoadVotes()
+
+	--Create sql table if it does not exist
+	MediaPlayer.CheckSqlTableExists()
 
 	--this is where cooldown loop begins
 	MediaPlayer.CooldownLoop()
@@ -252,6 +255,7 @@ end)
 hook.Add("PlayerInitialSpawn","MediaPlayer.InitialSpawn",function(ply, transition)
 	ply:DoInitialSpawn()
 
+	--for the search panel, sends what media types are currently enabled
 	MediaPlayer.SendEnabledMediaTypes(ply, MediaPlayer.GetEnabledMediaTypes())
 end)
 
@@ -313,34 +317,80 @@ end)
 
 --requests the personal history of a user, useless with out the search panel opened
 --TODO: Change into net
-concommand.Add("media_request_personal_history", function(ply, cmd, args)
+concommand.Add("media_request_personal_session", function(ply, cmd, args)
 	if (!args[1]) then return end
-	if (MediaPlayer.HasCooldown(ply, "History")) then return end
+	if (MediaPlayer.HasCooldown(ply, "Session")) then return end
 
 	local page = math.abs(tonumber(args[1]) - 1)
 	local setting = MediaPlayer.GetSetting("media_history_max")
 
-	local data = ply:GetPersonalHistory(setting.Value, page * setting.Value )
+	local data = ply:GetPersonalSession(setting.Value, page * setting.Value )
 
 	if (data == nil or table.IsEmpty(data)) then return end
 
-	MediaPlayer.SendPersonalHistoryData(ply, data)
-	MediaPlayer.AddPlayerCooldown(ply, MediaPlayer.CopyCooldown("History"))
+	MediaPlayer.SendPersonalSessionData(ply, data)
+	MediaPlayer.AddPlayerCooldown(ply, MediaPlayer.CopyCooldown("Session"))
+end)
+
+concommand.Add("media_history", function(ply, cmd, args)
+
+	local limit = MediaPlayer.GetSetting("media_history_max")
+
+	if (#args == 0 ) then
+		error("must be at least one arguments: orderby (string), onlyplayer (bool), ascending (bool), page (int)")
+	end
+
+	local orderby = args[1]
+	local onlyplayer = false
+	local asc = false
+
+	if (args[2] != nil and args[2] == "true") then
+		onlyplayer = true
+	end
+
+	if (args[3] != nil and args[3] == "true") then
+		asc = true
+	end
+
+	local page = args[4] or 0
+
+	if (type(page) != "number") then
+		error("page is not a number")
+	end
+
+	local results
+
+	if (onlyplayer) then
+		print("on")
+		results = MediaPlayer.GetPlayerHistory(ply:SteamID(), orderby, asc, limit.Value, page)
+	else
+		results = MediaPlayer.GetHistory(orderby, asc, limit.Value, page)
+	end
+
+	if (results == nil) then
+		results = {}
+	end
+
+
+	net.Start("MediaPlayer.SendHistory")
+		net.WriteTable(results)
+		net.WriteTable(limit)
+	net.Send(ply)
 end)
 
 --requests the personal history of a server useless with out the search panel opened
 --TODO: Change into net
-concommand.Add("media_request_history", function(ply, cmd, args)
+concommand.Add("media_request_session", function(ply, cmd, args)
 	if (!args[1]) then return end
-	if (MediaPlayer.HasCooldown(ply, "History")) then return end
+	if (MediaPlayer.HasCooldown(ply, "Session")) then return end
 
 	local page = math.abs(tonumber(args[1]) - 1)
 	local setting = MediaPlayer.GetSetting("media_history_max")
 	local results = {}
 
-	if (table.IsEmpty(MediaPlayer.History)) then return end
+	if (table.IsEmpty(MediaPlayer.Session)) then return end
 
-	if (table.Count(MediaPlayer.History) < ( page * setting.Value) ) then
+	if (table.Count(MediaPlayer.Session) < ( page * setting.Value) ) then
 		results = {}
 	else
 		local count = 0
@@ -348,7 +398,7 @@ concommand.Add("media_request_history", function(ply, cmd, args)
 		local finish = start + setting.Value
 		results = {}
 
-		for k,v in SortedPairsByMemberValue(MediaPlayer.History, "LastPlayed", true ) do
+		for k,v in SortedPairsByMemberValue(MediaPlayer.Session, "LastPlayed", true ) do
 
 			if (count < start ) then
 				count = count + 1
@@ -362,8 +412,8 @@ concommand.Add("media_request_history", function(ply, cmd, args)
 	end
 
 	if ( !table.IsEmpty(results)) then
-		MediaPlayer.SendHistoryData(ply, results)
-		MediaPlayer.AddPlayerCooldown(ply, MediaPlayer.CopyCooldown("History"))
+		MediaPlayer.SendSessionChunk(ply, results)
+		MediaPlayer.AddPlayerCooldown(ply, MediaPlayer.CopyCooldown("Session"))
 	end
 end)
 
@@ -457,7 +507,7 @@ concommand.Add("media_like_video", function(ply, cmd, args)
 		MediaPlayer.LikeVideo(video)
 
 		for k,v in pairs(player.GetAll()) do
-			MediaPlayer.SendHistoryForVideo(v, MediaPlayer.History[video.Video])
+			MediaPlayer.SendSessionForVideo(v, MediaPlayer.Session[video.Video])
 
 			if (MediaPlayer.IsSettingTrue("announce_likes")) then
 				v:SendMessage( ply:GetName() .. " has liked this video!")
@@ -491,7 +541,7 @@ concommand.Add("media_dislike_video", function(ply, cmd, args)
 		MediaPlayer.DislikeVideo(video)
 
 		for k,v in pairs(player.GetAll()) do
-			MediaPlayer.SendHistoryForVideo(v, MediaPlayer.History[video.Video])
+			MediaPlayer.SendSessionForVideo(v, MediaPlayer.Session[video.Video])
 
 			if (MediaPlayer.IsSettingTrue("announce_dislikes")) then
 				v:SendMessage( ply:GetName() .. " has disliked this video!")
@@ -506,7 +556,7 @@ concommand.Add("media_dislike_video", function(ply, cmd, args)
 
 		local val = MediaPlayer.GetSetting("video_ban_after_dislikes").Value
 
-		if (val != 0 and val == MediaPlayer.History[video.Video].Dislikes) then
+		if (val != 0 and val == MediaPlayer.Session[video.Video].Dislikes) then
 			MediaPlayer.AddToBlacklist(video, ply )
 			MediaPlayer.SkipVideo()
 

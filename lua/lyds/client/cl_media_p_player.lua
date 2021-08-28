@@ -33,7 +33,7 @@ function panel:Init()
 	self.Wang:SetValue(100)
 end
 
-function panel:Paint(p)
+function panel:Paint()
 
 	surface.SetDrawColor(self.Settings.Colours.Value.Background)
 	surface.DrawRect(0, 0, self:GetWidth(), self:GetHeight())
@@ -49,7 +49,7 @@ function panel:Paint(p)
 		local str = self:GetMinsSeconds(time)
 		local total = self:GetMinsSeconds(self.Video.Duration)
 
-		local w = surface.GetTextSize(str)
+		local w = surface.GetTextSize(str) or 1
 
 		local tw = surface.GetTextSize("/" .. total)
 

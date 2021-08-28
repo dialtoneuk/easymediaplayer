@@ -84,6 +84,11 @@ local server = {
 		Max = 500,
 		Comment = "How many seconds the player has to wait after requesting server history. (its recommended you keep this at its current value).",
 	},
+	cooldown_session = {
+		Value = 1,
+		Max = 500,
+		Comment = "How many seconds the player has to wait after requesting history regarding the current session. (its recommended you keep this at its current value).",
+	},
 	cooldown_refreshrate = {
 		Value = 1,
 		Max = 6,

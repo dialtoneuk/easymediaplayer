@@ -53,6 +53,7 @@ local client = {
 			Width = 750,
 			Height = 500,
 			RowHeight = 40,
+			SecondaryRowHeight = 200,
 			Padding = 5,
 		}
 	},

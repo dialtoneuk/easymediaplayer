@@ -217,17 +217,19 @@ function panel:CreateFullPanel()
 
 	if (IsValid(self.FullPanel)) then self.FullPanel:Remove() end
 
+	local h = math.floor(self.Settings.Size.Value.RowHeight / 2) + self.Settings.Size.Value.RowSpacing
+
 	self.FullPanel = vgui.Create("DButton", self.Grid )
 	self.FullPanel:SetWide(self:GetWidth(true, true) - self:GetPadding())
-	self.FullPanel:SetTall( math.floor(self.Settings.Size.Value.RowHeight / 2) + self.Settings.Size.Value.RowSpacing )
+	self.FullPanel:SetTall( h )
 	self.FullPanel:SetText("")
 	self.FullPanel.Paint = function(s)
 		surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 		surface.DrawRect(0, 0, s:GetWide(), s:GetTall())
 		surface.SetDrawColor(self.Settings.Colours.Value.Border)
 		surface.DrawOutlinedRect(0, 0, s:GetWide(), s:GetTall(), self.Settings.Options.Value.BorderThickness)
-		draw.SimpleText("Playlist Full", "PlaylistText", self:GetPadding(),  self:GetPadding(), MediaPlayer.Colours.FadedWhite )
-		draw.SimpleText(self._Count  .. " videos in total", "PlaylistText", self:GetPadding() + 90, self:GetPadding(), MediaPlayer.Colours.FadedWhite)
+		draw.SimpleText("Playlist Full", "PlaylistText", self:GetPadding(), h / 2 - self:GetPadding(), MediaPlayer.Colours.FadedWhite )
+		draw.SimpleText(self._Count  .. " videos in total", "PlaylistText", self:GetPadding() + 90,  h / 2 - self:GetPadding(), MediaPlayer.Colours.FadedWhite)
 	end
 
 	self.Grid:AddItem(self.FullPanel)

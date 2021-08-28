@@ -61,9 +61,9 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
 
         for f,v in pairs(MediaPlayerErrors) do
             if (CLIENT) then
-                file.Write("lyds/errors/" .. f .. " " .. os.date("%A_%B%d_%y %H_%M_%S") .. " CLIENT.json", util.TableToJSON(v["Client"], true))
+                file.Write("lyds/errors/" .. f .. " " .. game.GetMap() .. "_" .. os.date("%A_%B%d_%y %H_%M_%S") .. " CLIENT.json", util.TableToJSON(v["Client"], true))
             elseif (SERVER) then
-                file.Write("lyds/errors/" .. f .. " " .. os.date("%A_%B%d_%y %H_%M_%S") .. " SERVER.json", util.TableToJSON(v["Server"], true))
+                file.Write("lyds/errors/" .. f .. " " .. game.GetMap() .. "_" .. os.date("%A_%B%d_%y %H_%M_%S") .. " SERVER.json", util.TableToJSON(v["Server"], true))
             end
         end
     end)

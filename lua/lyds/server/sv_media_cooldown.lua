@@ -17,6 +17,7 @@ MediaPlayer.RegisteredCooldowns = MediaPlayer.RegisteredCooldowns or {
 	Vote = "cooldown_vote",
 	Interaction = "cooldown_interaction",
 	History = "cooldown_history",
+	Session = "cooldown_session",
 	Command = "cooldown_command",
 }
 

@@ -4,24 +4,16 @@ MediaPlayer.CurrentVideo = MediaPlayer.CurrentVideo or {}
 MediaPlayer.Playlist = MediaPlayer.Playlist or {}
 
 --History and Playhistory client tables
-MediaPlayer.History = MediaPlayer.History or {} --contains servers history (is not 1 to 1 w/ server)
-MediaPlayer.PlayerHistory = MediaPlayer.PlayerHistory or {} --contains players history (is not 1 to 1)
-MediaPlayer.SearchResults = MediaPlayer.SearchResults or {}
+MediaPlayer.Session = MediaPlayer.Session or {} --contains servers history (is not 1 to 1 w/ server)
+MediaPlayer.PlayerSession = MediaPlayer.PlayerSession or {} --contains players history (is not 1 to 1)
+
+--Page max (for page math)
+MediaPlayer.HistoryMax = MediaPlayer.HistoryMax or 30
 
 --admin stuff
 MediaPlayer.Blacklist = MediaPlayer.Blacklist or {} --only filled if admin
 
 --For our history page
-MediaPlayer.HistoryCount = MediaPlayer.HistoryCount or 1 --how many history elements in total
-
---TODO: Move this to be completely a client side variable
-MediaPlayer.HistoryPageMax = MediaPlayer.HistoryPageMax or 1 --how many elements at max can appear
-
---for our player history page
-MediaPlayer.PlayerHistoryCount = MediaPlayer.PlayerHistoryCount or 1 --how many history elements in total
-
---TODO: Move this to be completely a client side variable
-MediaPlayer.PlayerPageMax = MediaPlayer.PlayerPageMax or 1 --how many elements at max can appear
 
 MediaPlayer.CurrentVote = MediaPlayer.CurrentVote or {}
 MediaPlayer.AdminSettings = MediaPlayer.AdminSettings  or {}
@@ -388,6 +380,18 @@ local writeDefaultPreset = function(preset)
 	file.Write("lyds/presets/server.json", util.TableToJSON(preset, true))
 end
 
+net.Receive("MediaPlayer.SendHistory", function()
+
+	local results = net.ReadTable()
+	local historymax = net.ReadTable()
+
+	MediaPlayer.HistoryMax = historymax
+
+	if (MediaPlayer.PanelValid("SearchPanel")) then
+		MediaPlayer.GetPanel("SearchPanel").SearchHistoryContainer:SetSearchResults(results)
+	end
+end)
+
 net.Receive("MediaPlayer.ApplyDefaultPreset", function()
 
 	local preset = net.ReadTable()
@@ -410,55 +414,42 @@ end)
 
 
 --receives a chunk of history data from the server, not the full thing
-net.Receive("MediaPlayer.SendHistoryData", function()
+net.Receive("MediaPlayer.SendSessionChunk", function()
 	local tab = net.ReadTable();
 
 	if (table.IsEmpty(tab)) then
 		return
 	end
 
-	MediaPlayer.History = tab
-	MediaPlayer.HistoryCount = net.ReadFloat()
-	MediaPlayer.HistoryPageMax = net.ReadFloat()
+	MediaPlayer.Session = tab
 
-
-	local panel = MediaPlayer.GetPanel("SearchPanel")
-
-	--now, add it to the search panel
-	panel:AddPageHeader(panel.HistoryGrid, panel.HistoryPage)
-	panel:PresentHistory()
-	panel.HistoryPage = panel.HistoryPage + 1
+	if (MediaPlayer.PanelValid("SearchPanel")) then
+		MediaPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(MediaPlayer.Session)
+	end
 end)
 
 --receives a chunk of personal history data from the server, not the full thing. (personal history data is simply videos the user has submitted)
-net.Receive("MediaPlayer.SendPersonalHistory", function()
+net.Receive("MediaPlayer.SendPersonalSession", function()
 	local tab = net.ReadTable();
 
 	if (table.IsEmpty(tab)) then
 		return
 	end
 
-	MediaPlayer.PlayerHistory = tab
-	MediaPlayer.PlayerHistoryCount = net.ReadFloat()
-	MediaPlayer.PlayerHistoryPageMax = net.ReadFloat()
+	MediaPlayer.PlayerSession = tab
 
-	local panel = MediaPlayer.GetPanel("SearchPanel")
-
-	panel:AddPageHeader(panel.PlayerHistoryGrid, panel.PlayerHistoryPage, MediaPlayer.PlayerHistoryCount)
-	panel:PresentPlayerHistory()
-	panel.PlayerHistoryPage = panel.PlayerHistoryPage + 1
+	if (MediaPlayer.PanelValid("SearchPanel")) then
+		MediaPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(MediaPlayer.PlayerSession)
+	end
 end)
 
 --receives all the history from the server
-net.Receive("MediaPlayer.SendHistory", function()
-	MediaPlayer.History =  net.ReadTable()
-	MediaPlayer.HistoryCount = net.ReadFloat()
-	MediaPlayer.HistoryPageMax = net.ReadFloat()
+net.Receive("MediaPlayer.SendSession", function()
+	MediaPlayer.Session = net.ReadTable()
 
-	local panel = MediaPlayer.GetPanel("SearchPanel")
-	panel:RefreshHistoryGrid()
-	panel:AddPageHeader(panel.HistoryGrid, "All History")
-	panel:PresentHistory()
+	if (MediaPlayer.PanelValid("SearchPanel")) then
+		MediaPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(MediaPlayer.Session)
+	end
 end)
 
 
@@ -475,9 +466,9 @@ end)
 
 
 --Receives history for a singular video
-net.Receive("MediaPlayer.SendHistoryForVideo", function()
+net.Receive("MediaPlayer.SendSessionForVideo", function()
 	local tab = net.ReadTable()
-	MediaPlayer.History[tab.Video] = tab;
+	MediaPlayer.Session[tab.Video] = tab;
 end)
 
 --The blacklist full of banned videos

@@ -57,8 +57,8 @@ end
 
 function panel:DoClick()
 	--does this each time if there is history for this video but too bad!
-	if ( MediaPlayer.History != nil and MediaPlayer.History[ self.Item.Video ] != nil ) then
-		self.Item = table.Merge(self.Item,  MediaPlayer.History[ self.Item.Video  ])
+	if ( MediaPlayer.Session != nil and MediaPlayer.Session[ self.Item.Video ] != nil ) then
+		self.Item = table.Merge(self.Item,  MediaPlayer.Session[ self.Item.Video  ])
 	end
 
 	local menu = DermaMenu(false, self)

@@ -55,7 +55,7 @@ function MediaPlayer.CanSubmitVideo(id, ply )
 	end
 
 	if (MediaPlayer.Blacklist[ id ]) then
-		ply:SendMessage("This video is banned!")
+		ply:SendMediaWarningBox("That video is banned!")
 		return false
 	end
 

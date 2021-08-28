@@ -50,21 +50,21 @@ end
 
 
 --creates a success box on the players screen
-function ply:SendSuccessWarningBox(message, title)
-	title = title or "Warning"
+function ply:SendMediaSuccessBox(message, title)
+	title = title or "Success"
 
 	net.Start("MediaPlayer.CreateSuccessBox")
-	net.WriteString(title)
-	net.WriteString(message)
+		net.WriteString(title)
+		net.WriteString(message)
 	net.Send(self)
 end
 
 --gets all of the playlist items the player has personally submitted
-function ply:GetPersonalHistory(max, start )
+function ply:GetPersonalSession(max, start )
 	local results = {}
 	local count = 0
 
-	for k,v in SortedPairsByMemberValue(MediaPlayer.History, "LastPlayed", true ) do
+	for k,v in SortedPairsByMemberValue(MediaPlayer.Session, "LastPlayed", true ) do
 		count = count + 1
 
 		if ( count < start) then continue end
@@ -80,11 +80,11 @@ function ply:GetPersonalHistory(max, start )
 end
 
 --gets how many items there are in total
-function ply:GetPersonalHistoryCount()
+function ply:GetPersonalSessionCount()
 
 	local count = 0
 
-	for k,v in pairs(MediaPlayer.History) do
+	for k,v in pairs(MediaPlayer.Session) do
 		if (v.Owner == nil) then continue end
 
 		if (self:SteamID() == v.Owner.SteamID) then

@@ -9,7 +9,6 @@ function MediaPlayer.GetYoutubeVideoInfo(video, callback)
 			video.Title = data.snippet.title
 			video.Creator = data.snippet.channelTitle
 			video.Views = data.statistics.viewCount
-			video.Player = data.player
 
 			if ( callback != nil) then
 				callback(video)
