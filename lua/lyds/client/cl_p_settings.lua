@@ -51,7 +51,9 @@ function panel:Init()
 			Selected = {},
 			Edited = false,
 			Changed = false,
-			Clicked = false
+			Clicked = false,
+			IsCustom = false, --updated each node select
+			IsAdmin = false --updated each node select
 		}
 	})
 
@@ -300,6 +302,28 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	self.settingsEdit[title] = vgui.Create("DProperties", scrollRight)
 	self.settingsEdit[title]:Dock(FILL)
 	self.settingsEdit[title]:SetHeight(self:GetTall())
+	self.settingsEdit[title]:DockMargin(0, self:GetPadding() * 2, 0, 0)
+
+	--refreshes all panels
+	self.RefreshAllPanels = vgui.Create("DButton", scrollRight)
+	self.RefreshAllPanels:Dock(TOP)
+	self.RefreshAllPanels:SizeToContents()
+	self.RefreshAllPanels:SetText("Refresh All Panels")
+	self.RefreshAllPanels:SetImage("icon16/arrow_refresh.png")
+	self.RefreshAllPanels:SetTall(30)
+	self.RefreshAllPanels:DockMargin(0,self:GetPadding(),0,0)
+	self.RefreshAllPanels.DoClick = function()
+		RunConsoleCommand("media_create_cl")
+
+		MediaPlayer.CreateChatMessage("Refreshed all panels! Settings window reopening in a second...")
+
+		--
+		timer.Simple(1, function()
+			if (MediaPlayer.PanelValid("SettingsPanel")) then
+				MediaPlayer.ShowPanel("SettingsPanel")
+			end
+		end)
+	end
 
 	if (admin) then
 		self.SendButton = vgui.Create("DButton", scrollRight)
@@ -320,8 +344,59 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 				MediaPlayer.CreateSuccessBox("Success","Server settings succesfully applied", 2)
 			end
 		end
+	else
+
+		self.Reset = vgui.Create("DButton", scrollRight)
+		self.Reset:Dock(TOP)
+		self.Reset:SizeToContents()
+		self.Reset:SetText("Reset Setting To Default")
+		self.Reset:SetImage("icon16/key.png")
+		self.Reset:SetTall(30)
+		self.Reset:SetDisabled(true)
+		self.Reset:DockMargin(0,self:GetPadding(),0,0)
+		self.Reset.DoClick = function()
+			if (self.Selected == nil or self.Selected.Key == nil ) then return end
+
+			--resets
+			MediaPlayer.ResetSetting(self.Selected.Key)
+
+			self:UpdateTable(title, MediaPlayer.GetSetting(self.Selected.Key), self.IsAdmin)
+
+			--self:UpdateTable(title, setting, false)
+			MediaPlayer.CreateSuccessBox("Success", "Setting '" .. self.Selected.Key .. "' has sucessfully been reset. You might need to refresh all panels.")
+		end
 	end
 
+	self.AddKey = vgui.Create("DButton", scrollRight)
+	self.AddKey:Dock(TOP)
+	self.AddKey:SizeToContents()
+	self.AddKey:SetText("Add New Key")
+	self.AddKey:SetImage("icon16/key.png")
+	self.AddKey:SetTall(30)
+	self.AddKey:SetDisabled(true)
+	self.AddKey:DockMargin(0,self:GetPadding(),0,0)
+	self.AddKey.DoClick = function()
+		if (!self.IsCustom) then
+			MediaPlayer.CreateWarningBox("Error", "This table is uncustomizable")
+			return
+		else
+			if (self.Selected == nil or self.Selected.Key == nil ) then return end
+
+			local setting
+
+			if (self.IsAdmin) then
+				setting =  MediaPlayer.GetSetting(self.Selected.Key)
+			else
+				setting = MediaPlayer.AdminSettings[self.Selected.Key][self.Selected.Type]
+			end
+
+			if (setting != MediaPlayer.Type.TABLE ) then error("not a table") return end
+			if (!setting.Custom ) then error("not customisable") return end
+
+			setting.Value[#setting.Value + 1] = ""
+			self:UpdateTable(title, setting, self.IsAdmin)
+		end
+	end
 
 	--comment for the property
 	self.Comments[title] = vgui.Create("DPanel",self.settingsEdit[title])
@@ -357,7 +432,15 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 			local node = settingSelection:AddNode(k, MediaPlayer.GetSettingIcon(k, admin) )
 
 			function node:DoClick()
-				MediaPlayer.LoadedPanels["SettingsPanel"].Panel:UpdateTable(title, v, admin )
+				if (!MediaPlayer.PanelValid("SettingsPanel")) then return end
+
+				local s = MediaPlayer.GetPanel("SettingsPanel")
+				s:UpdateTable(title, v, admin )
+				s.Selected = v
+				s.IsCustom = v.Custom or false
+				s.IsAdmin = admin
+				s.AddKey:SetDisabled(!self.IsCustom)
+				s.Reset:SetDisabled(false)
 			end
 		end
 	end
@@ -374,6 +457,7 @@ Updates the selection table
 
 function panel:UpdateTable(title, v, admin)
 	self.settingsEdit[title]:Clear()
+
 	local settingsTitle = string.Replace(title," ", "_")
 
 	if (v.Comment) then

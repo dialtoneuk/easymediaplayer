@@ -25,7 +25,7 @@ end
 function MediaPlayer.AddFullStop(text)
 
 	local escape = {
-		"!","?","~","."
+		"!","?","~",".","=","\n"
 	}
 
 	for k,v in pairs(escape) do

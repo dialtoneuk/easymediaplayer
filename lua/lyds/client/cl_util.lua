@@ -14,11 +14,18 @@ function MediaPlayer.CreateSuccessBox(title, message, timeout)
 	MediaPlayer.GetPanel("SuccessBox"):SetBox(title, message, timeout)
 end
 
-function MediaPlayer.CreateChatMessage(msg)
+function MediaPlayer.CreateChatMessage(msg, tag)
 	msg = msg or " null "
+	tag = tag or false
+	msg = string.Trim(msg)
 	local setting = MediaPlayer.GetSetting("chat_colours")
 
-	chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, MediaPlayer.AddFullStop(msg) )
+	if (tag) then
+		chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, MediaPlayer.AddFullStop(msg) )
+	else
+		chat.AddText( setting.Value.TextColor, msg )
+	end
+
 	chat.PlaySound()
 end
 

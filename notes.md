@@ -17,8 +17,6 @@
 [Easy MediaPlayer] Now playing 'Boards Of Canada - 5.9.78' submitted by Lyds.
 
 ```
-
-* Add versioning to presets and warn a user if they are using older presets
 * Are you sure box? If yes do console command, if no, do not.
 * !Play argument url parsing so can just put direct link to media
 * implement a changelog

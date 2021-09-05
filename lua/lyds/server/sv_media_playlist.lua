@@ -32,7 +32,7 @@ function MediaPlayer.RemovePlayerVideo(id, ply)
 	if (video.Owner:SteamID() != ply:SteamID()) then return end --not ours
 
 	MediaPlayer.RemoveVideo(id)
-	ply:SendMessage("Video successfully removed!")
+	ply:SendMediaPlayerMessage("Video successfully removed!")
 end
 
 --removes all a players videos
@@ -50,7 +50,7 @@ end
 function MediaPlayer.CanSubmitVideo(id, ply )
 
 	if (MediaPlayer.Playlist[ id ]) then
-		ply:SendMessage("This video is already in the playlist!")
+		ply:SendMediaPlayerMessage("This video is already in the playlist!")
 		return false
 	end
 
@@ -60,12 +60,12 @@ function MediaPlayer.CanSubmitVideo(id, ply )
 	end
 
 	if (MediaPlayer.HasCooldown(ply, "Play")) then
-		ply:SendMessage("Wait a bit before playing something else")
+		ply:SendMediaPlayerMessage("Wait a bit before playing something else")
 		return false
 	end
 
 	if (MediaPlayer.GetSetting("playlist_capacity") == MediaPlayer.Count ) then
-		ply:SendMessage("The playlist is at full capacity")
+		ply:SendMediaPlayerMessage("The playlist is at full capacity")
 		return false
 	end
 

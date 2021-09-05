@@ -40,17 +40,16 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
         end
 
         MediaPlayerErrors.Bad[ seed ] = MediaPlayerErrors.Bad[ seed ] or {}
-
-        if (#MediaPlayerErrors.Bad[ seed ] == 0) then
-            hook.Run("OnFirstBadError", {...})
-        end
-
         MediaPlayerErrors.Bad[ seed ][ #MediaPlayerErrors.Bad[ seed ] + 1 ] = {
             Time = os.time(),
             ...
         }
 
-        hook.Run("OnBadError", {...})
+        if (#MediaPlayerErrors.Bad[ seed ] == 0) then
+            hook.Run("OnFirstBadError", {...})
+        else
+            hook.Run("OnBadError", {...})
+        end
 
         originalError(...)
     end
@@ -85,7 +84,14 @@ MediaPlayer = MediaPlayer or {
         TABLE = "table", --cant be a convar,
         FLOAT = "float"
     },
-    Files = {} --see below
+    LastError = nil,
+    LastWarning = nil,
+    Files = {}, --see below,
+    --metatable stuff (unused)
+    _new = function()
+        return setmetatable(table.Copy(MediaPlayer), MediaPlayer)
+    end,
+    __index = MediaPlayer
 }
 
 --holds our computer colours
@@ -93,11 +99,13 @@ MediaPlayer.ComputedColours = MediaPlayer.ComputedColours or {}
 
 --the colours for our stuff
 MediaPlayer.Colours = {
-    Black = Color(10,10,10),
+    Black = Color(35,35,35),
     Gray = Color(145,145,145),
     PitchBlack = Color(0,0,0),
+    SmokeyWhite = Color(195,195,195),
     White = Color(255,255,255),
     Red = Color(255,0,0),
+    Pink = Color(255,0,200),
     Blue = Color(0,0,255)
 }
 
@@ -106,12 +114,12 @@ if (table.IsEmpty(MediaPlayer.ComputedColours)) then
 
     for key,colour in pairs(MediaPlayer.Colours) do
         MediaPlayer.ComputedColours[ "Faded" .. key ] = Color(colour.r, colour.g, colour.b, 200 )
-        MediaPlayer.ComputedColours[ "Barely" .. key ] = Color(colour.r, colour.g, colour.b, 50 )
+        MediaPlayer.ComputedColours[ "Barely" .. key ] = Color(colour.r, colour.g, colour.b, 75 )
+        MediaPlayer.ComputedColours[ "Transparent" .. key ] = Color(colour.r, colour.g, colour.b, 25 )
         MediaPlayer.ComputedColours[ "Reverse" .. key ] = Color(colour.b, colour.g, colour.r, 255 )
     end
 end
 
---only do it once
 if (!table.IsEmpty(MediaPlayer.ComputedColours)) then
     MediaPlayer.Colours = table.Merge(MediaPlayer.Colours, MediaPlayer.ComputedColours)
 end

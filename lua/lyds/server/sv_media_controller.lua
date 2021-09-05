@@ -33,7 +33,7 @@ function MediaPlayer.AnnounceVideo()
 	if (!MediaPlayer.IsSettingTrue("announce_video")) then return end
 
 	for k,v in pairs(player.GetAll()) do
-		v:SendMessage("Now playing '" .. MediaPlayer.CurrentVideo.Title .. "' submitted by " .. MediaPlayer.CurrentVideo.Owner:GetName())
+		v:SendMediaPlayerMessage("Now playing '" .. MediaPlayer.CurrentVideo.Title .. "' submitted by " .. MediaPlayer.CurrentVideo.Owner:GetName())
 	end
 end
 
@@ -43,7 +43,7 @@ function MediaPlayer.AnnouncePlaylistAddition(video)
 	if (!MediaPlayer.IsSettingTrue("announce_addition")) then return end
 
 	for k,v in pairs(player.GetAll()) do
-		v:SendMessage("Added '" .. video.Title .. "' submitted by " .. video.Owner:GetName())
+		v:SendMediaPlayerMessage("Added '" .. video.Title .. "' submitted by " .. video.Owner:GetName())
 	end
 end
 
@@ -53,7 +53,7 @@ function MediaPlayer.AnnounceVideoEnding(video)
 	if (!MediaPlayer.IsSettingTrue("announce_ending")) then return end
 
 	for k,v in pairs(player.GetAll()) do
-		v:SendMessage("Video '" .. video.Title .. "' over!")
+		v:SendMediaPlayerMessage("Video '" .. video.Title .. "' over!")
 	end
 end
 

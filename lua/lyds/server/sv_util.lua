@@ -1,12 +1,15 @@
 
 --Sends a preset to the player
 function MediaPlayer.SendDefaultPreset(ply, usmg)
-    usmg = usmg or "ApplyDefaultPreset"
+    usmg = usmg or "Apply"
     local tab = util.JSONToTable( file.Read("lyds/presets/server_preset.json", "DATA") )
 
+    if (usmg != "Apply" and usmg != "Refresh" ) then
+       error("invalid user message start (is CaseSensitive):  " .. usmg)
+    end
     if (table.IsEmpty(tab)) then return end
 
-    net.Start("MediaPlayer." .. usmg)
+    net.Start("MediaPlayer." .. usmg .. "DefaultPreset")
         net.WriteTable(tab)
     net.Send(ply)
 end

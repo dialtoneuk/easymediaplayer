@@ -33,12 +33,12 @@ MediaPlayer.RegisteredVotes = {
 			MediaPlayer.SkipVideo()
 
 			for k,v in pairs(player.GetAll()) do
-				v:SendMessage("Vote Passed! Skipping video..")
+				v:SendMediaPlayerMessage("Vote Passed! Skipping video..")
 			end
 		end,
 		OnFailire = function()
 			for k,v in pairs(player.GetAll()) do
-				v:SendMessage("Vote has not been skipped!")
+				v:SendMediaPlayerMessage("Vote has not been skipped!")
 			end
 		end
 	},
@@ -51,12 +51,12 @@ MediaPlayer.RegisteredVotes = {
 			MediaPlayer.SkipVideo()
 
 			for k,v in pairs(player.GetAll()) do
-				v:SendMessage("Vote Passed! Blacklisting video..")
+				v:SendMediaPlayerMessage("Vote Passed! Blacklisting video..")
 			end
 		end,
 		OnFailire = function()
 			for k,v in pairs(player.GetAll()) do
-				v:SendMessage("Video has not been blacklisted!")
+				v:SendMediaPlayerMessage("Video has not been blacklisted!")
 			end
 		end
 	}
@@ -172,7 +172,7 @@ function MediaPlayer.AddToCount()
 
 	if (MediaPlayer.IsSettingTrue("announce_count")) then
 		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("Votes +1 to " .. MediaPlayer.CurrentVote.Type .. " (" .. MediaPlayer.CurrentVote.Count ..  " / " .. MediaPlayer.CurrentVote.Required  .. ")")
+			v:SendMediaPlayerMessage("Votes +1 to " .. MediaPlayer.CurrentVote.Type .. " (" .. MediaPlayer.CurrentVote.Count ..  " / " .. MediaPlayer.CurrentVote.Required  .. ")")
 		end
 
 		if (MediaPlayer.HasPassed() ) then
@@ -194,7 +194,7 @@ function MediaPlayer.StartVote(vote, ply)
 
 	local count = table.Count( player.GetAll() )
 
-	if (v.Required > count ) then ply:SendMessage("Must have at over " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
+	if (v.Required > count ) then ply:SendMediaPlayerMessage("Must have at over " .. v.Required .. " players in the server for this vote, there is currently " .. count) return end
 
 	if (v.Required == 1 ) then
 		v.Required = math.Round(count / 2)
@@ -206,7 +206,7 @@ function MediaPlayer.StartVote(vote, ply)
 		local result = v.OnStart()
 
 		if (result == false ) then
-			ply:SendMessage("Unable to start vote")
+			ply:SendMediaPlayerMessage("Unable to start vote")
 			return
 		end
 	end
@@ -237,7 +237,7 @@ function MediaPlayer.ExecuteVote(vote)
 
 	if (MediaPlayer.IsSettingTrue("announce_vote")) then
 		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("A vote has been initiated. type !vote to participate! " .. vote.Required .. " votes are required for this to pass!")
+			v:SendMediaPlayerMessage("A vote has been initiated. type !vote to participate! " .. vote.Required .. " votes are required for this to pass!")
 		end
 	end
 

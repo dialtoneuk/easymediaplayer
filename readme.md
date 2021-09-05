@@ -31,26 +31,6 @@ As of 2021, the chromium web engine is not in the game by default due to some cr
 
 **NOTE:** I have noticed several game crashing bugs with this addon on branches other than the  x86-x64 branch. These are simply impossible for me to fix as they are due to the older html engine, so please don't submit bug reports if you aren't on the x86-x64.
 
-### Direct MP3 Mode
-
-The server does not
- * Download or directly access any of the mp3s submitted.
- * Actually check if an mp3 is a valid mp3 (that would require downloading it).
- * Verify with complete accuracy that an mp3 can be played.
-
-What it will do is
- * Checks the link given by the user is indeed a valid mp3 and is accessible by the server (not 404) through a bog standard http get <u>(the return body of this request is the mp3 data or potentially bad data and does not leave the executory block of the http fetch function and is immediately marked for garbage collection)</u>
- * Check if a user is outright banned from posting mp3s (can help with abuse)
- * Put the mp3 into a container so even if its bad, it just won't play.
-
- Its really up to you if you decide to disable this feature or not. If you do change the setting `mp3_enabled` to false inside the server tab of the settings panel
-
-## More Important Things To Notes
-
-**NOTE:** Sever operators which use this plugin are advised to read each of comments provided for the settings to fully get an understanding of what each of them do. As for users, your client settings are seperated from the servers settings and will follow you through each server which uses Easy MediaPlayer, so you don't have to worry about your styling being messed up.
-
-**NOTE: <u>Always save your client settings as a preset!</u>** Or change the setting `preset_allow_default` to false overwise it will be overwritten when you join a server (for the first time) which has Easy Mediaplayer Installed and a server initial server. If you forget to flick the setting, you can always revert back to your saved preset. Remember to include any _centered or _inverted or _hide settings in the presets settings as they are not added implicitly when the default settings checkbox is true in the preset creator
-
 # Features
 
 * Server wide media playlist supporting Youtube, Youtube Music, Dailymotion, direct mp3s with more planned in the future!
@@ -67,6 +47,12 @@ What it will do is
 * Pointshop Integration
 * Developer hooks and open source code, built for expanding upon (and heavily encouraged)
 * Stable and migrates perfectly with newer versions, making it safe you to keep getting updates from the Steam Workshop.
+
+## More Important Things To Notes
+
+**NOTE:** Requires you to facilitate your own API keys for the various media platforms.
+**NOTE:** Each platform has different rate limits that once met will disable the API key, some for a day, some forever.
+**NOTE:** Searching lots of search results will be of great cost to your API keys rate limits, its best to keep it small.
 
 # Hooks Overview
 

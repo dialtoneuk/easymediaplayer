@@ -49,7 +49,7 @@ MediaPlayer.RegisteredCommands = {
 				MediaPlayer.AddToCount()
 				ply:SetNWBool("MediaPlayer.Voted", true )
 			else
-				ply:SendMessage("You have already voted in this vote!")
+				ply:SendMediaPlayerMessage("You have already voted in this vote!")
 			end
 		end,
 		Aliases = {
@@ -69,11 +69,16 @@ MediaPlayer.RegisteredCommands = {
 			"s"
 		}
 	},
+	Refresh = {
+		OnExecute = function(ply, cmd)
+			ply:ConCommand("media_create_cl")
+		end
+	},
 	Like = {
 		OnExecute = function(ply, cmd)
 			if ( table.IsEmpty(MediaPlayer.CurrentVideo) ) then
 
-				ply:SendMessage("No video currently playing!")
+				ply:SendMediaPlayerMessage("No video currently playing!")
 				return false
 			end --returning false won't inhibit a cooldown
 
@@ -84,7 +89,7 @@ MediaPlayer.RegisteredCommands = {
 		OnExecute = function(ply, cmd)
 			if ( table.IsEmpty(MediaPlayer.CurrentVideo) ) then
 
-				ply:SendMessage("No video currently playing!")
+				ply:SendMediaPlayerMessage("No video currently playing!")
 				return false
 			end --returning false won't inhibit a cooldown
 
@@ -96,7 +101,7 @@ MediaPlayer.RegisteredCommands = {
 
 			if ( table.IsEmpty(MediaPlayer.CurrentVideo) ) then
 
-				ply:SendMessage("No video currently playing!")
+				ply:SendMediaPlayerMessage("No video currently playing!")
 				return false
 			end --returning false won't inhibit a cooldown
 
@@ -194,10 +199,10 @@ function MediaPlayer.ParseCommand(ply, str)
 
 	if (str.find(command, " ")) then
 		command = str.Explode(" ", command)[1]
-		ply:SendMessage("Commands with spaces not supported! Will treat your command like '" .. command .. "'" )
+		ply:SendMediaPlayerMessage("Commands with spaces not supported! Will treat your command like '" .. command .. "'" )
 	end
 
-	if (!MediaPlayer.Commands[command]) then ply:SendMessage("command '" .. command .. "' does not exist") return false end
+	if (!MediaPlayer.Commands[command]) then ply:SendMediaPlayerMessage("command '" .. command .. "' does not exist") return false end
 
 	command = MediaPlayer.Commands[command]
 
@@ -205,7 +210,7 @@ function MediaPlayer.ParseCommand(ply, str)
 	if (!command.OnExecute) then return false end
 
 	if (command.Cooldown and MediaPlayer.HasCooldown(ply, "Command")) then
-		ply:SendMessage("You are doing that too quickly!")
+		ply:SendMediaPlayerMessage("You are doing that too quickly!")
 		return nil
 	else
 

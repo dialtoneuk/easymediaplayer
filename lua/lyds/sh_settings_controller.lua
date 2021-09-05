@@ -288,6 +288,22 @@ function MediaPlayer.ResetSettings()
 	end
 end
 
+function MediaPlayer.ResetSetting(key)
+	for k,keys in pairs(MediaPlayer.Settings) do
+		if (k != key) then continue end
+
+		for kind,v in pairs(keys) do
+			if (kind == MediaPlayer.Type.BOOL) then
+				MediaPlayer.Settings[k][kind].Value = ( v.DefValue == 1 or v.DefValue == true )
+			elseif (kind == MediaPlayer.Type.TABLE ) then
+				MediaPlayer.Settings[k][kind].Value = table.Copy(v.DefValue)
+			else
+				MediaPlayer.Settings[k][kind].Value = v.DefValue
+			end
+		end
+	end
+end
+
 --this is named differently if we are playing locally
 if (SERVER) then
 	--server only
@@ -370,7 +386,7 @@ if (SERVER) then
 		MediaPlayer.ResyncConvars()
 
 		if (!ply:IsAdmin()) then
-			ply:SendAdminSettings()
+			ply:SendMediaPlayerAdminSettings()
 			return
 		end
 	end)

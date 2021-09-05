@@ -117,7 +117,7 @@ function MediaPlayer.DisplayTip()
 			local tip = MediaPlayer.SelectTip(v:IsAdmin())
 
 			if (tip != nil) then
-				v:SendMessage("psst - " .. MediaPlayer.ParseTipBody(tip))
+				v:SendMediaPlayerMessage("psst - " .. MediaPlayer.ParseTipBody(tip))
 			end
 		end
 	end

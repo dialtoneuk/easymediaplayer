@@ -6,7 +6,7 @@
 util.AddNetworkString("MediaPlayer.SendPlaylist")
 util.AddNetworkString("MediaPlayer.SendCurrentVideo")
 util.AddNetworkString("MediaPlayer.RequestAdminSettings")
-util.AddNetworkString("MediaPlayer.SendAdminSettings")
+util.AddNetworkString("MediaPlayer.SendMediaPlayerAdminSettings")
 util.AddNetworkString("MediaPlayer.SetAdminSettings")
 util.AddNetworkString("MediaPlayer.SearchQuery")
 util.AddNetworkString("MediaPlayer.SendSearchResults")
@@ -17,7 +17,7 @@ util.AddNetworkString("MediaPlayer.SendSessionChunk")
 util.AddNetworkString("MediaPlayer.End")
 util.AddNetworkString("MediaPlayer.NewVote")
 util.AddNetworkString("MediaPlayer.EndVote")
-util.AddNetworkString("MediaPlayer.SendMessage")
+util.AddNetworkString("MediaPlayer.SendMediaPlayerMessage")
 util.AddNetworkString("MediaPlayer.SendPersonalSession")
 util.AddNetworkString("MediaPlayer.SendBlacklist")
 util.AddNetworkString("MediaPlayer.CreateWarningBox")
@@ -39,7 +39,7 @@ util.AddNetworkString("MediaPlayer.EnabledMediaTypes")
 net.Receive("MediaPlayer.SearchQuery",function(len, ply)
 
 	if (MediaPlayer.HasCooldown(ply, "Search")) then
-		ply:SendMessage("Please wait a bit before searching again")
+		ply:SendMediaPlayerMessage("Please wait a bit before searching again")
 		return
 	end
 
@@ -79,7 +79,7 @@ end)
 
 --sends the admin settings to a player, checks if they are an admin inside the function.
 net.Receive("MediaPlayer.RequestAdminSettings",function(len, ply)
-	ply:SendAdminSettings()
+	ply:SendMediaPlayerAdminSettings()
 end)
 
 --sends the player the initial preset and applys it
@@ -96,7 +96,7 @@ net.Receive("MediaPlayer.AdminRefreshDefaultPreset",function(len, ply)
 	if (!ply:IsAdmin()) then return end
 	if (!file.Exists("lyds/presets/server_preset.json", "DATA")) then return end
 
-	MediaPlayer.SendDefaultPreset(ply, "RefreshDefaultPreset")
+	MediaPlayer.SendDefaultPreset(ply, "DefaultPreset")
 	-- above sends the "RefreshDefaultPreset" which does not auto apply the preset only updates the clients server.json
 end)
 
@@ -186,10 +186,10 @@ net.Receive("MediaPlayer.SetAdminSettings",function(len, ply)
 
 		if (!v:IsAdmin()) then continue end
 
-		v:SendAdminSettings()
+		v:SendMediaPlayerAdminSettings()
 
 		if (MediaPlayer.IsSettingTrue("announce_settings")) then
-			v:SendMessage("Admin settings have been updated by " .. ply:GetName()  .. " refreshing settings panel...")
+			v:SendMediaPlayerMessage("Admin settings have been updated by " .. ply:GetName()  .. " refreshing settings panel...")
 		end
 
 		v:ConCommand("settings_create")
@@ -235,16 +235,67 @@ hook.Add("PlayerSay", "MediaPlayer.PlayerSay", function(ply, msg, teamchat)
 	end
 end)
 
---Sends a warning to all admins which are online when the first bad error occurs
-hook.Add("OnFirstBadError","MediaPlayer.OnFirstBadError", function(err)
 
+local errorh = function(err)
 	local f = function()
+
+		err[1] = err[1] or ""
+		local suffix = ""
+
+		if (#err[1] > 64) then
+			err[1] = string.sub(err[1], 1, 64)
+			suffix = " (cut after 64 characters check log/console)"
+		end
+
+		--wont spam
+		if (MediaPlayer and MediaPlayer.LastError != err[1]) then
+			MediaPlayer.LastError = err[1]
+		end
+
 		for k,v in pairs(player.GetAll()) do
 
 			if (!IsValid(v)) then continue end
 			if (!v:IsAdmin() ) then continue end
 
-			v:SendMediaWarningBox("There has been an bad error! Please check the admin panel inside the error log to see what occured! \n\n error: " .. err[1],"Oh no!")
+			v:SendMediaPlayerMessage("There has been an error...")
+			v:SendMediaPlayerMessage("[START] (v" .. MediaPlayer.Version .. ")\n", true)
+			v:SendMediaPlayerMessage( err[1] .. suffix .. "\n", true )
+			v:SendMediaPlayerMessage("[END] (v" .. MediaPlayer.Version .. ")", true )
+		end
+	end
+
+	pcall(f)
+end
+
+--Sends first bad error no matter what
+hook.Add("OnFirstBadError","MediaPlayer.OnFirstBadError", errorh )
+hook.Add("OnBadError","MediaPlayer.OnBadError", errorh )
+
+--Sends a warning to all admins each time a server error occurs
+hook.Add("OnWarning","MediaPlayer.OnWarning", function(err)
+	local f = function()
+		err[1] = err[1] or ""
+		local suffix = ""
+
+		if (#err[1] > 32) then
+			err[1] = string.sub(err[1], 1, 32)
+			suffix = " (cut after 32 characters check log/console)"
+		end
+
+		--wont spam
+		if (MediaPlayer and MediaPlayer.LastWarning != err[1]) then
+			MediaPlayer.LastWarning = err[1]
+		end
+
+		for k,v in pairs(player.GetAll()) do
+
+			if (!IsValid(v)) then continue end
+			if (!v:IsAdmin() ) then continue end
+
+			v:SendMediaPlayerMessage("Something is trying to warn you...")
+			v:SendMediaPlayerMessage("[START] (v" .. MediaPlayer.Version .. ")", true)
+			v:SendMediaPlayerMessage( err[1] .. suffix .. "\n", true)
+			v:SendMediaPlayerMessage("[END] (v" .. MediaPlayer.Version .. ")", true)
 		end
 	end
 
@@ -253,7 +304,7 @@ end)
 
 --Does our initial spawn
 hook.Add("PlayerInitialSpawn","MediaPlayer.InitialSpawn",function(ply, transition)
-	ply:DoInitialSpawn()
+	ply:MediaPlayerInitialSpawn()
 
 	--for the search panel, sends what media types are currently enabled
 	MediaPlayer.SendEnabledMediaTypes(ply, MediaPlayer.GetEnabledMediaTypes())
@@ -267,7 +318,7 @@ end)
 --starts a vote, the first argument is the name of the vote and it is defined in sv_media_voting.lua
 concommand.Add("media_start_vote", function(ply, cmd, args)
 	if (MediaPlayer.HasCooldown(ply, "Vote")) then
-		ply:SendMessage("You have started a vote too recently!")
+		ply:SendMediaPlayerMessage("You have started a vote too recently!")
 		return
 	end
 
@@ -324,7 +375,7 @@ concommand.Add("media_request_personal_session", function(ply, cmd, args)
 	local page = math.abs(tonumber(args[1]) - 1)
 	local setting = MediaPlayer.GetSetting("media_history_max")
 
-	local data = ply:GetPersonalSession(setting.Value, page * setting.Value )
+	local data = ply:GetSessionVideos(setting.Value, page * setting.Value )
 
 	if (data == nil or table.IsEmpty(data)) then return end
 
@@ -419,7 +470,7 @@ end)
 
 --refreshes the admin settings
 concommand.Add("media_refresh_admin_settings", function(ply)
-	ply:SendAdminSettings()
+	ply:SendMediaPlayerAdminSettings()
 end)
 
 --reloads the playlist for all users
@@ -436,7 +487,7 @@ concommand.Add("media_skip_video", function(ply)
 
 		if (MediaPlayer.IsSettingTrue("announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
-				v:SendMessage("Video skipped by " .. ply:GetName() .. " (admin)")
+				v:SendMediaPlayerMessage("Video skipped by " .. ply:GetName() .. " (admin)")
 			end
 		end
 	end
@@ -463,7 +514,7 @@ concommand.Add("media_blacklist_video", function(ply,cmd,args)
 
 		if (MediaPlayer.IsSettingTrue("announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
-				v:SendMessage("Video banned by " .. ply:GetName() .. " (admin)")
+				v:SendMediaPlayerMessage("Video banned by " .. ply:GetName() .. " (admin)")
 			end
 		end
 	end
@@ -481,7 +532,7 @@ concommand.Add("media_unblacklist_video", function(ply, cmd, args)
 
 		if (MediaPlayer.IsSettingTrue("announce_admin")) then
 			for k,v in pairs(player.GetAll()) do
-				v:SendMessage( vid.Title .. " has been unbanned by " ..  ply:GetName() .. " (admin)")
+				v:SendMediaPlayerMessage( vid.Title .. " has been unbanned by " ..  ply:GetName() .. " (admin)")
 			end
 		end
 
@@ -492,10 +543,10 @@ end)
 
 --likes a current video
 concommand.Add("media_like_video", function(ply, cmd, args)
-	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have liked a video too recently") return end
+	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMediaPlayerMessage("You have liked a video too recently") return end
 	if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
 	if (ply:GetNWBool("MediaPlayer.Engaged")) then
-		ply:SendMessage("You have already engaged with this video!")
+		ply:SendMediaPlayerMessage("You have already engaged with this video!")
 		return
 	end
 
@@ -510,14 +561,14 @@ concommand.Add("media_like_video", function(ply, cmd, args)
 			MediaPlayer.SendSessionForVideo(v, MediaPlayer.Session[video.Video])
 
 			if (MediaPlayer.IsSettingTrue("announce_likes")) then
-				v:SendMessage( ply:GetName() .. " has liked this video!")
+				v:SendMediaPlayerMessage( ply:GetName() .. " has liked this video!")
 			end
 		end
 
 		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.CopyCooldown("Interaction") )
 
 		if (!MediaPlayer.IsSettingTrue("announce_dislikes")) then
-			ply:SendMessage("Video liked!")
+			ply:SendMediaPlayerMessage("Video liked!")
 		end
 
 
@@ -527,10 +578,10 @@ end)
 
 --dislikes a current video
 concommand.Add("media_dislike_video", function(ply, cmd, args)
-	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMessage("You have disliked a video too recently") return end
+	if (MediaPlayer.HasCooldown(ply, "Interaction")) then ply:SendMediaPlayerMessage("You have disliked a video too recently") return end
 	if (args[1] == nil and table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
 	if (ply:GetNWBool("MediaPlayer.Engaged")) then
-		ply:SendMessage("You have already engaged with this video!")
+		ply:SendMediaPlayerMessage("You have already engaged with this video!")
 		return
 	end
 
@@ -544,14 +595,14 @@ concommand.Add("media_dislike_video", function(ply, cmd, args)
 			MediaPlayer.SendSessionForVideo(v, MediaPlayer.Session[video.Video])
 
 			if (MediaPlayer.IsSettingTrue("announce_dislikes")) then
-				v:SendMessage( ply:GetName() .. " has disliked this video!")
+				v:SendMediaPlayerMessage( ply:GetName() .. " has disliked this video!")
 			end
 		end
 
 		MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.CopyCooldown("Interaction") )
 
 		if (!MediaPlayer.IsSettingTrue("announce_dislikes")) then
-			ply:SendMessage("Video disliked!")
+			ply:SendMediaPlayerMessage("Video disliked!")
 		end
 
 		local val = MediaPlayer.GetSetting("video_ban_after_dislikes").Value
@@ -562,7 +613,7 @@ concommand.Add("media_dislike_video", function(ply, cmd, args)
 
 			if (MediaPlayer.IsSettingTrue("announce_admin")) then
 				for k,v in pairs(player.GetAll()) do
-					v:SendMessage("Video automatically banned as it reached over the dislike fresh hold")
+					v:SendMediaPlayerMessage("Video automatically banned as it reached over the dislike fresh hold")
 				end
 			end
 		end
@@ -583,7 +634,7 @@ concommand.Add("media_play", function(ply, cmd, args)
 	local id = args[2] --is only a url if the typ is MP3
 
 	if (MediaPlayer.IsSettingTrue("admin_only") and !ply:IsAdmin()) then
-		ply:SendMessage("Only admins can use this feature.")
+		ply:SendMediaPlayerMessage("Only admins can use this feature.")
 		return
 	end
 
@@ -593,7 +644,7 @@ concommand.Add("media_play", function(ply, cmd, args)
 
 	--check if this user already has loads of videos
 	if (videoCount >= setting.Value and (!ply:IsAdmin() or !MediaPlayer.IsSettingTrue("admin_ignore_limits") ) ) then
-		ply:SendMessage("You are allowed a maximum of " .. setting.Value .. " in the playlist. You have " .. videoCount  .. "." )
+		ply:SendMediaPlayerMessage("You are allowed a maximum of " .. setting.Value .. " in the playlist. You have " .. videoCount  .. "." )
 		return
 	end
 
@@ -624,27 +675,27 @@ concommand.Add("media_play", function(ply, cmd, args)
 
 			if (returnedVideo == false ) then
 				if (!IsValid(video.Owner)) then return end
-				video.Owner:SendMessage("There was something wrong with that video! Please try another one")
+				video.Owner:SendMediaPlayerMessage("There was something wrong with that video! Please try another one")
 				return
 			end
 
 			if ( returnedVideo.Duration <= 0 ) then
 
 				if (!IsValid(video.Owner)) then return end
-				video.Owner:SendMessage("There was something wrong with that video! Please try another one")
+				video.Owner:SendMediaPlayerMessage("There was something wrong with that video! Please try another one")
 				return
 			end
 
 			if ( returnedVideo.Duration > MediaPlayer.GetSetting("video_max_duration").Value ) then
 				if (!IsValid(video.Owner)) then return end
-				video.Owner:SendMessage("This video is too long! Please select another one")
+				video.Owner:SendMediaPlayerMessage("This video is too long! Please select another one")
 				return
 			end
 
 			MediaPlayer.AddVideo(video.Video, video)
 			MediaPlayer.AddPlayerCooldown(video.Owner, MediaPlayer.CopyCooldown("Play"))
 
-			ply:SendMessage("Youtube video added!")
+			ply:SendMediaPlayerMessage("Youtube video added!")
 			MediaPlayer.Begin(video)
 		end)
 	elseif (typ == MediaPlayer.MediaType.MP3) then
@@ -663,7 +714,7 @@ concommand.Add("media_play", function(ply, cmd, args)
 		MediaPlayer.IsNot404(id, function(result)
 			if (!result) then
 				if (!IsValid(video.Owner)) then return end
-				video.Owner:SendMessage("There was something wrong with that mp3 link! Please try another one")
+				video.Owner:SendMediaPlayerMessage("There was something wrong with that mp3 link! Please try another one")
 				return
 			end
 
@@ -686,7 +737,7 @@ concommand.Add("media_delete", function(ply, cmd, args)
 
 	if (MediaPlayer.IsSettingTrue("announce_admin")) then
 		for k,v in pairs(player.GetAll()) do
-			v:SendMessage("Video deleted by admin (" .. ply:GetName() .. ")")
+			v:SendMediaPlayerMessage("Video deleted by admin (" .. ply:GetName() .. ")")
 		end
 	end
 

@@ -408,8 +408,13 @@ net.Receive("MediaPlayer.RefreshDefaultPreset", function()
 end)
 
 --receives a message from the server and puts it into the players chat
-net.Receive("MediaPlayer.SendMessage", function()
-	MediaPlayer.CreateChatMessage(net.ReadString())
+net.Receive("MediaPlayer.SendMediaPlayerMessage", function()
+
+	local str = net.ReadString()
+	local bool = net.ReadBool()
+	bool = !bool
+
+	MediaPlayer.CreateChatMessage(str, bool)
 end)
 
 
@@ -579,6 +584,6 @@ net.Receive("MediaPlayer.SendPlaylist",function()
 end)
 
 --receives admin settings from the server
-net.Receive("MediaPlayer.SendAdminSettings",function()
+net.Receive("MediaPlayer.SendMediaPlayerAdminSettings",function()
 	MediaPlayer.AdminSettings = net.ReadTable()
 end)

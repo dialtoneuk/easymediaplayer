@@ -4,41 +4,49 @@ local server = {
 		Value = true,
 		Comment = "Announce to the server when an admin skips or removes videos from the playlist."
 	},
+	announce_error = {
+		Value = true,
+		Comment = "Will announce in chat addon specific lua errors to all admins on the server."
+	},
+	announce_warning = {
+		Value = true,
+		Comment = "Will announce in chat addon specific warnings to all admins on the server."
+	},
 	announce_video = {
 		Value = true,
-		Comment = "Announce to the server when a new video has begun."
+		Comment = "Announce in chat to the server when a new video has begun."
 	},
 	announce_addition = {
 		Value = true,
-		Comment = "Announce to the server when a new video has been added to the playlist."
+		Comment = "Announce in chat to the server when a new video has been added to the playlist."
 	},
 	announce_ending = {
 		Value = true,
-		Comment = "Announce to the server when a video has come to its end."
+		Comment = "Announce in chat to the server when a video has come to its end."
 	},
 	announce_spawn = {
 		Value = true,
-		Comment = "Announce to the player that the server is running this plugin."
+		Comment = "Announce in chat to the player that the server is running this plugin."
 	},
 	announce_count = {
 		Value = true,
-		Comment = "Announce to the server when a vote has gained a new vote."
+		Comment = "Announce in chat to the server when a vote has gained a new vote."
 	},
 	announce_vote = {
 		Value = true,
-		Comment = "Announce the creation of new votes to the server."
+		Comment = "Announce in chat the creation of new votes to the server."
 	},
 	announce_likes = {
 		Value = true,
-		Comment = "Announce to the server when a player has liked a video."
+		Comment = "Announce in chat to the server when a player has liked a video."
 	},
 	announce_dislikes = {
 		Value = true,
-		Comment = "Announce to the server when a player has disliked a video."
+		Comment = "Announce in chat to the server when a player has disliked a video."
 	},
 	announce_settings = {
 		Value = true,
-		Comment = "Announce to all admins online when edits to the servers settings are made."
+		Comment = "Announce in chat to all admins online when edits to the servers settings are made."
 	},
 	tips_enabled = {
 		Value = true,
@@ -148,6 +156,10 @@ local server = {
 	youtube_api_key = {
 		Value = "REPLACE WITH YOUR OWN",
 		Comment = "Head over to google dashboard and create API credientials which have access to the Youtube Data API (version 3)"
+	},
+	youtube_backup_api_key = {
+		Value = "(unused)",
+		Comment = "(Coming soon)"
 	},
 	dailymotion_enabled = {
 		Value = false,
