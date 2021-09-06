@@ -515,7 +515,7 @@ function panel:UpdateTable(title, v, admin)
 		row:SetValue(v.Value)
 		row.DataChanged = function( _, val )
 
-			if (v.Refresh) then
+			if (v.Refresh and !admin) then
 
 				local fn = function()
 					RunConsoleCommand("media_refresh_cl")

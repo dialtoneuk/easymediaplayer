@@ -62,7 +62,20 @@ MediaPlayer.Panels = {
 			panel:MakePopup()
 		end
 	},
-
+	--Preset preview panel
+	PresetPreview = {
+		Element = "PresetPreviewWindow",
+		SettingsBase = "settings",
+		Draggable = true,
+		Admin = false,
+		Settings = {
+			--can define extra settings here
+			--size, is centered and show is implicit
+		},
+		PostInit = function(panel, key, settings)
+			panel:Hide()
+		end
+	},
 	--Warning Message Box
 	WarningBox = {
 		Preloaded = false, --this won't be created and "hidden", instead it'll be created on demand

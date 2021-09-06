@@ -41,6 +41,7 @@ local client = {
 				return value
 			end,
 			Background = MediaPlayer.Colours.FadedBlack,
+			SecondaryBackground = MediaPlayer.Colours.FadedGray,
 			Border = MediaPlayer.Colours.FadedBlack,
 			SecondaryBorder = MediaPlayer.Colours.FadedGray,
 			TextColor = MediaPlayer.Colours.White

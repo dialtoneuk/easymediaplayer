@@ -42,7 +42,7 @@ As of 2021, the chromium web engine is not in the game by default due to some cr
 * UI scales to all resolutions.
 * Comes packed with lots of ways to find the media you want to play. From using the built in UI or through chat commands (See Below)
 * Comes packed with lots of predefined chat commands, such as !vote and !voteskip. (Your severs command prefix can be changed in the settings panel)
-* Server-based historical records are kept of the videos being played, by who and when. (Does not use SQL and is purely json based)
+* Server keeps historical records of all music played using internal SQL engine. **MySQL support is an optional addon.**
 * Video engagements such as likes and dislikes.
 * Pointshop Integration
 * Developer hooks and open source code, built for expanding upon (and heavily encouraged)
@@ -51,7 +51,9 @@ As of 2021, the chromium web engine is not in the game by default due to some cr
 ## More Important Things To Notes
 
 **NOTE:** Requires you to facilitate your own API keys for the various media platforms.
+
 **NOTE:** Each platform has different rate limits that once met will disable the API key, some for a day, some forever.
+
 **NOTE:** Searching lots of search results will be of great cost to your API keys rate limits, its best to keep it small.
 
 # Hooks Overview

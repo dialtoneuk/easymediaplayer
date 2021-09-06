@@ -332,15 +332,6 @@ function panel:FillPresetEditor()
 		self.ComboBox:SetDisabled(true)
 	end
 
-	if (IsValid(self.VersionText)) then self.VersionText:Remove() end
-
-	self.VersionText = vgui.Create("DLabel", p )
-	self.VersionText:SetTall(15)
-	self.VersionText:Dock(TOP)
-	self.VersionText:DockMargin(0,self:GetPadding(),0,0)
-	self.VersionText:SetText( "Version: " .. ( self.Preset.Version or "Unknown?") )
-	self.VersionText:SetTextColor(MediaPlayer.Colours.Black)
-
 	if (IsValid(self.AddButton)) then self.AddButton:Remove() end
 
 	self.AddButton = vgui.Create("DButton", p )
@@ -367,13 +358,41 @@ function panel:FillPresetEditor()
 		end
 	end
 
+	if (IsValid(self.VersionText)) then self.VersionText:Remove() end
+
+	self.VersionText = vgui.Create("DLabel", p )
+	self.VersionText:SetTall(15)
+	self.VersionText:Dock(TOP)
+	self.VersionText:DockMargin(0,self:GetPadding(),0,0)
+	self.VersionText:SetText( "Version: " .. ( self.Preset.Version or "Unknown?") )
+	self.VersionText:SetTextColor(MediaPlayer.Colours.Black)
+
+	if (IsValid(self.PreviewButton)) then self.PreviewButton:Remove() end
+
+	self.PreviewButton = vgui.Create("DButton", p )
+	self.PreviewButton:SetTall(30)
+	self.PreviewButton:Dock(TOP)
+	self.PreviewButton:DockMargin(0,self:GetPadding() * 2,0,self:GetPadding() * 2)
+	self.PreviewButton:SetText("Preview Preset")
+
+	self.PreviewButton.DoClick = function()
+
+		--recreate it
+		MediaPlayer.ReinstantiatePanel("PresetPreview")
+
+		local pan = MediaPlayer.GetPanel("PresetPreview")
+		pan:SetPreview( self:GetPresetPreview() )
+		pan:MakePopup()
+		pan:Show()
+	end
+
 	if (IsValid(self.RemoveButton)) then self.RemoveButton:Remove() end
 
 	self.RemoveButton = vgui.Create("DButton", p )
 	self.RemoveButton:SetTall(20)
 	self.RemoveButton:Dock(TOP)
 	self.RemoveButton:SetDisabled(true)
-	self.RemoveButton:DockMargin(0,self:GetPadding(),0,self:GetPadding() * 2)
+	self.RemoveButton:DockMargin(0,self:GetPadding() * 2,0,0)
 	self.RemoveButton:SetText("Remove Setting")
 
 	self.RemoveButton.DoClick = function()
@@ -394,12 +413,11 @@ function panel:FillPresetEditor()
 	if (IsValid(self.UpdateButton)) then self.UpdateButton:Remove() end
 
 	self.UpdateButton = vgui.Create("DButton", p )
-	self.UpdateButton:SetTall(15)
+	self.UpdateButton:SetTall(20)
 	self.UpdateButton:Dock(TOP)
 	self.UpdateButton:SetDisabled(true)
 	self.UpdateButton:DockMargin(0,self:GetPadding(),0,0)
-	self.UpdateButton:SetTall(20)
-	self.UpdateButton:SetText("Set Setting To Current Setting")
+	self.UpdateButton:SetText("Set Value To Current Setting")
 
 	self.UpdateButton.DoClick = function()
 
@@ -422,12 +440,11 @@ function panel:FillPresetEditor()
 	if (IsValid(self.UpdateAllButton)) then self.UpdateAllButton:Remove() end
 
 	self.UpdateAllButton = vgui.Create("DButton", p )
-	self.UpdateAllButton:SetTall(15)
+	self.UpdateAllButton:SetTall(20)
 	self.UpdateAllButton:Dock(TOP)
 	self.UpdateAllButton:SetDisabled(true)
 	self.UpdateAllButton:DockMargin(0,self:GetPadding(),0,0)
-	self.UpdateAllButton:SetTall(30)
-	self.UpdateAllButton:SetText("Sync All Settings To Current")
+	self.UpdateAllButton:SetText("Sync All Values To Current Settings")
 
 	self.UpdateAllButton.DoClick = function()
 
@@ -458,7 +475,7 @@ function panel:FillPresetEditor()
 	if (IsValid(self.LoadButton)) then self.LoadButton:Remove() end
 
 	self.LoadButton = vgui.Create("DButton", p )
-	self.LoadButton:SetTall(30)
+	self.LoadButton:SetTall(20)
 	self.LoadButton:Dock(BOTTOM)
 	self.LoadButton:DockMargin(0,self:GetPadding(),0,0)
 	self.LoadButton:SetText("Apply Preset")
@@ -506,7 +523,7 @@ function panel:FillPresetEditor()
 	if (IsValid(self.CopyButton)) then self.CopyButton:Remove() end
 
 	self.CopyButton = vgui.Create("DButton", p )
-	self.CopyButton:SetTall(15)
+	self.CopyButton:SetTall(20)
 	self.CopyButton:Dock(BOTTOM)
 	self.CopyButton:DockMargin(0,self:GetPadding() * 2,0,0)
 	self.CopyButton:SetText("Copy Preset")
@@ -514,7 +531,7 @@ function panel:FillPresetEditor()
 	if (IsValid(self.SaveButton)) then self.SaveButton:Remove() end
 
 	self.SaveButton = vgui.Create("DButton", p )
-	self.SaveButton:SetTall(30)
+	self.SaveButton:SetTall(20)
 	self.SaveButton:Dock(BOTTOM)
 	self.SaveButton:DockMargin(0,self:GetPadding(),0,0)
 	self.SaveButton:SetText("Save Preset")
@@ -529,6 +546,42 @@ function panel:FillPresetEditor()
 	end
 
 	self.HasEdited = false
+end
+
+function panel:GetPresetPreview()
+
+	if (self.Preset == nil ) then return {} end
+
+	local tab = {}
+
+	for k,v in pairs(self.DefaultSettings.Panels) do
+
+		if (self.Preset.Settings[v .. "_colours"] != nil ) then
+			tab[v .. "_colours"] = table.Copy(self.Preset.Settings[v .. "_colours"])
+		end
+
+		if (self.Preset.Settings[v .. "_size"] != nil ) then
+			tab[v .. "_size"] = table.Copy(self.Preset.Settings[v .. "_size"])
+		end
+
+		if (self.Preset.Settings[v .. "_position"] != nil ) then
+			tab[v .. "_position"] = table.Copy(self.Preset.Settings[v .. "_position"])
+		end
+
+		if (self.Preset.Settings[v .. "_resize_scale"] != nil ) then
+			tab[v .. "_resize_scale"] = self.Preset.Settings[v .. "_resize_scale"]
+		end
+
+		if (self.Preset.Settings[v .. "_invert_position"] != nil ) then
+			tab[v .. "_invert_position"] = self.Preset.Settings[v .. "_invert_position"]
+		end
+
+		if (self.Preset.Settings[v .. "_centered"] != nil ) then
+			tab[v .. "_centered"] = self.Preset.Settings[v .. "_centered"]
+		end
+	end
+
+	return tab
 end
 
 function panel:IsPresetLocked()

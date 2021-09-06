@@ -199,7 +199,7 @@ local client = {
 		Comment = "(editing coming soon)"
 	},
 	gui_resize_scale = {
-		Value = 4,
+		Value = 3,
 		Max = 10,
 		Refresh = true,
 		SlowUpdate = 2,

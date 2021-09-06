@@ -89,8 +89,8 @@ end
 function panel:SetGrid()
 	self.Grid:Dock(FILL)
 	self.Grid:SetCols( 1 )
-	self.Grid:SetWide(self:GetWidth(true))
-	self.Grid:SetColWide(self:GetWidth(true, true))
+	self.Grid:SetWide(self:GetWidth(true, true))
+	self.Grid:SetColWide(self:GetWidth(true, true) - self:GetPadding())
 	self.Grid:SetRowHeight(self.Settings.Size.Value.RowHeight + self.Settings.Size.Value.RowSpacing )
 end
 --[[
@@ -217,19 +217,17 @@ function panel:CreateFullPanel()
 
 	if (IsValid(self.FullPanel)) then self.FullPanel:Remove() end
 
-	local h = math.floor(self.Settings.Size.Value.RowHeight / 2) + self.Settings.Size.Value.RowSpacing
-
 	self.FullPanel = vgui.Create("DButton", self.Grid )
-	self.FullPanel:SetWide(self:GetWidth(true, true) - self:GetPadding())
-	self.FullPanel:SetTall( h )
+	self.FullPanel:SetWide(self:GetWidth() - self:GetPadding() * 2 )
+	self.FullPanel:SetTall( self.Settings.Size.Value.RowHeight - ( self:GetPadding() * 2 ) )
 	self.FullPanel:SetText("")
 	self.FullPanel.Paint = function(s)
 		surface.SetDrawColor(self.Settings.Colours.Value.ItemBackground)
 		surface.DrawRect(0, 0, s:GetWide(), s:GetTall())
 		surface.SetDrawColor(self.Settings.Colours.Value.Border)
 		surface.DrawOutlinedRect(0, 0, s:GetWide(), s:GetTall(), self.Settings.Options.Value.BorderThickness)
-		draw.SimpleText("Playlist Full", "PlaylistText", self:GetPadding(), h / 2 - self:GetPadding(), MediaPlayer.Colours.FadedWhite )
-		draw.SimpleText(self._Count  .. " videos in total", "PlaylistText", self:GetPadding() + 90,  h / 2 - self:GetPadding(), MediaPlayer.Colours.FadedWhite)
+		draw.SimpleText("Playlist Full", "BiggerText", self:GetPadding(), ( s:GetTall() / 2 ) - 15 , MediaPlayer.Colours.FadedWhite )
+		draw.SimpleText(self._Count  .. " videos in total", "PlaylistText", self:GetPadding() + 135, ( s:GetTall() / 2 ) - 10, MediaPlayer.Colours.FadedWhite)
 	end
 
 	self.Grid:AddItem(self.FullPanel)
@@ -250,7 +248,7 @@ function panel:UpdateGrid()
 
 	for k,v in SortedPairsByMemberValue(self.Playlist, "Position") do
 
-		if (count > self.Settings.Limit.Value ) then
+		if (count == self.Settings.Limit.Value ) then
 			self:CreateFullPanel()
 			break
 		end
@@ -290,9 +288,11 @@ function panel:RecalculateSize()
 
 	if (count > 1 ) then
 		count = count - self.Settings.Size.Value.RowSpacing
+	else
+		count = count + self.Settings.Size.Value.RowSpacing
 	end
 
-	self:SetTall(count + self:GetPadding() * 2 )
+	self:SetTall(count + self:GetPadding() * 2)
 end
 
 

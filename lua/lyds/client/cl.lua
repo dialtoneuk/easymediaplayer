@@ -41,6 +41,25 @@ surface.CreateFont( "BiggerText", {
 	outline = false,
 })
 
+
+surface.CreateFont( "PlaylistBigText", {
+	font = "Arial",
+	extended = false,
+	size = 22,
+	weight = 200,
+	blursize = 0,
+	scanlines = 0,
+	antialias = true,
+	underline = false,
+	italic = false,
+	strikeout = false,
+	symbol = false,
+	rotary = false,
+	shadow = true,
+	additive = false,
+	outline = false,
+})
+
 surface.CreateFont( "PlaylistText", {
 	font = "Arial",
 	extended = false,
@@ -98,7 +117,7 @@ surface.CreateFont( "MediumText", {
 surface.CreateFont( "SmallText", {
 	font = "Arial",
 	extended = false,
-	size = 12,
+	size = 14,
 	weight = 80,
 	blursize = 0,
 	scanlines = 0,

@@ -52,6 +52,10 @@ local client = {
 		Value = false,
 		Comment = "(unused)"
 	},
+	base_centered = {
+		Value = true,
+		Comment = "(unused)"
+	},
 	base_auto_resize = {
 		Value = false,
 		Comment = "(unused)"
