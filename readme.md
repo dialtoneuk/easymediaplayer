@@ -27,7 +27,7 @@ Written by Llydia Cross.
 Easy MediaPlayer is a media addon which allows a garrysmod server (or just your self!) to watch and listen to media together via a server wide playlist. It currently supports several sites, such as Dailymotion and Youtube as well as Youtube Music and also mp3s.
 
 ## Note:
-As of 2021, the chromium web engine is not in the game by default due to some crashes and bugs that can occur. I myself have experienced several of these crashes, how ever I have found that crashes are actually more persitant on the "older html engine" than the newer one and _its really no bother switching to the x86-x64 and sticking wih it_. In regards to using this plugin on a server, <u>the only thing which will work on the older html engine are mp3 links which use a very primative javascript api to function, no videos will ever be possible now **flash is dead**</u>.
+As of 2021, the chromium web engine is not in the game by default due to some crashes and bugs that can occur. I myself have experienced several of these crashes, how ever I have found that crashes are actually more persitant on the "older html engine" than the newer one and _its really no bother switching to the x86-x64 branch and sticking wih it_. In regards to using this plugin on a server, <u>the only thing which will work on the older html engine are mp3 links which use a very primative javascript api to function, no videos will ever be possible now **flash is dead**</u>.
 
 **NOTE:** I have noticed several game crashing bugs with this addon on branches other than the  x86-x64 branch. These are simply impossible for me to fix as they are due to the older html engine, so please don't submit bug reports if you aren't on the x86-x64.
 

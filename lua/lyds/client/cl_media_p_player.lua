@@ -40,7 +40,7 @@ function panel:Paint()
 	surface.SetDrawColor(self.Settings.Colours.Value.Border)
 	surface.DrawOutlinedRect(0, 0, self:GetWidth(), self:GetHeight(), self.Settings.Options.Value.BorderThickness)
 	surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder)
-	surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
+	surface.DrawOutlinedRect(2, 2, self:GetWidth() - 4, self:GetHeight() - 4, self.Settings.Options.Value.BorderThickness)
 
 	--todo: Optimise this
 	if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
@@ -62,11 +62,11 @@ function panel:Paint()
 			title = title .. " (AUDIO MUTED!)"
 		end
 
-		draw.SimpleTextOutlined(title, "MediumText", 10, self:GetHeight() - 32, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-		draw.SimpleTextOutlined(self.Video.Creator .. " | " .. ( self.Video.Views or 0 ) .. " Views", "SmallText", 10, self:GetHeight() - 47, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-		draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner, "SmallText", 10, self:GetHeight() - 15, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-		draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw - 10) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-		draw.SimpleTextOutlined(" / " .. total, "MediumText", ( self:GetWidth() - tw - 10) - self:GetPadding() * 4, self:GetHeight() - 45, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(title, "PlaylistText", 10, self:GetHeight() - 38, MediaPlayer.Colours.White, 10, 1, 0.2, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(self.Video.Creator .. " | " .. ( self.Video.Views or 0 ) .. " Views", "SmallText", 10, self:GetHeight() - 55, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined("Submitted by " .. self._CurrentVideoOwner, "SmallText", 10, self:GetHeight() - 22, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(str, "MediumText", ( self:GetWidth() - w - tw - 10) - self:GetPadding() * 4, self:GetHeight() - 55, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+		draw.SimpleTextOutlined(" / " .. total, "MediumText", ( self:GetWidth() - tw - 10) - self:GetPadding() * 4, self:GetHeight() - 55, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
 	end
 end
 
@@ -200,7 +200,7 @@ function panel:GetYoutubeSourceCode(video, start_time, mute)
 			#player{
 				position: relative;
 				margin-left: 10px;
-				margin-top: 15px;
+				margin-top: 5px;
 			}
 			</style>
 		</head>
