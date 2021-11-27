@@ -96,7 +96,7 @@ net.Receive("MediaPlayer.AdminRefreshDefaultPreset",function(len, ply)
 	if (!ply:IsAdmin()) then return end
 	if (!file.Exists("lyds/presets/server_preset.json", "DATA")) then return end
 
-	MediaPlayer.SendDefaultPreset(ply, "DefaultPreset")
+	MediaPlayer.SendDefaultPreset(ply, "Refresh")
 	-- above sends the "RefreshDefaultPreset" which does not auto apply the preset only updates the clients server.json
 end)
 
