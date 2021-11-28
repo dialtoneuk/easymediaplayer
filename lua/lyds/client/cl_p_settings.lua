@@ -161,11 +161,31 @@ Add Credits Tab
 --]]
 
 function panel:AddCreditsTab()
-	local pan = vgui.Create("DScrollPanel", self.PropertySheet)
-	self:SetDockPadding(pan)
-	pan:Dock(FILL)
 
-	self.PropertySheet:AddSheet("Credits & Changelog", pan, "icon16/rainbow.png")
+	local p = vgui.Create("DPanel", self.PropertySheet)
+	p:Dock(FILL)
+	self:SetDockMargin(p)
+
+	local html = vgui.Create("DHTML", p)
+	html:Dock(FILL)
+	html:SetHTML([[
+		<html>
+			<head>
+				<style>
+					html{
+						font-family: Arial, Helvetica, sans-serif;
+						text-align: center;
+						padding: 15%;
+					}
+				</style>
+			</head>
+			<body>
+				<h1>Created by Llydia Cross</h1>
+			</body>
+		</html>
+	]])
+
+	self.PropertySheet:AddSheet("Credits & Changelog", p, "icon16/rainbow.png")
 end
 
 --[[

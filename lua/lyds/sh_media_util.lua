@@ -1,14 +1,19 @@
 --pareses a youtube url and returns the video id
 function MediaPlayer.ParseYoutubeURL(url) --bad method
 
-	if (url == "https://www.youtube.com"  or url == "http://youtube.com" ) then return nil end
-	if (string.sub(url, 1,23) != "https://www.youtube.com" and string.sub(url, 1,23) != "http://youtube.com" ) then return nil end
 
-	local str = string.match(url, "?v=[a-zA-Z0-9_/]+") --bad method
+	local str = string.Replace(url, "https://", "");
+	str = string.Replace(str, "http://", "");
+	str = string.Replace(str, "www.", "");
+
+	if (string.sub(str, 1,11) != "youtube.com") then print(string.sub(str, 1,8)) return nil end
+
+	str = string.match(str, "?v=[a-zA-Z0-9_/]+") --bad method
 
 	if (str == nil) then return nil end
 
 	str = string.Replace(str, "?v=", "") --ugh
+
 	return str
 end
 

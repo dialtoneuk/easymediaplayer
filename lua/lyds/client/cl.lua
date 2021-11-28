@@ -26,7 +26,7 @@ MediaPlayer.AdminSettings = MediaPlayer.AdminSettings  or {}
 surface.CreateFont( "BiggerText", {
 	font = "Arial",
 	extended = false,
-	size = 30,
+	size = 25,
 	weight = 200,
 	blursize = 0,
 	scanlines = 0,
@@ -36,7 +36,7 @@ surface.CreateFont( "BiggerText", {
 	strikeout = false,
 	symbol = false,
 	rotary = false,
-	shadow = true,
+	shadow =false,
 	additive = false,
 	outline = false,
 })
@@ -55,7 +55,7 @@ surface.CreateFont( "PlaylistBigText", {
 	strikeout = false,
 	symbol = false,
 	rotary = false,
-	shadow = true,
+	shadow = false,
 	additive = false,
 	outline = false,
 })
@@ -63,7 +63,7 @@ surface.CreateFont( "PlaylistBigText", {
 surface.CreateFont( "PlaylistText", {
 	font = "Arial",
 	extended = false,
-	size = 20,
+	size = 19,
 	weight = 200,
 	blursize = 0,
 	scanlines = 0,
@@ -73,7 +73,7 @@ surface.CreateFont( "PlaylistText", {
 	strikeout = false,
 	symbol = false,
 	rotary = false,
-	shadow = true,
+	shadow = false,
 	additive = false,
 	outline = false,
 })
@@ -81,7 +81,7 @@ surface.CreateFont( "PlaylistText", {
 surface.CreateFont( "BigText", {
 	font = "Arial",
 	extended = false,
-	size = 18,
+	size = 16,
 	weight = 200,
 	blursize = 0,
 	scanlines = 0,
@@ -91,7 +91,7 @@ surface.CreateFont( "BigText", {
 	strikeout = false,
 	symbol = false,
 	rotary = false,
-	shadow = true,
+	shadow = false,
 	additive = false,
 	outline = false,
 })
@@ -99,7 +99,7 @@ surface.CreateFont( "BigText", {
 surface.CreateFont( "MediumText", {
 	font = "Arial",
 	extended = false,
-	size = 16,
+	size = 14,
 	weight = 100,
 	blursize = 0,
 	scanlines = 1,

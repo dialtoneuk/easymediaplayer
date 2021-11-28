@@ -28,7 +28,7 @@ function panel:Init()
 
 	self.ScrollPanel = vgui.Create("DScrollPanel", self)
 	self.SearchButton = vgui.Create( "DButton", self.ScrollPanel )
-	self.ColumnWidth = self.Settings.ColumnWidth.Value
+self.ColumnWidth = self:GetWidth() / self.Settings.ColumnCount.Value or 1
 
 	self.ScrollPanel:Dock(FILL)
 	self:SetDockMargin(self.ScrollPanel, 2)

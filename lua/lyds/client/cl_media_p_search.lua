@@ -1,5 +1,4 @@
 local panel = {}
-
 panel.Name = "search"
 
 panel.Settings = {
@@ -7,7 +6,6 @@ panel.Settings = {
 	ColumnCount = "column_count",
 	ColumnWidth = "column_width"
 }
-
 
 function panel:Init()
 	self:BaseInit({
@@ -17,54 +15,54 @@ function panel:Init()
 		}
 	})
 
-	if (!self:IsSettingTrue("AutoResize")) then
+	if (not self:IsSettingTrue("AutoResize")) then
 		self:SetIgnoreRescaling(false, false)
 		self:Rescale()
 	else
 		self:RescaleTo(self:GetSettingInt("ResizeScale"))
 	end
 
-	self.PropertySheet = vgui.Create("DPropertySheet", self )
+	self.PropertySheet = vgui.Create("DPropertySheet", self)
 	self.PropertySheet:Dock(FILL)
 
 	self:AddSearchPanel()
+	self:AddBrowserPanel()
 	self:AddSessionPanel()
 	self:AddHistoryPanel()
 end
 
 function panel:AddHistoryPanel()
-	self.SearchHistoryContainer = vgui.Create("MediaPlayer.SearchHistoryContainer", self.PropertySheet )
-	self.SearchHistoryContainer.ColumnWidth = ( self:GetWidth() / self:GetSettingInt("ColumnCount") ) - 15
+	self.SearchHistoryContainer = vgui.Create("MediaPlayer.SearchHistoryContainer", self.PropertySheet)
+	self.SearchHistoryContainer.ColumnWidth = (self:GetWidth() / self:GetSettingInt("ColumnCount")) - 15
 	self.SearchHistoryContainer:Dock(FILL)
 	self.SearchHistoryContainer:AddDefaultPanel()
-
 	self.PropertySheet:AddSheet("History", self.SearchHistoryContainer, "icon16/zoom.png")
 end
 
-function panel:AddSessionPanel()
-	self.SearchSessionContainer = vgui.Create("MediaPlayer.SearchSessionContainer", self.PropertySheet )
-	self.SearchSessionContainer.ColumnWidth = ( self:GetWidth() / self:GetSettingInt("ColumnCount") ) - 15
-	self.SearchSessionContainer:Dock(FILL)
+function panel:AddBrowserPanel()
+	self.SearchBrowserContainer = vgui.Create("MediaPlayer.SearchBrowserContainer", self.PropertySheet)
+	self.SearchBrowserContainer:Dock(FILL)
+	self.PropertySheet:AddSheet("Browser", self.SearchBrowserContainer, "icon16/world.png")
+end
 
+function panel:AddSessionPanel()
+	self.SearchSessionContainer = vgui.Create("MediaPlayer.SearchSessionContainer", self.PropertySheet)
+	self.SearchSessionContainer.ColumnWidth = (self:GetWidth() / self:GetSettingInt("ColumnCount")) - 15
+	self.SearchSessionContainer:Dock(FILL)
 	self.PropertySheet:AddSheet("Session", self.SearchSessionContainer, "icon16/hourglass.png")
 end
 
 function panel:AddSearchPanel()
-	self.SearchContainer = vgui.Create("MediaPlayer.SearchContainer", self.PropertySheet )
-	self.SearchContainer.ColumnWidth = ( self:GetWidth() / self:GetSettingInt("ColumnCount") ) - 15
+	self.SearchContainer = vgui.Create("MediaPlayer.SearchContainer", self.PropertySheet)
+	self.SearchContainer.ColumnWidth = (self:GetWidth() / self:GetSettingInt("ColumnCount")) - 15
 	self.SearchContainer:Dock(FILL)
 	self.SearchContainer:AddDefaultPanel()
-
-	self.SearchController = vgui.Create("DPanel", self.SearchContainer )
+	self.SearchController = vgui.Create("DPanel", self.SearchContainer)
 	self.SearchController:Dock(BOTTOM)
-	self.SearchController:SetTall( self:GetWidth() / 6 )
+	self.SearchController:SetTall(self:GetWidth() / 6)
 	self.SearchController:Hide()
-	self.SearchController.Paint = function()
-		return
-	end
-
+	self.SearchController.Paint = function() return end
 	self:SetDockMargin(self.SearchController)
-
 	self.PropertySheet:AddSheet("Search", self.SearchContainer, "icon16/wand.png")
 end
 
@@ -73,18 +71,16 @@ function panel:RebuildComboBox()
 end
 
 function panel:ShowVideoInfo(video)
-
 	if (IsValid(self.SearchItem)) then
 		self.SearchItem:SetVideo(video)
 		self.SearchController:Show()
+
 		return
 	end
 
 	self.SearchItem = vgui.Create("MediaPlayer.SearchItem", self.SearchController)
-
 	self.SearchItem:Dock(FILL)
 	self.SearchItem:SetVideo(video)
-
 	self.SearchController:Show()
 end
 

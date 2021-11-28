@@ -42,6 +42,10 @@ local client = {
 		Type = MediaPlayer.Type.FLOAT,
 		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
+	vote_center_horizontally = {
+		Value = false,
+		Comment = "Turning this to true will mean that the vote panel is centered horizontally to the screen, the Y position still counts."
+	},
 	warning_auto_resize = {
 		Value = false,
 		Comment = "(unused)."

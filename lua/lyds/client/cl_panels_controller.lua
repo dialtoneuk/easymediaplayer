@@ -138,7 +138,9 @@ function MediaPlayer.SetupPanel(settings, panel, key)
 		panel:SetSize(settings.Size.Value.Width, settings.Size.Value.Height)
 	end
 
-	panel:SetPos(settings.Position.Value.X, settings.Position.Value.Y)
+	if (!panel.Locked) then
+		panel:SetPos(settings.Position.Value.X, settings.Position.Value.Y)
+	end
 
 	if (settings.Centered.Value) then
 		panel:LockPanel()

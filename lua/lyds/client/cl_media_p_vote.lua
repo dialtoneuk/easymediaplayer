@@ -8,6 +8,10 @@ local panel = {}
 --panel settings
 panel.Name = "vote"
 
+panel.Settings = {
+    CenterHorizontally = "center_horizontally",
+}
+
 --[[
 Create vote panel
 --]]
@@ -17,8 +21,15 @@ function panel:Init()
 		Padding = true,
 		Declare = {
 			Vote = {}
-		}
+		},
+		Locked = true
 	})
+
+	if (self.Settings.CenterHorizontally.Value) then
+		self:SetPos(ScrW() / 2 - ( self:GetWidth() / 2 ), self.Settings.Position.Value.Y )
+	else
+		self:SetPos(self.Settings.Position.Value.X, self.Settings.Position.Value.Y)
+	end
 
 	self.Type = vgui.Create("DLabel", self )
 	self.Type:Dock(TOP)

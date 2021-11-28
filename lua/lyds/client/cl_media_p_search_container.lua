@@ -25,7 +25,7 @@ function panel:Init()
 	self.SearchBox = vgui.Create("DTextEntry", self )
 	self.ComboBox = vgui.Create( "DComboBox", self.SearchBox )
 	self.SearchButton = vgui.Create( "DButton", self.SearchBox )
-	self.ColumnWidth = self.Settings.ColumnWidth.Value
+	self.ColumnWidth = self:GetWidth() / self.Settings.ColumnCount.Value or 1
 
 	self:SetUpGrid()
 
