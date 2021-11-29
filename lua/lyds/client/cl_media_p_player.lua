@@ -115,6 +115,12 @@ end
 --Normally use MyThink instead of Think
 function panel:MyThink()
 
+	if (!self:InScoreboardMenu()) then
+		self:MoveToBack()
+	else
+		self:MoveToFront()
+	end
+
 	if (self:HasRescaled()) then
 		self:SetDockPadding()
 	end

@@ -180,7 +180,18 @@ function panel:AddCreditsTab()
 				</style>
 			</head>
 			<body>
-				<h1>Created by Llydia Cross</h1>
+				<h1>made by lyds</h1>
+
+				<marquee>8=========3</marquee>
+
+				<h2>Github<h2>
+				https://github.com/dialtoneuk/easymediaplayer
+
+				<h2>My Twitter</h2>
+				https://twitter.com/lydsmas
+
+				<h2>Send Eth</h2>
+				0x527738Dd42170065d778C89264654b03f8Ed989B
 			</body>
 		</html>
 	]])

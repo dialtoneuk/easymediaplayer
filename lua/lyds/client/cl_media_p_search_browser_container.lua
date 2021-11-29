@@ -80,7 +80,8 @@ function panel:Init()
 
 		self.Submit:SetDisabled(true)
 		self.Browser:OpenURL("https://youtube.com")
-		self:GetParent():GetParent():Hide() --this could break
+
+		MediaPlayer.HidePanel("SearchPanel") //hide the search panel
 	end
 
 	self.Browser:OpenURL("https://youtube.com")

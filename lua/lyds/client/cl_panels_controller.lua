@@ -8,6 +8,7 @@ function MediaPlayer.ExecuteContextMenu(has_opened)
 	--loop through all our loaded panels and execute the OnContext method
 	for k,v in pairs(MediaPlayer.LoadedPanels) do
 		if ( v.OnContext != nil ) then
+			MediaPlayer.LoadedPanels[k].Panel:SetInContext(has_opened)
 			v.OnContext(MediaPlayer.LoadedPanels[k].Panel, k, MediaPlayer.LoadedPanels[k]._Settings, has_opened)
 		end
 	end
@@ -20,6 +21,7 @@ function MediaPlayer.ExecuteScoreboardMenu(has_opened)
 	--loop through all our loaded panels and execute the OnScoreboard method
 	for k,v in pairs(MediaPlayer.LoadedPanels) do
 		if ( v.OnScoreboard != nil ) then
+			MediaPlayer.LoadedPanels[k].Panel:SetInScoreboard(has_opened)
 			v.OnScoreboard(MediaPlayer.LoadedPanels[k].Panel, k, MediaPlayer.LoadedPanels[k]._Settings, has_opened)
 		end
 	end

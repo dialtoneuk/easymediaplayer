@@ -130,6 +130,9 @@ function base:SetOptions(options)
 		Height = false
 	}
 
+	self.InContext = false
+	self.InScoreboard = false
+
 	self.Centered = options.Centered or false
 	self.Resized = options.Resized or false
 	self.Locked = options.Locked or false
@@ -229,6 +232,22 @@ function base:GetRescaledWidth()
 	end
 
 	return result * 0.76
+end
+
+function base:SetInContext(bool)
+	self.InContext = bool
+end
+
+function base:SetInScoreboard(bool)
+    self.InScoreboard = bool
+end
+
+function base:InContextMenu()
+	return self.InContext
+end
+
+function base:InScoreboardMenu()
+    return self.InScoreboard;
 end
 
 function base:GetRescaledHeight()

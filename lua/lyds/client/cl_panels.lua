@@ -160,7 +160,8 @@ MediaPlayer.Panels = {
 			end
 		end,
 		OnContext =  function(panel, key, settings, opened)
-			panel:SetKeyboardInputEnabled(opened)
+			panel:MakePopup()
+			panel:SetKeyboardInputEnabled(false)
 			panel:SetMouseInputEnabled(opened)
 
 			if (settings.Hide.Value) then
@@ -183,7 +184,8 @@ MediaPlayer.Panels = {
 			end
 		end,
 		OnScoreboard =  function(panel, key, settings, opened)
-			panel:SetKeyboardInputEnabled(opened)
+			panel:MakePopup()
+			panel:SetKeyboardInputEnabled(false)
 			panel:SetMouseInputEnabled(opened)
 
 			if (settings.Hide.Value) then

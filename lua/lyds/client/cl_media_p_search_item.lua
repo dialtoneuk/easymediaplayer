@@ -76,7 +76,7 @@ function panel:SetVideo(video)
 
 	self.Button.DoClick = function()
 		RunConsoleCommand("media_play", video.Type, video.Video)
-		self:GetParent():Hide()
+		MediaPlayer.HidePanel("SearchPanel") --hide the search panel
 	end
 end
 
