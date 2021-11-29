@@ -1,11 +1,11 @@
 
 --gets duration, title, creator, views and other information about a youtube video
-function MediaPlayer.GetYoutubeVideoInfo(video, callback)
-	MediaPlayer.YoutubeVideoExists(video, function(result)
+function LydsPlayer.GetYoutubeVideoInfo(video, callback)
+	LydsPlayer.YoutubeVideoExists(video, function(result)
 		if (!result or result == nil) then callback(false) return end
 
-		MediaPlayer.YoutubeGetVideo(video, function(data)
-			video.Duration = MediaPlayer.ConvertFromISOTime(data.contentDetails.duration)
+		LydsPlayer.YoutubeGetVideo(video, function(data)
+			video.Duration = LydsPlayer.ConvertFromISOTime(data.contentDetails.duration)
 			video.Title = data.snippet.title
 			video.Creator = data.snippet.channelTitle
 			video.Views = data.statistics.viewCount
@@ -18,18 +18,18 @@ function MediaPlayer.GetYoutubeVideoInfo(video, callback)
 end
 
 --returns true if a video exists
-function MediaPlayer.YoutubeVideoExists(video, callback)
+function LydsPlayer.YoutubeVideoExists(video, callback)
 
 	--This gets the info then executes a callback
-	MediaPlayer.YoutubeIsValid(video, function(data)
+	LydsPlayer.YoutubeIsValid(video, function(data)
 		if (data == nil) then
 			callback(false)
 		elseif (!table.IsEmpty(data)) then
 			callback(true)
 		else
 
-			if (MediaPlayer.IsSettingTrue("youtube_deep_check")) then
-				MediaPlayer.YoutubeGetVideo(video, function(r)
+			if (LydsPlayer.IsSettingTrue("youtube_deep_check")) then
+				LydsPlayer.YoutubeGetVideo(video, function(r)
 					if (table.IsEmpty(r)) then
 						callback(false)
 					else
@@ -44,19 +44,19 @@ function MediaPlayer.YoutubeVideoExists(video, callback)
 end
 
 --preforms a youtube search, returns a table full of objects as the first argument in the callbacks parameter
-function MediaPlayer.YoutubeSearch(query, callback, count)
+function LydsPlayer.YoutubeSearch(query, callback, count)
 	count = count or 1
 
 	if (type(callback) != "function") then
 		error("callback must be a function")
 	end
 
-	local params = "search?q=" .. MediaPlayer.EncodeURI(query) .. "&part=snippet&maxResults=" .. math.floor(count) .. "&type=video"
-	MediaPlayer.YoutubeFetch(params, callback)
+	local params = "search?q=" .. LydsPlayer.EncodeURI(query) .. "&part=snippet&maxResults=" .. math.floor(count) .. "&type=video"
+	LydsPlayer.YoutubeFetch(params, callback)
 end
 
 --queries youtube and gets information about a video, takes a table or the id of a video
-function MediaPlayer.YoutubeGetVideo(video, callback)
+function LydsPlayer.YoutubeGetVideo(video, callback)
 
 	if (type(video) == "table") then
 		video = video.Video
@@ -67,11 +67,11 @@ function MediaPlayer.YoutubeGetVideo(video, callback)
 	end
 
 	local params = "videos?id=" .. video .. "&part=snippet,contentDetails,statistics,status,player"
-	MediaPlayer.YoutubeFetch(params, callback, true )
+	LydsPlayer.YoutubeFetch(params, callback, true )
 end
 
 --returns true if a video is valid
-function MediaPlayer.YoutubeIsValid(video, callback)
+function LydsPlayer.YoutubeIsValid(video, callback)
 
 	if (type(video) == "table") then
 		video = video.Video

@@ -26,22 +26,22 @@ local client = {
 	base_colours = {
 		Value = {
 			__unpack = function(self, index, value) --called when unpacking from save json
-				return MediaPlayer.TableToColour(value) --TODO: Optimize to use pre-created colours instead of creating new ones
+				return LydsPlayer.TableToColour(value) --TODO: Optimize to use pre-created colours instead of creating new ones
 			end,
 			__pack = function(self, index, value) --called when packing data into json.
 				return value
 			end,
-			Background = MediaPlayer.Colours.FadedBlack,
-			Border = MediaPlayer.Colours.FadedBlack,
-			TextColor = MediaPlayer.Colours.FadedWhite,
-			ItemBackground = MediaPlayer.Colours.FadedBlack,
-			ItemBorder = MediaPlayer.Colours.FadedBlue
+			Background = LydsPlayer.Colours.FadedBlack,
+			Border = LydsPlayer.Colours.FadedBlack,
+			TextColor = LydsPlayer.Colours.FadedWhite,
+			ItemBackground = LydsPlayer.Colours.FadedBlack,
+			ItemBorder = LydsPlayer.Colours.FadedBlue
 		}
 	},
 	base_resize_scale = {
 		Value = 1,
 		Refresh = false,
-		Type = MediaPlayer.Type.FLOAT,
+		Type = LydsPlayer.Type.FLOAT,
 		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
 	base_invert_position = {
@@ -71,6 +71,6 @@ local client = {
 }
 
 --register our settings
-hook.Add("MediaPlayer.SettingsLoaded","MediaPlayer.RegisterBaseSettings", function()
-	MediaPlayer.RegisterSettings(server, client)
+hook.Add("LydsPlayer.SettingsLoaded","LydsPlayer.RegisterBaseSettings", function()
+	LydsPlayer.RegisterSettings(server, client)
 end)

@@ -32,7 +32,7 @@ function panel:Init()
 end
 
 function panel:AddHistoryPanel()
-	self.SearchHistoryContainer = vgui.Create("MediaPlayer.SearchHistoryContainer", self.PropertySheet)
+	self.SearchHistoryContainer = vgui.Create("LydsPlayer.SearchHistoryContainer", self.PropertySheet)
 	self.SearchHistoryContainer.ColumnWidth = (self:GetWidth() / self:GetSettingInt("ColumnCount")) - 15
 	self.SearchHistoryContainer:Dock(FILL)
 	self.SearchHistoryContainer:AddDefaultPanel()
@@ -40,20 +40,20 @@ function panel:AddHistoryPanel()
 end
 
 function panel:AddBrowserPanel()
-	self.SearchBrowserContainer = vgui.Create("MediaPlayer.SearchBrowserContainer", self.PropertySheet)
+	self.SearchBrowserContainer = vgui.Create("LydsPlayer.SearchBrowserContainer", self.PropertySheet)
 	self.SearchBrowserContainer:Dock(FILL)
 	self.PropertySheet:AddSheet("Browser", self.SearchBrowserContainer, "icon16/world.png")
 end
 
 function panel:AddSessionPanel()
-	self.SearchSessionContainer = vgui.Create("MediaPlayer.SearchSessionContainer", self.PropertySheet)
+	self.SearchSessionContainer = vgui.Create("LydsPlayer.SearchSessionContainer", self.PropertySheet)
 	self.SearchSessionContainer.ColumnWidth = (self:GetWidth() / self:GetSettingInt("ColumnCount")) - 15
 	self.SearchSessionContainer:Dock(FILL)
 	self.PropertySheet:AddSheet("Session", self.SearchSessionContainer, "icon16/hourglass.png")
 end
 
 function panel:AddSearchPanel()
-	self.SearchContainer = vgui.Create("MediaPlayer.SearchContainer", self.PropertySheet)
+	self.SearchContainer = vgui.Create("LydsPlayer.SearchContainer", self.PropertySheet)
 	self.SearchContainer.ColumnWidth = (self:GetWidth() / self:GetSettingInt("ColumnCount")) - 15
 	self.SearchContainer:Dock(FILL)
 	self.SearchContainer:AddDefaultPanel()
@@ -78,7 +78,7 @@ function panel:ShowVideoInfo(video)
 		return
 	end
 
-	self.SearchItem = vgui.Create("MediaPlayer.SearchItem", self.SearchController)
+	self.SearchItem = vgui.Create("LydsPlayer.SearchItem", self.SearchController)
 	self.SearchItem:Dock(FILL)
 	self.SearchItem:SetVideo(video)
 	self.SearchController:Show()
@@ -95,4 +95,4 @@ function panel:ShowResults(typ, tab)
 	end
 end
 
-vgui.Register("MediaPlayer.SearchPanel", panel, "MediaPlayer.Base")
+vgui.Register("LydsPlayer.SearchPanel", panel, "LydsPlayer.Base")

@@ -1,22 +1,22 @@
 
 --playlist and current video
-MediaPlayer.CurrentVideo = MediaPlayer.CurrentVideo or {}
-MediaPlayer.Playlist = MediaPlayer.Playlist or {}
+LydsPlayer.CurrentVideo = LydsPlayer.CurrentVideo or {}
+LydsPlayer.Playlist = LydsPlayer.Playlist or {}
 
 --History and Playhistory client tables
-MediaPlayer.Session = MediaPlayer.Session or {} --contains servers history (is not 1 to 1 w/ server)
-MediaPlayer.PlayerSession = MediaPlayer.PlayerSession or {} --contains players history (is not 1 to 1)
+LydsPlayer.Session = LydsPlayer.Session or {} --contains servers history (is not 1 to 1 w/ server)
+LydsPlayer.PlayerSession = LydsPlayer.PlayerSession or {} --contains players history (is not 1 to 1)
 
 --Page max (for page math)
-MediaPlayer.HistoryMax = MediaPlayer.HistoryMax or 30
+LydsPlayer.HistoryMax = LydsPlayer.HistoryMax or 30
 
 --admin stuff
-MediaPlayer.Blacklist = MediaPlayer.Blacklist or {} --only filled if admin
+LydsPlayer.Blacklist = LydsPlayer.Blacklist or {} --only filled if admin
 
 --For our history page
 
-MediaPlayer.CurrentVote = MediaPlayer.CurrentVote or {}
-MediaPlayer.AdminSettings = MediaPlayer.AdminSettings  or {}
+LydsPlayer.CurrentVote = LydsPlayer.CurrentVote or {}
+LydsPlayer.AdminSettings = LydsPlayer.AdminSettings  or {}
 
 --[[
 	Fonts
@@ -138,7 +138,7 @@ surface.CreateFont( "SmallText", {
 --]]
 
 --adds icons to sandbox context menu
-hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
+hook.Add("PreGamemodeLoaded", "LydsPlayer.PreGamemodeLoaded", function()
 
 	--settings panel
 	list.Add( "DesktopWindows", {
@@ -177,8 +177,8 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 		onewindow	= true,
 		init		= function( icon, window )
 
-			if (table.IsEmpty(MediaPlayer.CurrentVideo)) then
-				MediaPlayer.CreateWarningBox("No Current Video!","There isn't even a video playing! Try playing one first.")
+			if (table.IsEmpty(LydsPlayer.CurrentVideo)) then
+				LydsPlayer.CreateWarningBox("No Current Video!","There isn't even a video playing! Try playing one first.")
 				window:Remove()
 				return
 			end
@@ -197,8 +197,8 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 		onewindow	= true,
 		init		= function( icon, window )
 
-			if (table.IsEmpty(MediaPlayer.CurrentVideo)) then
-				MediaPlayer.CreateWarningBox("No Current Video!","There isn't even a video playing! Try playing one first.")
+			if (table.IsEmpty(LydsPlayer.CurrentVideo)) then
+				LydsPlayer.CreateWarningBox("No Current Video!","There isn't even a video playing! Try playing one first.")
 				window:Remove()
 				return
 			end
@@ -217,8 +217,8 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 		onewindow	= true,
 		init		= function( icon, window )
 
-			if ( !MediaPlayer.LocalPlayer:IsAdmin()) then
-				MediaPlayer.CreateWarningBox("Permissions Denied!","You'll need to be an admin of the server to view the admin dashboard", 4)
+			if ( !LydsPlayer.LocalPlayer:IsAdmin()) then
+				LydsPlayer.CreateWarningBox("Permissions Denied!","You'll need to be an admin of the server to view the admin dashboard", 4)
 				window:Remove()
 				return
 			end
@@ -231,48 +231,48 @@ hook.Add("PreGamemodeLoaded", "MediaPlayer.PreGamemodeLoaded", function()
 end)
 
 --ran after all entities have been initiated, here we instantiate panels and apply a default preset if its our first time joining/running
-hook.Add("InitPostEntity", "MediaPlayer.LoadClientAddon", function()
-	MediaPlayer.LocalPlayer = LocalPlayer()
-	MediaPlayer.InstantiatePanels(true)
+hook.Add("InitPostEntity", "LydsPlayer.LoadClientAddon", function()
+	LydsPlayer.LocalPlayer = LocalPlayer()
+	LydsPlayer.InstantiatePanels(true)
 
 	--if the player has ran this addnon before and they have saved settings
-	if (MediaPlayer.HasSavedSettings()) then
+	if (LydsPlayer.HasSavedSettings()) then
 
 		--if we don't have preset defaults enabled then we'll just return here
-		if (!MediaPlayer.IsSettingTrue("preset_allow_initial")) then return end
+		if (!LydsPlayer.IsSettingTrue("preset_allow_initial")) then return end
 
-		MediaPlayer.RequestDefaultPreset() --This will check the servers join list and ask for a default preset
+		LydsPlayer.RequestDefaultPreset() --This will check the servers join list and ask for a default preset
 		return
 	else
 		--this is their first time
-		MediaPlayer.WriteDefaultPresets()
+		LydsPlayer.WriteDefaultPresets()
 
 		--now lets try and load our default preset
-		MediaPlayer.ApplyDefaultPreset()
+		LydsPlayer.ApplyDefaultPreset()
 	end
 
 	--will reinstantiate panels
-	MediaPlayer.GetDefaultPreset() --this asks the server for the servers default schema
+	LydsPlayer.GetDefaultPreset() --this asks the server for the servers default schema
 end)
 
 --hook onto context menu open, see cl_panels_controller.lua, arg 1 is simply visibility
-hook.Add("OnContextMenuOpen", "MediaPlayer.ContextMenu", function()
-	MediaPlayer.ExecuteContextMenu(true)
+hook.Add("OnContextMenuOpen", "LydsPlayer.ContextMenu", function()
+	LydsPlayer.ExecuteContextMenu(true)
 end)
 
 --hook onto context menu hide, see cl_panels_controller.lua, arg 1 is simply visibility
-hook.Add("OnContextMenuClose", "MediaPlayer.ContextMenu", function()
-	MediaPlayer.ExecuteContextMenu(false)
+hook.Add("OnContextMenuClose", "LydsPlayer.ContextMenu", function()
+	LydsPlayer.ExecuteContextMenu(false)
 end)
 
 --hook onto scoreboard menu, see cl_panels_controller.lua, arg 1 is simply visibility
-hook.Add("ScoreboardShow", "MediaPlayer.ScoreboardShow", function()
-	MediaPlayer.ExecuteScoreboardMenu(true)
+hook.Add("ScoreboardShow", "LydsPlayer.ScoreboardShow", function()
+	LydsPlayer.ExecuteScoreboardMenu(true)
 end)
 
 --hook onto scoreboard menu, see cl_panels_controller.lua, arg 1 is simply visibility
-hook.Add("ScoreboardHide", "MediaPlayer.ScoreboardHide", function()
-	MediaPlayer.ExecuteScoreboardMenu(false)
+hook.Add("ScoreboardHide", "LydsPlayer.ScoreboardHide", function()
+	LydsPlayer.ExecuteScoreboardMenu(false)
 end)
 
 
@@ -283,12 +283,12 @@ end)
 
 --writeDefaultPreset our default presets to file contained inside autorun/presets.lua
 concommand.Add("media_write_default_presets", function(ply, cmd, args)
-	MediaPlayer.WriteDefaultPresets()
+	LydsPlayer.WriteDefaultPresets()
 end)
 
 --gets the initial preset from the server and applies it
 concommand.Add("media_refresh_initial_preset", function(ply, cmd, args)
-	MediaPlayer.GetDefaultPreset()
+	LydsPlayer.GetDefaultPreset()
 end)
 
 --searches youtube
@@ -297,8 +297,8 @@ concommand.Add("media_search", function (ply, cmd, args)
 	local typ = args[1]
 	local query = args[2]
 
-	if (typ == MediaPlayer.MediaType.YOUTUBE or typ == MediaPlayer.MediaType.YoutubeMusic) then
-		MediaPlayer.YoutubeSearch(query)
+	if (typ == LydsPlayer.MediaType.YOUTUBE or typ == LydsPlayer.MediaType.YoutubeMusic) then
+		LydsPlayer.YoutubeSearch(query)
 	else
 		--others
 		print("not implemented")
@@ -307,78 +307,78 @@ end)
 
 --recreates all UI components
 concommand.Add("media_create_cl", function()
-	MediaPlayer.InstantiatePanels(true) --
+	LydsPlayer.InstantiatePanels(true) --
 end)
 
 --recreates settings panel
 concommand.Add("settings_create", function()
-	MediaPlayer.ReinstantiatePanel("SettingsPanel")
+	LydsPlayer.ReinstantiatePanel("SettingsPanel")
 end)
 
 --recreates all panels except the settings panel
 concommand.Add("media_refresh_cl", function()
-	MediaPlayer.InstantiatePanels(true, {
+	LydsPlayer.InstantiatePanels(true, {
 		"SettingsPanel" --skips settings panel
 	})
 end)
 
 --show search panel
 concommand.Add("search_panel", function()
-	MediaPlayer.ShowPanel("SearchPanel")
+	LydsPlayer.ShowPanel("SearchPanel")
 end)
 
 --mutes or unmutes a video
 concommand.Add("media_mute_video", function()
-	if (MediaPlayer.GetSetting("player_mute").Value) then
-		MediaPlayer.ChangeSetting("player_mute", false );
-		MediaPlayer.CreateChatMessage("Unmuted!")
+	if (LydsPlayer.GetSetting("player_mute").Value) then
+		LydsPlayer.ChangeSetting("player_mute", false );
+		LydsPlayer.CreateChatMessage("Unmuted!")
 	else
-		MediaPlayer.ChangeSetting("player_mute", true );
-		MediaPlayer.CreateChatMessage("Muted")
+		LydsPlayer.ChangeSetting("player_mute", true );
+		LydsPlayer.CreateChatMessage("Muted")
 	end
 
-	MediaPlayer.ReinstantiatePanel("PlayerPanel")
+	LydsPlayer.ReinstantiatePanel("PlayerPanel")
 end)
 
 --show admin panel
 concommand.Add("admin_panel", function()
-	MediaPlayer.ShowPanel("AdminPanel")
+	LydsPlayer.ShowPanel("AdminPanel")
 end)
 
 --show settings panel
 concommand.Add("settings", function()
-	MediaPlayer.ShowPanel("SettingsPanel")
+	LydsPlayer.ShowPanel("SettingsPanel")
 end)
 
 --various creation commands for panels
 --search
 concommand.Add("media_create_search_panel", function()
-	MediaPlayer.ReinstantiatePanel("SearchPanel")
+	LydsPlayer.ReinstantiatePanel("SearchPanel")
 end)
 
 --admin
 concommand.Add("media_create_admin_panel", function()
-	MediaPlayer.ReinstantiatePanel("AdminPanel")
+	LydsPlayer.ReinstantiatePanel("AdminPanel")
 end)
 
 --vote
 concommand.Add("media_create_vote_panel", function()
-	MediaPlayer.ReinstantiatePanel("VotePanel")
+	LydsPlayer.ReinstantiatePanel("VotePanel")
 end)
 
 --player
 concommand.Add("media_create_player_panel", function()
-	MediaPlayer.ReinstantiatePanel("PlayerPanel")
+	LydsPlayer.ReinstantiatePanel("PlayerPanel")
 end)
 
 --playlist
 concommand.Add("media_create_playlist_panel", function()
-	MediaPlayer.ReinstantiatePanel("PlaylistPanel")
+	LydsPlayer.ReinstantiatePanel("PlaylistPanel")
 end)
 
 --settings
 concommand.Add("media_create_settings_panel",function()
-	MediaPlayer.ReinstantiatePanel("SettingsPanel", true)
+	LydsPlayer.ReinstantiatePanel("SettingsPanel", true)
 end)
 
 --[[
@@ -388,7 +388,7 @@ end)
 
 
 --writes the servers local preset to file
---TODO: Maybe move this into a func inside MediaPlayer.?
+--TODO: Maybe move this into a func inside LydsPlayer.?
 local writeDefaultPreset = function(preset)
 	if (preset.Locked == nil or preset.Locked == false ) then
 		preset.Locked = true
@@ -399,210 +399,210 @@ local writeDefaultPreset = function(preset)
 	file.Write("lyds/presets/server.json", util.TableToJSON(preset, true))
 end
 
-net.Receive("MediaPlayer.SendHistory", function()
+net.Receive("LydsPlayer.SendHistory", function()
 
 	local results = net.ReadTable()
 	local historymax = net.ReadTable()
 
-	MediaPlayer.HistoryMax = historymax
+	LydsPlayer.HistoryMax = historymax
 
-	if (MediaPlayer.PanelValid("SearchPanel")) then
-		MediaPlayer.GetPanel("SearchPanel").SearchHistoryContainer:SetSearchResults(results)
+	if (LydsPlayer.PanelValid("SearchPanel")) then
+		LydsPlayer.GetPanel("SearchPanel").SearchHistoryContainer:SetSearchResults(results)
 	end
 end)
 
-net.Receive("MediaPlayer.ApplyDefaultPreset", function()
+net.Receive("LydsPlayer.ApplyDefaultPreset", function()
 
 	local preset = net.ReadTable()
 	writeDefaultPreset(preset)
 
-	if (!MediaPlayer.IsSettingTrue("preset_allow_initial")) then return end
+	if (!LydsPlayer.IsSettingTrue("preset_allow_initial")) then return end
 
-	MediaPlayer.ApplyPreset(preset)
-	MediaPlayer.InstantiatePanels(true)
+	LydsPlayer.ApplyPreset(preset)
+	LydsPlayer.InstantiatePanels(true)
 end)
 
-net.Receive("MediaPlayer.RefreshDefaultPreset", function()
+net.Receive("LydsPlayer.RefreshDefaultPreset", function()
 	writeDefaultPreset(net.ReadTable())
 end)
 
 --receives a message from the server and puts it into the players chat
-net.Receive("MediaPlayer.SendMediaPlayerMessage", function()
+net.Receive("LydsPlayer.SendMediaPlayerMessage", function()
 
 	local str = net.ReadString()
 	local bool = net.ReadBool()
 	bool = !bool
 
-	MediaPlayer.CreateChatMessage(str, bool)
+	LydsPlayer.CreateChatMessage(str, bool)
 end)
 
 
 --receives a chunk of history data from the server, not the full thing
-net.Receive("MediaPlayer.SendSessionChunk", function()
+net.Receive("LydsPlayer.SendSessionChunk", function()
 	local tab = net.ReadTable();
 
 	if (table.IsEmpty(tab)) then
 		return
 	end
 
-	MediaPlayer.Session = tab
+	LydsPlayer.Session = tab
 
-	if (MediaPlayer.PanelValid("SearchPanel")) then
-		MediaPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(MediaPlayer.Session)
+	if (LydsPlayer.PanelValid("SearchPanel")) then
+		LydsPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(LydsPlayer.Session)
 	end
 end)
 
 --receives a chunk of personal history data from the server, not the full thing. (personal history data is simply videos the user has submitted)
-net.Receive("MediaPlayer.SendPersonalSession", function()
+net.Receive("LydsPlayer.SendPersonalSession", function()
 	local tab = net.ReadTable();
 
 	if (table.IsEmpty(tab)) then
 		return
 	end
 
-	MediaPlayer.PlayerSession = tab
+	LydsPlayer.PlayerSession = tab
 
-	if (MediaPlayer.PanelValid("SearchPanel")) then
-		MediaPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(MediaPlayer.PlayerSession)
+	if (LydsPlayer.PanelValid("SearchPanel")) then
+		LydsPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(LydsPlayer.PlayerSession)
 	end
 end)
 
 --receives all the history from the server
-net.Receive("MediaPlayer.SendSession", function()
-	MediaPlayer.Session = net.ReadTable()
+net.Receive("LydsPlayer.SendSession", function()
+	LydsPlayer.Session = net.ReadTable()
 
-	if (MediaPlayer.PanelValid("SearchPanel")) then
-		MediaPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(MediaPlayer.Session)
+	if (LydsPlayer.PanelValid("SearchPanel")) then
+		LydsPlayer.PanelValid("SearchPanel").Panel.SearchSessionContainer:SetSearchResults(LydsPlayer.Session)
 	end
 end)
 
 
 --Creates a warning box, sent from server
-net.Receive("MediaPlayer.CreateWarningBox", function()
+net.Receive("LydsPlayer.CreateWarningBox", function()
 
-	if (MediaPlayer.PanelValid("WarningBox")) then
-		MediaPlayer.GetPanel("WarningBox"):SetWarning(net.ReadString(), net.ReadString())
+	if (LydsPlayer.PanelValid("WarningBox")) then
+		LydsPlayer.GetPanel("WarningBox"):SetWarning(net.ReadString(), net.ReadString())
 		return
 	end
 
-	MediaPlayer.CreateWarningBox(net.ReadString(), net.ReadString() )
+	LydsPlayer.CreateWarningBox(net.ReadString(), net.ReadString() )
 end)
 
 
 --Receives history for a singular video
-net.Receive("MediaPlayer.SendSessionForVideo", function()
+net.Receive("LydsPlayer.SendSessionForVideo", function()
 	local tab = net.ReadTable()
-	MediaPlayer.Session[tab.Video] = tab;
+	LydsPlayer.Session[tab.Video] = tab;
 end)
 
 --The blacklist full of banned videos
-net.Receive("MediaPlayer.SendBlacklist", function()
-	MediaPlayer.Blacklist = net.ReadTable()
+net.Receive("LydsPlayer.SendBlacklist", function()
+	LydsPlayer.Blacklist = net.ReadTable()
 
-	if (MediaPlayer.PanelValid("AdminPanel")) then
-		local panel = MediaPlayer.GetPanel("AdminPanel")
+	if (LydsPlayer.PanelValid("AdminPanel")) then
+		local panel = LydsPlayer.GetPanel("AdminPanel")
 		panel:PresentBlacklist()
 	end
 end)
 
 --Our enabled media types
-net.Receive("MediaPlayer.EnabledMediaTypes", function()
-	MediaPlayer.EnabledMediaTypes = net.ReadTable()
+net.Receive("LydsPlayer.EnabledMediaTypes", function()
+	LydsPlayer.EnabledMediaTypes = net.ReadTable()
 
-	if (MediaPlayer.PanelValid("SearchPanel")) then
-		local panel = MediaPlayer.GetPanel("SearchPanel")
+	if (LydsPlayer.PanelValid("SearchPanel")) then
+		local panel = LydsPlayer.GetPanel("SearchPanel")
 		panel:RebuildComboBox()
 	end
 end)
 
 --Received when a vote has ended
-net.Receive("MediaPlayer.EndVote", function()
-	MediaPlayer.CurrentVote = {}
-	local panel = MediaPlayer.GetPanel("VotePanel")
+net.Receive("LydsPlayer.EndVote", function()
+	LydsPlayer.CurrentVote = {}
+	local panel = LydsPlayer.GetPanel("VotePanel")
 	panel:Reset()
 	panel:Hide()
 end)
 
 
 --Received when a vote has begun
-net.Receive("MediaPlayer.NewVote", function()
-	MediaPlayer.CurrentVote = net.ReadTable()
+net.Receive("LydsPlayer.NewVote", function()
+	LydsPlayer.CurrentVote = net.ReadTable()
 
-	local panel = MediaPlayer.GetPanel("VotePanel")
-	panel:SetVote(MediaPlayer.CurrentVote)
+	local panel = LydsPlayer.GetPanel("VotePanel")
+	panel:SetVote(LydsPlayer.CurrentVote)
 	panel:Show()
 end)
 
 
 --Received when search results have been returned
-net.Receive("MediaPlayer.SendSearchResults",function()
+net.Receive("LydsPlayer.SendSearchResults",function()
 	local tab = net.ReadTable()
 	local typ = net.ReadString()
-	local panel = MediaPlayer.GetPanel("SearchPanel")
+	local panel = LydsPlayer.GetPanel("SearchPanel")
 
 	panel:ShowResults(typ, tab)
 end)
 
 --Received when the playlist has ended
-net.Receive("MediaPlayer.End", function()
-	MediaPlayer.Playlist = {}
-	MediaPlayer.CurrentVideo = {}
+net.Receive("LydsPlayer.End", function()
+	LydsPlayer.Playlist = {}
+	LydsPlayer.CurrentVideo = {}
 
-	local panel = MediaPlayer.GetPanel("PlaylistPanel")
+	local panel = LydsPlayer.GetPanel("PlaylistPanel")
 	panel:UpdatePlaylist()
 	panel:UpdateGrid()
 	panel:EmptyPanel()
 
-	local setting = MediaPlayer.GetSetting("player_hide")
-	panel = MediaPlayer.GetPanel("PlayerPanel")
-	panel:SetVideo(MediaPlayer.CurrentVideo)
+	local setting = LydsPlayer.GetSetting("player_hide")
+	panel = LydsPlayer.GetPanel("PlayerPanel")
+	panel:SetVideo(LydsPlayer.CurrentVideo)
 
 	if (setting.Value) then
 		panel:Hide()
 	end
 
-	MediaPlayer.CurrentVote = {}
-	panel = MediaPlayer.GetPanel("VotePanel")
+	LydsPlayer.CurrentVote = {}
+	panel = LydsPlayer.GetPanel("VotePanel")
 	panel:Reset()
 	panel:Hide()
 end)
 
 --Received when a new video is playing, sets the current video in the playlist and removes that video from the playlist position, updating all other positions to down one.
-net.Receive("MediaPlayer.SendCurrentVideo",function()
-	MediaPlayer.CurrentVideo = net.ReadTable()
-	MediaPlayer.CurrentVideo.StartTime = CurTime()
+net.Receive("LydsPlayer.SendCurrentVideo",function()
+	LydsPlayer.CurrentVideo = net.ReadTable()
+	LydsPlayer.CurrentVideo.StartTime = CurTime()
 
-	if (MediaPlayer.Playlist[MediaPlayer.CurrentVideo.Video]) then
-		MediaPlayer.Playlist[MediaPlayer.CurrentVideo.Video].Position = 0
+	if (LydsPlayer.Playlist[LydsPlayer.CurrentVideo.Video]) then
+		LydsPlayer.Playlist[LydsPlayer.CurrentVideo.Video].Position = 0
 	end
 
-	for k,v in SortedPairsByMemberValue(MediaPlayer.Playlist, "Position") do
-		if (v.Video != MediaPlayer.CurrentVideo.Video) then MediaPlayer.Playlist[v.Video].Position = MediaPlayer.Playlist[v.Video].Position - 1 end
+	for k,v in SortedPairsByMemberValue(LydsPlayer.Playlist, "Position") do
+		if (v.Video != LydsPlayer.CurrentVideo.Video) then LydsPlayer.Playlist[v.Video].Position = LydsPlayer.Playlist[v.Video].Position - 1 end
 	end
 
 	--update visual elements here
-	local panel = MediaPlayer.GetPanel("PlaylistPanel")
+	local panel = LydsPlayer.GetPanel("PlaylistPanel")
 	panel:UpdatePlaylist()
 	panel:UpdateGrid()
 
-	panel = MediaPlayer.GetPanel("PlayerPanel")
-	panel:SetVideo(MediaPlayer.CurrentVideo)
+	panel = LydsPlayer.GetPanel("PlayerPanel")
+	panel:SetVideo(LydsPlayer.CurrentVideo)
 
-	if (MediaPlayer.IsSettingTrue("player_show_current_video")) then
+	if (LydsPlayer.IsSettingTrue("player_show_current_video")) then
 		panel:Show()
 	end
 end)
 
 --receives the playlist from the server
-net.Receive("MediaPlayer.SendPlaylist",function()
+net.Receive("LydsPlayer.SendPlaylist",function()
 
-	MediaPlayer.Playlist = net.ReadTable()
+	LydsPlayer.Playlist = net.ReadTable()
 
-	local panel = MediaPlayer.GetPanel("PlaylistPanel")
+	local panel = LydsPlayer.GetPanel("PlaylistPanel")
 	panel:UpdatePlaylist()
 end)
 
 --receives admin settings from the server
-net.Receive("MediaPlayer.SendMediaPlayerAdminSettings",function()
-	MediaPlayer.AdminSettings = net.ReadTable()
+net.Receive("LydsPlayer.SendMediaPlayerAdminSettings",function()
+	LydsPlayer.AdminSettings = net.ReadTable()
 end)

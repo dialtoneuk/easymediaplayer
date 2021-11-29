@@ -1,8 +1,9 @@
 # Version 0.2
 
-* Fixed bug regarding net messages.
-* Added new browser tab to search panel.
-* Fixed default plguins.
+* Fixed various bugs related to the new UI rewrite.
+* Added back the web browser as an alternative to finding videos can be found as a new tab in the search panel.
+* Default presets changed and tweaked.
+* Font and UI tweaks.
 
 
 # Version 0.15

@@ -1,4 +1,4 @@
-MediaPlayer.Table = {
+LydsPlayer.Table = {
     Video = "TEXT",
     Title = "TEXT",
     Creator = "TEXT",
@@ -10,10 +10,10 @@ MediaPlayer.Table = {
     LastPlayed = "NUMBER"
 }
 
-function MediaPlayer.InsertHistory(obj)
+function LydsPlayer.InsertHistory(obj)
 
-    local r = sql.Query("INSERT into media_history " .. MediaPlayer.GetTableStructure()
-    .. " VALUES (" .. MediaPlayer.CollapseTable({
+    local r = sql.Query("INSERT into media_history " .. LydsPlayer.GetTableStructure()
+    .. " VALUES (" .. LydsPlayer.CollapseTable({
         Video = obj.Video,
         Title = obj.Title,
         Creator = obj.Creator,
@@ -32,9 +32,9 @@ function MediaPlayer.InsertHistory(obj)
     print("inserted " .. obj.Video)
 end
 
-function MediaPlayer.UpdateHistory(video, obj)
+function LydsPlayer.UpdateHistory(video, obj)
 
-    local q = "UPDATE media_history SET " .. MediaPlayer.CollapseTable({
+    local q = "UPDATE media_history SET " .. LydsPlayer.CollapseTable({
         Video = obj.Video,
         Title = obj.Title,
         Creator = obj.Creator,
@@ -56,7 +56,7 @@ function MediaPlayer.UpdateHistory(video, obj)
     print("updated " .. obj.Video)
 end
 
-function MediaPlayer.GetVideoHistory(video)
+function LydsPlayer.GetVideoHistory(video)
     local r = sql.QueryValue("SELECT * FROM media_history WHERE Video = '" .. video .. "'")
 
     if (r == false ) then
@@ -66,8 +66,8 @@ function MediaPlayer.GetVideoHistory(video)
     return r
 end
 
-function MediaPlayer.GetHistory(orderby, asc, limit, page)
-    limit = limit or MediaPlayer.GetSettingInt("media_history_max")
+function LydsPlayer.GetHistory(orderby, asc, limit, page)
+    limit = limit or LydsPlayer.GetSettingInt("media_history_max")
     page = page or 0
     orderby = orderby or  "Plays"
 
@@ -92,7 +92,7 @@ function MediaPlayer.GetHistory(orderby, asc, limit, page)
 end
 
 
-function MediaPlayer.ExistsInDatabase(Video)
+function LydsPlayer.ExistsInDatabase(Video)
 
     local r = sql.QueryValue("SELECT * FROM media_history WHERE Video = " .. sql.SQLStr(Video) .. "")
 
@@ -110,8 +110,8 @@ function MediaPlayer.ExistsInDatabase(Video)
 end
 
 
-function MediaPlayer.GetPlayerHistory(id, orderby, asc, limit, page)
-    limit = limit or MediaPlayer.GetSettingInt("media_history_max")
+function LydsPlayer.GetPlayerHistory(id, orderby, asc, limit, page)
+    limit = limit or LydsPlayer.GetSettingInt("media_history_max")
     orderby = orderby or  "Plays"
     page = page or 0
 
@@ -131,16 +131,16 @@ function MediaPlayer.GetPlayerHistory(id, orderby, asc, limit, page)
 end
 
 
-function MediaPlayer.CheckSqlTableExists()
+function LydsPlayer.CheckSqlTableExists()
     --creates table if it does not exist
-    local r = sql.Query("CREATE TABLE IF NOT EXISTS media_history" .. MediaPlayer.GetTableStructure(true) .. ";")
+    local r = sql.Query("CREATE TABLE IF NOT EXISTS media_history" .. LydsPlayer.GetTableStructure(true) .. ";")
 
     if (r == false) then
         error(sql.LastError())
     end
 end
 
-function MediaPlayer.DropTable()
+function LydsPlayer.DropTable()
     --creates table if it does not exist
     local r = sql.Query("DROP TABLE media_history;")
 
@@ -149,7 +149,7 @@ function MediaPlayer.DropTable()
     end
 end
 
-function MediaPlayer.CollapseTable(tab, equals)
+function LydsPlayer.CollapseTable(tab, equals)
     equals = equals or false
 
     local str = ""
@@ -171,11 +171,11 @@ function MediaPlayer.CollapseTable(tab, equals)
 end
 
 
-function MediaPlayer.GetTableStructure(typ)
+function LydsPlayer.GetTableStructure(typ)
     typ = typ or false
     local str = ""
 
-    for k,v in pairs(MediaPlayer.Table) do
+    for k,v in pairs(LydsPlayer.Table) do
 
         if (typ) then
             str = str .. k .. " " .. v .. ", "

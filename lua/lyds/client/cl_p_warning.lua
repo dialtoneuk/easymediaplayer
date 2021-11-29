@@ -93,4 +93,4 @@ function panel:SetTimeout(seconds)
 	end)
 end
 
-vgui.Register("MediaPlayer.WarningBox", panel, "MediaPlayer.Base")
+vgui.Register("LydsPlayer.WarningBox", panel, "LydsPlayer.Base")

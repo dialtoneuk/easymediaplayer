@@ -73,7 +73,7 @@ function panel:SetVideo(video, k)
 		self.Type:SetText("last played " ..  os.date( "%H:%M:%S - %d/%m/%Y" , video.LastPlayed ))
 	end
 
-	if (MediaPlayer.CurrentVideo == video.Video or MediaPlayer.Playlist[video.Video]) then
+	if (LydsPlayer.CurrentVideo == video.Video or LydsPlayer.Playlist[video.Video]) then
 		self.Button:SetDisabled(true)
 	end
 
@@ -82,4 +82,4 @@ function panel:SetVideo(video, k)
 		self.Button:SetDisabled(true)
 	end
 end
-vgui.Register("MediaPlayer.SearchItemHistory", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.SearchItemHistory", panel, "LydsPlayer.BasePanel")

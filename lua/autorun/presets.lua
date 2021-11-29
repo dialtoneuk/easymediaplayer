@@ -1,4 +1,4 @@
---you can auto generate this in console lua_run_cl MediaPlayer.PrintDefaultPresets() on client and following print instructions
+--you can auto generate this in console lua_run_cl LydsPlayer.PrintDefaultPresets() on client and following print instructions
 --make sure sv_cheats 1
 --NOTE: this has to be done manually due to gmod writing limitations as well as addon creation limitations
 

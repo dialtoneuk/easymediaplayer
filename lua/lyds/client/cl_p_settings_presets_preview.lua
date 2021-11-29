@@ -19,7 +19,7 @@ end
 --takes the key of the setting inside MEDIA.Settings and then the alue,
 function panel:DisplaySettings(k, v, parent)
 
-    if !(MediaPlayer.HasSetting(k)) then
+    if !(LydsPlayer.HasSetting(k)) then
         self.Parent.Preset.Settings[k] = nil
         return
     end
@@ -38,7 +38,7 @@ function panel:DisplaySettings(k, v, parent)
         self.LabelTitle = vgui.Create("DLabel", self)
         self.LabelTitle:Dock(TOP)
         self.LabelTitle:SetText("Unmodifiable")
-        self.LabelTitle:SetTextColor(MediaPlayer.Colours.Black)
+        self.LabelTitle:SetTextColor(LydsPlayer.Colours.Black)
     end
 
     self.Properties = vgui.Create("DProperties", self)
@@ -70,10 +70,10 @@ function panel:DisplaySettings(k, v, parent)
                 d = string.Explode(" ", d)
 
                 if (key ~= nil) then
-                    self.Parent.Preset.Settings[k][key] = MediaPlayer.VarToColour(d)
+                    self.Parent.Preset.Settings[k][key] = LydsPlayer.VarToColour(d)
                     row:SetValue(self.Parent.Preset.Settings[k][key])
                 else
-                    self.Parent.Preset.Settings[k] = MediaPlayer.VarToColour(d)
+                    self.Parent.Preset.Settings[k] = LydsPlayer.VarToColour(d)
                     row:SetValue(self.Parent.Preset.Settings[k])
                 end
             end
@@ -116,9 +116,9 @@ function panel:DisplaySettings(k, v, parent)
         end
     end
 
-    local setting = MediaPlayer.GetSetting(k)
+    local setting = LydsPlayer.GetSetting(k)
 
-    if (setting.Type == MediaPlayer.Type.TABLE) then
+    if (setting.Type == LydsPlayer.Type.TABLE) then
         for key, value in pairs(v) do
             local typ
 
@@ -129,11 +129,11 @@ function panel:DisplaySettings(k, v, parent)
             if (string.sub(key, 1, 2) == "__") then continue end
 
             if (type(v[key]) == "boolean") then
-                typ = MediaPlayer.Type.BOOL
+                typ = LydsPlayer.Type.BOOL
             elseif (type(v[key]) == "number") then
-                typ = MediaPlayer.Type.INT
+                typ = LydsPlayer.Type.INT
             else
-                typ = MediaPlayer.Type.BOOL
+                typ = LydsPlayer.Type.BOOL
             end
 
             create(v[key], key, typ)
@@ -143,4 +143,4 @@ function panel:DisplaySettings(k, v, parent)
     end
 end
 
-vgui.Register("MediaPlayer.PresetPreview", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.PresetPreview", panel, "LydsPlayer.BasePanel")

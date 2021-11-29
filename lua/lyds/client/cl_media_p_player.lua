@@ -43,7 +43,7 @@ function panel:Paint()
 	surface.DrawOutlinedRect(2, 2, self:GetWidth() - 4, self:GetHeight() - 4, self.Settings.Options.Value.BorderThickness)
 
 	--todo: Optimise this
-	if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
+	if (!table.IsEmpty(LydsPlayer.CurrentVideo)) then
 
 		local time = CurTime() - self.Video.StartTime
 		local str = self:GetMinsSeconds(time)
@@ -168,7 +168,7 @@ function panel:SetVideo(video)
 	end
 
 
-	if (video.Type == MediaPlayer.MediaType.YOUTUBE) then
+	if (video.Type == LydsPlayer.MediaType.YOUTUBE) then
 
 		self.HTML:SetHTML(self:GetYoutubeSourceCode(video, time, mute))
 		self:SetYoutubeWang()
@@ -249,4 +249,4 @@ function panel:GetYoutubeSourceCode(video, start_time, mute)
 end
 
 --Register
-vgui.Register("MediaPlayer.PlayerPanel", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.PlayerPanel", panel, "LydsPlayer.BasePanel")

@@ -18,7 +18,7 @@ function panel:Init()
 		}
 	})
 
-	if (!MediaPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
+	if (!LydsPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
 
 	self.PropertySheet = vgui.Create("DPropertySheet", self )
 	self.PropertySheet:Dock(FILL)
@@ -93,16 +93,16 @@ function panel:CreateBlacklistPanel()
 		if (!self.Selected or table.IsEmpty(self.Selected)) then return end
 
 		RunConsoleCommand("media_unblacklist_video", self.Selected.Video )
-		MediaPlayer.Blacklist[self.Selected.Video] = nil
+		LydsPlayer.Blacklist[self.Selected.Video] = nil
 
-		if (table.IsEmpty(MediaPlayer.Blacklist)) then self.List:Clear() end
+		if (table.IsEmpty(LydsPlayer.Blacklist)) then self.List:Clear() end
 
 		self.Selected = {}
 		self.SelectedPanel:SetDisabled(true)
 	end
 
 	self.List.OnRowSelected = function( lst, index, pnl )
-		self.Selected = MediaPlayer.Blacklist[pnl:GetColumnText(5)]
+		self.Selected = LydsPlayer.Blacklist[pnl:GetColumnText(5)]
 		self.SelectedPanel:Show()
 		self.SelectedPanel:SetDisabled(false)
 	end
@@ -117,7 +117,7 @@ function panel:CreateBlacklistPanel()
 		RunConsoleCommand("media_reload_blacklist")
 	end
 
-	if (MediaPlayer.Blacklist and !table.IsEmpty(MediaPlayer.Blacklist)) then
+	if (LydsPlayer.Blacklist and !table.IsEmpty(LydsPlayer.Blacklist)) then
 		self:PresentBlacklist()
 	end
 end
@@ -128,14 +128,14 @@ end
 
 function panel:PresentBlacklist()
 
-	if (!MediaPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
+	if (!LydsPlayer.LocalPlayer:IsAdmin()) then self:Remove() return end
 
 	self.List:Clear()
 
-	for k,v in pairs( MediaPlayer.Blacklist ) do
+	for k,v in pairs( LydsPlayer.Blacklist ) do
 		self.List:AddLine(v.Title, os.date( "%H:%M:%S - %d/%m/%Y",v.DateAdded), v.Owner.Name, v.Admin.Name, v.Video )
 	end
 end
 
 --Register panel
-vgui.Register("MediaPlayer.AdminPanel", panel, "MediaPlayer.Base")
+vgui.Register("LydsPlayer.AdminPanel", panel, "LydsPlayer.Base")

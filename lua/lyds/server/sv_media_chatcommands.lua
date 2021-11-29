@@ -1,8 +1,8 @@
 --chat commands global table
-MediaPlayer.Commands = MediaPlayer.Commands or {}
+LydsPlayer.Commands = LydsPlayer.Commands or {}
 
 --base commmand
-MediaPlayer.BaseCommand = {
+LydsPlayer.BaseCommand = {
 	Command = "default",
 	Cooldown = true,
 	Admin = false,
@@ -15,7 +15,7 @@ MediaPlayer.BaseCommand = {
 }
 
 --registered commands
-MediaPlayer.RegisteredCommands = {
+LydsPlayer.RegisteredCommands = {
 
 	--this is also registered a a command so !voteskip
 	VoteSkip = {
@@ -43,11 +43,11 @@ MediaPlayer.RegisteredCommands = {
 	Vote = {
 		OnExecute = function(ply, cmd)
 
-			if (!MediaPlayer.HasCurrentVote() ) then return end
+			if (!LydsPlayer.HasCurrentVote() ) then return end
 
-			if (!ply:GetNWBool("MediaPlayer.Voted")) then
-				MediaPlayer.AddToCount()
-				ply:SetNWBool("MediaPlayer.Voted", true )
+			if (!ply:GetNWBool("LydsPlayer.Voted")) then
+				LydsPlayer.AddToCount()
+				ply:SetNWBool("LydsPlayer.Voted", true )
 			else
 				ply:SendMediaPlayerMessage("You have already voted in this vote!")
 			end
@@ -76,7 +76,7 @@ MediaPlayer.RegisteredCommands = {
 	},
 	Like = {
 		OnExecute = function(ply, cmd)
-			if ( table.IsEmpty(MediaPlayer.CurrentVideo) ) then
+			if ( table.IsEmpty(LydsPlayer.CurrentVideo) ) then
 
 				ply:SendMediaPlayerMessage("No video currently playing!")
 				return false
@@ -87,7 +87,7 @@ MediaPlayer.RegisteredCommands = {
 	},
 	Dislike = {
 		OnExecute = function(ply, cmd)
-			if ( table.IsEmpty(MediaPlayer.CurrentVideo) ) then
+			if ( table.IsEmpty(LydsPlayer.CurrentVideo) ) then
 
 				ply:SendMediaPlayerMessage("No video currently playing!")
 				return false
@@ -99,7 +99,7 @@ MediaPlayer.RegisteredCommands = {
 	Mute = {
 		OnExecute = function(ply, cmd)
 
-			if ( table.IsEmpty(MediaPlayer.CurrentVideo) ) then
+			if ( table.IsEmpty(LydsPlayer.CurrentVideo) ) then
 
 				ply:SendMediaPlayerMessage("No video currently playing!")
 				return false
@@ -135,13 +135,13 @@ MediaPlayer.RegisteredCommands = {
 }
 
 --loads our chat commands
-function MediaPlayer.LoadChatCommands()
+function LydsPlayer.LoadChatCommands()
 
 	--this is the hook you would attach your shit too
-	hook.Call("MediaPlayer.PreloadRegisteredCommands")
+	hook.Call("LydsPlayer.PreloadRegisteredCommands")
 
-	for k,v in pairs(MediaPlayer.RegisteredCommands) do
-		v = table.Merge(MediaPlayer.GetNewChatCommand(), v)
+	for k,v in pairs(LydsPlayer.RegisteredCommands) do
+		v = table.Merge(LydsPlayer.GetNewChatCommand(), v)
 
 		v.Command = string.lower(k)
 
@@ -153,43 +153,43 @@ function MediaPlayer.LoadChatCommands()
 				})
 
 				v.Aliases = {}
-				MediaPlayer.AddChatCommand(tab)
+				LydsPlayer.AddChatCommand(tab)
 			end
 		end
 
-		MediaPlayer.AddChatCommand(v)
+		LydsPlayer.AddChatCommand(v)
 	end
 
-	hook.Call("MediaPlayer.CommandsLoaded")
+	hook.Call("LydsPlayer.CommandsLoaded")
 end
 
 --takes an array and adds commands to be registered to the global table
-function MediaPlayer.AddRegisteredCommands(tab)
+function LydsPlayer.AddRegisteredCommands(tab)
 
 	for k,v in pairs(tab) do
 
-		if (MediaPlayer.RegisteredCommands[k] != nil ) then
+		if (LydsPlayer.RegisteredCommands[k] != nil ) then
 			warning(k .. " is an already registered command")
 		end
 
-		MediaPlayer.RegisteredCommands[k] = v
+		LydsPlayer.RegisteredCommands[k] = v
 	end
 end
 
 --gets a new chat command which is used in the register functions
-function MediaPlayer.GetNewChatCommand()
-	return table.Copy(MediaPlayer.BaseCommand)
+function LydsPlayer.GetNewChatCommand()
+	return table.Copy(LydsPlayer.BaseCommand)
 end
 
 --adds the command for use in the main global table
-function MediaPlayer.AddChatCommand(command)
-	MediaPlayer.Commands[command.Command] = command
+function LydsPlayer.AddChatCommand(command)
+	LydsPlayer.Commands[command.Command] = command
 end
 
 --parses a command given through the PlayerSay hook and matches it to one of our registered commands
 --TODO: Add variable argument parsing for !play
-function MediaPlayer.ParseCommand(ply, str)
-	if (str.sub(str, 1,1) != MediaPlayer.GetSetting("chatcommand_prefix").Value ) then return false end
+function LydsPlayer.ParseCommand(ply, str)
+	if (str.sub(str, 1,1) != LydsPlayer.GetSetting("chatcommand_prefix").Value ) then return false end
 
 	local command = str.sub(str, 2 )
 	command = str.Trim(command, " ")
@@ -202,14 +202,14 @@ function MediaPlayer.ParseCommand(ply, str)
 		ply:SendMediaPlayerMessage("Commands with spaces not supported! Will treat your command like '" .. command .. "'" )
 	end
 
-	if (!MediaPlayer.Commands[command]) then ply:SendMediaPlayerMessage("command '" .. command .. "' does not exist") return false end
+	if (!LydsPlayer.Commands[command]) then ply:SendMediaPlayerMessage("command '" .. command .. "' does not exist") return false end
 
-	command = MediaPlayer.Commands[command]
+	command = LydsPlayer.Commands[command]
 
 	if (!ply:IsAdmin() and command.Admin ) then return false end
 	if (!command.OnExecute) then return false end
 
-	if (command.Cooldown and MediaPlayer.HasCooldown(ply, "Command")) then
+	if (command.Cooldown and LydsPlayer.HasCooldown(ply, "Command")) then
 		ply:SendMediaPlayerMessage("You are doing that too quickly!")
 		return nil
 	else
@@ -217,7 +217,7 @@ function MediaPlayer.ParseCommand(ply, str)
 		local result = command.OnExecute(ply, command)
 
 		if (result != false and command.Admin == false ) then
-			MediaPlayer.AddPlayerCooldown( ply, MediaPlayer.CopyCooldown("Command"))
+			LydsPlayer.AddPlayerCooldown( ply, LydsPlayer.CopyCooldown("Command"))
 		end
 
 		return true

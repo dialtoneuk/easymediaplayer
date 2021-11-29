@@ -1,7 +1,7 @@
 
 --These are all the panels used by the addon.
 --see cl_panels_controller.lua for how the data here is then instantiated and ready for us to use
-MediaPlayer.Panels = {
+LydsPlayer.Panels = {
 
 	--settings panel
 	SettingsPanel = {
@@ -18,16 +18,16 @@ MediaPlayer.Panels = {
 		--called after initialized
 		PostInit = function(panel, key, settings)
 			panel:FillPropertySheet({
-				Server = MediaPlayer.AdminSettings or {},
-				Client = MediaPlayer.Settings or {}
+				Server = LydsPlayer.AdminSettings or {},
+				Client = LydsPlayer.Settings or {}
 			})
 			panel:MakePopup()
 
 			--refreshes
 			panel.OnClose = function(self)
 
-				if ( MediaPlayer.LocalPlayer:IsAdmin() and self.Changed) then
-					MediaPlayer.CreateWarningBox("Warning!","Admin settings hasnt been saved! please make sure everythings been saved or press close again to ignore")
+				if ( LydsPlayer.LocalPlayer:IsAdmin() and self.Changed) then
+					LydsPlayer.CreateWarningBox("Warning!","Admin settings hasnt been saved! please make sure everythings been saved or press close again to ignore")
 					self.Changed = false
 					panel:Show()
 				else
@@ -35,7 +35,7 @@ MediaPlayer.Panels = {
 						RunConsoleCommand("media_refresh_cl")
 					else
 						if (settings.Hide.Value == false ) then
-							MediaPlayer.CreateWarningBox("Warning!","youtube_settings_hide is false so settings will always be visible")
+							LydsPlayer.CreateWarningBox("Warning!","youtube_settings_hide is false so settings will always be visible")
 							panel:Show()
 						end
 					end
@@ -143,8 +143,8 @@ MediaPlayer.Panels = {
 				return
 			end
 
-			if (!table.IsEmpty(MediaPlayer.CurrentVideo)) then
-				panel:SetVideo(MediaPlayer.CurrentVideo)
+			if (!table.IsEmpty(LydsPlayer.CurrentVideo)) then
+				panel:SetVideo(LydsPlayer.CurrentVideo)
 
 				if (settings.Show_New_Constant.Value or settings.Show_Constant.Value) then
 					panel:Show()
@@ -174,7 +174,7 @@ MediaPlayer.Panels = {
 				return
 			end
 
-			if (!table.IsEmpty(MediaPlayer.CurrentVideo) and settings.Show_New_Constant.Value ) then
+			if (!table.IsEmpty(LydsPlayer.CurrentVideo) and settings.Show_New_Constant.Value ) then
 				panel:Show()
 				return
 			end
@@ -198,7 +198,7 @@ MediaPlayer.Panels = {
 				return
 			end
 
-			if (!table.IsEmpty(MediaPlayer.CurrentVideo) and settings.Show_New_Constant.Value ) then
+			if (!table.IsEmpty(LydsPlayer.CurrentVideo) and settings.Show_New_Constant.Value ) then
 				panel:Show()
 				return
 			end
@@ -222,10 +222,10 @@ MediaPlayer.Panels = {
 		PostInit = function(panel, key, settings)
 			panel:Reposition()
 			--nothing needs to be done
-			if (table.IsEmpty(MediaPlayer.CurrentVote)) then
+			if (table.IsEmpty(LydsPlayer.CurrentVote)) then
 				panel:Hide()
 			else
-				panel:SetVote(MediaPlayer.CurrentVote)
+				panel:SetVote(LydsPlayer.CurrentVote)
 				panel:Show()
 			end
 		end
@@ -249,7 +249,7 @@ MediaPlayer.Panels = {
 			panel:Reposition()
 			panel:SetPos(ScrW() - settings.Position.Value.X, settings.Position.Value.Y)
 
-			if (table.IsEmpty(MediaPlayer.Playlist) and !settings.Show_Constant.Value ) then
+			if (table.IsEmpty(LydsPlayer.Playlist) and !settings.Show_Constant.Value ) then
 				panel:Hide()
 			elseif (!settings.Hide.Value and settings.Show_Constant.Value) then
 				panel:Show()

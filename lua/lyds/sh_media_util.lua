@@ -1,5 +1,5 @@
 --pareses a youtube url and returns the video id
-function MediaPlayer.ParseYoutubeURL(url) --bad method
+function LydsPlayer.ParseYoutubeURL(url) --bad method
 
 
 	local str = string.Replace(url, "https://", "");
@@ -18,7 +18,7 @@ function MediaPlayer.ParseYoutubeURL(url) --bad method
 end
 
 --checks if a given link is a 404 page
-function MediaPlayer.IsNot404(url, callback, https)
+function LydsPlayer.IsNot404(url, callback, https)
 	https = https or false
 
 	local start = "http://"
@@ -37,10 +37,10 @@ function MediaPlayer.IsNot404(url, callback, https)
 end
 
 --TODO: Rewrite
-function MediaPlayer.DailymotionFetch(params, callback, one_object)
+function LydsPlayer.DailymotionFetch(params, callback, one_object)
 	one_object = one_object or false
 
-	local apikey = MediaPlayer.GetSetting("dailymotion_api_key")
+	local apikey = LydsPlayer.GetSetting("dailymotion_api_key")
 	if (apikey.Value == apikey.DefValue or false ) then
 		error([[dailymotion_api_key not set! please goto https://console.cloud.google.com/google/ and create a new api key, it must have access to the Youtube 'Data' V3 Api,
 		then, type settings into console and find dailymotion_api_key and put in your new api key, and try again.]])
@@ -48,10 +48,10 @@ function MediaPlayer.DailymotionFetch(params, callback, one_object)
 end
 
 --TODO: Rewrite this to api endpoint is not apart of params and params are at table
-function MediaPlayer.YoutubeFetch(params, callback, one_object)
+function LydsPlayer.YoutubeFetch(params, callback, one_object)
 	one_object = one_object or false
 
-	local apikey = MediaPlayer.GetSetting("youtube_api_key")
+	local apikey = LydsPlayer.GetSetting("youtube_api_key")
 
 	if (apikey.Value == apikey.DefValue or false ) then
 		error([[youtube_api_key not set! please goto https://console.cloud.google.com/google/ and create a new api key, it must have access to the Youtube 'Data' V3 Api,
@@ -100,7 +100,7 @@ function MediaPlayer.YoutubeFetch(params, callback, one_object)
 end
 
 --Converts ISO time to a numerical value, used with Youtube videos.
-function MediaPlayer.ConvertFromISOTime(duration)
+function LydsPlayer.ConvertFromISOTime(duration)
 
 	local safeFunc = function()
 		local time = string.gsub(duration, "^.-(%d+)M(%d+)S","%1:%2")
@@ -115,7 +115,7 @@ function MediaPlayer.ConvertFromISOTime(duration)
 
 		--lame fix
 		if (#exp == 1) then
-			return MediaPlayer.ConvertFromISOTime(duration .. "1S")
+			return LydsPlayer.ConvertFromISOTime(duration .. "1S")
 		end
 
 		local total = 0

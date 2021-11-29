@@ -219,18 +219,18 @@ local client = {
 	chat_colours = {
 		Value = {
 			__unpack = function(self, index, value) --called when unpacking from save json
-				return MediaPlayer.TableToColour(value)
+				return LydsPlayer.TableToColour(value)
 			end,
 			__pack = function(self, index, value) --called when packing data into json.
 				return value
 			end,
-			PrefixColor = MediaPlayer.Colours.Red,
-			TextColor = MediaPlayer.Colours.White
+			PrefixColor = LydsPlayer.Colours.Red,
+			TextColor = LydsPlayer.Colours.White
 		}
 	}
 }
 
 --register our settings
-hook.Add("MediaPlayer.SettingsLoaded","MediaPlayer.RegisterLegacySettings", function()
-	MediaPlayer.RegisterSettings(server, client)
+hook.Add("LydsPlayer.SettingsLoaded","LydsPlayer.RegisterLegacySettings", function()
+	LydsPlayer.RegisterSettings(server, client)
 end)

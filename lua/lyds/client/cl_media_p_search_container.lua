@@ -16,7 +16,7 @@ function panel:Init()
 			Height = true,
 		},
 		Declare = {
-			Type = MediaPlayer.MediaType.YOUTUBE,
+			Type = LydsPlayer.MediaType.YOUTUBE,
 			LastValue = ""
 		}
 	})
@@ -82,9 +82,9 @@ function panel:RebuildComboBox()
 	self.ComboBox:SetTall(30)
 	self.ComboBox:SetWide(self:GetWidth() / 6)
 	self.ComboBox:Dock(RIGHT)
-	self.ComboBox:SetValue( next(MediaPlayer.EnabledMediaTypes) )
+	self.ComboBox:SetValue( next(LydsPlayer.EnabledMediaTypes) )
 
-	for k,v in pairs(MediaPlayer.EnabledMediaTypes) do
+	for k,v in pairs(LydsPlayer.EnabledMediaTypes) do
 		self.ComboBox:AddChoice(k)
 	end
 end
@@ -221,18 +221,18 @@ function panel:ResultPanel(result)
 
 	pan.DoClick = function()
 
-		if (!table.IsEmpty(MediaPlayer.CurrentVideo) and result.Video == MediaPlayer.CurrentVideo.Video ) then
-			MediaPlayer.CreateWarningBox("Video alreay present","Video is currently playing")
+		if (!table.IsEmpty(LydsPlayer.CurrentVideo) and result.Video == LydsPlayer.CurrentVideo.Video ) then
+			LydsPlayer.CreateWarningBox("Video alreay present","Video is currently playing")
 			return
 		end
 
-		if (!table.IsEmpty(MediaPlayer.Playlist) and  MediaPlayer.Playlist[result.Video] != nil ) then
-			MediaPlayer.CreateWarningBox("Video alreay present","Video already in playlist!")
+		if (!table.IsEmpty(LydsPlayer.Playlist) and  LydsPlayer.Playlist[result.Video] != nil ) then
+			LydsPlayer.CreateWarningBox("Video alreay present","Video already in playlist!")
 			return
 		end
 
-		if (MediaPlayer.PanelValid("SearchPanel")) then
-			MediaPlayer.GetPanel("SearchPanel"):ShowVideoInfo(result)
+		if (LydsPlayer.PanelValid("SearchPanel")) then
+			LydsPlayer.GetPanel("SearchPanel"):ShowVideoInfo(result)
 		end
 	end
 
@@ -261,4 +261,4 @@ function panel:ResultPanel(result)
 end
 
 --Register
-vgui.Register("MediaPlayer.SearchContainer", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.SearchContainer", panel, "LydsPlayer.BasePanel")

@@ -85,7 +85,7 @@ Fills the property sheet
 function panel:FillPropertySheet(settings)
 	for k,v in pairs(settings) do
 		if ( k == "Server") then
-			if (MediaPlayer.LocalPlayer:IsAdmin()) then
+			if (LydsPlayer.LocalPlayer:IsAdmin()) then
 				self:AddPropertySheetTab(k, v, "icon16/shield.png", true )
 			end
 			continue
@@ -104,7 +104,7 @@ end
 --]]
 
 function panel:MyThink()
-	if (self:HasRescaled() and MediaPlayer.Settings != nil ) then
+	if (self:HasRescaled() and LydsPlayer.Settings != nil ) then
 
 		if (!IsValid(self.PropertySheet)) then return end
 
@@ -115,34 +115,34 @@ function panel:MyThink()
 		self.Changed = false
 
 		self:FillPropertySheet({
-			Server = MediaPlayer.AdminSettings,
-			Client = MediaPlayer.Settings
+			Server = LydsPlayer.AdminSettings,
+			Client = LydsPlayer.Settings
 		})
 	end
 
 	if (self:GetWidth() < 300 ) then
 
-		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
+		LydsPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
 			math.floor( self:GetWidth() ) .. " pixels wide! We've put it back for you. Try again!")
 
 		self.Settings.Size.Value.Width = 600
-		MediaPlayer.ChangeSetting("settings_size", self.Settings.Size.Value)
-		MediaPlayer.ChangeSetting("settings_auto_resize", false)
+		LydsPlayer.ChangeSetting("settings_size", self.Settings.Size.Value)
+		LydsPlayer.ChangeSetting("settings_auto_resize", false)
 
 		self:Remove()
-		MediaPlayer.InstantiatePanels(true)
+		LydsPlayer.InstantiatePanels(true)
 	end
 
 	if (self:GetHeight() < 300 ) then
 
-		MediaPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
+		LydsPlayer.CreateWarningBox("Oh no!","Seems the settings window got a bit too small to use. Its only " ..
 			math.floor( self:GetHeight() ) .. " pixels tall! We've put it back for you. Try again!")
 		self.Settings.Size.Value.Height = 600
-		MediaPlayer.ChangeSetting("settings_size", self.Settings.Size.Value)
-		MediaPlayer.ChangeSetting("settings_auto_resize", false)
+		LydsPlayer.ChangeSetting("settings_size", self.Settings.Size.Value)
+		LydsPlayer.ChangeSetting("settings_auto_resize", false)
 
 		self:Remove()
-		MediaPlayer.InstantiatePanels(true)
+		LydsPlayer.InstantiatePanels(true)
 	end
 end
 
@@ -152,7 +152,7 @@ Add Preset tab
 
 function panel:AddPresetTab()
 
-	self.PresetEditor = vgui.Create("MediaPlayer.SettingPresets", self.PropertySheet)
+	self.PresetEditor = vgui.Create("LydsPlayer.SettingPresets", self.PropertySheet)
 	self.PropertySheet:AddSheet("Presets", self.PresetEditor, "icon16/folder.png")
 end
 
@@ -225,7 +225,7 @@ function panel:AddCommandsTab()
 	divider:SetWide( ( self:GetWidth(true, true ) - self:GetPadding() * 2 )  - 30 )
 
 	divider.Paint = function()
-		draw.SimpleTextOutlined( "Client Commands", "BiggerText", 5, self.Settings.Size.Value.RowHeight / 2 , self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		draw.SimpleTextOutlined( "Client Commands", "BiggerText", 5, self.Settings.Size.Value.RowHeight / 2 , self.Settings.Colours.Value.TextColor, 5, 1, 0.5, LydsPlayer.Colours.Black )
 	end
 
 	grid:AddItem( divider )
@@ -241,7 +241,7 @@ function panel:AddCommandsTab()
 		but.Paint = function(s)
 			surface.SetDrawColor(self.Settings.Colours.Value.Border)
 			surface.DrawOutlinedRect(0, 0, s:GetWide(), self.Settings.Size.Value.RowHeight , self.Settings.Options.Value.BorderThickness)
-			draw.SimpleTextOutlined( v, "MediumText", 25, self.Settings.Size.Value.RowHeight / 2, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+			draw.SimpleTextOutlined( v, "MediumText", 25, self.Settings.Size.Value.RowHeight / 2, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, LydsPlayer.Colours.Black )
 		end
 
 
@@ -265,7 +265,7 @@ function panel:AddCommandsTab()
 		fn(k,string.upper(v), "user.png")
 	end
 
-	if (MediaPlayer.LocalPlayer:IsAdmin()) then
+	if (LydsPlayer.LocalPlayer:IsAdmin()) then
 
 		--add server commands devicer
 		divider = vgui.Create("DButton", grid )
@@ -276,7 +276,7 @@ function panel:AddCommandsTab()
 		divider:SetTextColor(self.Settings.Colours.Value.TextColor)
 
 		divider.Paint = function()
-			draw.SimpleTextOutlined( "Server Commands", "BiggerText", 5, self.Settings.Size.Value.RowHeight / 2 , self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+			draw.SimpleTextOutlined( "Server Commands", "BiggerText", 5, self.Settings.Size.Value.RowHeight / 2 , self.Settings.Colours.Value.TextColor, 5, 1, 0.5, LydsPlayer.Colours.Black )
 		end
 
 		grid:AddItem( divider )
@@ -316,7 +316,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	scrollRight.Paint = function(s)
 
 		if (admin and self.Edited) then
-			draw.SimpleTextOutlined( "Remember to click save!" , "BiggerText", 10, s:GetTall() / 2 , MediaPlayer.Colours.White, 10, 1, 0.5,  MediaPlayer.Colours.Black )
+			draw.SimpleTextOutlined( "Remember to click save!" , "BiggerText", 10, s:GetTall() / 2 , LydsPlayer.Colours.White, 10, 1, 0.5,  LydsPlayer.Colours.Black )
 		end
 	end
 
@@ -346,12 +346,12 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	self.RefreshAllPanels.DoClick = function()
 		RunConsoleCommand("media_create_cl")
 
-		MediaPlayer.CreateChatMessage("Refreshed all panels! Settings window reopening in a second...")
+		LydsPlayer.CreateChatMessage("Refreshed all panels! Settings window reopening in a second...")
 
 		--
 		timer.Simple(1, function()
-			if (MediaPlayer.PanelValid("SettingsPanel")) then
-				MediaPlayer.ShowPanel("SettingsPanel")
+			if (LydsPlayer.PanelValid("SettingsPanel")) then
+				LydsPlayer.ShowPanel("SettingsPanel")
 			end
 		end)
 	end
@@ -367,12 +367,12 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 		self.SendButton:Hide()
 		self.SendButton.DoClick = function()
 			if (self.Edited) then
-				MediaPlayer.SetAdminSettings()
+				LydsPlayer.SetAdminSettings()
 
 				self.SendButton:SetDisabled(true)
 				self.Edited = false
 				self.Changed = false
-				MediaPlayer.CreateSuccessBox("Success","Server settings succesfully applied", 2)
+				LydsPlayer.CreateSuccessBox("Success","Server settings succesfully applied", 2)
 			end
 		end
 	else
@@ -389,12 +389,12 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 			if (self.Selected == nil or self.Selected.Key == nil ) then return end
 
 			--resets
-			MediaPlayer.ResetSetting(self.Selected.Key)
+			LydsPlayer.ResetSetting(self.Selected.Key)
 
-			self:UpdateTable(title, MediaPlayer.GetSetting(self.Selected.Key), self.IsAdmin)
+			self:UpdateTable(title, LydsPlayer.GetSetting(self.Selected.Key), self.IsAdmin)
 
 			--self:UpdateTable(title, setting, false)
-			MediaPlayer.CreateSuccessBox("Success", "Setting '" .. self.Selected.Key .. "' has sucessfully been reset. You might need to refresh all panels.")
+			LydsPlayer.CreateSuccessBox("Success", "Setting '" .. self.Selected.Key .. "' has sucessfully been reset. You might need to refresh all panels.")
 		end
 	end
 
@@ -408,7 +408,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	self.AddKey:DockMargin(0,self:GetPadding(),0,0)
 	self.AddKey.DoClick = function()
 		if (!self.IsCustom) then
-			MediaPlayer.CreateWarningBox("Error", "This table is uncustomizable")
+			LydsPlayer.CreateWarningBox("Error", "This table is uncustomizable")
 			return
 		else
 			if (self.Selected == nil or self.Selected.Key == nil ) then return end
@@ -416,12 +416,12 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 			local setting
 
 			if (self.IsAdmin) then
-				setting =  MediaPlayer.GetSetting(self.Selected.Key)
+				setting =  LydsPlayer.GetSetting(self.Selected.Key)
 			else
-				setting = MediaPlayer.AdminSettings[self.Selected.Key][self.Selected.Type]
+				setting = LydsPlayer.AdminSettings[self.Selected.Key][self.Selected.Type]
 			end
 
-			if (setting != MediaPlayer.Type.TABLE ) then error("not a table") return end
+			if (setting != LydsPlayer.Type.TABLE ) then error("not a table") return end
 			if (!setting.Custom ) then error("not customisable") return end
 
 			setting.Value[#setting.Value + 1] = ""
@@ -449,7 +449,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 	self.Notifications[title]:DockMargin(0,5,0,0)
 	self.Notifications[title]:DockPadding(15,5,5,5)
 	self.Notifications[title]:SetTall(30)
-	self.Notifications[title]:SetBackgroundColor(MediaPlayer.Colours.FadedRed)
+	self.Notifications[title]:SetBackgroundColor(LydsPlayer.Colours.FadedRed)
 	self.Notifications[title]:Hide()
 
 	self.Notifications[title].Text = vgui.Create("DLabel",  self.Notifications[title])
@@ -460,12 +460,12 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
 
 	for k,keys in SortedPairs(data) do
 		for kind,v in SortedPairsByMemberValue(keys, "Convar") do
-			local node = settingSelection:AddNode(k, MediaPlayer.GetSettingIcon(k, admin) )
+			local node = settingSelection:AddNode(k, LydsPlayer.GetSettingIcon(k, admin) )
 
 			function node:DoClick()
-				if (!MediaPlayer.PanelValid("SettingsPanel")) then return end
+				if (!LydsPlayer.PanelValid("SettingsPanel")) then return end
 
-				local s = MediaPlayer.GetPanel("SettingsPanel")
+				local s = LydsPlayer.GetPanel("SettingsPanel")
 				s:UpdateTable(title, v, admin )
 				s.Selected = v
 				s.IsCustom = v.Custom or false
@@ -492,7 +492,7 @@ function panel:UpdateTable(title, v, admin)
 	local settingsTitle = string.Replace(title," ", "_")
 
 	if (v.Comment) then
-		self.Comments[title].Text:SetText(settingsTitle .. ": " .. MediaPlayer.AddFullStop(v.Comment))
+		self.Comments[title].Text:SetText(settingsTitle .. ": " .. LydsPlayer.AddFullStop(v.Comment))
 		self.Comments[title]:Dock(BOTTOM)
 		self.Comments[title]:Show()
 	else
@@ -523,11 +523,11 @@ function panel:UpdateTable(title, v, admin)
 
 		local str = v.Key
 
-		if (v.Type == MediaPlayer.Type.INT ) then
+		if (v.Type == LydsPlayer.Type.INT ) then
 			typ = "Int"
-		elseif (v.Type == MediaPlayer.Type.FLOAT ) then
+		elseif (v.Type == LydsPlayer.Type.FLOAT ) then
 			typ = "Float"
-		elseif ( v.Type == MediaPlayer.Type.BOOL) then
+		elseif ( v.Type == LydsPlayer.Type.BOOL) then
 			typ = "Boolean"
 		end
 
@@ -570,14 +570,14 @@ function panel:UpdateTable(title, v, admin)
 			end
 
 			if (!admin) then
-				if (MediaPlayer.GetSetting(v.Key).Value != val ) then
-					MediaPlayer.ChangeSetting(v.Key, val)
+				if (LydsPlayer.GetSetting(v.Key).Value != val ) then
+					LydsPlayer.ChangeSetting(v.Key, val)
 				end
 
 				return
 			end
 
-			MediaPlayer.AdminSettings[v.Key][v.Type].Value = val
+			LydsPlayer.AdminSettings[v.Key][v.Type].Value = val
 
 			if (self.Edited == false) then
 
@@ -644,28 +644,28 @@ function panel:NormalSettingsRow(v, k, row )
 				tab = val
 			end
 
-			if ( MediaPlayer.Settings[v.Key][v.Type].DefValue.__unpack) then
-				MediaPlayer.Settings[v.Key][v.Type].Value[k] = MediaPlayer.Settings[v.Key][v.Type].DefValue.__unpack(MediaPlayer.Settings[v.Key][v.Type], k, tab)
+			if ( LydsPlayer.Settings[v.Key][v.Type].DefValue.__unpack) then
+				LydsPlayer.Settings[v.Key][v.Type].Value[k] = LydsPlayer.Settings[v.Key][v.Type].DefValue.__unpack(LydsPlayer.Settings[v.Key][v.Type], k, tab)
 			else
 
-				if (type(MediaPlayer.Settings[v.Key][v.Type].DefValue[k]) == "boolean") then
+				if (type(LydsPlayer.Settings[v.Key][v.Type].DefValue[k]) == "boolean") then
 					tab = (tab == 1 or tab == true)
-					MediaPlayer.Settings[v.Key][v.Type].Value[k] = tab
+					LydsPlayer.Settings[v.Key][v.Type].Value[k] = tab
 					return
 				end
 
-				if (v.Type == MediaPlayer.Type.TABLE) then
-					MediaPlayer.Settings[v.Key][v.Type].Value[k] = val
-				elseif (v.Type == MediaPlayer.Type.INT) then
-					MediaPlayer.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
-				elseif (v.Type == MediaPlayer.Type.FLOAT) then
-					MediaPlayer.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab, 2)
+				if (v.Type == LydsPlayer.Type.TABLE) then
+					LydsPlayer.Settings[v.Key][v.Type].Value[k] = val
+				elseif (v.Type == LydsPlayer.Type.INT) then
+					LydsPlayer.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab)
+				elseif (v.Type == LydsPlayer.Type.FLOAT) then
+					LydsPlayer.Settings[v.Key][v.Type].Value[k] = math.Truncate(tab, 2)
 				else
-					MediaPlayer.Settings[v.Key][v.Type].Value[k] = tab
+					LydsPlayer.Settings[v.Key][v.Type].Value[k] = tab
 				end
 			end
 
-			row:SetValue(MediaPlayer.Settings[v.Key][v.Type].Value[k])
+			row:SetValue(LydsPlayer.Settings[v.Key][v.Type].Value[k])
 		end
 
 		if ( v.SlowUpdate ) then
@@ -708,26 +708,26 @@ function panel:AdminSettingsRow(v, k, row )
 
 		self.Changed = true
 
-		if ( MediaPlayer.AdminSettings[v.Key][v.Type].DefValue.__unpack) then
-			MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = MediaPlayer.AdminSettings[v.Key][v.Type].DefValue.__unpack(MediaPlayer.AdminSettings[v.Key][v.Type], k, tab)
+		if ( LydsPlayer.AdminSettings[v.Key][v.Type].DefValue.__unpack) then
+			LydsPlayer.AdminSettings[v.Key][v.Type].Value[k] = LydsPlayer.AdminSettings[v.Key][v.Type].DefValue.__unpack(LydsPlayer.AdminSettings[v.Key][v.Type], k, tab)
 		else
 
 			--seems to work for boolean packing/unpacking
-			if (type(MediaPlayer.AdminSettings[v.Key][v.Type].DefValue[k]) == "boolean") then
+			if (type(LydsPlayer.AdminSettings[v.Key][v.Type].DefValue[k]) == "boolean") then
 				tab = (tab == 1 or tab == true)
-				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = tab
+				LydsPlayer.AdminSettings[v.Key][v.Type].Value[k] = tab
 				return
 			end
 
-			if (v.Type == MediaPlayer.Type.TABLE) then
-				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = val
-			elseif (v.Type == MediaPlayer.Type.INT) then
-				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = math.Truncate(tab)
+			if (v.Type == LydsPlayer.Type.TABLE) then
+				LydsPlayer.AdminSettings[v.Key][v.Type].Value[k] = val
+			elseif (v.Type == LydsPlayer.Type.INT) then
+				LydsPlayer.AdminSettings[v.Key][v.Type].Value[k] = math.Truncate(tab)
 			else
-				MediaPlayer.AdminSettings[v.Key][v.Type].Value[k] = tab
+				LydsPlayer.AdminSettings[v.Key][v.Type].Value[k] = tab
 			end
 		end
 	end
 end
 
-vgui.Register("MediaPlayer.SettingsPanel", panel, "MediaPlayer.Base")
+vgui.Register("LydsPlayer.SettingsPanel", panel, "LydsPlayer.Base")

@@ -1,8 +1,8 @@
 --Used in the GenerateUniqueID method
-MediaPlayer.BaseSeed = math.floor( os.time() / 3600 ) --hours since 1970
+LydsPlayer.BaseSeed = math.floor( os.time() / 3600 ) --hours since 1970
 
 --Enocdes a string into URI format for use in a http call
-function MediaPlayer.EncodeURI(str)
+function LydsPlayer.EncodeURI(str)
 	if (str) then
 		str = string.gsub (str, "\n", "\r\n")
 		str = string.gsub (str, "([^%w ])",
@@ -13,7 +13,7 @@ function MediaPlayer.EncodeURI(str)
 end
 
 --Decodes a string used in a http call (unused)
-function MediaPlayer.DecodeURI(s)
+function LydsPlayer.DecodeURI(s)
 	if (s) then
 		s = string.gsub(s, "%%(%x%x)", function (hex)
 			return string.char(tonumber(hex,16))
@@ -22,7 +22,7 @@ function MediaPlayer.DecodeURI(s)
 	return s
 end
 
-function MediaPlayer.AddFullStop(text)
+function LydsPlayer.AddFullStop(text)
 
 	local escape = {
 		"!","?","~",".","=","\n"
@@ -38,18 +38,18 @@ function MediaPlayer.AddFullStop(text)
 end
 
 --Takes a table and returns a colour using the indexes of the table provided, must be numerical
-function MediaPlayer.TableToColour(tab)
+function LydsPlayer.TableToColour(tab)
 	return Color(tab.r or tab[1], tab.g or tab[2], tab.b or tab[3], tab.a or tab[4] or 255)
 end
 
 --Takes variable arguments as a parameter and turns them into a table
-function MediaPlayer.VarToColour(...)
+function LydsPlayer.VarToColour(...)
 	local tab = {...}
-	return MediaPlayer.TableToColour(tab[1])
+	return LydsPlayer.TableToColour(tab[1])
 end
 
 --Generates a safe id based off of a master_string, the id returned will always be unique to the master_string
-function MediaPlayer.GenerateSafeID(master_string)
+function LydsPlayer.GenerateSafeID(master_string)
 	local seed = 0
 	local id = ""
 
@@ -57,7 +57,7 @@ function MediaPlayer.GenerateSafeID(master_string)
 		seed = seed + string.byte(master_string, i, i) --get the bytevalue of each of our string addit all together
 	end
 
-	seed = seed * MediaPlayer.BaseSeed --times it all together
+	seed = seed * LydsPlayer.BaseSeed --times it all together
 
 	if (seed < 1000) then
 		seed = seed * 10
@@ -78,7 +78,7 @@ function MediaPlayer.GenerateSafeID(master_string)
 end
 
 --Verifies that an mp3 url is valid and in an acceptable format
-function MediaPlayer.ValidMediaUrl(url)
+function LydsPlayer.ValidMediaUrl(url)
 	url = string.Trim(url)
 
 	if (string.find(url, ".mp3") == nil ) then
@@ -103,6 +103,6 @@ function MediaPlayer.ValidMediaUrl(url)
 end
 
 --returns true is a URL is https
-function MediaPlayer.IsUrlHTTPS(url)
+function LydsPlayer.IsUrlHTTPS(url)
 	return string.sub(url, 1, 5) == "https"
 end

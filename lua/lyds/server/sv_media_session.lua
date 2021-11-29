@@ -1,18 +1,18 @@
 
-MediaPlayer.Session = MediaPlayer.Session or {}
+LydsPlayer.Session = LydsPlayer.Session or {}
 
 --adds a video to the servers history
-function MediaPlayer.AddToSession(video)
+function LydsPlayer.AddToSession(video)
 
-	if (MediaPlayer.Session[video.Video]) then
+	if (LydsPlayer.Session[video.Video]) then
 
-		if (MediaPlayer.Session[video.Video].Plays == nil ) then
-			MediaPlayer.Session[video.Video].Plays = 0
+		if (LydsPlayer.Session[video.Video].Plays == nil ) then
+			LydsPlayer.Session[video.Video].Plays = 0
 		end
 
-		MediaPlayer.Session[video.Video].Plays = MediaPlayer.Session[video.Video].Plays + 1
-		MediaPlayer.Session[video.Video].LastPlayed = os.time()
-		MediaPlayer.Session[video.Video].Owner = {
+		LydsPlayer.Session[video.Video].Plays = LydsPlayer.Session[video.Video].Plays + 1
+		LydsPlayer.Session[video.Video].LastPlayed = os.time()
+		LydsPlayer.Session[video.Video].Owner = {
 			Name = video.Owner:GetName() or video.Owner.Name or "Unknown",
 			SteamID = video.Owner:SteamID() or video.Owner.SteamID or "Unknown"
 		}
@@ -25,8 +25,8 @@ function MediaPlayer.AddToSession(video)
 			SteamID = video.Owner:SteamID() or video.Owner.SteamID or "Unknown"
 		}
 
-		if (MediaPlayer.ExistsInDatabase(video.Video)) then
-			local default = MediaPlayer.GetVideoHistory(video.Video)
+		if (LydsPlayer.ExistsInDatabase(video.Video)) then
+			local default = LydsPlayer.GetVideoHistory(video.Video)
 
 			history.Likes = default.Likes or 0
 			history.Dislikes = default.Disikes or 0
@@ -39,51 +39,51 @@ function MediaPlayer.AddToSession(video)
 			history.LastPlayed = os.time()
 		end
 
-		MediaPlayer.Session[video.Video] = history
+		LydsPlayer.Session[video.Video] = history
 	end
 
 	--insert or update
-	if (!MediaPlayer.ExistsInDatabase(video.Video)) then
-		MediaPlayer.InsertHistory(MediaPlayer.Session[video.Video])
+	if (!LydsPlayer.ExistsInDatabase(video.Video)) then
+		LydsPlayer.InsertHistory(LydsPlayer.Session[video.Video])
 	else
-		MediaPlayer.UpdateHistory(video.Video, MediaPlayer.Session[video.Video])
+		LydsPlayer.UpdateHistory(video.Video, LydsPlayer.Session[video.Video])
 	end
 end
 
 --returns true if that video has been played before
-function MediaPlayer.HasRecentlyPlayed(video)
-	return MediaPlayer.Session[video.Video] != nil
+function LydsPlayer.HasRecentlyPlayed(video)
+	return LydsPlayer.Session[video.Video] != nil
 end
 
 --likes the current playing video
-function MediaPlayer.LikeCurrentVideo()
-	MediaPlayer.LikeVideo(MediaPlayer.CurrentVideo or {})
+function LydsPlayer.LikeCurrentVideo()
+	LydsPlayer.LikeVideo(LydsPlayer.CurrentVideo or {})
 end
 
 --likes a video
-function MediaPlayer.LikeVideo(video)
+function LydsPlayer.LikeVideo(video)
 	if (table.IsEmpty(video)) then return end
-	if (!MediaPlayer.HasRecentlyPlayed(video)) then MediaPlayer.AddToSession(video) end
+	if (!LydsPlayer.HasRecentlyPlayed(video)) then LydsPlayer.AddToSession(video) end
 
-	MediaPlayer.Session[video.Video].Likes = MediaPlayer.Session[video.Video].Likes + 1
+	LydsPlayer.Session[video.Video].Likes = LydsPlayer.Session[video.Video].Likes + 1
 end
 
 --likes a the current video
-function MediaPlayer.LikeCurrentVideo()
-	MediaPlayer.DislikeVideo(MediaPlayer.CurrentVideo or {})
+function LydsPlayer.LikeCurrentVideo()
+	LydsPlayer.DislikeVideo(LydsPlayer.CurrentVideo or {})
 end
 
 --dislikes the current video
-function MediaPlayer.DislikeVideo(video)
+function LydsPlayer.DislikeVideo(video)
 	if (table.IsEmpty(video)) then return end
-	if (!MediaPlayer.HasRecentlyPlayed(video)) then MediaPlayer.AddToSession(video) end
+	if (!LydsPlayer.HasRecentlyPlayed(video)) then LydsPlayer.AddToSession(video) end
 
-	MediaPlayer.Session[video.Video].Dislikes = MediaPlayer.Session[video.Video].Dislikes + 1
+	LydsPlayer.Session[video.Video].Dislikes = LydsPlayer.Session[video.Video].Dislikes + 1
 end
 
 --saves our history to file
-function MediaPlayer.SaveSession()
+function LydsPlayer.SaveSession()
 	if (!file.IsDir("lyds/sessions/", "DATA")) then file.CreateDir("lyds/sessions/", "DATA") end
 
-	file.Write("lyds/sessions/" .. game.GetMap() .. "_" .. os.date("%A_%B%d_%y %H_%M_%S") .. ".json", util.TableToJSON( MediaPlayer.Session ))
+	file.Write("lyds/sessions/" .. game.GetMap() .. "_" .. os.date("%A_%B%d_%y %H_%M_%S") .. ".json", util.TableToJSON( LydsPlayer.Session ))
 end

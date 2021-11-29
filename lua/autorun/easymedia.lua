@@ -1,6 +1,6 @@
 --only does this once
-if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
-    MediaPlayerErrors = {}
+if (LydsPlayer == nil or table.IsEmpty(LydsPlayer)) then
+    LydsPlayerErrors = {}
 
     --original error function
     local originalError = error
@@ -13,14 +13,14 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
     --warning func
     warning = function(...)
         local seed = "Server"
-        MediaPlayerErrors.Recoverable = MediaPlayerErrors.Recoverable or {}
+        LydsPlayerErrors.Recoverable = LydsPlayerErrors.Recoverable or {}
 
         if (CLIENT) then
             seed = "Client"
         end
 
-        MediaPlayerErrors.Recoverable[ seed ] = MediaPlayerErrors.Recoverable[ seed ] or {}
-        MediaPlayerErrors.Recoverable[ seed ][ #MediaPlayerErrors.Recoverable[ seed ] ] =  {
+        LydsPlayerErrors.Recoverable[ seed ] = LydsPlayerErrors.Recoverable[ seed ] or {}
+        LydsPlayerErrors.Recoverable[ seed ][ #LydsPlayerErrors.Recoverable[ seed ] ] =  {
             Time = os.time(),
             ...
         }
@@ -33,19 +33,19 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
     --error
     errorBad = function(...)
         local seed = "Server"
-        MediaPlayerErrors.Bad = MediaPlayerErrors.Bad or {}
+        LydsPlayerErrors.Bad = LydsPlayerErrors.Bad or {}
 
         if (CLIENT) then
             seed = "Client"
         end
 
-        MediaPlayerErrors.Bad[ seed ] = MediaPlayerErrors.Bad[ seed ] or {}
-        MediaPlayerErrors.Bad[ seed ][ #MediaPlayerErrors.Bad[ seed ] + 1 ] = {
+        LydsPlayerErrors.Bad[ seed ] = LydsPlayerErrors.Bad[ seed ] or {}
+        LydsPlayerErrors.Bad[ seed ][ #LydsPlayerErrors.Bad[ seed ] + 1 ] = {
             Time = os.time(),
             ...
         }
 
-        if (#MediaPlayerErrors.Bad[ seed ] == 0) then
+        if (#LydsPlayerErrors.Bad[ seed ] == 0) then
             hook.Run("OnFirstBadError", {...})
         else
             hook.Run("OnBadError", {...})
@@ -58,7 +58,7 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
     hook.Add("ShutDown", "SaveErrors", function()
         if (!file.IsDir("lyds/errors", "DATA")) then file.CreateDir("lyds/errors", "DATA") end
 
-        for f,v in pairs(MediaPlayerErrors) do
+        for f,v in pairs(LydsPlayerErrors) do
             if (CLIENT) then
                 file.Write("lyds/errors/" .. f .. " " .. game.GetMap() .. "_" .. os.date("%A_%B%d_%y %H_%M_%S") .. " CLIENT.json", util.TableToJSON(v["Client"], true))
             elseif (SERVER) then
@@ -69,7 +69,7 @@ if (MediaPlayer == nil or table.IsEmpty(MediaPlayer)) then
 end
 
 --our global table
-MediaPlayer = MediaPlayer or {
+LydsPlayer = LydsPlayer or {
     Name = "Easy MediaPlayer",
     Credits = {
         Author = "llydia",
@@ -89,16 +89,16 @@ MediaPlayer = MediaPlayer or {
     Files = {}, --see below,
     --metatable stuff (unused)
     _new = function()
-        return setmetatable(table.Copy(MediaPlayer), MediaPlayer)
+        return setmetatable(table.Copy(LydsPlayer), LydsPlayer)
     end,
-    __index = MediaPlayer
+    __index = LydsPlayer
 }
 
 --holds our computer colours
-MediaPlayer.ComputedColours = MediaPlayer.ComputedColours or {}
+LydsPlayer.ComputedColours = LydsPlayer.ComputedColours or {}
 
 --the colours for our stuff
-MediaPlayer.Colours = {
+LydsPlayer.Colours = {
     Black = Color(35,35,35),
     Gray = Color(145,145,145),
     PitchBlack = Color(0,0,0),
@@ -110,18 +110,18 @@ MediaPlayer.Colours = {
 }
 
 --generates some colours but only once
-if (table.IsEmpty(MediaPlayer.ComputedColours)) then
+if (table.IsEmpty(LydsPlayer.ComputedColours)) then
 
-    for key,colour in pairs(MediaPlayer.Colours) do
-        MediaPlayer.ComputedColours[ "Faded" .. key ] = Color(colour.r, colour.g, colour.b, 200 )
-        MediaPlayer.ComputedColours[ "Barely" .. key ] = Color(colour.r, colour.g, colour.b, 75 )
-        MediaPlayer.ComputedColours[ "Transparent" .. key ] = Color(colour.r, colour.g, colour.b, 25 )
-        MediaPlayer.ComputedColours[ "Reverse" .. key ] = Color(colour.b, colour.g, colour.r, 255 )
+    for key,colour in pairs(LydsPlayer.Colours) do
+        LydsPlayer.ComputedColours[ "Faded" .. key ] = Color(colour.r, colour.g, colour.b, 200 )
+        LydsPlayer.ComputedColours[ "Barely" .. key ] = Color(colour.r, colour.g, colour.b, 75 )
+        LydsPlayer.ComputedColours[ "Transparent" .. key ] = Color(colour.r, colour.g, colour.b, 25 )
+        LydsPlayer.ComputedColours[ "Reverse" .. key ] = Color(colour.b, colour.g, colour.r, 255 )
     end
 end
 
-if (!table.IsEmpty(MediaPlayer.ComputedColours)) then
-    MediaPlayer.Colours = table.Merge(MediaPlayer.Colours, MediaPlayer.ComputedColours)
+if (!table.IsEmpty(LydsPlayer.ComputedColours)) then
+    LydsPlayer.Colours = table.Merge(LydsPlayer.Colours, LydsPlayer.ComputedColours)
 end
 
 --autoloader for our scripts
@@ -133,16 +133,16 @@ for k,v in pairs(file.Find("lyds/*.lua","LUA")) do
     end
     include("lyds/" .. v)
 
-    MediaPlayer.Files.Shared =  MediaPlayer.Files.Shared or {}
-    MediaPlayer.Files.Shared["lyds/" .. v] = v
+    LydsPlayer.Files.Shared =  LydsPlayer.Files.Shared or {}
+    LydsPlayer.Files.Shared["lyds/" .. v] = v
 end
 
 --loads server files (does not index dirs)
 if (SERVER) then
     for k,v in pairs(file.Find("lyds/server/*.lua","LUA")) do
         include("lyds/server/" .. v)
-        MediaPlayer.Files.Server = MediaPlayer.Files.Server or {}
-        MediaPlayer.Files.Server["lyds/server/" .. v] = v
+        LydsPlayer.Files.Server = LydsPlayer.Files.Server or {}
+        LydsPlayer.Files.Server["lyds/server/" .. v] = v
     end
 end
 
@@ -152,7 +152,7 @@ for k,v in pairs(file.Find("lyds/client/*.lua","LUA")) do
         AddCSLuaFile("lyds/client/" .. v)
     else
         include("lyds/client/" .. v)
-        MediaPlayer.Files.Client = MediaPlayer.Files.Client or {}
-        MediaPlayer.Files.Client["lyds/client/" .. v] = v
+        LydsPlayer.Files.Client = LydsPlayer.Files.Client or {}
+        LydsPlayer.Files.Client["lyds/client/" .. v] = v
     end
 end

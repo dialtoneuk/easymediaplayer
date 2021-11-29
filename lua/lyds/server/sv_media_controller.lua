@@ -1,46 +1,46 @@
 --This is what actually start the playlist and what is called to begin,
 --if its the fisrt video it'll instantly play it, if not it'll go around in this callback loop until no videos are left
-function MediaPlayer.Begin(video)
+function LydsPlayer.Begin(video)
 
 	if (type(video) != "table") then error("must be a table") end
 
-	if (table.IsEmpty(MediaPlayer.CurrentVideo)) then
-		MediaPlayer.StartVideo(video, function()
-			MediaPlayer.AddToSession(video)
-			MediaPlayer.RemoveVideo(video.Video)
-			MediaPlayer.StopVideo(video.Video)
+	if (table.IsEmpty(LydsPlayer.CurrentVideo)) then
+		LydsPlayer.StartVideo(video, function()
+			LydsPlayer.AddToSession(video)
+			LydsPlayer.RemoveVideo(video.Video)
+			LydsPlayer.StopVideo(video.Video)
 
-			if (MediaPlayer.HasNext()) then
+			if (LydsPlayer.HasNext()) then
 				--Next please
-				MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
-				MediaPlayer.Begin(MediaPlayer.Next())
+				LydsPlayer.BroadcastSection(LydsPlayer.GetSetting("playlist_broadcast_limit").Value)
+				LydsPlayer.Begin(LydsPlayer.Next())
 			else
 				--Ending
-				MediaPlayer.Playlist = {}
-				MediaPlayer.CurrentVideo = {}
-				MediaPlayer.BroadcastEnd()
+				LydsPlayer.Playlist = {}
+				LydsPlayer.CurrentVideo = {}
+				LydsPlayer.BroadcastEnd()
 			end
 		end)
 	else
-		MediaPlayer.AnnouncePlaylistAddition(video)
-		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
+		LydsPlayer.AnnouncePlaylistAddition(video)
+		LydsPlayer.BroadcastSection(LydsPlayer.GetSetting("playlist_broadcast_limit").Value)
 	end
 end
 
 --announces a new video
-function MediaPlayer.AnnounceVideo()
-	if (!MediaPlayer.CurrentVideo or table.IsEmpty(MediaPlayer.CurrentVideo)) then return end
-	if (!MediaPlayer.IsSettingTrue("announce_video")) then return end
+function LydsPlayer.AnnounceVideo()
+	if (!LydsPlayer.CurrentVideo or table.IsEmpty(LydsPlayer.CurrentVideo)) then return end
+	if (!LydsPlayer.IsSettingTrue("announce_video")) then return end
 
 	for k,v in pairs(player.GetAll()) do
-		v:SendMediaPlayerMessage("Now playing '" .. MediaPlayer.CurrentVideo.Title .. "' submitted by " .. MediaPlayer.CurrentVideo.Owner:GetName())
+		v:SendMediaPlayerMessage("Now playing '" .. LydsPlayer.CurrentVideo.Title .. "' submitted by " .. LydsPlayer.CurrentVideo.Owner:GetName())
 	end
 end
 
 --announces the addition of a new video into the playlist
-function MediaPlayer.AnnouncePlaylistAddition(video)
+function LydsPlayer.AnnouncePlaylistAddition(video)
 	if (!video or table.IsEmpty(video)) then return end
-	if (!MediaPlayer.IsSettingTrue("announce_addition")) then return end
+	if (!LydsPlayer.IsSettingTrue("announce_addition")) then return end
 
 	for k,v in pairs(player.GetAll()) do
 		v:SendMediaPlayerMessage("Added '" .. video.Title .. "' submitted by " .. video.Owner:GetName())
@@ -48,9 +48,9 @@ function MediaPlayer.AnnouncePlaylistAddition(video)
 end
 
 --announces the ending of the video
-function MediaPlayer.AnnounceVideoEnding(video)
+function LydsPlayer.AnnounceVideoEnding(video)
 	if (!video or table.IsEmpty(video)) then return end
-	if (!MediaPlayer.IsSettingTrue("announce_ending")) then return end
+	if (!LydsPlayer.IsSettingTrue("announce_ending")) then return end
 
 	for k,v in pairs(player.GetAll()) do
 		v:SendMediaPlayerMessage("Video '" .. video.Title .. "' over!")
@@ -58,125 +58,125 @@ function MediaPlayer.AnnounceVideoEnding(video)
 end
 
 --sends the session data
-function MediaPlayer.SendSessionChunk(ply, data)
-	if (table.IsEmpty(MediaPlayer.Session)) then return end
+function LydsPlayer.SendSessionChunk(ply, data)
+	if (table.IsEmpty(LydsPlayer.Session)) then return end
 
-	net.Start("MediaPlayer.SendSessionChunk")
+	net.Start("LydsPlayer.SendSessionChunk")
 		net.WriteTable(data)
 	net.Send(ply)
 end
 
 --sends all the videos the user has played this session
-function MediaPlayer.SendPersonalSessionData(ply, data)
-	if (table.IsEmpty(MediaPlayer.Session)) then return end
+function LydsPlayer.SendPersonalSessionData(ply, data)
+	if (table.IsEmpty(LydsPlayer.Session)) then return end
 
-	net.Start("MediaPlayer.SendPersonalSession")
+	net.Start("LydsPlayer.SendPersonalSession")
 		net.WriteTable(data)
 	net.Send(ply)
 end
 
 --sends all of the history to the player
-function MediaPlayer.SendSession(ply)
-	if (table.IsEmpty(MediaPlayer.Session)) then return end
+function LydsPlayer.SendSession(ply)
+	if (table.IsEmpty(LydsPlayer.Session)) then return end
 
-	net.Start("MediaPlayer.SendSession")
-		net.WriteTable(MediaPlayer.Session)
+	net.Start("LydsPlayer.SendSession")
+		net.WriteTable(LydsPlayer.Session)
 	net.Send(ply)
 end
 
 --sends the history just for that video
-function MediaPlayer.SendSessionForVideo(ply, video)
-	net.Start("MediaPlayer.SendSessionForVideo")
+function LydsPlayer.SendSessionForVideo(ply, video)
+	net.Start("LydsPlayer.SendSessionForVideo")
 		net.WriteTable(video)
 	net.Send(ply)
 end
 
 --sends all of the banned videos to a player if they are an admin
-function MediaPlayer.SendBlacklist(ply)
+function LydsPlayer.SendBlacklist(ply)
 	if (!ply:IsAdmin()) then return end
-	if (table.IsEmpty(MediaPlayer.Blacklist)) then return end
+	if (table.IsEmpty(LydsPlayer.Blacklist)) then return end
 
-	net.Start("MediaPlayer.SendBlacklist")
-		net.WriteTable(MediaPlayer.Blacklist)
+	net.Start("LydsPlayer.SendBlacklist")
+		net.WriteTable(LydsPlayer.Blacklist)
 	net.Send(ply)
 end
 
 --sends a section of the playlist to the player, limit is set in admin settings under playist_max_limit
-function MediaPlayer.SendPlaylistSection(ply, limit)
-	net.Start("MediaPlayer.SendPlaylist")
-		net.WriteTable(MediaPlayer.GetVideos(false, limit))
+function LydsPlayer.SendPlaylistSection(ply, limit)
+	net.Start("LydsPlayer.SendPlaylist")
+		net.WriteTable(LydsPlayer.GetVideos(false, limit))
 	net.Send(ply)
 end
 
 --broadcasts a section of the playlist to all players
-function MediaPlayer.BroadcastSection(limit)
+function LydsPlayer.BroadcastSection(limit)
 	for k,v in pairs(player.GetAll()) do
-		MediaPlayer.SendPlaylistSection(v, limit )
+		LydsPlayer.SendPlaylistSection(v, limit )
 	end
 end
 
 --broadcasts the end of a video to all players
-function MediaPlayer.BroadcastEnd()
+function LydsPlayer.BroadcastEnd()
 	for k,v in pairs(player.GetAll()) do
-		MediaPlayer.SendEnd(v)
+		LydsPlayer.SendEnd(v)
 	end
 end
 
 --sends the entire playlist to player
-function MediaPlayer.SendPlaylist(ply)
-	net.Start("MediaPlayer.SendPlaylist")
-	net.WriteTable(MediaPlayer.GetVideos(false))
+function LydsPlayer.SendPlaylist(ply)
+	net.Start("LydsPlayer.SendPlaylist")
+	net.WriteTable(LydsPlayer.GetVideos(false))
 	net.Send(ply)
 end
 
 --tells a player that the video has ended
-function MediaPlayer.SendEnd(ply)
-	net.Start("MediaPlayer.End")
+function LydsPlayer.SendEnd(ply)
+	net.Start("LydsPlayer.End")
 	net.Send(ply)
 end
 
 --broadcasts th plailist to ever
-function MediaPlayer.BroadcastPlaylist()
+function LydsPlayer.BroadcastPlaylist()
 	for k,v in pairs(player.GetAll()) do
-		MediaPlayer.SendPlaylist(v)
+		LydsPlayer.SendPlaylist(v)
 	end
 end
 
 --starts a new video
-function MediaPlayer.StartVideo(video, callback)
-	MediaPlayer.CurrentVideo = video
-	MediaPlayer.BroadcastCurrentVideo()
-	MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
-	MediaPlayer.AnnounceVideo()
+function LydsPlayer.StartVideo(video, callback)
+	LydsPlayer.CurrentVideo = video
+	LydsPlayer.BroadcastCurrentVideo()
+	LydsPlayer.BroadcastSection(LydsPlayer.GetSetting("playlist_broadcast_limit").Value)
+	LydsPlayer.AnnounceVideo()
 
 	--for our voting
 	for k,v in pairs(player.GetAll()) do
-		v:SetNWBool("MediaPlayer.Engaged", false )
+		v:SetNWBool("LydsPlayer.Engaged", false )
 	end
 
-	timer.Create("MediaPlayer.VideoTimer", video.Duration, 1, function()
-		MediaPlayer.StopVideo()
+	timer.Create("LydsPlayer.VideoTimer", video.Duration, 1, function()
+		LydsPlayer.StopVideo()
 		callback()
 	end)
 end
 
 --skips a video
-function MediaPlayer.SkipVideo()
+function LydsPlayer.SkipVideo()
 
-	local video = MediaPlayer.CurrentVideo
-	MediaPlayer.AddToSession(video)
-	MediaPlayer.RemoveVideo(video.Video)
-	MediaPlayer.StopVideo(video.Video)
+	local video = LydsPlayer.CurrentVideo
+	LydsPlayer.AddToSession(video)
+	LydsPlayer.RemoveVideo(video.Video)
+	LydsPlayer.StopVideo(video.Video)
 
-	if (MediaPlayer.HasNext()) then
+	if (LydsPlayer.HasNext()) then
 		--Next please
-		MediaPlayer.BroadcastSection(MediaPlayer.GetSetting("playlist_broadcast_limit").Value)
-		MediaPlayer.Begin(MediaPlayer.Next())
+		LydsPlayer.BroadcastSection(LydsPlayer.GetSetting("playlist_broadcast_limit").Value)
+		LydsPlayer.Begin(LydsPlayer.Next())
 	else
 		--Ending
-		MediaPlayer.Playlist = {}
-		MediaPlayer.CurrentVideo = {}
-		MediaPlayer.BroadcastEnd()
+		LydsPlayer.Playlist = {}
+		LydsPlayer.CurrentVideo = {}
+		LydsPlayer.BroadcastEnd()
 	end
 end
 
@@ -184,23 +184,23 @@ end
 	Stops the current video
 --]]
 
-function MediaPlayer.StopVideo()
-	if (timer.Exists("MediaPlayer.VideoTimer")) then timer.Remove("MediaPlayer.VideoTimer") end
+function LydsPlayer.StopVideo()
+	if (timer.Exists("LydsPlayer.VideoTimer")) then timer.Remove("LydsPlayer.VideoTimer") end
 
 
-	MediaPlayer.AnnounceVideoEnding(MediaPlayer.CurrentVideo)
+	LydsPlayer.AnnounceVideoEnding(LydsPlayer.CurrentVideo)
 
-	MediaPlayer.CurrentVideo = {}
+	LydsPlayer.CurrentVideo = {}
 end
 
 --[[
 	Broadcasts the current video to the players
 --]]
 
-function MediaPlayer.BroadcastCurrentVideo()
+function LydsPlayer.BroadcastCurrentVideo()
 	for k,v in pairs(player.GetAll()) do
-		net.Start("MediaPlayer.SendCurrentVideo")
-		net.WriteTable(MediaPlayer.CurrentVideo or {})
+		net.Start("LydsPlayer.SendCurrentVideo")
+		net.WriteTable(LydsPlayer.CurrentVideo or {})
 		net.Send(v)
 	end
 end

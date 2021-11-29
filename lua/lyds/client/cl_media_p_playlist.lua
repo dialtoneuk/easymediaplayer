@@ -48,7 +48,7 @@ function panel:Init()
 
 	self:SetupGrid()
 
-	if (table.IsEmpty(MediaPlayer.Playlist)) then
+	if (table.IsEmpty(LydsPlayer.Playlist)) then
 		self:EmptyPanel()
 	else
 		self:UpdatePlaylist()
@@ -68,7 +68,7 @@ function panel:Paint()
 	surface.DrawRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
 	surface.SetDrawColor(self.Settings.Colours.Value.Border)
 	surface.DrawOutlinedRect(0, 0, self:GetWide(), self:GetTall(), self.Settings.Options.Value.BorderThickness)
-	surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder or MediaPlayer.Colours.Black )
+	surface.SetDrawColor(self.Settings.Colours.Value.SecondaryBorder or LydsPlayer.Colours.Black )
 	surface.DrawOutlinedRect(2, 2, self:GetWide() - 4, self:GetTall() - 4, self.Settings.Options.Value.BorderThickness)
 end
 
@@ -110,7 +110,7 @@ function panel:MyThink()
 	local f = false
 	if (!table.IsEmpty(self.Playlist)) then
 		for k,v in SortedPairs(self.Playlist) do
-			if (!MediaPlayer.Playlist[v.Video]) then
+			if (!LydsPlayer.Playlist[v.Video]) then
 				self.Playlist[k] = nil
 				f = true
 			end
@@ -131,7 +131,7 @@ function panel:MyThink()
 
 		self:SetDockPadding()
 
-		if (!table.IsEmpty(MediaPlayer.Playlist)) then
+		if (!table.IsEmpty(LydsPlayer.Playlist)) then
 			self:UpdateGrid()
 		else
 			self:RecalculateSize()
@@ -146,10 +146,10 @@ Essentially fills our local playlist table and updates the grid.
 function panel:UpdatePlaylist()
 	self.Playlist = {}
 
-	if (table.IsEmpty(MediaPlayer.Playlist)) then return end
+	if (table.IsEmpty(LydsPlayer.Playlist)) then return end
 
 	local updated = false
-	for k,v in pairs(MediaPlayer.Playlist) do
+	for k,v in pairs(LydsPlayer.Playlist) do
 
 		if (self.Playlist[k] == nil ) then
 			self.Playlist[k] = v
@@ -188,7 +188,7 @@ function panel:EmptyPanel()
 	self.MiscPanel:SetText("")
 
 
-	local str = MediaPlayer.Name
+	local str = LydsPlayer.Name
 
 	self.MiscPanel.Paint = function(s)
 
@@ -196,9 +196,9 @@ function panel:EmptyPanel()
 		local len = surface.GetTextSize(str)
 
 		draw.RoundedBox(5, 0, 0, self:GetWidth() - self:GetPadding() * 2, self.Settings.Size.Value.RowHeight, self.Settings.Colours.Value.ItemBackground )
-		draw.SimpleTextOutlined( str, "BiggerText", 10, 20, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
-		draw.SimpleTextOutlined( "v" .. MediaPlayer.Version, "MediumText", len + 17, 15, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
-		draw.SimpleTextOutlined("No videos queued - click me to search!", "MediumText", 10, 45,self.Settings.Colours.Value.TextColor, 5, 1, 0.5, MediaPlayer.Colours.Black )
+		draw.SimpleTextOutlined( str, "BiggerText", 10, 20, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, LydsPlayer.Colours.Black )
+		draw.SimpleTextOutlined( "v" .. LydsPlayer.Version, "MediumText", len + 17, 15, self.Settings.Colours.Value.TextColor, 5, 1, 0.5, LydsPlayer.Colours.Black )
+		draw.SimpleTextOutlined("No videos queued - click me to search!", "MediumText", 10, 45,self.Settings.Colours.Value.TextColor, 5, 1, 0.5, LydsPlayer.Colours.Black )
 	end
 
 	self.MiscPanel.DoClick = function(s)
@@ -226,8 +226,8 @@ function panel:CreateFullPanel()
 		surface.DrawRect(0, 0, s:GetWide(), s:GetTall())
 		surface.SetDrawColor(self.Settings.Colours.Value.Border)
 		surface.DrawOutlinedRect(0, 0, s:GetWide(), s:GetTall(), self.Settings.Options.Value.BorderThickness)
-		draw.SimpleText("Playlist Full", "BiggerText", self:GetPadding(), ( s:GetTall() / 2 ) - 15 , MediaPlayer.Colours.FadedWhite )
-		draw.SimpleText(self._Count  .. " videos in total", "PlaylistText", self:GetPadding() + 135, ( s:GetTall() / 2 ) - 10, MediaPlayer.Colours.FadedWhite)
+		draw.SimpleText("Playlist Full", "BiggerText", self:GetPadding(), ( s:GetTall() / 2 ) - 15 , LydsPlayer.Colours.FadedWhite )
+		draw.SimpleText(self._Count  .. " videos in total", "PlaylistText", self:GetPadding() + 135, ( s:GetTall() / 2 ) - 10, LydsPlayer.Colours.FadedWhite)
 	end
 
 	self.Grid:AddItem(self.FullPanel)
@@ -253,9 +253,9 @@ function panel:UpdateGrid()
 			break
 		end
 
-		local p = vgui.Create("MediaPlayer.PlaylistItem", self )
+		local p = vgui.Create("LydsPlayer.PlaylistItem", self )
 
-		if (MediaPlayer.CurrentVideo and MediaPlayer.CurrentVideo.Video == v.Video) then
+		if (LydsPlayer.CurrentVideo and LydsPlayer.CurrentVideo.Video == v.Video) then
 
 			if (self:IsSettingTrue("HideActive")) then
 				p:Remove()
@@ -319,4 +319,4 @@ function panel:RemoveVideo(video)
 end
 
 --Register
-vgui.Register("MediaPlayer.PlaylistPanel", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.PlaylistPanel", panel, "LydsPlayer.BasePanel")

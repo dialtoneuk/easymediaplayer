@@ -1,27 +1,27 @@
 --Creates a warning box
-function MediaPlayer.CreateWarningBox(title, message, timeout)
+function LydsPlayer.CreateWarningBox(title, message, timeout)
 	timeout = timeout or false
 
-	MediaPlayer.ReinstantiatePanel("WarningBox")
-	MediaPlayer.GetPanel("WarningBox"):SetWarning(title, message, timeout)
+	LydsPlayer.ReinstantiatePanel("WarningBox")
+	LydsPlayer.GetPanel("WarningBox"):SetWarning(title, message, timeout)
 end
 
 --Creates a success box
-function MediaPlayer.CreateSuccessBox(title, message, timeout)
+function LydsPlayer.CreateSuccessBox(title, message, timeout)
 	timeout = timeout or false
 
-	MediaPlayer.ReinstantiatePanel("SuccessBox")
-	MediaPlayer.GetPanel("SuccessBox"):SetBox(title, message, timeout)
+	LydsPlayer.ReinstantiatePanel("SuccessBox")
+	LydsPlayer.GetPanel("SuccessBox"):SetBox(title, message, timeout)
 end
 
-function MediaPlayer.CreateChatMessage(msg, tag)
+function LydsPlayer.CreateChatMessage(msg, tag)
 	msg = msg or " null "
 	tag = tag or false
 	msg = string.Trim(msg)
-	local setting = MediaPlayer.GetSetting("chat_colours")
+	local setting = LydsPlayer.GetSetting("chat_colours")
 
 	if (tag) then
-		chat.AddText( setting.Value.PrefixColor, "[" .. MediaPlayer.Name .. "] ", setting.Value.TextColor, MediaPlayer.AddFullStop(msg) )
+		chat.AddText( setting.Value.PrefixColor, "[" .. LydsPlayer.Name .. "] ", setting.Value.TextColor, LydsPlayer.AddFullStop(msg) )
 	else
 		chat.AddText( setting.Value.TextColor, msg )
 	end
@@ -30,11 +30,11 @@ function MediaPlayer.CreateChatMessage(msg, tag)
 end
 
 --gets a setting icon
-function MediaPlayer.GetSettingIcon(key, admin)
+function LydsPlayer.GetSettingIcon(key, admin)
 	local i
 	if (admin) then
 
-		for k,typ in pairs(MediaPlayer.AdminSettings) do
+		for k,typ in pairs(LydsPlayer.AdminSettings) do
 			if (k != key ) then continue end
 			for _v,val in pairs(typ) do
 				if (val.Icon != nil ) then
@@ -73,8 +73,8 @@ function MediaPlayer.GetSettingIcon(key, admin)
 		end
 	else
 
-		if (MediaPlayer.GetSetting(key).Icon != nil ) then
-			return MediaPlayer.GetSetting(key).Icon
+		if (LydsPlayer.GetSetting(key).Icon != nil ) then
+			return LydsPlayer.GetSetting(key).Icon
 		end
 
 		--TODO: FIND LESS RETARDED WAY
@@ -105,31 +105,31 @@ function MediaPlayer.GetSettingIcon(key, admin)
 end
 
 --sends a request to search youtube
-function MediaPlayer.YoutubeSearch(query)
+function LydsPlayer.YoutubeSearch(query)
 
 	if (query == nil or query == "") then return end
 
-	net.Start("MediaPlayer.SearchQuery")
+	net.Start("LydsPlayer.SearchQuery")
 		net.WriteString(query)
-		net.WriteString(MediaPlayer.MediaType.YOUTUBE)
+		net.WriteString(LydsPlayer.MediaType.YOUTUBE)
 	net.SendToServer()
 end
 
 --gets the admin settings
-function MediaPlayer.GetAdminSettings()
-	if (!MediaPlayer.LocalPlayer:IsAdmin()) then return end
+function LydsPlayer.GetAdminSettings()
+	if (!LydsPlayer.LocalPlayer:IsAdmin()) then return end
 
-	net.Start("MediaPlayer.RequestAdminSettings")
+	net.Start("LydsPlayer.RequestAdminSettings")
 	--nothing
 	net.SendToServer()
 end
 
 --sets the admin settings
-function MediaPlayer.SetAdminSettings()
-	if (!MediaPlayer.LocalPlayer:IsAdmin()) then return end
-	if (table.IsEmpty(MediaPlayer.AdminSettings)) then return end
+function LydsPlayer.SetAdminSettings()
+	if (!LydsPlayer.LocalPlayer:IsAdmin()) then return end
+	if (table.IsEmpty(LydsPlayer.AdminSettings)) then return end
 
-	net.Start("MediaPlayer.SetAdminSettings")
-		net.WriteTable(MediaPlayer.AdminSettings)
+	net.Start("LydsPlayer.SetAdminSettings")
+		net.WriteTable(LydsPlayer.AdminSettings)
 	net.SendToServer()
 end

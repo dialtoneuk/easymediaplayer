@@ -76,8 +76,8 @@ function panel:SetVideo(video)
 
 	self.Button.DoClick = function()
 		RunConsoleCommand("media_play", video.Type, video.Video)
-		MediaPlayer.HidePanel("SearchPanel") --hide the search panel
+		LydsPlayer.HidePanel("SearchPanel") --hide the search panel
 	end
 end
 
-vgui.Register("MediaPlayer.SearchItem", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.SearchItem", panel, "LydsPlayer.BasePanel")

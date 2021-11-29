@@ -35,7 +35,7 @@ local client = {
 	admin_resize_scale = {
 		Value = 0.75,
 		Refresh = false,
-		Type = MediaPlayer.Type.FLOAT,
+		Type = LydsPlayer.Type.FLOAT,
 		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
 	admin_size = {
@@ -57,16 +57,16 @@ local client = {
 	admin_colours = {
 		Value = {
 			__unpack = function(self, index, value) --called when unpacking from save json
-				return MediaPlayer.TableToColour(value)
+				return LydsPlayer.TableToColour(value)
 			end,
 			__pack = function(self, index, value) --called when packing data into json.
 				return value
 			end,
-			Background = MediaPlayer.Colours.FadedBlack,
-			Border = MediaPlayer.Colours.FadedBlack,
-			ButtonBackground = MediaPlayer.Colours.FadedRed,
-			ButtonBorder = MediaPlayer.Colours.Red,
-			TextColor = MediaPlayer.Colours.Black
+			Background = LydsPlayer.Colours.FadedBlack,
+			Border = LydsPlayer.Colours.FadedBlack,
+			ButtonBackground = LydsPlayer.Colours.FadedRed,
+			ButtonBorder = LydsPlayer.Colours.Red,
+			TextColor = LydsPlayer.Colours.Black
 		}
 	},
 	admin_options = {
@@ -80,6 +80,6 @@ local client = {
 }
 
 --register our settings
-hook.Add("MediaPlayer.SettingsLoaded","MediaPlayer.RegisterAdminSettings", function()
-	MediaPlayer.RegisterSettings(server, client)
+hook.Add("LydsPlayer.SettingsLoaded","LydsPlayer.RegisterAdminSettings", function()
+	LydsPlayer.RegisterSettings(server, client)
 end)

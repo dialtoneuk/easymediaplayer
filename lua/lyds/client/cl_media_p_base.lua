@@ -247,7 +247,7 @@ function base:InContextMenu()
 end
 
 function base:InScoreboardMenu()
-    return self.InScoreboard;
+    return self.InScoreboard
 end
 
 function base:GetRescaledHeight()
@@ -368,7 +368,7 @@ end
 function base:BaseThink()
 	for k, v in pairs(self.Settings) do
 		if (self.Updates[k] != nil) then
-			if (v.Type == MediaPlayer.Type.TABLE) then
+			if (v.Type == LydsPlayer.Type.TABLE) then
 				for index, value in pairs(v.Value) do
 					if (self.Updates[k][index] != nil) then
 						self.Updates[k][index](self)
@@ -401,9 +401,9 @@ function base:SetPanelSettings()
 
 	for k, v in pairs(self.Settings) do
 		if (type(v) == "string") then
-			self.Settings[k] = MediaPlayer.GetSetting(self:GetSettingKey(v))
+			self.Settings[k] = LydsPlayer.GetSetting(self:GetSettingKey(v))
 		elseif (type(v) == "table") then
-			self.Settings[k] = MediaPlayer.GetSetting(v.Key)
+			self.Settings[k] = LydsPlayer.GetSetting(v.Key)
 		end
 	end
 end
@@ -460,6 +460,6 @@ local panel = table.Copy(base)
 local button = table.Copy(base)
 
 --Register
-vgui.Register("MediaPlayer.Base", base, "DFrame")
-vgui.Register("MediaPlayer.BasePanel", panel, "DPanel") --register an exact copy but for a panel too
-vgui.Register("MediaPlayer.BaseButton", button, "DButton") --register an exact copy but for a  too
+vgui.Register("LydsPlayer.Base", base, "DFrame")
+vgui.Register("LydsPlayer.BasePanel", panel, "DPanel") --register an exact copy but for a panel too
+vgui.Register("LydsPlayer.BaseButton", button, "DButton") --register an exact copy but for a  too

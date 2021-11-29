@@ -45,7 +45,7 @@ local client = {
 		Value = 0.8,
 		Max = 2.0,
 		Refresh = false,
-		Type = MediaPlayer.Type.FLOAT,
+		Type = LydsPlayer.Type.FLOAT,
 		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
 	search_size = {
@@ -70,18 +70,18 @@ local client = {
 	search_colours = {
 		Value = {
 			__unpack = function(self, index, value) --called when unpacking from save json
-				return MediaPlayer.TableToColour(value)
+				return LydsPlayer.TableToColour(value)
 			end,
 			__pack = function(self, index, value) --called when packing data into json.
 				return value
 			end,
-			Background = MediaPlayer.Colours.FadedBlack,
-			Border = MediaPlayer.Colours.FadedBlack,
-			TextColor = MediaPlayer.Colours.FadedWhite,
-			ItemBackground = MediaPlayer.Colours.FadedBlack,
-			ItemBorder = MediaPlayer.Colours.Blue,
-			HeaderBackground = MediaPlayer.Colours.FadedBlack,
-			HeaderBorder = MediaPlayer.Colours.Gray
+			Background = LydsPlayer.Colours.FadedBlack,
+			Border = LydsPlayer.Colours.FadedBlack,
+			TextColor = LydsPlayer.Colours.FadedWhite,
+			ItemBackground = LydsPlayer.Colours.FadedBlack,
+			ItemBorder = LydsPlayer.Colours.Blue,
+			HeaderBackground = LydsPlayer.Colours.FadedBlack,
+			HeaderBorder = LydsPlayer.Colours.Gray
 		}
 	},
 	search_options = {
@@ -95,6 +95,6 @@ local client = {
 }
 
 --register our settings
-hook.Add("MediaPlayer.SettingsLoaded","MediaPlayer.RegisterSearchSettings", function()
-	MediaPlayer.RegisterSettings(server, client)
+hook.Add("LydsPlayer.SettingsLoaded","LydsPlayer.RegisterSearchSettings", function()
+	LydsPlayer.RegisterSettings(server, client)
 end)

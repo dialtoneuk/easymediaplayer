@@ -97,7 +97,7 @@ function panel:SetSearchResults(results)
 
 	for k,v in pairs(results) do
 
-		local p = vgui.Create("MediaPlayer.SearchItemHistory", self.Grid)
+		local p = vgui.Create("LydsPlayer.SearchItemHistory", self.Grid)
 		p:SetWide(self.ColumnWidth)
 		p:SetTall(self.Settings.Size.Value.SecondaryRowHeight)
 		p:SetVideo(v, k)
@@ -158,4 +158,4 @@ function panel:SetUpGrid()
 	self.Grid:SetRowHeight( self.Settings.Size.Value.SecondaryRowHeight + self:GetPadding() * 2 )
 end
 
-vgui.Register("MediaPlayer.SearchHistoryContainer", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.SearchHistoryContainer", panel, "LydsPlayer.BasePanel")

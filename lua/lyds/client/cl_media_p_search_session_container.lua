@@ -51,4 +51,4 @@ function panel:SetUpGrid()
 	self.Grid:SetRowHeight( self.Settings.Size.Value.RowHeight + self:GetPadding() * 2 )
 end
 
-vgui.Register("MediaPlayer.SearchSessionContainer", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.SearchSessionContainer", panel, "LydsPlayer.BasePanel")

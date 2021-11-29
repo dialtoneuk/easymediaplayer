@@ -66,7 +66,7 @@ function panel:Init()
 		else
 			self.LastListValue = k
 
-			if (k == "server_preset.json" and !MediaPlayer.LocalPlayer:IsAdmin()) then
+			if (k == "server_preset.json" and !LydsPlayer.LocalPlayer:IsAdmin()) then
 				return
 			end
 
@@ -150,7 +150,7 @@ function panel:FillPresetCreator()
 	self.PresetAuthor = vgui.Create("DTextEntry", self.PresetCreator)
 	self.PresetAuthor:Dock(TOP)
 	self.PresetAuthor:DockMargin( 0, 0, 0, self:GetPadding() )
-	self.PresetAuthor:SetValue( MediaPlayer.LocalPlayer:Name() )
+	self.PresetAuthor:SetValue( LydsPlayer.LocalPlayer:Name() )
 
 	self.Checkbox = vgui.Create("DCheckBoxLabel", self.PresetCreator )
 	self.Checkbox:Dock(TOP)
@@ -169,7 +169,7 @@ function panel:FillPresetCreator()
 		local result = self:CreatePreset(self.PresetTitle:GetValue(), self.PresetAuthor:GetValue(), self.Checkbox:GetChecked())
 
 		if (!result) then
-			MediaPlayer.CreateWarningBox("Unsuccessful","Please make sure the title is not taken by something else and it also doesn't contain any special characters. Please change: " .. self.PresetTitle:GetValue())
+			LydsPlayer.CreateWarningBox("Unsuccessful","Please make sure the title is not taken by something else and it also doesn't contain any special characters. Please change: " .. self.PresetTitle:GetValue())
 		else
 			self.ListView:AddLine(result)
 			self.PresetCreator:Hide()
@@ -202,7 +202,7 @@ function panel:CreatePreset(title, author, add_default)
 	if (add_default) then
 		for k,v in pairs(self.DefaultSettings.Panels) do
 			for _,setting in pairs(self.DefaultSettings.Keys) do
-				settings[v .. "_" .. setting] = MediaPlayer.GetSetting(v .. "_" .. setting).Value
+				settings[v .. "_" .. setting] = LydsPlayer.GetSetting(v .. "_" .. setting).Value
 			end
 		end
 	end
@@ -211,7 +211,7 @@ function panel:CreatePreset(title, author, add_default)
 		Author = author,
 		Locked = false,
 		Description = "User created preset",
-		Version = MediaPlayer.Version,
+		Version = LydsPlayer.Version,
 		Settings = settings
 	}
 
@@ -219,7 +219,7 @@ function panel:CreatePreset(title, author, add_default)
 		return false
 	end
 
-	MediaPlayer.SavePreset(title, table.Copy(preset))
+	LydsPlayer.SavePreset(title, table.Copy(preset))
 	self.Presets[title .. ".json"] = table.Copy(preset)
 
 	return title .. ".json"
@@ -290,7 +290,7 @@ function panel:FillPresetEditor()
 
 	if (self.Preset.Settings != nil and !table.IsEmpty(self.Preset.Settings)) then
 		for k,v in pairs(self.Preset.Settings) do
-			if (!MediaPlayer.HasSetting(k)) then
+			if (!LydsPlayer.HasSetting(k)) then
 				self.Preset.Settings[k] = nil
 				continue
 			end
@@ -316,7 +316,7 @@ function panel:FillPresetEditor()
 	self.ComboBox:Dock(TOP)
 	self.ComboBox:SetValue( "..." )
 
-	for k,v in pairs(MediaPlayer.Settings) do
+	for k,v in pairs(LydsPlayer.Settings) do
 		self.ComboBox:AddChoice(k)
 	end
 
@@ -351,7 +351,7 @@ function panel:FillPresetEditor()
 
 		if ( sel != nil and sel != "..." ) then
 
-			local tab = table.Copy(MediaPlayer.GetSetting(sel))
+			local tab = table.Copy(LydsPlayer.GetSetting(sel))
 			self.Preset.Settings[sel] = tab.Value
 			self.HasEdited = true
 			self:FillPresetEditor()
@@ -365,7 +365,7 @@ function panel:FillPresetEditor()
 	self.VersionText:Dock(TOP)
 	self.VersionText:DockMargin(0,self:GetPadding(),0,0)
 	self.VersionText:SetText( "Version: " .. ( self.Preset.Version or "Unknown?") )
-	self.VersionText:SetTextColor(MediaPlayer.Colours.Black)
+	self.VersionText:SetTextColor(LydsPlayer.Colours.Black)
 
 	if (IsValid(self.PreviewButton)) then self.PreviewButton:Remove() end
 
@@ -378,9 +378,9 @@ function panel:FillPresetEditor()
 	self.PreviewButton.DoClick = function()
 
 		--recreate it
-		MediaPlayer.ReinstantiatePanel("PresetPreview")
+		LydsPlayer.ReinstantiatePanel("PresetPreview")
 
-		local pan = MediaPlayer.GetPanel("PresetPreview")
+		local pan = LydsPlayer.GetPanel("PresetPreview")
 		pan:SetPreview( self:GetPresetPreview() )
 		pan:MakePopup()
 		pan:Show()
@@ -430,7 +430,7 @@ function panel:FillPresetEditor()
 
 		if ( sel != nil and sel != "..." ) then
 
-			local tab = table.Copy(MediaPlayer.GetSetting(sel))
+			local tab = table.Copy(LydsPlayer.GetSetting(sel))
 			self.Preset.Settings[sel] = tab.Value
 			self.HasEdited = true
 			self:FillPresetEditor()
@@ -455,7 +455,7 @@ function panel:FillPresetEditor()
 		self.HasEdited = true
 
 		for k,v in pairs(self.Preset.Settings) do
-			local tab = table.Copy(MediaPlayer.GetSetting(k))
+			local tab = table.Copy(LydsPlayer.GetSetting(k))
 			self.Preset.Settings[k] = tab.Value
 			self:FillPresetEditor()
 		end
@@ -467,7 +467,7 @@ function panel:FillPresetEditor()
 
 	if (IsValid(self.PresetPreview)) then self.PresetPreview:Remove() end
 
-	self.PresetPreview = vgui.Create("MediaPlayer.PresetPreview", p )
+	self.PresetPreview = vgui.Create("LydsPlayer.PresetPreview", p )
 	self.PresetPreview:Dock(TOP)
 	self.PresetPreview:DockMargin(0, self:GetPadding() * 2, 0, 0)
 	self.PresetPreview:SetTall(self:GetHeight() / 3)
@@ -480,14 +480,14 @@ function panel:FillPresetEditor()
 	self.LoadButton:DockMargin(0,self:GetPadding(),0,0)
 	self.LoadButton:SetText("Apply Preset")
 	self.LoadButton.DoClick = function()
-		MediaPlayer.ApplyPreset(self.Preset)
+		LydsPlayer.ApplyPreset(self.Preset)
 		RunConsoleCommand("media_create_cl")
 
-		MediaPlayer.CreateSuccessBox("Success","Preset " .. self.LastListValue .. " successfully applied")
+		LydsPlayer.CreateSuccessBox("Success","Preset " .. self.LastListValue .. " successfully applied")
 		RunConsoleCommand("settings")
 	end
 
-	if (MediaPlayer.LocalPlayer:IsAdmin() ) then
+	if (LydsPlayer.LocalPlayer:IsAdmin() ) then
 
 		if (IsValid(self.DefaultButton)) then self.DefaultButton:Remove() end
 
@@ -504,19 +504,19 @@ function panel:FillPresetEditor()
 			end
 
 			if (self.LastListValue == "server_preset.json") then
-				MediaPlayer.CreateWarningBox("Error", "server_preset.json is the same as server.json and only exists on the server.", 4)
+				LydsPlayer.CreateWarningBox("Error", "server_preset.json is the same as server.json and only exists on the server.", 4)
 				return
 			end
 
 			if (self.LastListValue == "server.json") then
-				MediaPlayer.CreateWarningBox("Error", "server.json is the same as server_preset.json and only exists on the client.", 4)
+				LydsPlayer.CreateWarningBox("Error", "server.json is the same as server_preset.json and only exists on the client.", 4)
 				return
 			end
 
-			MediaPlayer.SendPresetToServer(self.Preset)
-			MediaPlayer.RefreshDefaultPreset()
-			MediaPlayer.InstantiatePanels(true)
-			MediaPlayer.CreateSuccessBox("Success", "Initial preset uploaded and set successfully applied!", 4)
+			LydsPlayer.SendPresetToServer(self.Preset)
+			LydsPlayer.RefreshDefaultPreset()
+			LydsPlayer.InstantiatePanels(true)
+			LydsPlayer.CreateSuccessBox("Success", "Initial preset uploaded and set successfully applied!", 4)
 		end
 	end
 
@@ -541,8 +541,8 @@ function panel:FillPresetEditor()
 	end
 
 	self.SaveButton.DoClick = function(s)
-		MediaPlayer.SavePreset(self.LastListValue, self.Preset)
-		MediaPlayer.CreateSuccessBox("Success", self.LastListValue .. " has been saved successfully!")
+		LydsPlayer.SavePreset(self.LastListValue, self.Preset)
+		LydsPlayer.CreateSuccessBox("Success", self.LastListValue .. " has been saved successfully!")
 	end
 
 	self.HasEdited = false
@@ -588,4 +588,4 @@ function panel:IsPresetLocked()
 	return self.Preset != nil and self.Preset.Locked != nil and self.Preset.Locked == true
 end
 
-vgui.Register("MediaPlayer.SettingPresets", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.SettingPresets", panel, "LydsPlayer.BasePanel")

@@ -1,6 +1,6 @@
 
 --default hardcoded tips
-MediaPlayer.Tips = {
+LydsPlayer.Tips = {
 	{
 		body = "Admins can use {chatcommand_prefix}admin to remove videos from the blacklist.",
 		admin = true
@@ -17,7 +17,7 @@ MediaPlayer.Tips = {
 		body = "You can search for a video by typing {chatcommand_prefix}play or by typing {chatcommand_prefix}search into chat.",
 	},
 	{
-		body = MediaPlayer.Name .. " was created by " .. MediaPlayer.Credits.Author,
+		body = LydsPlayer.Name .. " was created by " .. LydsPlayer.Credits.Author,
 	},
 	{
 		body = "You can use {chatcommand_prefix}like or {chatcommand_prefix}dislike to engage with the current video!"
@@ -37,27 +37,27 @@ MediaPlayer.Tips = {
 }
 
 --load our custom tips
-function MediaPlayer.LoadCustomTips()
+function LydsPlayer.LoadCustomTips()
 
-	if ( MediaPlayer.GetSetting("tips_custom") == nil ) then
+	if ( LydsPlayer.GetSetting("tips_custom") == nil ) then
 		return
 	end
 
-	local tip = MediaPlayer.GetSetting("tips_custom")
+	local tip = LydsPlayer.GetSetting("tips_custom")
 
-	if (tip.Type != MediaPlayer.Type.TABLE ) then
+	if (tip.Type != LydsPlayer.Type.TABLE ) then
 		errorBad("invalid type")
 	end
 
 	for k,v in pairs(tip.Value) do
-		table.ForceInsert(MediaPlayer.Tips, {
+		table.ForceInsert(LydsPlayer.Tips, {
 			body = v
 		})
 	end
 end
 
 --selects a tip, first argument will display admin tips if true
-function MediaPlayer.SelectTip(is_admin)
+function LydsPlayer.SelectTip(is_admin)
 	is_admin = is_admin or false
 	local tip = {}
 	local count = 5;
@@ -68,7 +68,7 @@ function MediaPlayer.SelectTip(is_admin)
 			errorBad("failed to select tip")
 		end
 
-		local result = MediaPlayer.Tips[math.random( 1, #MediaPlayer.Tips )]
+		local result = LydsPlayer.Tips[math.random( 1, #LydsPlayer.Tips )]
 
 		if (result.admin != nil && result.admin != is_admin) then
 			count = count - 1;
@@ -82,7 +82,7 @@ function MediaPlayer.SelectTip(is_admin)
 end
 
 --parses a tips body and adds settings values or evaluates the string
-function MediaPlayer.ParseTipBody(tip)
+function LydsPlayer.ParseTipBody(tip)
 	local str = tip;
 
 	if (type(tip) == "table") then
@@ -98,8 +98,8 @@ function MediaPlayer.ParseTipBody(tip)
 	for capture in string.gmatch(str, "%{(.-)%}") do
 		capture = string.lower(capture)
 
-		local setting = MediaPlayer.GetSetting( capture ) or { Value = "null", Type = MediaPlayer.Type.STRING }
-		if (MediaPlayer.Type == MediaPlayer.Type.TABLE ) then
+		local setting = LydsPlayer.GetSetting( capture ) or { Value = "null", Type = LydsPlayer.Type.STRING }
+		if (LydsPlayer.Type == LydsPlayer.Type.TABLE ) then
 			str = string.Replace(str, "{" .. capture .. "}", "invalid setting: table referenced" )
 		else
 			str = string.Replace(str, "{" .. capture .. "}", setting.Value )
@@ -110,21 +110,21 @@ function MediaPlayer.ParseTipBody(tip)
 end
 
 --display the tip each frequency interval
-function MediaPlayer.DisplayTip()
+function LydsPlayer.DisplayTip()
 
-	if ( MediaPlayer.IsSettingTrue("tips_enabled")) then
+	if ( LydsPlayer.IsSettingTrue("tips_enabled")) then
 		for k,v in pairs(player.GetAll()) do
-			local tip = MediaPlayer.SelectTip(v:IsAdmin())
+			local tip = LydsPlayer.SelectTip(v:IsAdmin())
 
 			if (tip != nil) then
-				v:SendMediaPlayerMessage("psst - " .. MediaPlayer.ParseTipBody(tip))
+				v:SendMediaPlayerMessage("psst - " .. LydsPlayer.ParseTipBody(tip))
 			end
 		end
 	end
 
-	timer.Create("MediaPlayer.Tips", MediaPlayer.GetSetting("tips_frequency").Value, 1, function()
-		if ( MediaPlayer.GetSetting("tips_enabled").Value) then
-			MediaPlayer.DisplayTip()
+	timer.Create("LydsPlayer.Tips", LydsPlayer.GetSetting("tips_frequency").Value, 1, function()
+		if ( LydsPlayer.GetSetting("tips_enabled").Value) then
+			LydsPlayer.DisplayTip()
 		end
 	end)
 end

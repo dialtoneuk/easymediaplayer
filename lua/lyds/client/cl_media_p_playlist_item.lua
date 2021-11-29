@@ -57,8 +57,8 @@ end
 
 function panel:DoClick()
 	--does this each time if there is history for this video but too bad!
-	if ( MediaPlayer.Session != nil and MediaPlayer.Session[ self.Item.Video ] != nil ) then
-		self.Item = table.Merge(self.Item,  MediaPlayer.Session[ self.Item.Video  ])
+	if ( LydsPlayer.Session != nil and LydsPlayer.Session[ self.Item.Video ] != nil ) then
+		self.Item = table.Merge(self.Item,  LydsPlayer.Session[ self.Item.Video  ])
 	end
 
 	local menu = DermaMenu(false, self)
@@ -76,7 +76,7 @@ function panel:DoClick()
 
 	dislike:SetIcon("icon16/award_star_delete.png")
 
-	if ( !self.Active and ( self.Item.Owner.SteamID == MediaPlayer.LocalPlayer:SteamID() ) ) then
+	if ( !self.Active and ( self.Item.Owner.SteamID == LydsPlayer.LocalPlayer:SteamID() ) ) then
 		local remove = menu:AddOption( "Remove Video", function()
 			RunConsoleCommand("media_remove", self.Item.Video )
 		end)
@@ -90,12 +90,12 @@ function panel:DoClick()
 		removeall:SetIcon("icon16/error.png")
 	end
 
-	if (MediaPlayer.LocalPlayer:IsAdmin()) then
+	if (LydsPlayer.LocalPlayer:IsAdmin()) then
 
 		menu:AddSpacer()
 
 		if (!self.Active) then
-			if (self.Item.Owner.SteamID != MediaPlayer.LocalPlayer:SteamID()) then
+			if (self.Item.Owner.SteamID != LydsPlayer.LocalPlayer:SteamID()) then
 				local del = menu:AddOption( "Delete Video", function()
 					RunConsoleCommand("media_delete", self.Item.Video )
 				end)
@@ -202,4 +202,4 @@ function panel:SetItemText()
 end
 
 --Register Item
-vgui.Register("MediaPlayer.PlaylistItem", panel, "MediaPlayer.BaseButton")
+vgui.Register("LydsPlayer.PlaylistItem", panel, "LydsPlayer.BaseButton")

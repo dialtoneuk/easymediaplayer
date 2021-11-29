@@ -63,7 +63,7 @@ function panel:Paint(p)
 		local str =  mins .. ":" .. seconds
 		local w = surface.GetTextSize(str)
 
-		draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10 , self:GetTall() - 45, MediaPlayer.Colours.White, 10, 1, 0.5,  MediaPlayer.Colours.Black )
+		draw.SimpleTextOutlined(str, "MediumText", self:GetWide() - w - 10 , self:GetTall() - 45, LydsPlayer.Colours.White, 10, 1, 0.5,  LydsPlayer.Colours.Black )
 		surface.SetDrawColor(self.Settings.Colours.Value.LoadingBarBackground )
 		surface.DrawRect( 0, 0, math.Clamp( ( self:GetWide() / self.Vote.Time ) * time , 5, self:GetWide() ), self.Settings.Size.Value.LoadingBarHeight)
 	end
@@ -98,4 +98,4 @@ function panel:SetVote(vote)
 end
 
 --Register
-vgui.Register("MediaPlayer.VotePanel", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.VotePanel", panel, "LydsPlayer.BasePanel")

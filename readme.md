@@ -64,13 +64,13 @@ Easy MediaPlayer comes with some hooks for easy customisability by developers. M
 
 
 ```
-MediaPlayer.SettingsLoaded
+LydsPlayer.SettingsLoaded
 ```
 
-Called once the lua file for the settings controller has been parsed, is always the first thing to be called. Use this hook to add your own functions which invoke `MediaPlayer.RegisterSettings(server: table, client: table)`
+Called once the lua file for the settings controller has been parsed, is always the first thing to be called. Use this hook to add your own functions which invoke `LydsPlayer.RegisterSettings(server: table, client: table)`
 
 ```
-MediaPlayer.SettingsPostLoad
+LydsPlayer.SettingsPostLoad
 ```
 
 Called after all settings have been registered and any saved persistant settings in the data have replaced the default registered values. If you are using the settings system and want to ensure that things run once the settings load, use this hook.
@@ -79,22 +79,22 @@ Called after all settings have been registered and any saved persistant settings
 
 
 ```
-MediaPlayer.PreloadRegisteredVotes
+LydsPlayer.PreloadRegisteredVotes
 ```
 
-Called before votes are registered. Use this hook to add custom votes by invoking the method `MediaPlayer.AddRegisteredVotes(tab: table)`, see sv_media_voting.lua for an example of how the parameter table must be structured!
+Called before votes are registered. Use this hook to add custom votes by invoking the method `LydsPlayer.AddRegisteredVotes(tab: table)`, see sv_media_voting.lua for an example of how the parameter table must be structured!
 
 ```
-MediaPlayer.PreloadRegisteredCooldowns
+LydsPlayer.PreloadRegisteredCooldowns
 ```
 
-Called after the default cooldowns have been loaded, use this hook to add your own custom cooldowns (between actions). You can create new cooldowns by invoking `MediaPlayer.StoreCooldown(cooldown: table)`, see sv_cooldown.lua for an example
+Called after the default cooldowns have been loaded, use this hook to add your own custom cooldowns (between actions). You can create new cooldowns by invoking `LydsPlayer.StoreCooldown(cooldown: table)`, see sv_cooldown.lua for an example
 
 ```
-MediaPlayer.PreloadRegisteredCommands
+LydsPlayer.PreloadRegisteredCommands
 ```
 
-Called before chat commands have been registered. Use this hook to add custom votes by invoking the method `MediaPlayer.AddRegisteredCommands(tab: table)`, see sv_media_chatcommands.lua for an example of how the parameter table must be structured!
+Called before chat commands have been registered. Use this hook to add custom votes by invoking the method `LydsPlayer.AddRegisteredCommands(tab: table)`, see sv_media_chatcommands.lua for an example of how the parameter table must be structured!
 
 # More Information
 

@@ -37,7 +37,7 @@ function panel:FillPanel(pan, k, v)
 	if (type(v) == "table") then
 		local colour = v
 		elm.Paint = function(el)
-			draw.SimpleTextOutlined(k, "SmallText", 10, el:GetTall() / 2 + 8, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(k, "SmallText", 10, el:GetTall() / 2 + 8, LydsPlayer.Colours.White, 10, 1, 0.5, LydsPlayer.Colours.Black)
 			surface.SetDrawColor(colour)
 			surface.DrawOutlinedRect(0, 15,  el:GetWide(), el:GetTall() - 15,  4)
 		end
@@ -50,8 +50,8 @@ function panel:FillPanel(pan, k, v)
 		end
 
 		elm.Paint = function(el)
-			draw.SimpleTextOutlined(k, "SmallText", 15, 20, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
-			draw.SimpleText(v, "BigText", 15, 30, MediaPlayer.Colours.White)
+			draw.SimpleTextOutlined(k, "SmallText", 15, 20, LydsPlayer.Colours.White, 10, 1, 0.5, LydsPlayer.Colours.Black)
+			draw.SimpleText(v, "BigText", 15, 30, LydsPlayer.Colours.White)
 		end
 	end
 end
@@ -70,12 +70,12 @@ function panel:SetPreview(settings)
 			surface.DrawOutlinedRect( 2, 2,  el:GetWide() - 4, 14 - 4,  1)
 			surface.SetDrawColor(self.Settings.Colours.Value.Border)
 			surface.DrawOutlinedRect(0, 0,  el:GetWide(), 14,  1)
-			draw.SimpleTextOutlined(k, "MediumText", 5, 6, MediaPlayer.Colours.White, 10, 1, 0.5, MediaPlayer.Colours.Black)
+			draw.SimpleTextOutlined(k, "MediumText", 5, 6, LydsPlayer.Colours.White, 10, 1, 0.5, LydsPlayer.Colours.Black)
 		end
 
 		self:SetDockPadding(pan)
 
-		local set = MediaPlayer.GetSetting(k)
+		local set = LydsPlayer.GetSetting(k)
 		if (type(v) == "table") then
 			for _, _v in pairs(v) do
 				if ( type(_v) == "table") then
@@ -97,4 +97,4 @@ function panel:SetPreview(settings)
 end
 
 --Preview
-vgui.Register("MediaPlayer.PresetPreviewWindow", panel, "MediaPlayer.Base")
+vgui.Register("LydsPlayer.PresetPreviewWindow", panel, "LydsPlayer.Base")

@@ -29,22 +29,22 @@ local client = {
 		Value = 0.75,
 		Refresh = false,
 		Max = 2.0,
-		Type = MediaPlayer.Type.FLOAT,
+		Type = LydsPlayer.Type.FLOAT,
 		Comment = "Changing this to a lower value will make the panel appear bigger when auto_resize is enabled. This is divided by the current gui_resize_scale value."
 	},
 	settings_colours = {
 		Value = {
 			__unpack = function(self, index, value) --called when unpacking from save json
-				return MediaPlayer.TableToColour(value)
+				return LydsPlayer.TableToColour(value)
 			end,
 			__pack = function(self, index, value) --called when packing data into json.
 				return value
 			end,
-			Background = MediaPlayer.Colours.FadedBlack,
-			SecondaryBackground = MediaPlayer.Colours.FadedGray,
-			Border = MediaPlayer.Colours.FadedBlack,
-			SecondaryBorder = MediaPlayer.Colours.FadedGray,
-			TextColor = MediaPlayer.Colours.White
+			Background = LydsPlayer.Colours.FadedBlack,
+			SecondaryBackground = LydsPlayer.Colours.FadedGray,
+			Border = LydsPlayer.Colours.FadedBlack,
+			SecondaryBorder = LydsPlayer.Colours.FadedGray,
+			TextColor = LydsPlayer.Colours.White
 		}
 	},
 	settings_size = {
@@ -79,6 +79,6 @@ local client = {
 }
 
 
-hook.Add("MediaPlayer.SettingsLoaded","MediaPlayer.RegisterSettings", function()
-	MediaPlayer.RegisterSettings(server, client)
+hook.Add("LydsPlayer.SettingsLoaded","LydsPlayer.RegisterSettings", function()
+	LydsPlayer.RegisterSettings(server, client)
 end)

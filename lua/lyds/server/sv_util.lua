@@ -1,6 +1,6 @@
 
 --Sends a preset to the player
-function MediaPlayer.SendDefaultPreset(ply, usmg)
+function LydsPlayer.SendDefaultPreset(ply, usmg)
     usmg = usmg or "Apply"
     local tab = util.JSONToTable( file.Read("lyds/presets/server_preset.json", "DATA") )
 
@@ -9,17 +9,17 @@ function MediaPlayer.SendDefaultPreset(ply, usmg)
     end
     if (table.IsEmpty(tab)) then return end
 
-    net.Start("MediaPlayer." .. usmg .. "DefaultPreset")
+    net.Start("LydsPlayer." .. usmg .. "DefaultPreset")
         net.WriteTable(tab)
     net.Send(ply)
 end
 
-function MediaPlayer.GetEnabledMediaTypes()
+function LydsPlayer.GetEnabledMediaTypes()
 
     local t = {}
 
-    for k,v in pairs(MediaPlayer.MediaType) do
-        if (MediaPlayer.HasSetting(v .. "_enabled") and MediaPlayer.IsSettingTrue(v .. "_enabled")) then
+    for k,v in pairs(LydsPlayer.MediaType) do
+        if (LydsPlayer.HasSetting(v .. "_enabled") and LydsPlayer.IsSettingTrue(v .. "_enabled")) then
             t[v] = true
         end
     end
@@ -27,16 +27,16 @@ function MediaPlayer.GetEnabledMediaTypes()
     return t
 end
 
-function MediaPlayer.SendEnabledMediaTypes(ply, tab)
-    net.Start("MediaPlayer.EnabledMediaTypes")
+function LydsPlayer.SendEnabledMediaTypes(ply, tab)
+    net.Start("LydsPlayer.EnabledMediaTypes")
         net.WriteTable(tab)
     net.Send(ply)
 end
 
 --saves the servers joinlist to a json file
-function MediaPlayer.SaveJoinlist()
+function LydsPlayer.SaveJoinlist()
 
-    if (MediaPlayer.Joinlist == nil or table.IsEmpty(MediaPlayer.Joinlist)) then return end
+    if (LydsPlayer.Joinlist == nil or table.IsEmpty(LydsPlayer.Joinlist)) then return end
 
-    file.Write("lyds/join_list.json", util.TableToJSON(MediaPlayer.Joinlist))
+    file.Write("lyds/join_list.json", util.TableToJSON(LydsPlayer.Joinlist))
 end

@@ -44,7 +44,7 @@ function panel:Init()
 
 		self.URL = str
 		self.TextEntry:SetValue(self.URL)
-		str = MediaPlayer.ParseYoutubeURL(str)
+		str = LydsPlayer.ParseYoutubeURL(str)
 
 		if (str != nil ) then
 			self.Submit:SetDisabled(false)
@@ -68,23 +68,23 @@ function panel:Init()
 	self.Submit:SetText("Submit")
 	self.Submit:SetDisabled(true)
 	self.Submit.DoClick = function(this)
-		local str = MediaPlayer.ParseYoutubeURL(self.URL)
+		local str = LydsPlayer.ParseYoutubeURL(self.URL)
 
 		if (str == nil) then
 			self.Submit:SetDisabled(true)
-			MediaPlayer.CreateWarningBox("Invalid","Invalid Youtube URL", 2)
+			LydsPlayer.CreateWarningBox("Invalid","Invalid Youtube URL", 2)
 			return
 		end
 
-		RunConsoleCommand("media_play", MediaPlayer.MediaType.YOUTUBE, str)
+		RunConsoleCommand("media_play", LydsPlayer.MediaType.YOUTUBE, str)
 
 		self.Submit:SetDisabled(true)
 		self.Browser:OpenURL("https://youtube.com")
 
-		MediaPlayer.HidePanel("SearchPanel") //hide the search panel
+		LydsPlayer.HidePanel("SearchPanel") //hide the search panel
 	end
 
 	self.Browser:OpenURL("https://youtube.com")
 end
 
-vgui.Register("MediaPlayer.SearchBrowserContainer", panel, "MediaPlayer.BasePanel")
+vgui.Register("LydsPlayer.SearchBrowserContainer", panel, "LydsPlayer.BasePanel")
