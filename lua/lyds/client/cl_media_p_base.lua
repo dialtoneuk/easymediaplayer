@@ -239,7 +239,7 @@ function base:SetInContext(bool)
 end
 
 function base:SetInScoreboard(bool)
-    self.InScoreboard = bool
+	self.InScoreboard = bool
 end
 
 function base:InContextMenu()
@@ -247,7 +247,7 @@ function base:InContextMenu()
 end
 
 function base:InScoreboardMenu()
-    return self.InScoreboard
+	return self.InScoreboard
 end
 
 function base:GetRescaledHeight()

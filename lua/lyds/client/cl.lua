@@ -36,7 +36,7 @@ surface.CreateFont( "BiggerText", {
 	strikeout = false,
 	symbol = false,
 	rotary = false,
-	shadow =false,
+	shadow = false,
 	additive = false,
 	outline = false,
 })

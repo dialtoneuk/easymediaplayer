@@ -106,6 +106,20 @@ LydsPlayer.Panels = {
 			panel:MakePopup()
 		end
 	},
+	--Success Message Box
+	OptionBox = {
+		Preloaded = false,
+		Element = "OptionBox",
+		SettingsBase = "warning",
+		Draggable = true,
+		Settings = {
+
+		},
+		PostInit = function(panel, key, settings)
+			panel:Show()
+			panel:MakePopup()
+		end
+	},
 	SearchPanel = {
 		Element = "SearchPanel",
 		SettingsBase = "search",

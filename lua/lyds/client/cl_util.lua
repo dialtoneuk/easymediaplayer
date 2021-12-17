@@ -14,6 +14,21 @@ function LydsPlayer.CreateSuccessBox(title, message, timeout)
 	LydsPlayer.GetPanel("SuccessBox"):SetBox(title, message, timeout)
 end
 
+
+--Creates a option box
+function LydsPlayer.CreateOptionBox(title, message, callback)
+	callback = callback or function(res) end
+
+	if (type(callback) != "function") then
+		error("callback must be a function with one argument")
+	end
+
+	LydsPlayer.ReinstantiatePanel("OptionBox")
+	LydsPlayer.GetPanel("OptionBox"):SetBox(title, message)
+	LydsPlayer.GetPanel("OptionBox"):SetCallback(callback)
+end
+
+
 function LydsPlayer.CreateChatMessage(msg, tag)
 	msg = msg or " null "
 	tag = tag or false

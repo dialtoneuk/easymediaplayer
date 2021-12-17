@@ -2,7 +2,7 @@
 --returns a string
 function LydsPlayer.PackDefaultPresets()
 	local tab = {}
-	local str = "MediaPlayerPresets = {\n"
+	local str = "LydsPlayerPresets = {\n"
 
 	if (!file.IsDir("data/presets/", "thirdparty")) then
 		warning("data/presets/ not found in addon directory")
@@ -162,11 +162,11 @@ end
 function LydsPlayer.GetPackedPresets()
 
 	--this global is loaded from autorun
-	if ( MediaPlayerPresets == nil or table.IsEmpty(MediaPlayerPresets )) then
+	if ( LydsPlayerPresets == nil or table.IsEmpty(LydsPlayerPresets )) then
 		return {}
 	end
 
-	return MediaPlayerPresets;
+	return LydsPlayerPresets;
 end
 
 --requests the initial default preset from the server

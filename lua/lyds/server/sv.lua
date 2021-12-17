@@ -235,9 +235,8 @@ local errorh = function(err)
 			if (not IsValid(v)) then continue end
 			if (not v:IsAdmin()) then continue end
 			v:SendMediaPlayerMessage("There has been an error...")
-			v:SendMediaPlayerMessage("[START] (v" .. LydsPlayer.Version .. ")\n", true)
 			v:SendMediaPlayerMessage(err[1] .. suffix .. "\n", true)
-			v:SendMediaPlayerMessage("[END] (v" .. LydsPlayer.Version .. ")", true)
+			v:SendMediaPlayerMessage("[" .. LydsPlayer.Name .. " v" .. LydsPlayer.Version .. "]", true)
 		end
 	end
 

@@ -47,8 +47,6 @@ function LydsPlayer.UpdateHistory(video, obj)
     }, true) .. " WHERE Video = " .. sql.SQLStr(video) .. ";"
     local r = sql.Query(q)
 
-    print(q)
-
     if (r == false ) then
         error(sql.LastError())
     end
