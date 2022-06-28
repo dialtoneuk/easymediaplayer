@@ -1,227 +1,210 @@
-
 --returns a string
 function LydsPlayer.PackDefaultPresets()
-	local tab = {}
-	local str = "LydsPlayerPresets = {\n"
+    local tab = {}
+    local str = "LydsPlayerPresets = {\n"
 
-	if (!file.IsDir("data/presets/", "thirdparty")) then
-		warning("data/presets/ not found in addon directory")
-		return
-	end
+    if (not file.IsDir("data/presets/", "thirdparty")) then
+        warning("data/presets/ not found in addon directory")
 
-	local files = file.Find("data/presets/*.json", "thirdparty")
+        return
+    end
 
-	for k,v in pairs(files) do
+    local files = file.Find("data/presets/*.json", "thirdparty")
 
-		v = string.Replace(v, " ", "_")
+    for k, v in pairs(files) do
+        v = string.Replace(v, " ", "_")
+        local t = util.JSONToTable(file.Read("data/presets/" .. v, "thirdparty"))
 
-		local t = util.JSONToTable(file.Read("data/presets/" .. v , "thirdparty"))
+        if (t == nil) then
+            error("bad json in " .. v .. ".json")
+        end
 
-		if (t == nil ) then
-			error("bad json in " .. v .. ".json")
-		end
+        t.Locked = true
 
-		t.Locked = true
+        if (t.Version == nil) then
+            t.Version = LydsPlayer.Version
+        end
 
-		if (t.Version == nil ) then
-			t.Version = LydsPlayer.Version
-		end
+        tab[v] = t
+    end
 
-		tab[ v ] = t
-	end
+    for k, v in pairs(tab) do
+        str = str .. string.format("\t['%s'] = [[%s]],\n", k, util.TableToJSON(v))
+    end
 
-	for k,v in pairs(tab) do
-		str = str .. string.format("\t['%s'] = [[%s]],\n", k, util.TableToJSON(v) )
-	end
+    str = str .. "}"
 
-	str = str .. "}"
-
-	return str
+    return str
 end
 
 --saves ap reset to file
 function LydsPlayer.SavePreset(filename, preset)
+    if (preset.Settings == nil) then
+        error("bad preset")
+    end
 
-	if (preset.Settings == nil ) then error("bad preset") end
+    for k, v in pairs(preset.Settings) do
+        if (type(v) == "table") then
+            local set = LydsPlayer.GetSetting(k).DefValue
 
-	for k,v in pairs(preset.Settings) do
+            for key, val in pairs(v) do
+                if (set.__pack ~= nil and string.sub(key, 1, 2) ~= "__") then
+                    v[key] = set.__pack(v[key], key, val)
+                end
 
-		if (type(v) == "table") then
+                if (string.sub(key, 1, 2) == "__") then
+                    v[key] = nil
+                    continue
+                end
+            end
+        end
+    end
 
-			local set = LydsPlayer.GetSetting(k).DefValue
-			for key,val in pairs(v) do
-
-				if (set.__pack != nil and string.sub(key, 1, 2) != "__" ) then
-					v[key] = set.__pack(v[key], key, val )
-				end
-
-				if (string.sub(key, 1, 2) == "__") then
-					v[key] = nil
-					continue
-				end
-			end
-		end
-	end
-
-	if (preset.Version == nil ) then
-		preset.Version = LydsPlayer.Version
-	end
-
-	filename = string.Replace(filename, ".json", "")
-	file.Write("lyds/presets/" .. filename .. ".json", util.TableToJSON(preset) )
+    preset.Version = LydsPlayer.Version
+    filename = string.Replace(filename, ".json", "")
+    file.Write("lyds/presets/" .. filename .. ".json", util.TableToJSON(preset))
 end
 
 --applies a preset
 function LydsPlayer.ApplyPreset(preset)
+    if (preset.Settings == nil) then
+        error("bad preset")
+    end
 
-	if (preset.Settings == nil ) then error("bad preset") end
+    for k, v in pairs(preset.Settings) do
+        if (type(v) == "table") then
+            local set = table.Copy(LydsPlayer.GetSetting(k).DefValue)
 
-	for k,v in pairs(preset.Settings) do
+            --loop the default values as these assure all settings a present (incase presets are older)
+            for key, val in pairs(set) do
+                --it isnt set in this aray
+                if (v[key] == nil) then
+                    v[key] = set[key]
+                end
 
-		if (type(v) == "table") then
+                if (set.__unpack ~= nil and string.sub(key, 1, 2) ~= "__") then
+                    v[key] = set.__unpack(v[key], key, v[key])
+                end
 
-			local set = table.Copy( LydsPlayer.GetSetting(k).DefValue )
+                if (string.sub(key, 1, 2) == "__") then
+                    v[key] = nil
+                    continue
+                end
+            end
 
-			--loop the default values as these assure all settings a present (incase presets are older)
-			for key,val in pairs(set) do
-
-				--it isnt set in this aray
-				if (v[key] == nil ) then
-					v[key] = set[key]
-				end
-
-				if (set.__unpack != nil and string.sub(key, 1, 2) != "__" ) then
-					v[key] = set.__unpack(v[key], key, v[key] )
-				end
-
-				if (string.sub(key, 1, 2) == "__") then
-					v[key] = nil
-					continue
-				end
-			end
-
-			LydsPlayer.ChangeSetting(k, table.Copy(v))
-		else
-			LydsPlayer.ChangeSetting(k, v)
-		end
-	end
+            LydsPlayer.ChangeSetting(k, table.Copy(v))
+        else
+            LydsPlayer.ChangeSetting(k, v)
+        end
+    end
 end
 
 --applys the default preset
 function LydsPlayer.ApplyDefaultPreset()
+    if (not file.Exists("lyds/presets/default.json", "DATA")) then return end
+    local tab = util.JSONToTable(file.Read("lyds/presets/default.json"))
 
-	if (!file.Exists("lyds/presets/default.json","DATA") ) then
-		return
-	end
+    if (tab == nil) then
+        error("default preset is invalid")
+    end
 
-	local tab = util.JSONToTable(file.Read("lyds/presets/default.json"))
-
-	if (tab == nil) then
-		error("default preset is invalid")
-	end
-
-	LydsPlayer.ApplyPreset(tab)
-	LydsPlayer.InstantiatePanels(true)
+    LydsPlayer.ApplyPreset(tab)
+    LydsPlayer.InstantiatePanels(true)
 end
 
 --writes default presets to file
 function LydsPlayer.WriteDefaultPresets()
+    local files = LydsPlayer.GetPackedPresets()
 
-	local files = LydsPlayer.GetPackedPresets()
+    if (table.IsEmpty(files)) then
+        print("no files found")
 
-	if (table.IsEmpty(files)) then
-		print("no files found")
-		return
-	end
+        return
+    end
 
-	for k,v in pairs(files) do
-		if (file.Exists("lyds/presets/" .. k, "DATA" )) then print(k .. " already exists in folder")  continue end
-		if (!file.IsDir("lyds/presets/", "DATA")) then file.CreateDir("lyds/presets/") end
+    for k, v in pairs(files) do
+        if (file.Exists("lyds/presets/" .. k, "DATA")) then
+            print(k .. " already exists in folder")
+            continue
+        end
 
-		print("writing default preset file " .. k .. " into data/lyds/presets")
-		file.Write("lyds/presets/" .. k, v)
-	end
+        if (not file.IsDir("lyds/presets/", "DATA")) then
+            file.CreateDir("lyds/presets/")
+        end
+
+        print("writing default preset file " .. k .. " into data/lyds/presets")
+        file.Write("lyds/presets/" .. k, v)
+    end
 end
 
 --used in the creation of the default assets payload
 function LydsPlayer.PrintDefaultPresets()
+    if (not file.IsDir("lyds/", "DATA")) then
+        file.CreateDir("lyds/")
+    end
 
-	if (!file.IsDir("lyds/", "DATA")) then file.CreateDir("lyds/") end
-
-	local str = LydsPlayer.PackDefaultPresets()
-	str = "--autogenerated " .. util.DateStamp() .. "\n\n" .. str
-
-	file.Write("lyds/default_presets.txt", str)
-
-	print("Success!")
-	print("-- open garrysmod/garrysmod/data/lyds/default_presets.txt for output")
-	print("-- copy content of .txt into garrysmod/addons/<addon_name>/lua/autorun/presets.lua")
+    local str = LydsPlayer.PackDefaultPresets()
+    str = "--autogenerated " .. util.DateStamp() .. "\n\n" .. str
+    file.Write("lyds/default_presets.txt", str)
+    print("Success!")
+    print("-- open garrysmod/garrysmod/data/lyds/default_presets.txt for output")
+    print("-- copy content of .txt into garrysmod/addons/<addon_name>/lua/autorun/presets.lua")
 end
 
 --returns either the defined global or an empty table
 function LydsPlayer.GetPackedPresets()
+    --this global is loaded from autorun
+    if (LydsPlayerPresets == nil or table.IsEmpty(LydsPlayerPresets)) then return {} end
 
-	--this global is loaded from autorun
-	if ( LydsPlayerPresets == nil or table.IsEmpty(LydsPlayerPresets )) then
-		return {}
-	end
-
-	return LydsPlayerPresets;
+    return LydsPlayerPresets
 end
 
 --requests the initial default preset from the server
 function LydsPlayer.GetDefaultPreset()
-
-	net.Start("LydsPlayer.GetDefaultPreset")
-	net.SendToServer()
+    net.Start("LydsPlayer.GetDefaultPreset")
+    net.SendToServer()
 end
 
 --Refreses the default preset, must be an admin to call this
 function LydsPlayer.RefreshDefaultPreset()
-
-	if (!LydsPlayer.LocalPlayer:IsAdmin()) then return end
-
-	net.Start("LydsPlayer.AdminRefreshDefaultPreset")
-	net.SendToServer()
+    if (not LydsPlayer.LocalPlayer:IsAdmin()) then return end
+    net.Start("LydsPlayer.AdminRefreshDefaultPreset")
+    net.SendToServer()
 end
 
 --Request default preset from the server if we've only joined once
 function LydsPlayer.RequestDefaultPreset()
-
-	net.Start("LydsPlayer.RequestDefaultPreset")
-	net.SendToServer()
+    net.Start("LydsPlayer.RequestDefaultPreset")
+    net.SendToServer()
 end
 
 --applies the initial preset sent to us by the server
 function LydsPlayer.SendPresetToServer(preset)
+    if (not LydsPlayer.LocalPlayer:IsAdmin()) then return end
 
-	if (!LydsPlayer.LocalPlayer:IsAdmin()) then return end
+    if (table.IsEmpty(preset) or preset.Settings == nil) then
+        error("bad preset")
+    end
 
-	if (table.IsEmpty(preset) or preset.Settings == nil ) then
-		error("bad preset")
-	end
+    for k, v in pairs(preset.Settings) do
+        if (type(v) == "table") then
+            local set = LydsPlayer.GetSetting(k).DefValue
 
-	for k,v in pairs(preset.Settings) do
+            for key, val in pairs(v) do
+                if (set.__pack ~= nil and string.sub(key, 1, 2) ~= "__") then
+                    v[key] = set.__pack(v[key], key, val)
+                end
 
-		if (type(v) == "table") then
+                if (string.sub(key, 1, 2) == "__") then
+                    v[key] = nil
+                    continue
+                end
+            end
+        end
+    end
 
-			local set = LydsPlayer.GetSetting(k).DefValue
-			for key,val in pairs(v) do
-
-				if (set.__pack != nil and string.sub(key, 1, 2) != "__" ) then
-					v[key] = set.__pack(v[key], key, val )
-				end
-
-				if (string.sub(key, 1, 2) == "__") then
-					v[key] = nil
-					continue
-				end
-			end
-		end
-	end
-
-	print("sending initial preset to server")
-	net.Start("LydsPlayer.SendPresetToServer")
-		net.WriteTable(preset)
-	net.SendToServer()
+    print("sending initial preset to server")
+    net.Start("LydsPlayer.SendPresetToServer")
+    net.WriteTable(preset)
+    net.SendToServer()
 end

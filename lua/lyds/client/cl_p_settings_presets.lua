@@ -58,6 +58,7 @@ function panel:Init()
     refresh:Dock(BOTTOM)
     refresh:SetTall(30)
     refresh:SetText("Refresh List")
+    refresh:SetIcon("icon16/arrow_refresh.png")
 
     refresh.DoClick = function(s)
         self.ListView:Clear()
@@ -180,7 +181,7 @@ function panel:CreatePreset(title, author, add_default)
     title = string.Replace(title, ".json", "")
     title = string.lower(title)
 
-    if (author == "" || string.len(author) > 24) then
+    if (author == "" or string.len(author) > 24) then
         author = LydsPlayer.LocalPlayer:GetName()
     end
 
@@ -263,7 +264,7 @@ function panel:FillPresetEditor()
     self:SetDockMargin(self.CurrentPreset)
     local listview = vgui.Create("DListView", self.CurrentPreset)
     listview:Dock(LEFT)
-    listview:SetWide(math.floor(self.PresetEditor:GetWide() / 2) - (self:GetPadding() * 2))
+    listview:SetWide(math.floor(self.PresetEditor:GetWide() * 0.40) - (self:GetPadding() * 2))
     listview:AddColumn("Included Settings")
     self.LastValue = nil
 
@@ -273,7 +274,10 @@ function panel:FillPresetEditor()
         if (not self:IsPresetLocked()) then
             self.RemoveButton:SetDisabled(false)
             self.UpdateButton:SetDisabled(false)
-            self.SaveButton:SetDisabled(false)
+
+            if (IsValid(self.SaveButton)) then
+                self.SaveButton:SetDisabled(false)
+            end
         end
 
         if (IsValid(self.PresetPreview) and self.LastValue ~= k) then
@@ -298,7 +302,7 @@ function panel:FillPresetEditor()
     --container
     local p = vgui.Create("DPanel", self.CurrentPreset)
     p:Dock(RIGHT)
-    p:SetWide(math.floor(self.PresetEditor:GetWide() / 2) - (self:GetPadding() * 2))
+    p:SetWide(math.floor(self.PresetEditor:GetWide() * 0.60) - (self:GetPadding() * 2))
     p.Paint = function() end
     self:SetDockPadding(p)
 
@@ -334,6 +338,7 @@ function panel:FillPresetEditor()
     self.AddButton:SetDisabled(true)
     self.AddButton:DockMargin(0, self:GetPadding() * 2, 0, self:GetPadding())
     self.AddButton:SetText("Add Setting")
+    self.AddButton:SetIcon("icon16/add.png")
 
     self.AddButton.DoClick = function()
         if (self:IsPresetLocked()) then return end
@@ -347,18 +352,18 @@ function panel:FillPresetEditor()
         end
     end
 
-    if (IsValid(self.PreviewButton)) then
-        self.PreviewButton:Remove()
+    if (IsValid(self.InspectButton)) then
+        self.InspectButton:Remove()
     end
 
-    self.PreviewButton = vgui.Create("DButton", p)
-    self.PreviewButton:SetTall(30)
-    self.PreviewButton:Dock(TOP)
-    self.PreviewButton:DockMargin(0, 0, 0, self:GetPadding() * 2)
-    self.PreviewButton:SetText("Preview Preset")
-    self.PreviewButton:SetIcon("icon16/eye.png")
+    self.InspectButton = vgui.Create("DButton", p)
+    self.InspectButton:SetTall(20)
+    self.InspectButton:Dock(TOP)
+    self.InspectButton:DockMargin(0, 0, 0, self:GetPadding() * 2)
+    self.InspectButton:SetText("Inspect Preset")
+    self.InspectButton:SetIcon("icon16/eye.png")
 
-    self.PreviewButton.DoClick = function()
+    self.InspectButton.DoClick = function()
         --recreate it
         LydsPlayer.ReinstantiatePanel("PresetPreview")
         local pan = LydsPlayer.GetPanel("PresetPreview")
@@ -367,16 +372,41 @@ function panel:FillPresetEditor()
         pan:Show()
     end
 
+    if (IsValid(self.TryoutButton)) then
+        self.TryoutButton:Remove()
+    end
+
+    self.TryoutButton = vgui.Create("DButton", p)
+    self.TryoutButton:SetTall(20)
+    self.TryoutButton:Dock(TOP)
+    self.TryoutButton:DockMargin(0, 0, 0, self:GetPadding())
+    self.TryoutButton:SetText("Test Preset")
+    self.TryoutButton:SetIcon("icon16/flag_pink.png")
+
     if (IsValid(self.VersionText)) then
         self.VersionText:Remove()
     end
 
     self.VersionText = vgui.Create("DLabel", p)
-    self.VersionText:SetTall(15)
+    self.VersionText:SetTall(20)
     self.VersionText:Dock(TOP)
+    self.VersionText:SetFont("BigText")
     self.VersionText:DockMargin(0, self:GetPadding(), 0, 0)
-    self.VersionText:SetText("Version: " .. (self.Preset.Version or "Unknown?"))
-    self.VersionText:SetTextColor(LydsPlayer.Colours.Black)
+    local versionText = "built w/ ver " .. (self.Preset.Version or "?.?") .. " (yours " .. LydsPlayer.Version .. ")"
+
+    if (self.Preset.Version == LydsPlayer.Version) then
+        self.VersionText:SetTextColor(LydsPlayer.Colours.Green)
+    else
+        if (self.Preset.Version ~= nil and LydsPlayer.Version < 1.0 and self.Preset.Version > LydsPlayer.Version - 0.5) then
+            self.VersionText:SetTextColor(LydsPlayer.Colours.Orange)
+            versionText = versionText .. " [Unsupported]"
+        else
+            self.VersionText:SetTextColor(LydsPlayer.Colours.Red)
+            versionText = versionText .. " [Unadvised]"
+        end
+    end
+
+    self.VersionText:SetText(versionText)
 
     if (IsValid(self.AuthorText)) then
         self.AuthorText:Remove()
@@ -399,16 +429,26 @@ function panel:FillPresetEditor()
     self.RemoveButton:SetDisabled(true)
     self.RemoveButton:DockMargin(0, self:GetPadding() * 2, 0, 0)
     self.RemoveButton:SetText("Remove Setting")
+    self.RemoveButton:SetIcon("icon16/delete.png")
+    self.RemoveButton:SetPaintBackground(false)
+
+    self.RemoveButton.Paint = function()
+        draw.RoundedBox(5, 0, 0, self.RemoveButton:GetWide(), self.RemoveButton:GetTall(), LydsPlayer.ComputedColours.FadedRed)
+    end
 
     self.RemoveButton.DoClick = function()
         if (self:IsPresetLocked()) then return end
         local sel = self.LastValue or nil
 
-        if (sel ~= nil) then
-            self.Preset.Settings[sel] = nil
-            self:FillPresetEditor()
-            self.HasEdited = true
-        end
+        LydsPlayer.CreateOptionBox("Are you sure?", "Are you sure you want to delete " .. sel .. "?", function(result)
+            if (not result) then return end
+
+            if (sel ~= nil) then
+                self.Preset.Settings[sel] = nil
+                self:FillPresetEditor()
+                self.HasEdited = true
+            end
+        end)
     end
 
     if (IsValid(self.UpdateButton)) then
@@ -431,33 +471,8 @@ function panel:FillPresetEditor()
             self.Preset.Settings[sel] = tab.Value
             self.HasEdited = true
             self:FillPresetEditor()
+            LydsPlayer.CreateSuccessBox("Success", sel .. " have been matched with the value of your current setting")
         end
-    end
-
-    if (IsValid(self.UpdateAllButton)) then
-        self.UpdateAllButton:Remove()
-    end
-
-    self.UpdateAllButton = vgui.Create("DButton", p)
-    self.UpdateAllButton:SetTall(20)
-    self.UpdateAllButton:Dock(TOP)
-    self.UpdateAllButton:SetDisabled(true)
-    self.UpdateAllButton:DockMargin(0, self:GetPadding(), 0, 0)
-    self.UpdateAllButton:SetText("Sync All Values To Current Settings")
-
-    self.UpdateAllButton.DoClick = function()
-        if (self:IsPresetLocked()) then return end
-        self.HasEdited = true
-
-        for k, v in pairs(self.Preset.Settings) do
-            local tab = table.Copy(LydsPlayer.GetSetting(k))
-            self.Preset.Settings[k] = tab.Value
-            self:FillPresetEditor()
-        end
-    end
-
-    if (not self:IsPresetLocked()) then
-        self.UpdateAllButton:SetDisabled(false)
     end
 
     if (IsValid(self.PresetPreview)) then
@@ -467,7 +482,54 @@ function panel:FillPresetEditor()
     self.PresetPreview = vgui.Create("LydsPlayer.PresetPreview", p)
     self.PresetPreview:Dock(TOP)
     self.PresetPreview:DockMargin(0, self:GetPadding(), 0, 0)
-    self.PresetPreview:SetTall(self:GetHeight() / 3)
+    self.PresetPreview:SetTall(self:GetTall() / 4)
+
+    if (IsValid(self.UpdateAllButton)) then
+        self.UpdateAllButton:Remove()
+    end
+
+    self.UpdateAllButton = vgui.Create("DButton", p)
+    self.UpdateAllButton:SetTall(20)
+    self.UpdateAllButton:Dock(TOP)
+    self.UpdateAllButton:SetDisabled(true)
+    self.UpdateAllButton:SetText("Match Properties With Yours")
+    self.UpdateAllButton:SetIcon("icon16/wand.png")
+
+    self.UpdateAllButton.DoClick = function()
+        if (self:IsPresetLocked()) then return end
+        self.HasEdited = true
+
+        for k, v in pairs(self.Preset.Settings) do
+            local tab = table.Copy(LydsPlayer.GetSetting(k))
+            self.Preset.Settings[k] = tab.Value
+            self:FillPresetEditor()
+            LydsPlayer.CreateSuccessBox("Success", "All properties have been matched with the value of your current settings.")
+        end
+    end
+
+    if (not self:IsPresetLocked()) then
+        self.UpdateAllButton:SetDisabled(false)
+    end
+
+    if (IsValid(self.SaveButton)) then
+        self.SaveButton:Remove()
+    end
+
+    self.SaveButton = vgui.Create("DButton", p)
+    self.SaveButton:SetTall(40)
+    self.SaveButton:Dock(BOTTOM)
+    self.SaveButton:DockMargin(0, self:GetPadding(), 0, 0)
+    self.SaveButton:SetText("Save Preset")
+    self.SaveButton:SetIcon("icon16/disk.png")
+
+    if (self:IsPresetLocked()) then
+        self.SaveButton:SetDisabled(true)
+    end
+
+    self.SaveButton.DoClick = function(s)
+        LydsPlayer.SavePreset(self.LastListValue, self.Preset)
+        LydsPlayer.CreateSuccessBox("Success", self.LastListValue .. " has been saved successfully!")
+    end
 
     if (IsValid(self.LoadButton)) then
         self.LoadButton:Remove()
@@ -493,17 +555,17 @@ function panel:FillPresetEditor()
         end
 
         self.DefaultButton = vgui.Create("DButton", p)
-        self.DefaultButton:SetTall(30)
+        self.DefaultButton:SetTall(20)
         self.DefaultButton:Dock(BOTTOM)
-        self.DefaultButton:DockMargin(0, self:GetPadding() * 2, 0, self:GetPadding())
+        self.DefaultButton:DockMargin(0, self:GetPadding(), 0, self:GetPadding())
         self.DefaultButton:SetIcon("icon16/shield.png")
-        self.DefaultButton:SetText("Set As Servers Initial Preset")
+        self.DefaultButton:SetText("Set As Global Preset")
 
         self.DefaultButton.DoClick = function()
             if (table.IsEmpty(self.Preset)) then return end
 
             if (self.LastListValue == "server_preset.json") then
-                LydsPlayer.CreateWarningBox("Error", "server_preset.json is the same as server.json and only exists on the server.", 4)
+                LydsPlayer.CreateWarningBox("Error", "This preset is already set as the global preset.", 4)
 
                 return
             end
@@ -521,14 +583,45 @@ function panel:FillPresetEditor()
         end
     end
 
+    if (IsValid(self.DeleteButton)) then
+        self.DeleteButton:Remove()
+    end
+
+    self.DeleteButton = vgui.Create("DButton", p)
+    self.DeleteButton:SetTall(20)
+    self.DeleteButton:Dock(BOTTOM)
+    self.DeleteButton:DockMargin(0, self:GetPadding(), 0, 0)
+    self.DeleteButton:SetText("Delete Preset")
+    self.DeleteButton:SetIcon("icon16/delete.png")
+    self.DeleteButton:SetPaintBackground(false)
+
+    self.DeleteButton.Paint = function()
+        draw.RoundedBox(5, 0, 0, self.DeleteButton:GetWide(), self.DeleteButton:GetTall(), LydsPlayer.ComputedColours.FadedRed)
+    end
+
+    if (self:IsPresetLocked()) then
+        self.DeleteButton:SetDisabled(true)
+    end
+
+    self.DeleteButton.DoClick = function(s)
+        LydsPlayer.CreateOptionBox("Remove Preset", "Are you sure you want to remove " .. self.LastListValue .. "? This cannot be undone!", function(res)
+            if (res) then
+                self.Presets[self.LastListValue] = nil
+                file.Delete("lyds/presets/" .. self.LastListValue)
+                self.ListView:Clear()
+                self:GetPresets()
+            end
+        end)
+    end
+
     if (IsValid(self.CopyButton)) then
         self.CopyButton:Remove()
     end
 
     self.CopyButton = vgui.Create("DButton", p)
-    self.CopyButton:SetTall(30)
+    self.CopyButton:SetTall(20)
     self.CopyButton:Dock(BOTTOM)
-    self.CopyButton:DockMargin(0, self:GetPadding() * 2, 0, 0)
+    self.CopyButton:DockMargin(0, self:GetPadding(), 0, 0)
     self.CopyButton:SetText("Copy Preset")
     self.CopyButton:SetIcon("icon16/page_copy.png")
 
@@ -555,51 +648,6 @@ function panel:FillPresetEditor()
         LydsPlayer.CreateSuccessBox("Success", self.LastListValue .. " has been successfully copied and named " .. val .. "!")
         self.Presets[val] = tab
         self.ListView:AddLine(val)
-    end
-
-    if (IsValid(self.SaveButton)) then
-        self.SaveButton:Remove()
-    end
-
-    self.SaveButton = vgui.Create("DButton", p)
-    self.SaveButton:SetTall(20)
-    self.SaveButton:Dock(BOTTOM)
-    self.SaveButton:DockMargin(0, self:GetPadding(), 0, 0)
-    self.SaveButton:SetText("Save Preset")
-
-    if (self:IsPresetLocked()) then
-        self.SaveButton:SetDisabled(true)
-    end
-
-    self.SaveButton.DoClick = function(s)
-        LydsPlayer.SavePreset(self.LastListValue, self.Preset)
-        LydsPlayer.CreateSuccessBox("Success", self.LastListValue .. " has been saved successfully!")
-    end
-
-    if (IsValid(self.SaveButton)) then
-        self.SaveButton:Remove()
-    end
-
-    self.DeleteButton = vgui.Create("DButton", p)
-    self.DeleteButton:SetTall(30)
-    self.DeleteButton:Dock(BOTTOM)
-    self.DeleteButton:DockMargin(0, self:GetPadding(), 0, 0)
-    self.DeleteButton:SetText("Delete Preset")
-    self.DeleteButton:SetIcon("icon16/delete.png")
-
-    if (self:IsPresetLocked()) then
-        self.DeleteButton:SetDisabled(true)
-    end
-
-    self.DeleteButton.DoClick = function(s)
-        LydsPlayer.CreateOptionBox("Remove Preset","Are you sure you want to remove " .. self.LastListValue .. "? This cannot be undone!", function(res)
-            if (res) then
-                self.Presets[self.LastListValue] = nil
-                file.Delete("lyds/presets/" .. self.LastListValue)
-                self.ListView:Clear()
-                self:GetPresets()
-            end
-        end)
     end
 
     self.HasEdited = false

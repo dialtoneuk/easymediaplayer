@@ -51,7 +51,7 @@ function panel:Init()
             Clicked = false,
             IsCustom = false, --updated each node select
             IsAdmin = false --updated each node select
-
+            
         }
     })
 
@@ -186,7 +186,7 @@ function panel:AddCreditsTab()
 				<h2>My Twitter</h2>
 				https://twitter.com/lydsmas
 
-				<h2>Send Eth</h2>
+				<h2>Send Eth Plz</h2>
 				0x527738Dd42170065d778C89264654b03f8Ed989B
 			</body>
 		</html>
@@ -317,6 +317,10 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
         self.Comments = {}
     end
 
+    if (not self.AddTableKey) then
+        self.AddTableKey = {}
+    end
+
     if (not self.Notifications) then
         self.Notifications = {}
     end
@@ -386,17 +390,17 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
         end
     end
 
-    self.AddKey = vgui.Create("DButton", scrollRight)
-    self.AddKey:Dock(TOP)
-    self.AddKey:SizeToContents()
-    self.AddKey:SetText("Add New Key")
-    self.AddKey:SetImage("icon16/key.png")
-    self.AddKey:SetTall(30)
-    self.AddKey:SetDisabled(true)
-    self.AddKey:DockMargin(0, self:GetPadding(), 0, 0)
+    self.AddTableKey[title] = vgui.Create("DButton", scrollRight)
+    self.AddTableKey[title]:Dock(TOP)
+    self.AddTableKey[title]:SizeToContents()
+    self.AddTableKey[title]:SetText("Add New Key")
+    self.AddTableKey[title]:SetImage("icon16/add.png")
+    self.AddTableKey[title]:SetTall(30)
+    self.AddTableKey[title]:SetEnabled(false)
+    self.AddTableKey[title]:DockMargin(0, self:GetPadding(), 0, 0)
 
-    self.AddKey.DoClick = function()
-        if (not self.IsCustom) then
+    self.AddTableKey[title].DoClick = function()
+        if (not self.Selected.Custom) then
             LydsPlayer.CreateWarningBox("Error", "This table is uncustomizable")
 
             return
@@ -404,13 +408,13 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
             if (self.Selected == nil or self.Selected.Key == nil) then return end
             local setting
 
-            if (self.IsAdmin) then
+            if (not self.IsAdmin) then
                 setting = LydsPlayer.GetSetting(self.Selected.Key)
             else
                 setting = LydsPlayer.AdminSettings[self.Selected.Key][self.Selected.Type]
             end
 
-            if (setting ~= LydsPlayer.Type.TABLE) then
+            if (setting.Type ~= LydsPlayer.Type.TABLE) then
                 error("not a table")
 
                 return
@@ -423,7 +427,7 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
             end
 
             setting.Value[#setting.Value + 1] = ""
-            self:UpdateTable(title, setting, self.IsAdmin)
+            self:UpdateTable(title, setting, admin)
         end
     end
 
@@ -460,12 +464,12 @@ function panel:AddPropertySheetTab(title, data, icon, admin)
             function node:DoClick()
                 if (not LydsPlayer.PanelValid("SettingsPanel")) then return end
                 local s = LydsPlayer.GetPanel("SettingsPanel")
-                s:UpdateTable(title, v, admin)
                 s.Selected = v
                 s.IsCustom = v.Custom or false
                 s.IsAdmin = admin
-                s.AddKey:SetDisabled(not self.IsCustom)
+                s.AddTableKey[title]:SetEnabled(v.Custom)
                 s.Reset:SetDisabled(false)
+                s:UpdateTable(title, v, admin)
             end
         end
     end

@@ -1,26 +1,34 @@
 local panel = {}
-
 panel.Name = "settings"
 
 function panel:Init()
     self:BaseInit({
         DontResize = {
             Width = true,
-            Height = true
+            Height = true,
+        },
+        Declare = {
+            Rows = 1
         },
         Locked = true
     })
 end
 
 function panel:Paint(p)
-    --nothing
+    --nothing``
+end
+
+function panel:MyThink()
+    if (IsValid(self.Properties) and IsValid(self.Parent)) then
+        self:SetTall(math.max(self.Settings.Options.Value.PropertyMinHeight or 56, math.min((self.Parent:GetTall() / 4) - (self:GetPadding() * 2), (self.Rows or 1) * (self.Settings.Options.Value.PropertyRowSpacing or 28))))
+    end
 end
 
 --takes the key of the setting inside MEDIA.Settings and then the alue,
 function panel:DisplaySettings(k, v, parent)
-
-    if !(LydsPlayer.HasSetting(k)) then
+    if not (LydsPlayer.HasSetting(k)) then
         self.Parent.Preset.Settings[k] = nil
+
         return
     end
 
@@ -31,16 +39,7 @@ function panel:DisplaySettings(k, v, parent)
         self.Properties:Remove()
     end
 
-    if (self.Parent:IsPresetLocked()) then
-
-        if (IsValid(self.LabelTitle)) then self.LabelTitle:Remove() end
-
-        self.LabelTitle = vgui.Create("DLabel", self)
-        self.LabelTitle:Dock(TOP)
-        self.LabelTitle:SetText("Unmodifiable")
-        self.LabelTitle:SetTextColor(LydsPlayer.Colours.Black)
-    end
-
+    self.Rows = 0
     self.Properties = vgui.Create("DProperties", self)
     self:SetDockMargin(self.Properties)
     self.Properties:Dock(FILL)
@@ -66,7 +65,12 @@ function panel:DisplaySettings(k, v, parent)
             end
 
             row.DataChanged = function(s, d)
-                if (self.Parent:IsPresetLocked()) then return end
+                if (self.Parent:IsPresetLocked()) then
+                    LydsPlayer.CreateWarningBox("Warning", "This preset is locked and you cannot make any changes to it unless you copy it.")
+
+                    return
+                end
+
                 d = string.Explode(" ", d)
 
                 if (key ~= nil) then
@@ -82,7 +86,7 @@ function panel:DisplaySettings(k, v, parent)
             local _min = 0
             local _max
 
-            if (typs[typ] == "Integer") then
+            if (typs[typ] == "Integer" or typs[typ] == "Float") then
                 if (self.Parent:IsPresetLocked()) then
                     _min = data
                     _max = data
@@ -90,7 +94,12 @@ function panel:DisplaySettings(k, v, parent)
                     _max = data * 10
                 end
 
-                row:Setup("Int", {
+                local map = {
+                    ["Integer"] = "Int",
+                    ["Float"] = "Float"
+                }
+
+                row:Setup(map[typs[typ]], {
                     min = _min,
                     max = _max
                 })
@@ -105,6 +114,12 @@ function panel:DisplaySettings(k, v, parent)
             end
 
             row.DataChanged = function(s, d)
+                if (self.Parent:IsPresetLocked()) then
+                    LydsPlayer.CreateWarningBox("Warning", "This preset is locked and you cannot make any changes to it unless you copy it.")
+
+                    return
+                end
+
                 if (key ~= nil) then
                     self.Parent.Preset.Settings[k][key] = d
                     row:SetValue(self.Parent.Preset.Settings[k][key])
@@ -117,10 +132,12 @@ function panel:DisplaySettings(k, v, parent)
     end
 
     local setting = LydsPlayer.GetSetting(k)
+    self.Rows = (self.Rows or 1) + 1
 
     if (setting.Type == LydsPlayer.Type.TABLE) then
         for key, value in pairs(v) do
             local typ
+            self.Rows = (self.Rows or 1) + 1
 
             if (setting.DefValue.__unpack ~= nil and string.sub(key, 1, 2) ~= "__") then
                 v[key] = setting.DefValue.__unpack(self.Parent.Preset.Settings[k], key, v[key])
